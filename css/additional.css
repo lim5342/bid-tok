@@ -1,0 +1,105 @@
+/* ============================================
+   Beta Notice Section
+   ============================================ */
+.beta-notice-section {
+    background: linear-gradient(135deg, #1550E8 0%, #2D6FFF 100%);
+    padding: 4rem 0;
+}
+
+.beta-notice-card {
+    background: white;
+    border-radius: 20px;
+    padding: 3rem;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.beta-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #F5A623, #FFC850);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+/* ============================================
+   Expert Cards
+   ============================================ */
+.experts-section {
+    background-color: #F8F9FA;
+}
+
+.experts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.expert-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+.expert-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+}
+
+/* ============================================
+   Status Badges
+   ============================================ */
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.status-pending {
+    background-color: #FFF8E1;
+    color: #F57C00;
+}
+
+.status-completed {
+    background-color: #E8F5E9;
+    color: #2E7D32;
+}
+
+.badge-lawyer {
+    background-color: #E3F2FD;
+    color: #1565C0;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.badge-agent {
+    background-color: #FFF8E1;
+    color: #F57C00;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+@media (max-width: 768px) {
+    .beta-notice-card {
+        padding: 2rem 1.5rem;
+    }
+    
+    .experts-grid {
+        grid-template-columns: 1fr;
+    }
+}
