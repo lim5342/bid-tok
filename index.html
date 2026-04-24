@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>대리입찰 톡 - 전국 경매 대리입찰 연결 플랫폼</title>
+    <meta name="description" content="전국 법원 경매 대리입찰 서비스. 매수신청대리인·법무사와 빠르게 매칭하세요.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -21,81 +22,1204 @@
             </div>
             <ul class="nav-menu" id="navMenu">
                 <li><a href="#service">서비스 소개</a></li>
+                <li><a href="experts.html">전문가 목록</a></li>
                 <li><a href="#support">고객지원</a></li>
             </ul>
             <div class="nav-actions">
                 <button class="btn btn-expert" id="expertApplyBtn">전문가 신청</button>
+                <a href="#history" class="nav-link">신청내역</a>
                 <button class="btn btn-primary" id="applyBtn">대리입찰 신청</button>
             </div>
+            <button class="nav-toggle" id="navToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <div class="hero-badge">
-                <i class="fas fa-check-circle"></i>
-                <span>매수신청대리인 직접 입찰</span>
-            </div>
-            <h1 class="hero-title">시간도, 거리도<br>문제없어요!</h1>
-            <p class="hero-subtitle">대리입찰 톡에게 맡기고 편하게 기다리세요.</p>
-            <div class="hero-buttons">
-                <button class="btn btn-primary" id="heroApplyBtn">지금 바로 신청하기</button>
-            </div>
-            <div class="hero-features">
-                <div class="hero-feature">
-                    <i class="fas fa-search"></i>
-                    <span>실시간 사건 조회</span>
+    <!-- Main Page -->
+    <div id="mainPage" class="page active">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-badge">
+                    <i class="fas fa-check-circle"></i>
+                    <span>매수신청대리인 직접 입찰</span>
                 </div>
-                <div class="hero-feature">
-                    <i class="fas fa-handshake"></i>
-                    <span>전국 전문가 매칭</span>
+                <h1 class="hero-title">시간도, 거리도<br>문제없어요!</h1>
+                <p class="hero-subtitle">대리입찰 톡에게 맡기고 편하게 기다리세요.</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-hero-primary" id="heroApplyBtn">지금 바로 신청하기</button>
                 </div>
-                <div class="hero-feature">
-                    <i class="fas fa-shield-alt"></i>
-                    <span>보증금 최대 5억 보험</span>
+                <div class="hero-features">
+                    <div class="hero-feature">
+                        <i class="fas fa-search"></i>
+                        <span>실시간 사건 조회</span>
+                    </div>
+                    <div class="hero-feature">
+                        <i class="fas fa-handshake"></i>
+                        <span>전국 전문가 매칭</span>
+                    </div>
+                    <div class="hero-feature">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>보증금 최대 5억 보험</span>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Service Section -->
-    <section id="service" class="section service-section">
-        <div class="container">
-            <h2 class="section-title">왜 대리입찰 톡을 선택해야 할까요?</h2>
-            <div class="service-grid">
-                <div class="service-card">
-                    <div class="service-icon">🗺️</div>
-                    <h3>거리가 멀어도 OK</h3>
-                    <p>서울에서 지방 물건 입찰?<br>이제 직접 안 가도 됩니다.</p>
+        <!-- Service Section -->
+        <section id="service" class="section service-section">
+            <div class="container">
+                <h2 class="section-title">왜 대리입찰 톡을 선택해야 할까요?</h2>
+                <div class="service-grid">
+                    <div class="service-card">
+                        <div class="service-icon">🗺️</div>
+                        <h3>거리가 멀어도 OK</h3>
+                        <p>서울에서 지방 물건 입찰?<br>이제 직접 안 가도 됩니다.</p>
+                    </div>
+                    <div class="service-card">
+                        <div class="service-icon">⏰</div>
+                        <h3>직장인도 가능</h3>
+                        <p>아침부터 법원에서 기다릴 필요 없어요.<br>낙찰·패찰 결과만 받으세요.</p>
+                    </div>
+                    <div class="service-card">
+                        <div class="service-icon">👨‍⚖️</div>
+                        <h3>자격증 보유 전문가</h3>
+                        <p>매수신청대리인·법무사가 직접 입찰 진행.<br>보험 가입 완료.</p>
+                    </div>
+                    <div class="service-card">
+                        <div class="service-icon">💰</div>
+                        <h3>보증금 100% 안전</h3>
+                        <p>전문가 배상책임보험으로<br>입찰보증금 철저히 보호.</p>
+                    </div>
                 </div>
-                <div class="service-card">
-                    <div class="service-icon">⏰</div>
-                    <h3>직장인도 가능</h3>
-                    <p>아침부터 법원에서 기다릴 필요 없어요.<br>낙찰·패찰 결과만 받으세요.</p>
+            </div>
+        </section>
+
+        <!-- Beta Notice Section -->
+
+
+        <!-- Experts Section -->
+        <section id="experts" class="section experts-section">
+            <div class="container">
+                <h2 class="section-title">활동 중인 전문가</h2>
+                <p class="section-subtitle">대리입찰 톡과 함께하는 검증된 전문가를 소개합니다. 원하는 지역의 전문가에게 바로 신청하세요.</p>
+                
+                <div class="experts-grid" id="expertsGrid">
+                    <div class="expert-card-simple">
+                        <div class="expert-photo-full">
+                            <img src="https://i.imgur.com/6tK8Zj5.jpg" alt="법무사">
+                            <div class="expert-badge badge-lawyer">법무사</div>
+                        </div>
+                        <div class="expert-info-simple">
+                            <div class="expert-region">📍 서울, 경기, 인천</div>
+                            <p class="expert-intro-simple">15년 경력 법무사입니다. 부동산 경매 전문으로 정확하고 신속한 업무 처리를 약속드립니다.</p>
+                        </div>
+                        <button class="expert-match-btn" onclick="switchToApplicationPage()">이 전문가에게 신청하기 →</button>
+                    </div>
+                    
+                    <div class="expert-card-simple">
+                        <div class="expert-photo-full">
+                            <img src="https://i.imgur.com/7tL9Wj4.jpg" alt="법무사">
+                            <div class="expert-badge badge-lawyer">법무사</div>
+                        </div>
+                        <div class="expert-info-simple">
+                            <div class="expert-region">📍 부산, 경남, 울산</div>
+                            <p class="expert-intro-simple">부산·경남 지역 경매 전문 법무사입니다. 지역 법원에 대한 깊은 이해를 바탕으로 최상의 서비스를 제공합니다.</p>
+                        </div>
+                        <button class="expert-match-btn" onclick="switchToApplicationPage()">이 전문가에게 신청하기 →</button>
+                    </div>
+                    
+                    <div class="expert-card-simple">
+                        <div class="expert-photo-full">
+                            <img src="https://i.imgur.com/8uM2Nk6.jpg" alt="매수신청대리인">
+                            <div class="expert-badge badge-agent">매수신청대리인</div>
+                        </div>
+                        <div class="expert-info-simple">
+                            <div class="expert-region">📍 경기, 서울</div>
+                            <p class="expert-intro-simple">빠르고 정확한 대리 입찰 서비스를 제공합니다. 10년 이상의 경매 경험으로 안전한 입찰을 보장합니다.</p>
+                        </div>
+                        <button class="expert-match-btn" onclick="switchToApplicationPage()">이 전문가에게 신청하기 →</button>
+                    </div>
                 </div>
-                <div class="service-card">
-                    <div class="service-icon">👨‍⚖️</div>
-                    <h3>자격증 보유 전문가</h3>
-                    <p>매수신청대리인·법무사가 직접 입찰 진행.<br>보험 가입 완료.</p>
+            </div>
+        </section>
+
+        <!-- Reviews Section -->
+        <section class="section reviews-section">
+            <div class="container">
+                <h2 class="section-title">실제 이용자 후기</h2>
+                <div class="reviews-slider">
+                    <div class="review-card">
+                        <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                        <p class="review-text">"한두 푼도 아닌 입찰보증금을 믿고 맡길 수 있어 안심입니다. 신뢰할 수 있는 서비스인 것 같아 계속 이용할 의사 있습니다."</p>
+                        <p class="review-author">전문투자자 A</p>
+                    </div>
+                    <div class="review-card">
+                        <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                        <p class="review-text">"직장인이다 보니 주중에 연차를 내는 게 부담스러웠는데, 대리입찰 톡 덕분에 연차 걱정 없이 경매 참여할 수 있습니다."</p>
+                        <p class="review-author">직장인 B</p>
+                    </div>
+                    <div class="review-card">
+                        <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                        <p class="review-text">"서비스 신청 웹페이지도 직관적이고, 절차 안내도 명확합니다. 처음 이용하는데도 불편함 없이 3분 만에 신청 완료했네요."</p>
+                        <p class="review-author">전문직 C</p>
+                    </div>
+                    <div class="review-card">
+                        <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                        <p class="review-text">"다른 곳은 서류를 인쇄하고 스캔하고 우편으로 보내야 했는데, 대리입찰 톡은 모든 서류가 온라인에서 한 번에 해결되는 점이 최고입니다."</p>
+                        <p class="review-author">프리랜서 D</p>
+                    </div>
+                    <div class="review-card">
+                        <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                        <p class="review-text">"입찰가 입력 시 실수할 수 있는 부분을 미리 경고해 주어서, 이런 부분에서는 직접입찰보다 더 안심이 되어 좋았어요."</p>
+                        <p class="review-author">초보투자자 E</p>
+                    </div>
                 </div>
-                <div class="service-card">
-                    <div class="service-icon">💰</div>
-                    <h3>보증금 100% 안전</h3>
-                    <p>전문가 배상책임보험으로<br>입찰보증금 철저히 보호.</p>
+            </div>
+        </section>
+
+        <!-- Pricing Section -->
+        <section class="section pricing-section">
+            <div class="container">
+                <h2 class="section-title">투명한 수수료</h2>
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <h3 class="pricing-title">💰 매수신청대리인</h3>
+                        <div class="pricing-amount">
+                            <span class="amount">70,000</span>
+                            <span class="currency">원</span>
+                        </div>
+                        <p class="pricing-vat">(VAT 포함)</p>
+                        <p class="pricing-desc">비용 절약형 - 인감증명서 필요</p>
+                        <div class="pricing-features">
+                            <div class="pricing-feature">
+                                <i class="fas fa-check"></i>
+                                <span>입찰관련 서류작성</span>
+                            </div>
+                            <div class="pricing-feature">
+                                <i class="fas fa-check"></i>
+                                <span>대리 입찰참여</span>
+                            </div>
+                            <div class="pricing-feature">
+                                <i class="fas fa-check"></i>
+                                <span>입찰 결과 안내</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="pricing-card recommended-pricing">
+                        <div class="pricing-badge">추천</div>
+                        <h3 class="pricing-title">⚖️ 법무사</h3>
+                        <div class="pricing-amount">
+                            <span class="amount">100,000</span>
+                            <span class="currency">원</span>
+                        </div>
+                        <p class="pricing-vat">(VAT 포함)</p>
+                        <p class="pricing-desc">간편 온라인 처리 - 전자서명만</p>
+                        <div class="pricing-features">
+                            <div class="pricing-feature">
+                                <i class="fas fa-check"></i>
+                                <span>온라인 전자서명 (3분)</span>
+                            </div>
+                            <div class="pricing-feature">
+                                <i class="fas fa-check"></i>
+                                <span>대리 입찰참여</span>
+                            </div>
+                            <div class="pricing-feature">
+                                <i class="fas fa-check"></i>
+                                <span>입찰 결과 안내</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section id="support" class="section faq-section">
+            <div class="container">
+                <h2 class="section-title">자주 묻는 질문</h2>
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>Q. 보증금은 안전한가요?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>전문 매수신청대리인의 배상책임보험이 가입되어 있어 보증금은 100% 안전합니다. 최대 5억 원까지 보장됩니다.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>Q. 전국 어디서나 신청 가능한가요?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>네, 전국 모든 법원의 경매 사건에 대해 대리입찰 서비스를 제공합니다. 서울에서 부산 물건도, 제주에서 강원도 물건도 가능합니다.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>Q. 입찰 당일 연락은 어떻게 받나요?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>입찰 완료 후 즉시 문자 메시지로 결과를 안내해 드립니다. 낙찰 여부와 함께 다음 절차에 대한 상세 안내가 포함됩니다.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>Q. 낙찰되면 추가 비용이 있나요?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>매수신청대리인은 70,000원, 법무사는 100,000원입니다. 낙찰 이후 소유권 이전 등의 절차는 별도로 협의 가능합니다.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>Q. 신청 취소는 가능한가요?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>매각기일 전날까지 취소 시 전액 환불됩니다. 단, 매각기일 당일 취소는 환불이 불가능합니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="section cta-section">
+            <div class="container">
+                <h2>지금 바로 대리입찰을 신청하세요</h2>
+                <p>3분이면 충분합니다</p>
+                <button class="btn btn-hero-primary" id="ctaApplyBtn">대리입찰 신청하기</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- Application Page -->
+    <div id="applicationPage" class="page">
+        <div class="application-container">
+            <!-- Progress Sidebar -->
+            <div class="progress-sidebar">
+                <div class="progress-logo">
+                    <i class="fas fa-comment-dots"></i>
+                    <span>대리입찰 톡</span>
+                </div>
+                <div class="progress-steps">
+                    <div class="progress-step active" data-step="1">
+                        <div class="progress-circle">
+                            <span class="step-number">1</span>
+                            <i class="fas fa-check step-check"></i>
+                        </div>
+                        <span class="step-label">사건 조회</span>
+                    </div>
+                    <div class="progress-line"></div>
+                    <div class="progress-step" data-step="2">
+                        <div class="progress-circle">
+                            <span class="step-number">2</span>
+                            <i class="fas fa-check step-check"></i>
+                        </div>
+                        <span class="step-label">입찰정보작성</span>
+                    </div>
+                    <div class="progress-line"></div>
+                    <div class="progress-step" data-step="3">
+                        <div class="progress-circle">
+                            <span class="step-number">3</span>
+                            <i class="fas fa-check step-check"></i>
+                        </div>
+                        <span class="step-label">전자계약</span>
+                    </div>
+                    <div class="progress-line"></div>
+                    <div class="progress-step" data-step="4">
+                        <div class="progress-circle">
+                            <span class="step-number">4</span>
+                            <i class="fas fa-check step-check"></i>
+                        </div>
+                        <span class="step-label">수수료결제</span>
+                    </div>
+                </div>
+                <button class="btn btn-back" id="backToMain">
+                    <i class="fas fa-arrow-left"></i> 홈으로
+                </button>
+            </div>
+
+            <!-- Application Content -->
+            <div class="application-content">
+                <!-- Step 1: Case Search -->
+                <div class="step-content active" id="step1">
+                    <h2 class="step-title">의뢰하시는 경매 사건은 무엇인가요?</h2>
+                    <div class="form-card">
+                        <div class="external-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            <a href="https://www.courtauction.go.kr" target="_blank">대법원 사건검색 바로가기</a>
+                        </div>
+                        <div class="form-group">
+                            <label>관할법원 <span class="required">*</span></label>
+                            <div class="form-row">
+                                <select id="region" class="form-control">
+                                    <option value="">지역 선택</option>
+                                    <option value="서울">서울</option>
+                                    <option value="인천">인천</option>
+                                    <option value="경기">경기</option>
+                                    <option value="부산">부산</option>
+                                    <option value="대구">대구</option>
+                                    <option value="광주">광주</option>
+                                    <option value="대전">대전</option>
+                                    <option value="울산">울산</option>
+                                    <option value="강원">강원</option>
+                                    <option value="충북">충북</option>
+                                    <option value="충남">충남</option>
+                                    <option value="전북">전북</option>
+                                    <option value="전남">전남</option>
+                                    <option value="경북">경북</option>
+                                    <option value="경남">경남</option>
+                                    <option value="제주">제주</option>
+                                </select>
+                                <select id="court" class="form-control">
+                                    <option value="">법원 선택</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>사건번호 <span class="required">*</span></label>
+                            <input type="text" id="caseNumber" class="form-control" placeholder="예) 2025타경103123">
+                        </div>
+                        <div class="form-group">
+                            <label>물건번호</label>
+                            <input type="text" id="propertyNumber" class="form-control" placeholder="있을 경우에만 입력해주세요">
+                        </div>
+                        <button class="btn btn-primary btn-lg" id="searchCase">조회하기</button>
+                    </div>
+                </div>
+
+                <!-- Step 1 Result: Case Confirmation -->
+                <div class="step-content" id="step1Result">
+                    <h2 class="step-title">입찰하시는 사건을 확인해주세요</h2>
+                    <div class="case-info-card">
+                        <div class="case-image">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div class="case-details">
+                            <div class="case-detail-row">
+                                <span class="label">사건번호</span>
+                                <span class="value" id="displayCaseNumber">-</span>
+                            </div>
+                            <div class="case-detail-row">
+                                <span class="label">관할법원</span>
+                                <span class="value" id="displayCourt">-</span>
+                            </div>
+                            <div class="case-detail-row">
+                                <span class="label">매각기일</span>
+                                <span class="value" id="displayAuctionDate">2025년 3월 15일 10:30</span>
+                            </div>
+                            <div class="case-detail-row">
+                                <span class="label">감정가</span>
+                                <span class="value" id="displayAppraisalValue">350,000,000원</span>
+                            </div>
+                            <div class="case-detail-row">
+                                <span class="label">최저입찰가</span>
+                                <span class="value" id="displayMinBid">280,000,000원</span>
+                            </div>
+                            <div class="case-detail-row highlight">
+                                <span class="label">입찰보증금</span>
+                                <span class="value" id="displayDeposit">28,000,000원</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>사건의 입찰보증금은 의뢰인이 직접 해당 경매계에 확인하셔야 합니다</span>
+                    </div>
+                    
+                    <h3 style="margin: 2rem 0 1rem; font-size: 1.25rem;">대리인 유형을 선택해주세요</h3>
+                    <div class="expert-type-selection">
+                        <div class="expert-type-card">
+                            <input type="radio" name="expertType" id="selectAgent" value="매수신청대리인" checked>
+                            <label for="selectAgent">
+                                <div class="expert-type-header">
+                                    <h4>💰 매수신청대리인</h4>
+                                    <span class="expert-type-price">70,000원</span>
+                                </div>
+                                <p class="expert-type-desc">비용 절약형 (인감증명서 필요)</p>
+                                <ul class="expert-type-features">
+                                    <li>✅ 저렴한 수수료</li>
+                                    <li>⚠️ 주민센터 방문 필요</li>
+                                    <li>⚠️ 인감증명서 + 인감도장</li>
+                                    <li>⚠️ 2~3일 소요</li>
+                                </ul>
+                            </label>
+                        </div>
+                        
+                        <div class="expert-type-card recommended">
+                            <div class="recommended-badge">추천</div>
+                            <input type="radio" name="expertType" id="selectLawyer" value="법무사">
+                            <label for="selectLawyer">
+                                <div class="expert-type-header">
+                                    <h4>⚖️ 법무사</h4>
+                                    <span class="expert-type-price">100,000원</span>
+                                </div>
+                                <p class="expert-type-desc">간편 온라인 처리</p>
+                                <ul class="expert-type-features">
+                                    <li>✅ 온라인 전자서명만 (3분)</li>
+                                    <li>✅ 주민센터 방문 불필요</li>
+                                    <li>✅ 인감도장 불필요</li>
+                                    <li>✅ 10분 완료</li>
+                                </ul>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 1.5rem;">
+                        <p style="font-size:0.85rem;color:var(--text-light);margin-bottom:1rem;font-weight:600;">입찰 유형을 선택해주세요</p>
+                        <div class="button-group">
+                            <button class="btn btn-primary btn-lg" id="applyPersonal">
+                                <i class="fas fa-user"></i> 개인 입찰 신청
+                            </button>
+                            <button class="btn btn-secondary btn-lg" id="applyJoint">
+                                <i class="fas fa-users"></i> 공동 입찰 신청
+                            </button>
+                            <button class="btn btn-secondary btn-lg" id="applyCorporate">
+                                <i class="fas fa-building"></i> 법인 입찰 신청
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Bid Information -->
+                <div class="step-content" id="step2">
+                    <div class="case-summary">
+                        <div class="case-summary-item">
+                            <span class="label">사건번호</span>
+                            <span class="value" id="summaryCase">-</span>
+                        </div>
+                        <div class="case-summary-item">
+                            <span class="label">관할법원</span>
+                            <span class="value" id="summaryCourt">-</span>
+                        </div>
+                        <div class="case-summary-item">
+                            <span class="label">매각기일</span>
+                            <span class="value" id="summaryDate">-</span>
+                        </div>
+                    </div>
+
+                    <h2 class="step-title">입찰가를 입력해주세요</h2>
+                    <div class="form-card">
+                        <div class="info-box">
+                            <i class="fas fa-lock"></i>
+                            <span>오직 대리인만 입찰가를 확인할 수 있습니다.</span>
+                        </div>
+                        <div class="form-group">
+                            <label>입찰가 <span class="required">*</span></label>
+                            <div class="input-with-unit">
+                                <input type="text" id="bidAmount" class="form-control text-right" placeholder="최저입찰가 이상 입력">
+                                <span class="unit">원</span>
+                            </div>
+                            <small class="form-text">최저입찰가: <span id="minBidDisplay">280,000,000원</span></small>
+                        </div>
+                        <div class="form-group">
+                            <label>입찰보증금</label>
+                            <div class="input-with-unit">
+                                <input type="text" id="depositAmount" class="form-control text-right" readonly>
+                                <span class="unit">원</span>
+                            </div>
+                            <small class="form-text">입찰가의 10%로 자동 계산됩니다</small>
+                        </div>
+                    </div>
+
+                    <h2 class="step-title" style="margin-top: 40px;">입찰자 정보를 입력해주세요</h2>
+                    <div class="form-card">
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>입찰정보는 입찰표에 그대로 반영되므로, 정확하게 기재해주세요.</span>
+                        </div>
+                        <div class="form-group">
+                            <label>입찰자 성명 <span class="required">*</span></label>
+                            <input type="text" id="bidderName" class="form-control" placeholder="주민등록상 성명">
+                        </div>
+                        <div class="form-group">
+                            <label>보증금 반환계좌 <span class="required">*</span></label>
+                            <div class="form-row">
+                                <select id="bankName" class="form-control">
+                                    <option value="">은행 선택</option>
+                                    <option value="KB국민은행">KB국민은행</option>
+                                    <option value="신한은행">신한은행</option>
+                                    <option value="우리은행">우리은행</option>
+                                    <option value="하나은행">하나은행</option>
+                                    <option value="NH농협은행">NH농협은행</option>
+                                    <option value="IBK기업은행">IBK기업은행</option>
+                                    <option value="카카오뱅크">카카오뱅크</option>
+                                    <option value="토스뱅크">토스뱅크</option>
+                                    <option value="케이뱅크">케이뱅크</option>
+                                </select>
+                                <input type="text" id="accountNumber" class="form-control" placeholder="계좌번호 (- 없이 입력)">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>주민등록번호 <span class="required">*</span></label>
+                            <div class="form-row">
+                                <input type="text" id="ssnFront" class="form-control" placeholder="앞 6자리" maxlength="6">
+                                <span class="separator">-</span>
+                                <input type="password" id="ssnBack" class="form-control" placeholder="뒤 7자리" maxlength="7">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>주소 <span class="required">*</span></label>
+                            <div class="input-with-button">
+                                <input type="text" id="addressRoad" class="form-control" placeholder="도로명주소" readonly>
+                                <button class="btn btn-secondary" id="searchAddress">주소 검색</button>
+                            </div>
+                            <input type="text" id="addressDetail" class="form-control" placeholder="상세주소" style="margin-top: 8px;">
+                        </div>
+                        <div class="form-group">
+                            <label>휴대폰 번호 <span class="required">*</span></label>
+                            <div class="input-with-button">
+                                <input type="text" id="phoneNumber" class="form-control" placeholder="010-0000-0000">
+                                <button class="btn btn-secondary" id="verifyPhone">인증번호 받기</button>
+                            </div>
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="agreePersonal">
+                                <span>개인정보 수집 및 이용에 동의합니다 <span class="required">*</span></span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="agreeContract">
+                                <span>위임계약 체결에 관한 동의합니다 <span class="required">*</span></span>
+                            </label>
+                        </div>
+                        <div class="step-nav-buttons">
+                            <button class="btn btn-secondary" id="backToStep1Result">이전 단계</button>
+                            <button class="btn btn-primary btn-lg" id="proceedToContract">전자계약 진행하기</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Electronic Contract -->
+                <div class="step-content" id="step3">
+                    <h2 class="step-title">매수신청 대리 이용 계약서</h2>
+                    <div class="contract-card">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <span>실제 매수신청대리 업무는 입찰의뢰인과 플랫폼과는 독립된 제3자인 매수신청대리인이 수행하며, 플랫폼은 대리인의 행위에 대해 원칙적으로 책임지지 않음을 확인합니다.</span>
+                        </div>
+                        <div class="contract-content">
+                            <h3>매수신청 대리 이용 계약서</h3>
+                            
+                            <table class="contract-table">
+                                <tr>
+                                    <th colspan="2">당사자 정보</th>
+                                </tr>
+                                <tr>
+                                    <td><strong>입찰의뢰인</strong></td>
+                                    <td><strong>매수신청대리인</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        성명: <span id="contractBidderName">-</span><br>
+                                        주민등록번호: <span id="contractSSN">-</span><br>
+                                        주소: <span id="contractAddress">-</span>
+                                    </td>
+                                    <td>
+                                        성명: 김법무<br>
+                                        매수신청대리인 등록번호: 제2024-001호<br>
+                                        주소: 서울특별시 강남구 테헤란로 123
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <table class="contract-table">
+                                <tr>
+                                    <th colspan="2">경매 사건 정보</th>
+                                </tr>
+                                <tr>
+                                    <td>사건번호</td>
+                                    <td><span id="contractCaseNumber">-</span></td>
+                                </tr>
+                                <tr>
+                                    <td>물건번호</td>
+                                    <td><span id="contractPropertyNumber">-</span></td>
+                                </tr>
+                                <tr>
+                                    <td>집행법원</td>
+                                    <td><span id="contractCourt">-</span></td>
+                                </tr>
+                            </table>
+
+                            <h4>매수신청 대리 보수</h4>
+                            <ul>
+                                <li>확정 보수액: 110,000원 (VAT 포함)</li>
+                                <li>보수 지급 시기: 대리입찰 접수 시</li>
+                            </ul>
+
+                            <h4>위임 내용</h4>
+                            <ol>
+                                <li>민사집행법 제113조에 따른 매수신청 보증의 제공</li>
+                                <li>입찰표의 작성 및 제출</li>
+                                <li>입찰표의 정정 및 취하</li>
+                                <li>개찰기일 출석 및 입찰 참여</li>
+                                <li>낙찰 시 매수신고 및 대금납부</li>
+                                <li>기타 매수신청에 필요한 일체의 행위</li>
+                            </ol>
+
+                            <h4>계약 내용</h4>
+                            <p><strong>가. 입찰의뢰인의 의무</strong></p>
+                            <ul>
+                                <li>정확한 입찰정보 및 신원정보 제공</li>
+                                <li>입찰보증금의 적법한 준비 및 제공</li>
+                                <li>매수신청대리인의 정당한 업무수행 협조</li>
+                            </ul>
+
+                            <p><strong>나. 매수신청대리인의 의무</strong></p>
+                            <ul>
+                                <li>선량한 관리자의 주의의무로 입찰업무 수행</li>
+                                <li>입찰 정보의 비밀 유지</li>
+                                <li>입찰 결과의 신속한 통보</li>
+                                <li>배상책임보험 유지 (최대 5억 원)</li>
+                            </ul>
+
+                            <p class="contract-date">계약일: <span id="contractDate">2026년 2월 26일</span></p>
+
+                            <div class="signature-section">
+                                <div class="signature-box">
+                                    <p><strong>입찰의뢰인</strong></p>
+                                    <div class="signature-area" id="clientSignature">
+                                        <span class="signature-placeholder">서명해주세요</span>
+                                    </div>
+                                </div>
+                                <div class="signature-box">
+                                    <p><strong>매수신청대리인</strong></p>
+                                    <div class="signature-area signed">
+                                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 80'%3E%3Cpath d='M20,40 Q40,20 60,40 T100,40 Q120,50 140,35' fill='none' stroke='%231550E8' stroke-width='3'/%3E%3C/svg%3E" alt="서명">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step-nav-buttons">
+                            <button class="btn btn-secondary" id="backToStep2">이전 단계</button>
+                            <button class="btn btn-primary btn-lg" id="openSignature">서명하기</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Payment -->
+                <div class="step-content" id="step4">
+                    <h2 class="step-title">수수료 결제</h2>
+                    <div class="payment-card">
+                        <div class="payment-card-header">
+                            <i class="fas fa-comment-dots"></i>
+                            <span>대리입찰 톡</span>
+                        </div>
+                        <div class="payment-amount">
+                            <span class="label">대리입찰 수수료</span>
+                            <span class="amount">110,000원</span>
+                        </div>
+                    </div>
+
+                    <div class="form-card">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <span>입찰 당일 전자본인서명확인서(주민센터 발급)를 반드시 지참하셔야 합니다.</span>
+                        </div>
+
+                        <h3 class="section-subtitle">서비스 포함 내역</h3>
+                        <div class="service-includes">
+                            <div class="service-include-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>입찰관련 서류작성</span>
+                            </div>
+                            <div class="service-include-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>대리 입찰참여</span>
+                            </div>
+                            <div class="service-include-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>입찰 결과 안내</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>유의사항</label>
+                            <div class="terms-box">
+                                <ul>
+                                    <li>대리입찰 수수료는 입찰 참여에 대한 대가로, 낙찰 여부와 무관하게 환불되지 않습니다.</li>
+                                    <li>매각기일 전날까지 취소 시에만 전액 환불 가능합니다.</li>
+                                    <li>입찰 당일 전자본인서명확인서를 미지참할 경우 입찰이 진행되지 않을 수 있습니다.</li>
+                                    <li>입찰가 및 개인정보 오류로 인한 불이익은 의뢰인 책임입니다.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>결제약관 및 환불 규정</label>
+                            <div class="terms-box scrollable">
+                                <h4>제1조 (목적)</h4>
+                                <p>본 약관은 대리입찰 톡(이하 "플랫폼")이 제공하는 대리입찰 서비스의 이용 및 결제에 관한 사항을 규정함을 목적으로 합니다.</p>
+                                
+                                <h4>제2조 (결제)</h4>
+                                <p>1. 대리입찰 수수료는 서비스 신청 완료 시 결제됩니다.<br>
+                                2. 결제 수단은 신용카드, 체크카드, 계좌이체를 지원합니다.<br>
+                                3. 결제 완료 후 영수증은 이메일 및 SMS로 발송됩니다.</p>
+                                
+                                <h4>제3조 (환불)</h4>
+                                <p>1. 매각기일 전날까지 취소 시 전액 환불됩니다.<br>
+                                2. 매각기일 당일 취소는 환불이 불가능합니다.<br>
+                                3. 환불은 결제 수단으로 영업일 기준 3~5일 내 처리됩니다.</p>
+                                
+                                <h4>제4조 (책임의 제한)</h4>
+                                <p>1. 플랫폼은 입찰의뢰인과 매수신청대리인을 연결하는 중개 역할만 수행합니다.<br>
+                                2. 매수신청대리인의 과실로 인한 손해는 배상책임보험으로 처리됩니다.<br>
+                                3. 의뢰인의 정보 오류로 인한 불이익은 플랫폼이 책임지지 않습니다.</p>
+                            </div>
+                        </div>
+
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="agreePayment">
+                                <span>결제약관 및 환불 규정에 동의합니다 <span class="required">*</span></span>
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label>포인트 사용</label>
+                            <div class="point-section">
+                                <div class="point-info">
+                                    <span>보유 포인트: <strong>5,000P</strong></span>
+                                </div>
+                                <div class="input-with-button">
+                                    <input type="text" id="pointAmount" class="form-control" placeholder="0">
+                                    <button class="btn btn-secondary">전액 사용</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="payment-summary">
+                            <div class="summary-row">
+                                <span>수수료</span>
+                                <span>110,000원</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>포인트 할인</span>
+                                <span class="discount">-0원</span>
+                            </div>
+                            <div class="summary-row total">
+                                <span>최종 결제금액</span>
+                                <span>110,000원</span>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary btn-lg" id="processPayment">결제하기</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+
+    <!-- Expert Application Page -->
+    <div id="expertPage" class="page">
+        <div class="expert-container">
+            <div class="expert-header">
+                <div class="container">
+                    <button class="btn btn-back" id="backToMainFromExpert">
+                        <i class="fas fa-arrow-left"></i> 홈으로
+                    </button>
+                    <h1>매수신청대리인/법무사 전문가 신청</h1>
+                    <p>대리입찰 톡과 함께 전국의 입찰의뢰인을 만나보세요</p>
+                </div>
+            </div>
+
+            <div class="container" style="max-width: 900px; padding: 3rem 20px;">
+                <div class="form-card">
+                    <h2 class="section-subtitle">기본 정보</h2>
+                    
+                    <div class="form-group">
+                        <label>전문가 구분 <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="expertType" value="대리인" checked>
+                                <span>매수신청대리인</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="expertType" value="법무사">
+                                <span>법무사</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>성명 <span class="required">*</span></label>
+                        <input type="text" id="expertName" class="form-control" placeholder="실명 입력">
+                    </div>
+
+                    <div class="form-group">
+                        <label>자격증 번호 <span class="required">*</span></label>
+                        <input type="text" id="licenseNumber" class="form-control" placeholder="예) 제2024-001호">
+                    </div>
+
+                    <div class="form-group">
+                        <label>연락처 <span class="required">*</span></label>
+                        <input type="text" id="expertPhone" class="form-control" placeholder="010-0000-0000">
+                    </div>
+
+                    <div class="form-group">
+                        <label>이메일 <span class="required">*</span></label>
+                        <input type="email" id="expertEmail" class="form-control" placeholder="example@email.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label>사무소 주소 <span class="required">*</span></label>
+                        <div class="input-with-button">
+                            <input type="text" id="expertAddress" class="form-control" placeholder="도로명주소" readonly>
+                            <button class="btn btn-secondary" id="searchExpertAddress">주소 검색</button>
+                        </div>
+                        <input type="text" id="expertAddressDetail" class="form-control" placeholder="상세주소" style="margin-top: 8px;">
+                    </div>
+
+                    <div class="form-group">
+                        <label>프로필 사진 (선택)</label>
+                        <input type="file" id="expertPhoto" class="form-control" accept="image/*">
+                        <small style="color: #666;">사진을 업로드하지 않으면 기본 이미지가 표시됩니다.</small>
+                    </div>
+
+                    <h2 class="section-subtitle" style="margin-top: 40px;">활동 지역 선택</h2>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <span>선택한 지역에서 입찰 신청이 접수되면 카카오톡 알림을 받게 됩니다.</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>활동 가능 지역 <span class="required">*</span> (복수 선택 가능)</label>
+                        <div class="checkbox-grid">
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="region-checkbox" value="서울">
+                                <span>서울</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="region-checkbox" value="인천">
+                                <span>인천</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="region-checkbox" value="경기">
+                                <span>경기</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="region-checkbox" value="부산">
+                                <span>부산</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="region-checkbox" value="대구">
+                                <span>대구</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="region-checkbox" value="광주">
+                                <span>광주</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="region-checkbox" value="대전">
+                                <span>대전</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="region-checkbox" value="울산">
+                                <span>울산</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="region-checkbox" value="강원">
+                                <span>강원</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="region-checkbox" value="충북">
+                                <span>충북</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="region-checkbox" value="충남">
+                                <span>충남</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="region-checkbox" value="전북">
+                                <span>전북</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="region-checkbox" value="전남">
+                                <span>전남</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="region-checkbox" value="경북">
+                                <span>경북</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="region-checkbox" value="경남">
+                                <span>경남</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="region-checkbox" value="제주">
+                                <span>제주</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <h2 class="section-subtitle" style="margin-top: 40px;">자격 증명 서류</h2>
+                    
+                    <div class="form-group">
+                        <label>자격증 사본 <span class="required">*</span></label>
+                        <input type="file" id="licenseFile" class="form-control" accept="image/*,.pdf">
+                        <small class="form-text">매수신청대리인 등록증 또는 법무사 자격증</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>배상책임보험증권 <span class="required">*</span></label>
+                        <input type="file" id="insuranceFile" class="form-control" accept="image/*,.pdf">
+                        <small class="form-text">최대 5억 원 이상 보험 가입 증명</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>사업자등록증 (선택)</label>
+                        <input type="file" id="businessFile" class="form-control" accept="image/*,.pdf">
+                    </div>
+
+                    <h2 class="section-subtitle" style="margin-top: 40px;">수수료 정보</h2>
+                    
+                    <div class="form-group">
+                        <label>희망 수수료 <span class="required">*</span></label>
+                        <div class="input-with-unit">
+                            <input type="text" id="expertFee" class="form-control text-right" placeholder="110,000">
+                            <span class="unit">원</span>
+                        </div>
+                        <small class="form-text">권장 수수료: 110,000원 (VAT 포함)</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>카카오톡 알림 수신 번호 <span class="required">*</span></label>
+                        <input type="text" id="kakaoPhone" class="form-control" placeholder="010-0000-0000">
+                        <small class="form-text">입찰 신청 시 알림을 받을 번호</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>간단한 소개</label>
+                        <textarea id="expertIntro" class="form-control" rows="5" placeholder="경력, 전문 분야, 특기사항 등을 자유롭게 작성해주세요."></textarea>
+                    </div>
+
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="agreeExpertTerms">
+                            <span>전문가 이용약관에 동의합니다 <span class="required">*</span></span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="agreeExpertPrivacy">
+                            <span>개인정보 수집 및 이용에 동의합니다 <span class="required">*</span></span>
+                        </label>
+                    </div>
+
+                    <button class="btn btn-primary btn-lg" id="submitExpertApplication">전문가 신청하기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Page -->
+    <div id="adminPage" class="page">
+        <div class="admin-container">
+            <div class="admin-header">
+                <div class="container">
+                    <h1><i class="fas fa-shield-alt" style="color:var(--accent);margin-right:10px;"></i>관리자 대시보드</h1>
+                    <button class="btn btn-back" id="backToMainFromAdmin" style="background:rgba(255,255,255,0.1);color:white;border-color:rgba(255,255,255,0.2);">
+                        <i class="fas fa-sign-out-alt"></i> 로그아웃
+                    </button>
+                </div>
+            </div>
+
+            <div class="container" style="max-width: 1400px; padding: 2rem 20px;">
+                <div class="admin-tabs">
+                    <button class="admin-tab active" data-tab="applications">대리입찰 신청 관리</button>
+                    <button class="admin-tab" data-tab="experts">전문가 관리</button>
+                </div>
+
+                <!-- Applications Tab -->
+                <div class="admin-tab-content active" id="applicationsTab">
+                    <div class="admin-section">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                            <h2>대리입찰 신청 목록</h2>
+                            <button class="btn btn-success" onclick="exportApplicationsToExcel()" style="background:var(--success);">
+                                <i class="fas fa-file-excel"></i> 엑셀 다운로드
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>신청일시</th>
+                                        <th>신청자</th>
+                                        <th>연락처</th>
+                                        <th>사건번호</th>
+                                        <th>관할법원</th>
+                                        <th>입찰가</th>
+                                        <th>상태</th>
+                                        <th>관리</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="applicationsTableBody">
+                                    <tr>
+                                        <td>2026-02-26 10:30</td>
+                                        <td>홍길동</td>
+                                        <td>010-1234-5678</td>
+                                        <td>2025타경103123</td>
+                                        <td>서울중앙지방법원</td>
+                                        <td>280,000,000원</td>
+                                        <td><span class="status-badge status-pending">대기중</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary">상세보기</button>
+                                        </td>
+                                    </tr>
+                                    <!-- More rows will be added dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Experts Tab -->
+                <div class="admin-tab-content" id="expertsTab">
+                    <div class="admin-section">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                            <h2>전문가 승인 대기</h2>
+                            <button class="btn btn-success" onclick="exportExpertsToExcel()">
+                                <i class="fas fa-download"></i> 엑셀 다운로드
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>신청일시</th>
+                                        <th>성명</th>
+                                        <th>구분</th>
+                                        <th>자격증번호</th>
+                                        <th>연락처</th>
+                                        <th>활동지역</th>
+                                        <th>관리</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="expertsTableBody">
+                                    <tr>
+                                        <td>2026-02-26 09:15</td>
+                                        <td>김법무</td>
+                                        <td>매수신청대리인</td>
+                                        <td>제2024-001호</td>
+                                        <td>010-9876-5432</td>
+                                        <td>서울, 경기, 인천</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-secondary" onclick="alert('자격증 확인 기능 (파일 보기)')">서류확인</button>
+                                        </td>
+                                        <td><span class="status-badge status-pending">승인대기</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-success" onclick="alert('승인되었습니다')">승인</button>
+                                            <button class="btn btn-sm btn-danger" onclick="alert('거절되었습니다')">거절</button>
+                                        </td>
+                                    </tr>
+                                    <!-- More rows will be added dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="admin-section" style="margin-top: 3rem;">
+                        <h2>승인된 전문가</h2>
+                        <div class="table-container">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>성명</th>
+                                        <th>구분</th>
+                                        <th>자격증번호</th>
+                                        <th>연락처</th>
+                                        <th>활동지역</th>
+                                        <th>희망수수료</th>
+                                        <th>상태</th>
+                                        <th>관리</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>이법무</td>
+                                        <td>법무사</td>
+                                        <td>제2023-055호</td>
+                                        <td>010-1111-2222</td>
+                                        <td>서울 전체</td>
+                                        <td>110,000원</td>
+                                        <td><span class="status-badge status-approved">활동중</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary">상세보기</button>
+                                            <button class="btn btn-sm btn-danger">정지</button>
+                                        </td>
+                                    </tr>
+                                    <!-- More rows will be added dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signature Modal -->
+    <div class="modal" id="signatureModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>서명하기</h3>
+                <button class="modal-close" id="closeSignature">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>아래 캔버스에 서명해주세요</p>
+                <canvas id="signatureCanvas"></canvas>
+                <div class="signature-actions">
+                    <button class="btn btn-secondary" id="clearSignature">다시 그리기</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelSignature">취소</button>
+                <button class="btn btn-primary" id="completeSignature">서명완료</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>© 2026 대리입찰 톡. All rights reserved.</p>
-            <p>고객센터: 02-853-5875 | 평일 09:00~18:00</p>
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-comment-dots"></i>
+                    <span>대리입찰 톡</span>
+                </div>
+                <div class="footer-info">
+                    <p>플랫폼은 의뢰인과 매수신청대리인을 연결하는 중개 서비스입니다.</p>
+                    <p><strong>중개 수수료 무료 - 대리인이 직접 수수료를 받습니다</strong></p>
+                    <p>고객센터: 평일 09:00~18:00 | 전화: 02-853-5875</p>
+                </div>
+                <div class="footer-links">
+                    <a href="#">이용약관</a>
+                    <a href="#">개인정보처리방침</a>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                <p>&copy; 2026 대리입찰 톡. All rights reserved.</p>
+                <div class="footer-disclaimer">
+                    <h4>법적 고지 및 면책 공고</h4>
+                    <p>본 플랫폼은 입찰의뢰인과 매수신청대리인을 연결하는 중개 서비스를 제공하며, 직접적인 대리입찰 업무를 수행하지 않습니다.</p>
+                    <p>실제 매수신청 대리 업무는 플랫폼과 독립된 제3자인 매수신청대리인 또는 법무사가 수행하며, 플랫폼은 대리인의 행위에 대해 원칙적으로 책임을 지지 않습니다.</p>
+                    <p>입찰 진행 중 발생하는 모든 법적 책임은 매수신청대리인 또는 법무사가 부담하며, 대리인은 배상책임보험에 가입되어 있습니다.</p>
+                    <p>입찰의뢰인은 대리입찰 신청 전 계약 내용을 충분히 확인하시고, 정확한 정보를 제공해야 합니다.</p>
+                    <p>플랫폼은 중개 수수료를 받지 않으며, 대리인이 의뢰인에게 직접 수수료를 받습니다.</p>
+                </div>
+            </div>
         </div>
     </footer>
 
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script src="js/main.js"></script>
     <script src="js/admin.js"></script>
 </body>
