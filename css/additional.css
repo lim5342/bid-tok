@@ -235,7 +235,15 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center 10%;
     transition: transform 0.4s ease;
+}
+
+/* 증명사진/세로사진도 얼굴 중심으로 */
+.expert-photo-full img[src*="jpeg"],
+.expert-photo-full img[src*="jpg"],
+.expert-photo-full img[src*="png"] {
+    object-position: center 15%;
 }
 .expert-card-simple:hover .expert-photo-full img { transform: scale(1.04); }
 
