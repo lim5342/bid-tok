@@ -248,14 +248,6 @@ function setupEventListeners() {
         showStep(2);
     });
     document.getElementById('openSignature')?.addEventListener('click', openSignatureModal);
-    
-    // 서명 영역 클릭 시에도 모달 열기
-    document.getElementById('clientSignature')?.addEventListener('click', function() {
-        if (!this.classList.contains('signed')) {
-            openSignatureModal();
-        }
-    });
-    
     document.getElementById('closeSignature')?.addEventListener('click', closeSignatureModal);
     document.getElementById('cancelSignature')?.addEventListener('click', closeSignatureModal);
     document.getElementById('clearSignature')?.addEventListener('click', clearSignature);
@@ -485,13 +477,7 @@ function handleCaseSearch() {
     document.getElementById('displayCourt').textContent = court;
     document.getElementById('displayAuctionDate').textContent = AppState.caseData.auctionDate;
     document.getElementById('displayAppraisalValue').textContent = formatNumber(AppState.caseData.appraisalValue) + '원';
-    
-    // displayMinBid 요소가 있을 때만 업데이트 (최저입찰가 행 삭제로 인해 선택 사항)
-    const displayMinBid = document.getElementById('displayMinBid');
-    if (displayMinBid) {
-        displayMinBid.textContent = formatNumber(AppState.caseData.minBid) + '원';
-    }
-    
+    document.getElementById('displayMinBid').textContent = formatNumber(AppState.caseData.minBid) + '원';
     document.getElementById('displayDeposit').textContent = formatNumber(AppState.caseData.deposit) + '원';
     
     document.getElementById('step1').classList.remove('active');
@@ -509,37 +495,21 @@ function handleBidAmountInput(e) {
         e.target.value = formatNumber(value);
         const depositAmount = Math.floor(parseInt(value) * 0.1);
         document.getElementById('depositAmount').value = formatNumber(depositAmount);
-        
-        // 한글 단위 표시 (만원 ~ 억)
-        document.getElementById('bidAmountKorean').textContent = formatKoreanCurrency(parseInt(value));
-        document.getElementById('depositAmountKorean').textContent = formatKoreanCurrency(depositAmount);
     } else {
         e.target.value = '';
         document.getElementById('depositAmount').value = '';
-        document.getElementById('bidAmountKorean').textContent = '';
-        document.getElementById('depositAmountKorean').textContent = '';
     }
 }
 
-// 한글 금액 변환 함수 (만원 단위 ~ 억)
-function formatKoreanCurrency(num) {
-    if (!num || num === 0) return '';
-    
-    const eok = Math.floor(num / 100000000);
-    const man = Math.floor((num % 100000000) / 10000);
-    
-    let result = '';
-    if (eok > 0) result += eok + '억 ';
-    if (man > 0) result += man + '만원';
-    else if (eok > 0) result += '원';
-    
-    return result.trim() || num + '원';
-}
-
 function validateBidAmount() {
-    // 최저입찰가 검증 제거 - 10만원부터 자유 입력 가능
-    // 경매는 최저입찰가 제한 없음
-    return true;
+    const bidAmountInput = document.getElementById('bidAmount');
+    const bidAmount = parseInt(removeCommas(bidAmountInput.value));
+    const minBid = AppState.caseData.minBid || 280000000;
+    
+    if (bidAmount && bidAmount < minBid) {
+        alert(`입찰가는 최저입찰가(${formatNumber(minBid)}원) 이상이어야 합니다.`);
+        bidAmountInput.focus();
+    }
 }
 
 function handlePhoneVerification() {
@@ -586,11 +556,10 @@ function handleProceedToContract() {
         return;
     }
     
-    // 주소는 선택 사항으로 변경 (입력 안 해도 통과)
-    // if (!addressRoad || !addressDetail) {
-    //     alert('주소를 입력해주세요.');
-    //     return;
-    // }
+    if (!addressRoad || !addressDetail) {
+        alert('주소를 입력해주세요.');
+        return;
+    }
     
     if (!validatePhone(phoneNumber)) {
         alert('올바른 휴대폰 번호를 입력해주세요.');
@@ -626,12 +595,7 @@ function updateCaseSummary() {
     document.getElementById('summaryCase').textContent = AppState.caseData.caseNumber;
     document.getElementById('summaryCourt').textContent = AppState.caseData.court;
     document.getElementById('summaryDate').textContent = AppState.caseData.auctionDate;
-    
-    // minBidDisplay 요소가 있을 때만 업데이트 (최저입찰가 표시 제거로 인해 선택 사항)
-    const minBidDisplay = document.getElementById('minBidDisplay');
-    if (minBidDisplay) {
-        minBidDisplay.textContent = formatNumber(AppState.caseData.minBid) + '원';
-    }
+    document.getElementById('minBidDisplay').textContent = formatNumber(AppState.caseData.minBid) + '원';
 }
 
 function updateContractInfo() {
@@ -731,53 +695,29 @@ function handleTouchMove(e) {
 }
 
 function openSignatureModal() {
-    console.log('openSignatureModal 호출됨');
     const modal = document.getElementById('signatureModal');
     if (!modal) {
         console.error('Signature modal not found');
-        alert('서명 모달을 찾을 수 없습니다.');
         return;
     }
     
-    console.log('모달 요소 찾음:', modal);
-    
-    // 강제로 모달 표시
     modal.classList.add('active');
-    modal.style.display = 'flex';
-    modal.style.visibility = 'visible';
-    modal.style.opacity = '1';
     
-    console.log('모달 CSS 적용 완료');
+    // Re-initialize canvas when modal opens
+    if (!canvas) {
+        setupSignatureCanvas();
+    } else {
+        // Resize canvas to ensure proper display
+        const rect = canvas.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+        ctx.strokeStyle = '#1550E8';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+    }
     
-    // 캔버스 초기화 - 여러 번 시도
-    requestAnimationFrame(() => {
-        setTimeout(() => {
-            const canvasEl = document.getElementById('signatureCanvas');
-            if (!canvasEl) {
-                console.error('Canvas element not found');
-                return;
-            }
-            
-            console.log('캔버스 찾음:', canvasEl);
-            
-            // 캔버스 크기 강제 설정
-            const parentWidth = canvasEl.parentElement.clientWidth || 500;
-            canvasEl.width = parentWidth - 40;
-            canvasEl.height = 200;
-            
-            console.log('캔버스 크기 설정:', canvasEl.width, 'x', canvasEl.height);
-            
-            // 컨텍스트 재설정
-            canvas = canvasEl;
-            ctx = canvas.getContext('2d');
-            ctx.strokeStyle = '#1550E8';
-            ctx.lineWidth = 3;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            
-            console.log('캔버스 초기화 완료');
-        }, 150);
-    });
+    console.log('Signature modal opened');
 }
 
 function closeSignatureModal() {
@@ -924,7 +864,6 @@ function handleExpertSubmit() {
     const expertEmail = document.getElementById('expertEmail').value.trim();
     const expertAddress = document.getElementById('expertAddress').value.trim();
     const expertAddressDetail = document.getElementById('expertAddressDetail').value.trim();
-    const expertPhoto = document.getElementById('expertPhoto').files[0];
     const licenseFile = document.getElementById('licenseFile').files[0];
     const insuranceFile = document.getElementById('insuranceFile').files[0];
     const expertFee = document.getElementById('expertFee').value.trim();
