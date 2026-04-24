@@ -109,7 +109,7 @@ function initializeApp() {
     // Set default expert type and fee if not already set
     if (!AppState.formData.selectedExpertType) {
         AppState.formData.selectedExpertType = '매수신청대리인';
-        AppState.formData.serviceFee = 70000;
+        AppState.formData.serviceFee = 60000;
     }
 }
 
@@ -392,11 +392,11 @@ function proceedToStep(stepNumber, applicationType) {
         const selectedExpertType = document.querySelector('input[name="expertType"]:checked');
         if (selectedExpertType) {
             AppState.formData.selectedExpertType = selectedExpertType.value;
-            AppState.formData.serviceFee = selectedExpertType.value === '매수신청대리인' ? 70000 : 100000;
+            AppState.formData.serviceFee = selectedExpertType.value === '매수신청대리인' ? 60000 : 100000;
         } else {
             // Default to 매수신청대리인
             AppState.formData.selectedExpertType = '매수신청대리인';
-            AppState.formData.serviceFee = 70000;
+            AppState.formData.serviceFee = 60000;
         }
         console.log('Proceeding with:', AppState.formData.selectedExpertType, AppState.formData.serviceFee);
     }
@@ -438,7 +438,7 @@ function handleExpertTypeChange(e) {
     
     // Update fee display (will be used in payment step)
     if (selectedType === '매수신청대리인') {
-        AppState.formData.serviceFee = 70000;
+        AppState.formData.serviceFee = 60000;
     } else if (selectedType === '법무사') {
         AppState.formData.serviceFee = 100000;
     }
@@ -469,7 +469,7 @@ function handleCaseSearch() {
         propertyNumber: propertyNumber || '1',
         auctionDate: '2025년 3월 15일 10:30',
         appraisalValue: 350000000,
-        minBid: 280000000,
+        minBid: 100000,
         deposit: 28000000
     };
     
@@ -504,7 +504,7 @@ function handleBidAmountInput(e) {
 function validateBidAmount() {
     const bidAmountInput = document.getElementById('bidAmount');
     const bidAmount = parseInt(removeCommas(bidAmountInput.value));
-    const minBid = AppState.caseData.minBid || 280000000;
+    const minBid = AppState.caseData.minBid || 100000;
     
     if (bidAmount && bidAmount < minBid) {
         alert(`입찰가는 최저입찰가(${formatNumber(minBid)}원) 이상이어야 합니다.`);
@@ -600,7 +600,7 @@ function updateCaseSummary() {
 
 function updateContractInfo() {
     document.getElementById('contractBidderName').textContent = AppState.formData.bidderName;
-    document.getElementById('contractSSN').textContent = `${AppState.formData.ssnFront}-${AppState.formData.ssnBack.substring(0, 1)}******`;
+    document.getElementById('contractSSN').textContent = `${AppState.formData.ssnFront}-${AppState.formData.ssnBack}`;
     document.getElementById('contractAddress').textContent = `${AppState.formData.addressRoad} ${AppState.formData.addressDetail}`;
     document.getElementById('contractCaseNumber').textContent = AppState.caseData.caseNumber;
     document.getElementById('contractPropertyNumber').textContent = AppState.caseData.propertyNumber;
@@ -769,7 +769,7 @@ function completeSignature() {
 // Step 4: Payment
 // ============================================
 function updatePaymentDisplay() {
-    const serviceFee = AppState.formData.serviceFee || 70000;
+    const serviceFee = AppState.formData.serviceFee || 60000;
     const expertType = AppState.formData.selectedExpertType || '매수신청대리인';
     
     // Update all payment amount displays
@@ -800,7 +800,7 @@ function handlePayment() {
         return;
     }
     
-    const serviceFee = AppState.formData.serviceFee || 70000;
+    const serviceFee = AppState.formData.serviceFee || 60000;
     const expertType = AppState.formData.selectedExpertType || '매수신청대리인';
     
     if (confirm(`${formatNumber(serviceFee)}원을 결제하시겠습니까?\n(${expertType})`)) {
@@ -867,7 +867,7 @@ function handleExpertSubmit() {
     const expertPhoto = document.getElementById('expertPhoto').files[0];
     const licenseFile = document.getElementById('licenseFile').files[0];
     const insuranceFile = document.getElementById('insuranceFile').files[0];
-    const expertFee = document.getElementById('expertFee').value.trim();
+    
     const kakaoPhone = document.getElementById('kakaoPhone').value.trim();
     const agreeExpertTerms = document.getElementById('agreeExpertTerms').checked;
     const agreeExpertPrivacy = document.getElementById('agreeExpertPrivacy').checked;
@@ -919,10 +919,7 @@ function handleExpertSubmit() {
         return;
     }
     
-    if (!expertFee) {
-        alert('희망 수수료를 입력해주세요.');
-        return;
-    }
+    
     
     if (!validatePhone(kakaoPhone)) {
         alert('올바른 카카오톡 알림 수신 번호를 입력해주세요.');
@@ -948,7 +945,7 @@ function handleExpertSubmit() {
         address: expertAddress,
         address_detail: expertAddressDetail,
         active_regions: JSON.stringify(selectedRegions),
-        service_fee: parseInt(expertFee),
+        // 정찰가: 매수신청대리인 60,000원 / 법무사 100,000원 (시스템 고정)
         kakao_phone: kakaoPhone,
         introduction: expertIntro,
         status: '대기',

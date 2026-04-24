@@ -12,6 +12,7 @@ function initAdminPage() {
     renderExpertsTable();
     renderApprovedExpertsTable();
     updateAdminStats();
+    addSettlementTab();
 }
 
 // ============================================
@@ -270,7 +271,7 @@ function renderApprovedExpertsTable() {
             <td style="font-size:0.85rem;">${exp.license_number}</td>
             <td>${exp.phone}</td>
             <td style="font-size:0.85rem;">${regions.join(', ')}</td>
-            <td style="font-weight:700;color:#1550E8;">${formatAmount(exp.service_fee)}원</td>
+            
             <td><span class="status-badge status-approved">활동중</span></td>
             <td>
                 <button class="btn btn-sm btn-primary" onclick="viewExpertDetail(${exp.id})" style="margin-right:4px;">상세</button>
@@ -415,4 +416,212 @@ function exportExpertsToExcel() {
 function formatAmount(num) {
     if (!num) return '0';
     return num.toString().replace(/\B(?=(\d{3})+(?!\\d))/g, ',');
+}
+
+
+// ============================================
+// 회원 목록 (관리자 전용)
+// ============================================
+function renderUsersTab() {
+    const users = typeof getAdminUserList === 'function' ? getAdminUserList() : [];
+    const container = document.getElementById('usersTabContent');
+    if (!container) return;
+
+    if (users.length === 0) {
+        container.innerHTML = '<div style="text-align:center;padding:40px;color:#9CA3AF;">가입된 회원이 없습니다</div>';
+        return;
+    }
+
+    container.innerHTML = `
+        <div class="table-container">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>아이디</th>
+                        <th>이름</th>
+                        <th>연락처</th>
+                        <th>가입일</th>
+                        <th>상태</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${users.map(u => `
+                    <tr>
+                        <td><strong>${u.id}</strong></td>
+                        <td>${u.name}</td>
+                        <td>${u.phone}</td>
+                        <td>${u.joinDate || '-'}</td>
+                        <td><span class="status-badge status-approved">정상</span></td>
+                    </tr>`).join('')}
+                </tbody>
+            </table>
+        </div>
+        <div style="margin-top:12px;font-size:0.85rem;color:#6B7280;">총 ${users.length}명의 회원</div>
+    `;
+}
+
+// 관리자 탭에 회원관리 추가
+function initAdminPage() {
+    loadApplicationsFromStorage();
+    loadExpertsFromStorage();
+    renderApplicationsTable();
+    renderExpertsTable();
+    renderApprovedExpertsTable();
+    updateAdminStats();
+    addSettlementTab();
+
+    // 회원관리 탭 동적 추가
+    const tabsEl = document.querySelector('.admin-tabs');
+    if (tabsEl && !document.getElementById('tabUsers')) {
+        const userTab = document.createElement('button');
+        userTab.className = 'admin-tab';
+        userTab.id = 'tabUsers';
+        userTab.dataset.tab = 'users';
+        userTab.textContent = '회원 관리';
+        userTab.addEventListener('click', function() {
+            switchAdminTab('users');
+            renderUsersTab();
+        });
+        tabsEl.appendChild(userTab);
+
+        // 회원관리 탭 컨텐츠 추가
+        const expertTab = document.getElementById('expertsTab');
+        if (expertTab && !document.getElementById('usersTab')) {
+            const usersTabDiv = document.createElement('div');
+            usersTabDiv.className = 'admin-tab-content';
+            usersTabDiv.id = 'usersTab';
+            usersTabDiv.innerHTML = `
+                <div class="admin-section">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+                        <h2>회원 목록</h2>
+                        <button class="btn btn-success" onclick="exportUsersToExcel()">
+                            <i class="fas fa-file-excel"></i> 엑셀 다운로드
+                        </button>
+                    </div>
+                    <div id="usersTabContent">로딩 중...</div>
+                </div>
+            `;
+            expertTab.parentNode.appendChild(usersTabDiv);
+        }
+    }
+}
+
+function exportUsersToExcel() {
+    const users = typeof getAdminUserList === 'function' ? getAdminUserList() : [];
+    if (users.length === 0) { alert('회원 데이터가 없습니다.'); return; }
+
+    const headers = ['아이디', '이름', '연락처', '가입일'];
+    let csv = '\uFEFF' + headers.join(',') + '\n';
+    users.forEach(u => {
+        csv += [u.id, u.name, u.phone, u.joinDate || '-'].map(v => `"${v}"`).join(',') + '\n';
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `회원목록_${new Date().toLocaleDateString('ko-KR').replace(/\./g,'').replace(/ /g,'')}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+
+// ============================================
+// 정산 관리 (관리자)
+// ============================================
+function renderSettlementTab() {
+    const apps = typeof getApplications === 'function' ? getApplications() : [];
+    const container = document.getElementById('settlementTabContent');
+    if (!container) return;
+
+    const settling = apps.filter(a => a.payment?.status === 'release_pending' || a.payment?.status === 'released');
+
+    if (settling.length === 0) {
+        container.innerHTML = '<div style="text-align:center;padding:40px;color:#9CA3AF;"><i class="fas fa-coins" style="font-size:2rem;opacity:0.3;display:block;margin-bottom:12px;"></i>정산 대기 항목이 없습니다</div>';
+        return;
+    }
+
+    container.innerHTML = `
+        <div class="table-container">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>신청번호</th><th>소비자</th><th>전문가</th><th>수수료</th>
+                        <th>완료일시</th><th>정산상태</th><th>처리</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${settling.map(a => `
+                    <tr>
+                        <td style="font-weight:700;color:#1550E8;">${a.id}</td>
+                        <td>${a.consumer?.name || '-'}<br><small style="color:#9CA3AF;">${a.consumer?.phone || ''}</small></td>
+                        <td>${a.currentExpert?.name || '미매칭'}<br><small style="color:#9CA3AF;">${a.currentExpert?.phone || ''}</small></td>
+                        <td style="font-weight:700;color:#1550E8;">${formatAmount(a.fee)}원</td>
+                        <td style="font-size:0.8rem;">${a.payment?.completedAt ? formatDateKR(a.payment.completedAt) : '-'}</td>
+                        <td>
+                            <span class="status-badge ${a.payment?.status === 'released' ? 'status-approved' : 'status-pending'}">
+                                ${a.payment?.status === 'released' ? '✅ 정산완료' : '⏳ 정산대기'}
+                            </span>
+                        </td>
+                        <td>
+                            ${a.payment?.status === 'release_pending' ? `
+                            <button class="btn btn-sm btn-success" onclick="adminDoRelease('${a.id}')">정산승인</button>
+                            ` : '<span style="color:#9CA3AF;font-size:0.8rem;">완료</span>'}
+                        </td>
+                    </tr>`).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+function adminDoRelease(appId) {
+    if (!confirm(`${appId} 건의 수수료를 전문가에게 정산하시겠습니까?`)) return;
+    if (typeof adminReleasePayment === 'function') {
+        adminReleasePayment(appId);
+        renderSettlementTab();
+        alert('✅ 정산이 완료되었습니다. 전문가 계좌로 송금해주세요.');
+    }
+}
+
+function formatDateKR(isoString) {
+    if (!isoString) return '-';
+    const d = new Date(isoString);
+    return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+
+
+function addSettlementTab() {
+    const tabsEl = document.querySelector('.admin-tabs');
+    if (!tabsEl || document.getElementById('tabSettlement')) return;
+
+    // 정산 탭 버튼
+    const settleBtn = document.createElement('button');
+    settleBtn.className = 'admin-tab';
+    settleBtn.id = 'tabSettlement';
+    settleBtn.dataset.tab = 'settlement';
+    settleBtn.textContent = '💰 정산 관리';
+    settleBtn.addEventListener('click', function() {
+        switchAdminTab('settlement');
+        renderSettlementTab();
+    });
+    tabsEl.appendChild(settleBtn);
+
+    // 정산 탭 컨텐츠
+    const lastTab = document.querySelector('.admin-tab-content:last-of-type');
+    if (lastTab && !document.getElementById('settlementTab')) {
+        const div = document.createElement('div');
+        div.className = 'admin-tab-content';
+        div.id = 'settlementTab';
+        div.innerHTML = `
+            <div class="admin-section">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+                    <h2>정산 관리</h2>
+                    <div style="font-size:0.85rem;color:#6B7280;">전문가 진행완료 → 관리자 승인 → 계좌 송금</div>
+                </div>
+                <div id="settlementTabContent"><div style="text-align:center;padding:40px;color:#9CA3AF;">로딩 중...</div></div>
+            </div>
+        `;
+        lastTab.parentNode.appendChild(div);
+    }
 }
