@@ -731,31 +731,53 @@ function handleTouchMove(e) {
 }
 
 function openSignatureModal() {
+    console.log('openSignatureModal 호출됨');
     const modal = document.getElementById('signatureModal');
     if (!modal) {
         console.error('Signature modal not found');
+        alert('서명 모달을 찾을 수 없습니다.');
         return;
     }
     
-    modal.classList.add('active');
-    modal.style.display = 'flex'; // 강제 표시
+    console.log('모달 요소 찾음:', modal);
     
-    // Re-initialize canvas when modal opens
-    setTimeout(() => {
-        if (!canvas) {
-            setupSignatureCanvas();
-        } else {
-            // Resize canvas to ensure proper display
-            const rect = canvas.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = rect.height;
+    // 강제로 모달 표시
+    modal.classList.add('active');
+    modal.style.display = 'flex';
+    modal.style.visibility = 'visible';
+    modal.style.opacity = '1';
+    
+    console.log('모달 CSS 적용 완료');
+    
+    // 캔버스 초기화 - 여러 번 시도
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            const canvasEl = document.getElementById('signatureCanvas');
+            if (!canvasEl) {
+                console.error('Canvas element not found');
+                return;
+            }
+            
+            console.log('캔버스 찾음:', canvasEl);
+            
+            // 캔버스 크기 강제 설정
+            const parentWidth = canvasEl.parentElement.clientWidth || 500;
+            canvasEl.width = parentWidth - 40;
+            canvasEl.height = 200;
+            
+            console.log('캔버스 크기 설정:', canvasEl.width, 'x', canvasEl.height);
+            
+            // 컨텍스트 재설정
+            canvas = canvasEl;
+            ctx = canvas.getContext('2d');
             ctx.strokeStyle = '#1550E8';
             ctx.lineWidth = 3;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
-        }
-        console.log('Signature modal opened');
-    }, 100);
+            
+            console.log('캔버스 초기화 완료');
+        }, 150);
+    });
 }
 
 function closeSignatureModal() {
