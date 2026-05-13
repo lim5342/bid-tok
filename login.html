@@ -238,8 +238,8 @@
             <!-- 신청자 로그인 -->
             <form class="login-form active" id="clientLoginForm">
                 <div class="form-group">
-                    <label for="clientEmail">이메일</label>
-                    <input type="email" id="clientEmail" placeholder="example@email.com" required>
+                    <label for="clientUserId">아이디</label>
+                    <input type="text" id="clientUserId" placeholder="아이디를 입력하세요" required>
                 </div>
                 
                 <div class="form-group">
@@ -252,17 +252,30 @@
                         <input type="checkbox" id="clientRemember">
                         <label for="clientRemember">자동 로그인</label>
                     </div>
-                    <a href="#" class="forgot-password">비밀번호 찾기</a>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <a href="find-id.html" class="forgot-password">아이디 찾기</a>
+                        <span style="color: #ddd;">|</span>
+                        <a href="find-password.html" class="forgot-password">비밀번호 찾기</a>
+                    </div>
                 </div>
                 
                 <button type="submit" class="btn-login">로그인</button>
+                
+                <div style="margin-top: 1.5rem;">
+                    <button type="button" onclick="kakaoLogin()" style="width: 100%; padding: 0.9rem; background: #FEE500; color: #000; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-bottom: 0.7rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                        <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" style="width: 20px; height: 20px;"> 카카오 로그인
+                    </button>
+                    <button type="button" onclick="naverLogin()" style="width: 100%; padding: 0.9rem; background: #03C75A; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                        <span style="font-weight: 700; font-size: 1.1rem;">N</span> 네이버 로그인
+                    </button>
+                </div>
             </form>
             
             <!-- 법무사 로그인 -->
             <form class="login-form" id="expertLoginForm">
                 <div class="form-group">
-                    <label for="expertEmail">이메일</label>
-                    <input type="email" id="expertEmail" placeholder="example@email.com" required>
+                    <label for="expertUserId">아이디</label>
+                    <input type="text" id="expertUserId" placeholder="아이디를 입력하세요" required>
                 </div>
                 
                 <div class="form-group">
@@ -275,10 +288,23 @@
                         <input type="checkbox" id="expertRemember">
                         <label for="expertRemember">자동 로그인</label>
                     </div>
-                    <a href="#" class="forgot-password">비밀번호 찾기</a>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <a href="find-id.html" class="forgot-password">아이디 찾기</a>
+                        <span style="color: #ddd;">|</span>
+                        <a href="find-password.html" class="forgot-password">비밀번호 찾기</a>
+                    </div>
                 </div>
                 
                 <button type="submit" class="btn-login">로그인</button>
+                
+                <div style="margin-top: 1.5rem;">
+                    <button type="button" onclick="kakaoLogin()" style="width: 100%; padding: 0.9rem; background: #FEE500; color: #000; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-bottom: 0.7rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                        <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" style="width: 20px; height: 20px;"> 카카오 로그인
+                    </button>
+                    <button type="button" onclick="naverLogin()" style="width: 100%; padding: 0.9rem; background: #03C75A; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                        <span style="font-weight: 700; font-size: 1.1rem;">N</span> 네이버 로그인
+                    </button>
+                </div>
             </form>
             
             <div class="divider">또는</div>
@@ -316,15 +342,26 @@
             });
         });
         
+        // 간편 로그인
+        function kakaoLogin() {
+            alert('카카오 로그인 연동 준비 중입니다.');
+            // TODO: 카카오 SDK 연동
+        }
+        
+        function naverLogin() {
+            alert('네이버 로그인 연동 준비 중입니다.');
+            // TODO: 네이버 SDK 연동
+        }
+        
         // 신청자 로그인
         document.getElementById('clientLoginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const email = document.getElementById('clientEmail').value;
+            const userId = document.getElementById('clientUserId').value;
             const password = document.getElementById('clientPassword').value;
             const remember = document.getElementById('clientRemember').checked;
             
-            const result = await Auth.login(email, password, 'client', remember);
+            const result = await Auth.login(userId, password, 'client', remember);
             
             if (result.success) {
                 alert('로그인 성공!');
@@ -338,11 +375,11 @@
         document.getElementById('expertLoginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const email = document.getElementById('expertEmail').value;
+            const userId = document.getElementById('expertUserId').value;
             const password = document.getElementById('expertPassword').value;
             const remember = document.getElementById('expertRemember').checked;
             
-            const result = await Auth.login(email, password, 'expert', remember);
+            const result = await Auth.login(userId, password, 'expert', remember);
             
             if (result.success) {
                 alert('로그인 성공!');
