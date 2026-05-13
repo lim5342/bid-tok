@@ -504,12 +504,14 @@ function handleBidAmountInput(e) {
 function validateBidAmount() {
     const bidAmountInput = document.getElementById('bidAmount');
     const bidAmount = parseInt(removeCommas(bidAmountInput.value));
-    const minBid = AppState.caseData.minBid || 280000000;
+    const minAmount = 100000; // 최소 입찰가 10만원
     
-    if (bidAmount && bidAmount < minBid) {
-        alert(`입찰가는 최저입찰가(${formatNumber(minBid)}원) 이상이어야 합니다.`);
+    if (bidAmount && bidAmount < minAmount) {
+        alert(`입찰가는 ${formatNumber(minAmount)}원 이상이어야 합니다.`);
         bidAmountInput.focus();
+        return false;
     }
+    return true;
 }
 
 function handlePhoneVerification() {
@@ -536,8 +538,15 @@ function handleProceedToContract() {
     const agreePersonal = document.getElementById('agreePersonal').checked;
     const agreeContract = document.getElementById('agreeContract').checked;
     
+    const bidAmountValue = parseInt(removeCommas(bidAmount));
+    
     if (!bidAmount) {
         alert('입찰가를 입력해주세요.');
+        return;
+    }
+    
+    if (bidAmountValue < 100000) {
+        alert('입찰가는 100,000원 이상이어야 합니다.');
         return;
     }
     
