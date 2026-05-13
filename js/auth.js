@@ -30,16 +30,17 @@ const Auth = {
     },
 
     // 로그인 처리
-    login: async function(email, password, userType, autoLogin = false) {
+    login: async function(userIdOrEmail, password, userType, autoLogin = false) {
         try {
             // TODO: 실제 API 연동 시 교체
             // 임시 로그인 로직 (개발용)
-            console.log('로그인 시도:', { email, userType });
+            console.log('로그인 시도:', { userIdOrEmail, userType });
             
             // 임시 사용자 데이터
             const user = {
                 id: 'temp_' + Date.now(),
-                email: email,
+                userId: userIdOrEmail,
+                email: userIdOrEmail + '@example.com',
                 name: '테스트사용자',
                 userType: userType,
                 phone: '010-1234-5678',
