@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>아이디 찾기 - 대리입찰 톡</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .find-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 3rem;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .find-logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .find-logo i {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .find-logo h1 {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .find-logo p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.9rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .phone-verify-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: flex-start;
+        }
+
+        .phone-verify-group input {
+            flex: 1;
+        }
+
+        .verify-btn {
+            padding: 0.9rem 1.2rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.3s;
+        }
+
+        .verify-btn:hover {
+            background: #5568d3;
+        }
+
+        .verify-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .verify-success {
+            color: #28a745;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        .verify-timer {
+            color: #dc3545;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.3s;
+            margin-top: 1rem;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-submit:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-box {
+            display: none;
+            background: #f0f8ff;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        .result-box.show {
+            display: block;
+        }
+
+        .result-box h3 {
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .result-box p {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .result-email {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .find-container {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="find-container">
+        <div class="find-logo">
+            <i class="fas fa-user-search"></i>
+            <h1>아이디 찾기</h1>
+            <p>가입 시 등록한 이름과 휴대폰 번호를 입력해주세요</p>
+        </div>
+
+        <form id="findIdForm">
+            <div class="form-group">
+                <label for="name">이름</label>
+                <input type="text" id="name" name="name" required placeholder="홍길동">
+            </div>
+
+            <div class="form-group">
+                <label for="phone">휴대폰 번호</label>
+                <div class="phone-verify-group">
+                    <input type="tel" id="phone" name="phone" required placeholder="010-1234-5678" maxlength="13">
+                    <button type="button" class="verify-btn" id="sendVerify" onclick="sendVerifyCode()">인증번호 발송</button>
+                </div>
+            </div>
+
+            <div class="form-group" id="verifyCodeGroup" style="display: none;">
+                <label for="verifyCode">인증번호 입력</label>
+                <div class="phone-verify-group">
+                    <input type="text" id="verifyCode" name="verifyCode" placeholder="인증번호 6자리" maxlength="6">
+                    <button type="button" class="verify-btn" id="confirmVerify" onclick="confirmVerifyCode()">인증 확인</button>
+                </div>
+                <small id="verifyTimer" class="verify-timer"></small>
+                <div id="verifySuccess" class="verify-success" style="display: none;">✓ 인증이 완료되었습니다</div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn" disabled>아이디 찾기</button>
+        </form>
+
+        <div class="result-box" id="resultBox">
+            <h3>✓ 아이디를 찾았습니다</h3>
+            <p>회원님의 아이디는 다음과 같습니다.</p>
+            <div class="result-email" id="resultUserId"></div>
+            <button class="btn-submit" onclick="window.location.href='login.html'">로그인하러 가기</button>
+        </div>
+
+        <div class="back-link">
+            <a href="login.html"><i class="fas fa-arrow-left"></i> 로그인으로 돌아가기</a>
+        </div>
+    </div>
+
+    <script>
+        let verifyTimer = null;
+        let phoneVerified = false;
+
+        // 휴대폰 번호 포맷팅
+        document.getElementById('phone').addEventListener('input', function() {
+            const value = this.value.replace(/[^0-9]/g, '');
+            let formatted = '';
+            
+            if (value.length <= 3) {
+                formatted = value;
+            } else if (value.length <= 7) {
+                formatted = value.slice(0, 3) + '-' + value.slice(3);
+            } else {
+                formatted = value.slice(0, 3) + '-' + value.slice(3, 7) + '-' + value.slice(7, 11);
+            }
+            
+            this.value = formatted;
+        });
+
+        // 인증번호 발송
+        function sendVerifyCode() {
+            const phone = document.getElementById('phone').value.replace(/[^0-9]/g, '');
+            
+            if (phone.length !== 11) {
+                alert('올바른 휴대폰 번호를 입력해주세요.');
+                return;
+            }
+            
+            // TODO: 실제 SMS API 연동
+            const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
+            console.log('인증번호:', verifyCode);
+            sessionStorage.setItem('verifyCode', verifyCode);
+            
+            // UI 업데이트
+            document.getElementById('verifyCodeGroup').style.display = 'block';
+            document.getElementById('sendVerify').disabled = true;
+            document.getElementById('sendVerify').textContent = '발송완료';
+            document.getElementById('phone').disabled = true;
+            
+            // 타이머 시작 (3분)
+            startTimer(180);
+            
+            alert('인증번호가 발송되었습니다.\n(개발 중: 콘솔에서 확인)');
+        }
+
+        // 타이머 시작
+        function startTimer(seconds) {
+            const timerElement = document.getElementById('verifyTimer');
+            let remaining = seconds;
+            
+            if (verifyTimer) {
+                clearInterval(verifyTimer);
+            }
+            
+            verifyTimer = setInterval(() => {
+                remaining--;
+                const minutes = Math.floor(remaining / 60);
+                const secs = remaining % 60;
+                timerElement.textContent = `${minutes}:${secs.toString().padStart(2, '0')}`;
+                
+                if (remaining <= 0) {
+                    clearInterval(verifyTimer);
+                    timerElement.textContent = '인증시간 만료';
+                    document.getElementById('confirmVerify').disabled = true;
+                }
+            }, 1000);
+        }
+
+        // 인증번호 확인
+        function confirmVerifyCode() {
+            const inputCode = document.getElementById('verifyCode').value;
+            const savedCode = sessionStorage.getItem('verifyCode');
+            
+            if (!inputCode) {
+                alert('인증번호를 입력해주세요.');
+                return;
+            }
+            
+            if (inputCode === savedCode) {
+                phoneVerified = true;
+                clearInterval(verifyTimer);
+                
+                document.getElementById('verifySuccess').style.display = 'block';
+                document.getElementById('verifyCodeGroup').querySelectorAll('input, button').forEach(el => el.disabled = true);
+                document.getElementById('verifyTimer').style.display = 'none';
+                document.getElementById('submitBtn').disabled = false;
+                
+                alert('인증이 완료되었습니다!');
+            } else {
+                alert('인증번호가 일치하지 않습니다.');
+            }
+        }
+
+        // 폼 제출
+        document.getElementById('findIdForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!phoneVerified) {
+                alert('휴대폰 인증을 완료해주세요.');
+                return;
+            }
+            
+            const name = document.getElementById('name').value;
+            
+            // TODO: 실제 API 연동
+            // 임시로 가짜 아이디 표시
+            const fakeUserId = 'user****';
+            
+            console.log('아이디 찾기:', { name });
+            
+            // 결과 표시
+            document.getElementById('findIdForm').style.display = 'none';
+            document.getElementById('resultBox').classList.add('show');
+            document.getElementById('resultUserId').textContent = fakeUserId;
+        });
+    </script>
+</body>
+</html>
