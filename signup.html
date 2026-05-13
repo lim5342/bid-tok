@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입 - 대리입찰 톡</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/additional.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .signup-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 600px;
+            overflow: hidden;
+        }
+
+        .signup-header {
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .signup-header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        .signup-tabs {
+            display: flex;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .signup-tab {
+            flex: 1;
+            padding: 1.2rem;
+            text-align: center;
+            cursor: pointer;
+            background: #f5f5f5;
+            border: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .signup-tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .signup-tab:hover {
+            background: #fff;
+        }
+
+        .signup-content {
+            padding: 2rem;
+        }
+
+        .signup-form {
+            display: none;
+        }
+
+        .signup-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 0.3rem;
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        .region-checkboxes {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .region-checkbox {
+            display: flex;
+            align-items: center;
+        }
+
+        .region-checkbox input {
+            width: auto;
+            margin-right: 0.5rem;
+        }
+
+        .region-checkbox label {
+            margin: 0;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .file-upload-group {
+            margin-bottom: 1rem;
+        }
+
+        .file-upload-group label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .file-upload-group input[type="file"] {
+            width: 100%;
+            padding: 0.5rem;
+            border: 2px dashed #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .terms-group {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .terms-checkbox {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .terms-checkbox input {
+            width: auto;
+            margin-right: 0.8rem;
+        }
+
+        .terms-checkbox label {
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .terms-checkbox.all-terms {
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 1rem;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .signup-footer {
+            text-align: center;
+            padding: 1.5rem;
+            background: #f8f9fa;
+        }
+
+        .signup-footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .region-checkboxes {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <div class="signup-header">
+            <h1>🎯 회원가입</h1>
+        </div>
+
+        <div class="signup-tabs">
+            <button class="signup-tab active" onclick="switchTab('client')">신청자</button>
+            <button class="signup-tab" onclick="switchTab('expert')">법무사</button>
+        </div>
+
+        <div class="signup-content">
+            <!-- 신청자 회원가입 폼 -->
+            <form id="clientSignupForm" class="signup-form active">
+                <div class="form-group">
+                    <label for="clientEmail">이메일 *</label>
+                    <input type="email" id="clientEmail" name="email" required placeholder="example@email.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="clientPassword">비밀번호 *</label>
+                    <input type="password" id="clientPassword" name="password" required placeholder="8자 이상 입력">
+                    <small>영문, 숫자 포함 8자 이상</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="clientPasswordConfirm">비밀번호 확인 *</label>
+                    <input type="password" id="clientPasswordConfirm" name="passwordConfirm" required placeholder="비밀번호 재입력">
+                </div>
+
+                <div class="form-group">
+                    <label for="clientName">이름 *</label>
+                    <input type="text" id="clientName" name="name" required placeholder="홍길동">
+                </div>
+
+                <div class="form-group">
+                    <label for="clientPhone">휴대폰 번호 *</label>
+                    <input type="tel" id="clientPhone" name="phone" required placeholder="010-1234-5678">
+                </div>
+
+                <div class="terms-group">
+                    <div class="terms-checkbox all-terms">
+                        <input type="checkbox" id="clientAllTerms" onclick="toggleAllTerms('client')">
+                        <label for="clientAllTerms">전체 동의</label>
+                    </div>
+                    <div class="terms-checkbox">
+                        <input type="checkbox" id="clientTerms1" name="terms1" required>
+                        <label for="clientTerms1">[필수] 이용약관 동의</label>
+                    </div>
+                    <div class="terms-checkbox">
+                        <input type="checkbox" id="clientTerms2" name="terms2" required>
+                        <label for="clientTerms2">[필수] 개인정보 수집 및 이용 동의</label>
+                    </div>
+                    <div class="terms-checkbox">
+                        <input type="checkbox" id="clientTerms3" name="terms3">
+                        <label for="clientTerms3">[선택] 마케팅 정보 수신 동의</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">회원가입</button>
+            </form>
+
+            <!-- 법무사 회원가입 폼 -->
+            <form id="expertSignupForm" class="signup-form">
+                <div class="form-group">
+                    <label for="expertEmail">이메일 *</label>
+                    <input type="email" id="expertEmail" name="email" required placeholder="example@email.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="expertPassword">비밀번호 *</label>
+                    <input type="password" id="expertPassword" name="password" required placeholder="8자 이상 입력">
+                    <small>영문, 숫자 포함 8자 이상</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="expertPasswordConfirm">비밀번호 확인 *</label>
+                    <input type="password" id="expertPasswordConfirm" name="passwordConfirm" required placeholder="비밀번호 재입력">
+                </div>
+
+                <div class="form-group">
+                    <label for="expertName">이름 *</label>
+                    <input type="text" id="expertName" name="name" required placeholder="홍길동">
+                </div>
+
+                <div class="form-group">
+                    <label for="expertLicense">법무사 등록번호 *</label>
+                    <input type="text" id="expertLicense" name="licenseNumber" required placeholder="예: 서울-12345">
+                </div>
+
+                <div class="form-group">
+                    <label for="expertPhone">휴대폰 번호 *</label>
+                    <input type="tel" id="expertPhone" name="phone" required placeholder="010-1234-5678">
+                </div>
+
+                <div class="form-group">
+                    <label for="expertOffice">사무소 주소 *</label>
+                    <input type="text" id="expertOffice" name="officeAddress" required placeholder="서울시 강남구...">
+                </div>
+
+                <div class="form-group">
+                    <label>서비스 가능 지역 * (최소 1개 이상 선택)</label>
+                    <div class="region-checkboxes">
+                        <div class="region-checkbox">
+                            <input type="checkbox" id="region1" name="regions" value="서울">
+                            <label for="region1">서울</label>
+                        </div>
+                        <div class="region-checkbox">
+                            <input type="checkbox" id="region2" name="regions" value="경기">
+                            <label for="region2">경기</label>
+                        </div>
+                        <div class="region-checkbox">
+                            <input type="checkbox" id="region3" name="regions" value="인천">
+                            <label for="region3">인천</label>
+                        </div>
+                        <div class="region-checkbox">
+                            <input type="checkbox" id="region4" name="regions" value="강원">
+                            <label for="region4">강원</label>
+                        </div>
+                        <div class="region-checkbox">
+                            <input type="checkbox" id="region5" name="regions" value="충북">
+                            <label for="region5">충북</label>
+                        </div>
+                        <div class="region-checkbox">
+                            <input type="checkbox" id="region6" name="regions" value="충남">
+                            <label for="region6">충남</label>
+                        </div>
+                        <div class="region-checkbox">
+                            <input type="checkbox" id="region7" name="regions" value="대전">
+                            <label for="region7">대전</label>
+                        </div>
+                        <div class="region-checkbox">
+                            <input type="checkbox" id="region8" name="regions" value="세종">
+                            <label for="region8">세종</label>
+                        </div>
+                        <div class="region-checkbox">
+                            <input type="checkbox" id="region9" name="regions" value="경북">
+                            <label for="region9">경북</label>
+                        </div>
+                        <div class="region-checkbox">
+                            <input type="checkbox" id="region10" name="regions" value="경남">
+                            <label for="region10">경남</label>
+                        </div>
+                        <div class="region-checkbox">
+                            <input type="checkbox" id="region11" name="regions" value="대구">
+                            <label for="region11">대구</label>
+                        </div>
+                        <div class="region-checkbox">
+                            <input type="checkbox" id="region12" name="regions" value="부산">
+                            <label for="region12">부산</label>
+                        </div>
+                        <div class="region-checkbox">
+                            <input type="checkbox" id="region13" name="regions" value="울산">
+                            <label for="region13">울산</label>
+                        </div>
+                        <div class="region-checkbox">
+                            <input type="checkbox" id="region14" name="regions" value="전북">
+                            <label for="region14">전북</label>
+                        </div>
+                        <div class="region-checkbox">
+                            <input type="checkbox" id="region15" name="regions" value="전남">
+                            <label for="region15">전남</label>
+                        </div>
+                        <div class="region-checkbox">
+                            <input type="checkbox" id="region16" name="regions" value="광주">
+                            <label for="region16">광주</label>
+                        </div>
+                        <div class="region-checkbox">
+                            <input type="checkbox" id="region17" name="regions" value="제주">
+                            <label for="region17">제주</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>증빙 서류 업로드 *</label>
+                    <div class="file-upload-group">
+                        <label for="licenseFile">법무사 자격증</label>
+                        <input type="file" id="licenseFile" name="licenseFile" accept="image/*,.pdf" required>
+                    </div>
+                    <div class="file-upload-group">
+                        <label for="insuranceFile">배상책임보험 증권</label>
+                        <input type="file" id="insuranceFile" name="insuranceFile" accept="image/*,.pdf" required>
+                    </div>
+                </div>
+
+                <div class="terms-group">
+                    <div class="terms-checkbox all-terms">
+                        <input type="checkbox" id="expertAllTerms" onclick="toggleAllTerms('expert')">
+                        <label for="expertAllTerms">전체 동의</label>
+                    </div>
+                    <div class="terms-checkbox">
+                        <input type="checkbox" id="expertTerms1" name="terms1" required>
+                        <label for="expertTerms1">[필수] 이용약관 동의</label>
+                    </div>
+                    <div class="terms-checkbox">
+                        <input type="checkbox" id="expertTerms2" name="terms2" required>
+                        <label for="expertTerms2">[필수] 개인정보 수집 및 이용 동의</label>
+                    </div>
+                    <div class="terms-checkbox">
+                        <input type="checkbox" id="expertTerms3" name="terms3" required>
+                        <label for="expertTerms3">[필수] 법무사 서비스 제공 약관 동의</label>
+                    </div>
+                    <div class="terms-checkbox">
+                        <input type="checkbox" id="expertTerms4" name="terms4">
+                        <label for="expertTerms4">[선택] 마케팅 정보 수신 동의</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">법무사 가입 신청</button>
+                <p style="text-align: center; color: #666; font-size: 0.9rem; margin-top: 1rem;">
+                    * 법무사 회원가입은 관리자 승인 후 이용 가능합니다.
+                </p>
+            </form>
+        </div>
+
+        <div class="signup-footer">
+            이미 계정이 있으신가요? <a href="login.html">로그인하기</a>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(type) {
+            // 탭 전환
+            const tabs = document.querySelectorAll('.signup-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // 폼 전환
+            const forms = document.querySelectorAll('.signup-form');
+            forms.forEach(form => form.classList.remove('active'));
+            
+            if (type === 'client') {
+                document.getElementById('clientSignupForm').classList.add('active');
+            } else {
+                document.getElementById('expertSignupForm').classList.add('active');
+            }
+        }
+
+        function toggleAllTerms(type) {
+            const allCheckbox = document.getElementById(`${type}AllTerms`);
+            const checkboxes = document.querySelectorAll(`#${type}SignupForm .terms-checkbox:not(.all-terms) input[type="checkbox"]`);
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = allCheckbox.checked;
+            });
+        }
+
+        // 신청자 회원가입 제출
+        document.getElementById('clientSignupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const password = document.getElementById('clientPassword').value;
+            const passwordConfirm = document.getElementById('clientPasswordConfirm').value;
+            
+            if (password !== passwordConfirm) {
+                alert('비밀번호가 일치하지 않습니다.');
+                return;
+            }
+            
+            if (password.length < 8) {
+                alert('비밀번호는 8자 이상이어야 합니다.');
+                return;
+            }
+            
+            const terms1 = document.getElementById('clientTerms1').checked;
+            const terms2 = document.getElementById('clientTerms2').checked;
+            
+            if (!terms1 || !terms2) {
+                alert('필수 약관에 동의해주세요.');
+                return;
+            }
+            
+            const formData = {
+                email: document.getElementById('clientEmail').value,
+                password: password,
+                name: document.getElementById('clientName').value,
+                phone: document.getElementById('clientPhone').value,
+                userType: 'client',
+                marketingConsent: document.getElementById('clientTerms3').checked,
+                createdAt: new Date().toISOString()
+            };
+            
+            try {
+                // TODO: API 호출로 변경 예정
+                console.log('신청자 회원가입:', formData);
+                alert('회원가입이 완료되었습니다!');
+                window.location.href = 'login.html';
+            } catch (error) {
+                alert('회원가입 중 오류가 발생했습니다. 다시 시도해주세요.');
+                console.error(error);
+            }
+        });
+
+        // 법무사 회원가입 제출
+        document.getElementById('expertSignupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const password = document.getElementById('expertPassword').value;
+            const passwordConfirm = document.getElementById('expertPasswordConfirm').value;
+            
+            if (password !== passwordConfirm) {
+                alert('비밀번호가 일치하지 않습니다.');
+                return;
+            }
+            
+            if (password.length < 8) {
+                alert('비밀번호는 8자 이상이어야 합니다.');
+                return;
+            }
+            
+            // 지역 체크
+            const regions = Array.from(document.querySelectorAll('input[name="regions"]:checked')).map(cb => cb.value);
+            if (regions.length === 0) {
+                alert('서비스 가능 지역을 최소 1개 이상 선택해주세요.');
+                return;
+            }
+            
+            const terms1 = document.getElementById('expertTerms1').checked;
+            const terms2 = document.getElementById('expertTerms2').checked;
+            const terms3 = document.getElementById('expertTerms3').checked;
+            
+            if (!terms1 || !terms2 || !terms3) {
+                alert('필수 약관에 동의해주세요.');
+                return;
+            }
+            
+            // 파일 체크
+            const licenseFile = document.getElementById('licenseFile').files[0];
+            const insuranceFile = document.getElementById('insuranceFile').files[0];
+            
+            if (!licenseFile || !insuranceFile) {
+                alert('자격증과 보험증권을 모두 업로드해주세요.');
+                return;
+            }
+            
+            const formData = {
+                email: document.getElementById('expertEmail').value,
+                password: password,
+                name: document.getElementById('expertName').value,
+                licenseNumber: document.getElementById('expertLicense').value,
+                phone: document.getElementById('expertPhone').value,
+                officeAddress: document.getElementById('expertOffice').value,
+                serviceRegions: regions,
+                userType: 'expert',
+                approved: false,
+                marketingConsent: document.getElementById('expertTerms4').checked,
+                createdAt: new Date().toISOString()
+            };
+            
+            try {
+                // TODO: 파일 업로드 및 API 호출로 변경 예정
+                console.log('법무사 회원가입:', formData);
+                console.log('자격증 파일:', licenseFile.name);
+                console.log('보험증권 파일:', insuranceFile.name);
+                alert('법무사 가입 신청이 완료되었습니다.\n관리자 승인 후 이용 가능합니다.');
+                window.location.href = 'login.html';
+            } catch (error) {
+                alert('회원가입 중 오류가 발생했습니다. 다시 시도해주세요.');
+                console.error(error);
+            }
+        });
+    </script>
+</body>
+</html>
