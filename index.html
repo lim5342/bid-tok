@@ -231,45 +231,30 @@
         <!-- Pricing Section -->
         <section class="section pricing-section">
             <div class="container">
-                <h2 class="section-title">투명한 수수료</h2>
-                <div class="pricing-grid">
-                    <div class="pricing-card">
-                        <h3 class="pricing-title">💰 매수신청대리인</h3>
+                <h2 class="section-title">정찰제 수수료</h2>
+                <p class="section-subtitle" style="text-align: center; margin-bottom: 2rem;">법무사 전자서명으로 간편하게 진행합니다</p>
+                <div class="pricing-grid" style="justify-content: center;">
+                    <div class="pricing-card recommended-pricing" style="max-width: 500px;">
+                        <div class="pricing-badge">정찰제</div>
+                        <h3 class="pricing-title">⚖️ 법무사 대리입찰</h3>
                         <div class="pricing-amount">
-                            <span class="amount">70,000</span>
+                            <span class="amount">99,000</span>
                             <span class="currency">원</span>
                         </div>
                         <p class="pricing-vat">(VAT 포함)</p>
-                        <p class="pricing-desc">비용 절약형 - 인감증명서 필요</p>
+                        <p class="pricing-desc">온라인 전자서명 3분 완료</p>
                         <div class="pricing-features">
                             <div class="pricing-feature">
                                 <i class="fas fa-check"></i>
-                                <span>입찰관련 서류작성</span>
+                                <span>온라인 전자서명만 (3분)</span>
                             </div>
                             <div class="pricing-feature">
                                 <i class="fas fa-check"></i>
-                                <span>대리 입찰참여</span>
+                                <span>주민센터 방문 불필요</span>
                             </div>
                             <div class="pricing-feature">
                                 <i class="fas fa-check"></i>
-                                <span>입찰 결과 안내</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="pricing-card recommended-pricing">
-                        <div class="pricing-badge">추천</div>
-                        <h3 class="pricing-title">⚖️ 법무사</h3>
-                        <div class="pricing-amount">
-                            <span class="amount">100,000</span>
-                            <span class="currency">원</span>
-                        </div>
-                        <p class="pricing-vat">(VAT 포함)</p>
-                        <p class="pricing-desc">간편 온라인 처리 - 전자서명만</p>
-                        <div class="pricing-features">
-                            <div class="pricing-feature">
-                                <i class="fas fa-check"></i>
-                                <span>온라인 전자서명 (3분)</span>
+                                <span>인감증명서 불필요</span>
                             </div>
                             <div class="pricing-feature">
                                 <i class="fas fa-check"></i>
@@ -484,39 +469,25 @@
                         <span>사건의 입찰보증금은 의뢰인이 직접 해당 경매계에 확인하셔야 합니다</span>
                     </div>
                     
-                    <h3 style="margin: 2rem 0 1rem; font-size: 1.25rem;">대리인 유형을 선택해주세요</h3>
+                    <div class="alert alert-info" style="margin: 2rem 0;">
+                        <i class="fas fa-info-circle"></i>
+                        <span><strong>대리입찰 톡은 법무사 전자서명으로만 진행합니다</strong></span>
+                    </div>
+                    
                     <div class="expert-type-selection">
-                        <div class="expert-type-card">
-                            <input type="radio" name="expertType" id="selectAgent" value="매수신청대리인" checked>
-                            <label for="selectAgent">
+                        <div class="expert-type-card" style="max-width: 600px; margin: 0 auto; border: 2px solid #1550E8;">
+                            <input type="radio" name="expertType" id="selectLawyer" value="법무사" checked style="display: none;">
+                            <label for="selectLawyer" style="cursor: default;">
                                 <div class="expert-type-header">
-                                    <h4>💰 매수신청대리인</h4>
-                                    <span class="expert-type-price">70,000원</span>
+                                    <h4>⚖️ 법무사 전자서명</h4>
+                                    <span class="expert-type-price" style="font-size: 1.5rem; color: #1550E8;">99,000원</span>
                                 </div>
-                                <p class="expert-type-desc">비용 절약형 (인감증명서 필요)</p>
+                                <p class="expert-type-desc" style="font-weight: 600; color: #1550E8;">✅ 정찰제 (VAT 포함)</p>
                                 <ul class="expert-type-features">
-                                    <li>✅ 저렴한 수수료</li>
-                                    <li>⚠️ 주민센터 방문 필요</li>
-                                    <li>⚠️ 인감증명서 + 인감도장</li>
-                                    <li>⚠️ 2~3일 소요</li>
-                                </ul>
-                            </label>
-                        </div>
-                        
-                        <div class="expert-type-card recommended">
-                            <div class="recommended-badge">추천</div>
-                            <input type="radio" name="expertType" id="selectLawyer" value="법무사">
-                            <label for="selectLawyer">
-                                <div class="expert-type-header">
-                                    <h4>⚖️ 법무사</h4>
-                                    <span class="expert-type-price">100,000원</span>
-                                </div>
-                                <p class="expert-type-desc">간편 온라인 처리</p>
-                                <ul class="expert-type-features">
-                                    <li>✅ 온라인 전자서명만 (3분)</li>
+                                    <li>✅ 온라인 전자서명만 (3분 완료)</li>
                                     <li>✅ 주민센터 방문 불필요</li>
+                                    <li>✅ 인감증명서 불필요</li>
                                     <li>✅ 인감도장 불필요</li>
-                                    <li>✅ 10분 완료</li>
                                 </ul>
                             </label>
                         </div>
@@ -875,19 +846,12 @@
                 <div class="form-card">
                     <h2 class="section-subtitle">기본 정보</h2>
                     
-                    <div class="form-group">
-                        <label>전문가 구분 <span class="required">*</span></label>
-                        <div class="radio-group">
-                            <label class="radio-label">
-                                <input type="radio" name="expertType" value="대리인" checked>
-                                <span>매수신청대리인</span>
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="expertType" value="법무사">
-                                <span>법무사</span>
-                            </label>
-                        </div>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <span><strong>대리입찰 톡은 법무사만 신청 가능합니다</strong></span>
                     </div>
+                    
+                    <input type="hidden" name="expertType" value="법무사">
 
                     <div class="form-group">
                         <label>성명 <span class="required">*</span></label>
@@ -1016,12 +980,12 @@
                     <h2 class="section-subtitle" style="margin-top: 40px;">수수료 정보</h2>
                     
                     <div class="form-group">
-                        <label>희망 수수료 <span class="required">*</span></label>
-                        <div class="input-with-unit">
-                            <input type="text" id="expertFee" class="form-control text-right" placeholder="110,000">
-                            <span class="unit">원</span>
+                        <label>수수료 안내</label>
+                        <div class="info-box" style="background: #f8f9fa; padding: 1rem; border-radius: 8px; text-align: center;">
+                            <p style="margin: 0; font-size: 1.25rem; font-weight: 600; color: #1550E8;">정찰제 99,000원 (VAT 포함)</p>
+                            <small style="color: #666;">모든 법무사에게 동일하게 적용됩니다</small>
                         </div>
-                        <small class="form-text">권장 수수료: 110,000원 (VAT 포함)</small>
+                        <input type="hidden" id="expertFee" value="99000">
                     </div>
 
                     <div class="form-group">
