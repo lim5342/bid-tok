@@ -212,16 +212,19 @@ document.addEventListener('DOMContentLoaded', function() {
 // 네비게이션 UI 업데이트 함수
 function updateNavigation() {
     const user = Auth.getCurrentUser();
-    const loginBtn = document.getElementById('loginBtn');
-    const userInfo = document.getElementById('userInfo');
+    const loginActions = document.getElementById('loginActions');
+    const loginBtn    = document.getElementById('loginBtn');   // 단독 loginBtn 호환
+    const userInfo    = document.getElementById('userInfo');
 
-    if (!loginBtn || !userInfo) return;
+    if (!userInfo) return;
 
     if (user) {
-        loginBtn.style.display = 'none';
+        // 비로그인 버튼 숨기기 (loginActions 우선, 없으면 loginBtn)
+        if (loginActions) loginActions.style.display = 'none';
+        else if (loginBtn) loginBtn.style.display = 'none';
         userInfo.style.display = 'flex';
 
-        const userName = document.getElementById('userName');
+        const userName     = document.getElementById('userName');
         const userTypeLabel = document.getElementById('userTypeLabel');
 
         if (userName) userName.textContent = user.name || user.userId || user.email;
@@ -230,7 +233,9 @@ function updateNavigation() {
             userTypeLabel.textContent = typeMap[user.userType] || user.userType;
         }
     } else {
-        loginBtn.style.display = 'block';
+        // 로그인 버튼 다시 보이기
+        if (loginActions) loginActions.style.display = 'flex';
+        else if (loginBtn) loginBtn.style.display = 'block';
         userInfo.style.display = 'none';
     }
 }

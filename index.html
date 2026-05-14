@@ -25,7 +25,10 @@
             </ul>
             <div class="nav-actions">
                 <!-- 비로그인 시 -->
-                <button class="btn btn-outline" id="loginBtn" onclick="window.location.href='login.html'" style="display: block;">로그인</button>
+                <div id="loginActions" style="display: flex; align-items: center; gap: 0.5rem;">
+                    <button class="btn btn-outline" onclick="window.location.href='login.html'" id="loginBtn">로그인</button>
+                    <button class="btn btn-outline" onclick="window.location.href='signup.html'" style="border-color:#10B981; color:#10B981;">회원가입</button>
+                </div>
                 
                 <!-- 로그인 시 -->
                 <div id="userInfo" style="display: none; align-items: center; gap: 1rem;">

@@ -126,6 +126,29 @@
 
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
+
+    <!-- 신청 상세보기 모달 -->
+    <div id="detailModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center; padding:1rem;">
+        <div style="background:white; border-radius:20px; width:100%; max-width:520px; max-height:85vh; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+            <div style="padding:1.5rem 2rem 1rem; border-bottom:1px solid #e0e0e0; display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0; font-size:1.1rem; color:#333;"><i class="fas fa-clipboard-list" style="color:#667eea; margin-right:0.5rem;"></i>신청 상세 정보</h3>
+                <button onclick="closeDetailModal()" style="background:none; border:none; font-size:1.5rem; cursor:pointer; color:#999; line-height:1;">&times;</button>
+            </div>
+            <div id="detailContent" style="overflow-y:auto; flex:1; padding:1.5rem 2rem;"></div>
+            <div style="padding:1rem 2rem 1.5rem; border-top:1px solid #e0e0e0;">
+                <button onclick="closeDetailModal()" style="width:100%; padding:0.9rem; background:#667eea; color:white; border:none; border-radius:10px; font-weight:700; cursor:pointer; font-size:0.95rem;">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .detail-table { width:100%; border-collapse:collapse; }
+        .detail-table tr { border-bottom:1px solid #f0f0f0; }
+        .detail-table tr:last-child { border-bottom:none; }
+        .detail-table td { padding:0.65rem 0.5rem; font-size:0.92rem; }
+        .detail-table td:first-child { color:#888; width:38%; font-weight:500; }
+        .detail-table td:last-child { color:#222; font-weight:600; }
+    </style>
     <script>
         // ── 로그인 체크 ────────────────────────────────────────
         if (!Auth.isLoggedIn() || Auth.getUserType() !== 'client') {
@@ -304,27 +327,39 @@
             });
         }
 
-        // ── 상세보기 ───────────────────────────────────────────
+        // ── 상세보기 (모달) ────────────────────────────────────
         async function viewDetail(id) {
             try {
                 const app = await API.applications.getById(id);
                 if (!app) { alert('상세 정보를 불러올 수 없습니다.'); return; }
                 const si = getStatusInfo(app.status);
-                alert([
-                    `📋 신청 상세 정보`,
-                    `━━━━━━━━━━━━━━━━━━━━`,
-                    `사건번호: ${app.case_number || '-'}`,
-                    `법원: ${app.court || '-'}`,
-                    `주소: ${app.address || '-'}`,
-                    `입찰가: ${formatPrice(app.bid_amount)}원`,
-                    `입찰일: ${app.bid_date || '-'}`,
-                    `상태: ${si.text}`,
-                    `담당 법무사: ${app.expert_name || '미배정'}`,
-                    `신청일: ${app.created_at ? app.created_at.slice(0, 10) : '-'}`
-                ].join('\n'));
+
+                document.getElementById('detailModal').style.display = 'flex';
+                document.getElementById('detailContent').innerHTML = `
+                    <table class="detail-table">
+                        <tr><td>상태</td><td><span class="status-badge ${si.cls}">${si.text}</span></td></tr>
+                        <tr><td>사건번호</td><td><strong>${app.case_number || '-'}</strong></td></tr>
+                        <tr><td>법원</td><td>${app.court || '-'}</td></tr>
+                        <tr><td>물건 주소</td><td>${app.address || '-'}</td></tr>
+                        <tr><td>입찰 기일</td><td>${app.bid_date || '-'}</td></tr>
+                        <tr><td>감정가</td><td>${formatPrice(app.appraisal_price || 0)}원</td></tr>
+                        <tr><td>희망 입찰가</td><td><strong style="color:#1550E8;">${formatPrice(app.bid_amount || 0)}원</strong></td></tr>
+                        <tr><td>물건 종류</td><td>${app.property_type || '-'}</td></tr>
+                        <tr><td>입찰 형태</td><td>${app.bid_type || '-'}</td></tr>
+                        <tr><td>담당 법무사</td><td>${app.expert_name
+                            ? `<span style="color:#10B981;font-weight:600;">${app.expert_name}</span>`
+                            : '<span style="color:#999;">배정 대기 중</span>'}</td></tr>
+                        <tr><td>서비스 수수료</td><td>${formatPrice(app.service_fee || 99000)}원</td></tr>
+                        <tr><td>결제 상태</td><td>${app.payment_status || '결제대기'}</td></tr>
+                        <tr><td>신청일시</td><td>${app.created_at ? app.created_at.slice(0, 16).replace('T', ' ') : '-'}</td></tr>
+                    </table>`;
             } catch (err) {
                 alert('상세 정보를 불러오는 중 오류가 발생했습니다.');
             }
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detailModal').style.display = 'none';
         }
 
         // ── 취소하기 ───────────────────────────────────────────
