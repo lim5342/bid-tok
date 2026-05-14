@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 페이지 - 대리입찰 톡</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/mypage.css">
+</head>
+<body>
+    <!-- 로그인 화면 -->
+    <div id="adminLoginScreen" style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <div style="background: white; padding: 3rem; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); width: 100%; max-width: 400px;">
+            <h1 style="text-align: center; margin-bottom: 2rem; color: #333;">
+                <i class="fas fa-shield-alt"></i> 관리자 로그인
+            </h1>
+            <form id="adminLoginForm">
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 600;">아이디</label>
+                    <input type="text" id="adminId" required placeholder="bootv1, bootv2, bootv3, bootv4" style="width: 100%; padding: 0.8rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;">
+                </div>
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 600;">비밀번호</label>
+                    <input type="password" id="adminPassword" required placeholder="비밀번호 입력" style="width: 100%; padding: 0.8rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;">
+                </div>
+                <button type="submit" style="width: 100%; padding: 1rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 700; cursor: pointer;">로그인</button>
+            </form>
+            <p style="text-align: center; margin-top: 1.5rem; color: #666; font-size: 0.9rem;">
+                bootv1: 대표 (마스터) | bootv2~4: 팀장
+            </p>
+        </div>
+    </div>
+
+    <!-- 관리자 대시보드 -->
+    <div id="adminDashboard" style="display: none;">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="container nav-container">
+                <div class="nav-logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>관리자 대시보드</span>
+                </div>
+                <div class="nav-actions">
+                    <span id="adminName" style="font-weight: 600; margin-right: 1rem;"></span>
+                    <button class="btn btn-outline" onclick="adminLogout()">로그아웃</button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="mypage-container">
+            <aside class="mypage-sidebar">
+                <div class="sidebar-profile">
+                    <div class="profile-avatar">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <h3 id="adminRoleName">관리자</h3>
+                    <p id="adminUserId"></p>
+                </div>
+                
+                <nav class="sidebar-menu">
+                    <a href="#dashboard" class="menu-item active" onclick="showAdminSection('dashboard')">
+                        <i class="fas fa-chart-line"></i> 대시보드
+                    </a>
+                    <a href="#applications" class="menu-item" onclick="showAdminSection('applications')">
+                        <i class="fas fa-file-alt"></i> 신청 관리
+                    </a>
+                    <a href="#experts" class="menu-item" onclick="showAdminSection('experts')">
+                        <i class="fas fa-user-tie"></i> 전문가 승인
+                    </a>
+                    <a href="#users" class="menu-item" onclick="showAdminSection('users')">
+                        <i class="fas fa-users"></i> 회원 관리
+                    </a>
+                    <a href="#settlements" class="menu-item" onclick="showAdminSection('settlements')">
+                        <i class="fas fa-won-sign"></i> 정산 관리
+                    </a>
+                </nav>
+            </aside>
+
+            <main class="mypage-content">
+                <!-- 대시보드 섹션 -->
+                <section id="dashboardSection" class="content-section active">
+                    <div class="section-header">
+                        <h2><i class="fas fa-chart-line"></i> 대시보드</h2>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <i class="fas fa-file-alt"></i>
+                            <div class="stat-value">24</div>
+                            <div class="stat-label">전체 신청</div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-clock"></i>
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">매칭 대기</div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-user-tie"></i>
+                            <div class="stat-value">12</div>
+                            <div class="stat-label">활동 법무사</div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-won-sign"></i>
+                            <div class="stat-value">2,376,000원</div>
+                            <div class="stat-label">이번 달 매출</div>
+                        </div>
+                    </div>
+
+                    <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-top: 2rem;">
+                        <h3 style="margin-bottom: 1rem;">최근 신청 현황</h3>
+                        <div id="recentApplications"></div>
+                    </div>
+                </section>
+
+                <!-- 신청 관리 섹션 -->
+                <section id="applicationsSection" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-file-alt"></i> 신청 관리</h2>
+                        <button class="btn btn-primary" onclick="exportToExcel()">
+                            <i class="fas fa-file-excel"></i> 엑셀 다운로드
+                        </button>
+                    </div>
+
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" onclick="filterAdminApplications('all')">전체</button>
+                        <button class="filter-tab" onclick="filterAdminApplications('matching')">매칭중</button>
+                        <button class="filter-tab" onclick="filterAdminApplications('confirmed')">확정</button>
+                        <button class="filter-tab" onclick="filterAdminApplications('completed')">완료</button>
+                    </div>
+
+                    <div id="adminApplicationsList"></div>
+                </section>
+
+                <!-- 전문가 승인 섹션 -->
+                <section id="expertsSection" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-user-tie"></i> 전문가 승인 대기</h2>
+                    </div>
+
+                    <div id="expertApprovalList"></div>
+                </section>
+
+                <!-- 회원 관리 섹션 -->
+                <section id="usersSection" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-users"></i> 회원 관리</h2>
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <input type="text" id="userSearch" placeholder="이름, 이메일, 전화번호로 검색" style="width: 100%; padding: 0.8rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;">
+                    </div>
+
+                    <div id="usersList"></div>
+                </section>
+
+                <!-- 정산 관리 섹션 -->
+                <section id="settlementsSection" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-won-sign"></i> 정산 관리</h2>
+                    </div>
+
+                    <div id="settlementsList"></div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        let currentAdmin = null;
+
+        // 관리자 로그인
+        document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('adminId').value;
+            const password = document.getElementById('adminPassword').value;
+            
+            // 임시 인증 (실제로는 서버 인증 필요)
+            const validAdmins = {
+                'bootv1': { name: '대표 (마스터)', role: 'master', password: '1234' },
+                'bootv2': { name: '팀장 2', role: 'team', password: '1234' },
+                'bootv3': { name: '팀장 3', role: 'team', password: '1234' },
+                'bootv4': { name: '팀장 4', role: 'team', password: '1234' }
+            };
+            
+            if (validAdmins[id] && validAdmins[id].password === password) {
+                currentAdmin = { id: id, ...validAdmins[id] };
+                
+                document.getElementById('adminLoginScreen').style.display = 'none';
+                document.getElementById('adminDashboard').style.display = 'block';
+                document.getElementById('adminName').textContent = currentAdmin.name;
+                document.getElementById('adminRoleName').textContent = currentAdmin.name;
+                document.getElementById('adminUserId').textContent = id;
+                
+                loadDashboard();
+            } else {
+                alert('아이디 또는 비밀번호가 올바르지 않습니다.');
+            }
+        });
+
+        // 로그아웃
+        function adminLogout() {
+            if (confirm('로그아웃 하시겠습니까?')) {
+                currentAdmin = null;
+                document.getElementById('adminLoginScreen').style.display = 'flex';
+                document.getElementById('adminDashboard').style.display = 'none';
+                document.getElementById('adminLoginForm').reset();
+            }
+        }
+
+        // 섹션 전환
+        function showAdminSection(section) {
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
+            
+            if (section === 'dashboard') {
+                document.getElementById('dashboardSection').classList.add('active');
+                loadDashboard();
+            } else if (section === 'applications') {
+                document.getElementById('applicationsSection').classList.add('active');
+                loadApplications();
+            } else if (section === 'experts') {
+                document.getElementById('expertsSection').classList.add('active');
+                loadExpertApprovals();
+            } else if (section === 'users') {
+                document.getElementById('usersSection').classList.add('active');
+                loadUsers();
+            } else if (section === 'settlements') {
+                document.getElementById('settlementsSection').classList.add('active');
+                loadSettlements();
+            }
+        }
+
+        // 대시보드 로드
+        function loadDashboard() {
+            const container = document.getElementById('recentApplications');
+            
+            const mockData = [
+                { id: 1, caseNumber: '2024타경12345', clientName: '홍길동', expertName: '김법무', status: 'confirmed', date: '2024-02-15' },
+                { id: 2, caseNumber: '2024타경54321', clientName: '김철수', expertName: null, status: 'matching', date: '2024-02-14' },
+                { id: 3, caseNumber: '2024타경99999', clientName: '박영희', expertName: '이법무', status: 'completed', date: '2024-02-13' }
+            ];
+
+            container.innerHTML = `
+                <table class="payments-table">
+                    <thead>
+                        <tr>
+                            <th>사건번호</th>
+                            <th>신청자</th>
+                            <th>담당 법무사</th>
+                            <th>상태</th>
+                            <th>신청일</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${mockData.map(item => `
+                            <tr>
+                                <td>${item.caseNumber}</td>
+                                <td>${item.clientName}</td>
+                                <td>${item.expertName || '-'}</td>
+                                <td><span class="status-badge status-${item.status}">${getStatusText(item.status)}</span></td>
+                                <td>${item.date}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        // 신청 관리 로드
+        function loadApplications() {
+            const container = document.getElementById('adminApplicationsList');
+            
+            const mockData = [
+                { id: 1, caseNumber: '2024타경12345', address: '서울시 강남구', clientName: '홍길동', clientPhone: '010-1234-5678', expertName: '김법무', bidPrice: 450000000, status: 'confirmed', date: '2024-02-15' },
+                { id: 2, caseNumber: '2024타경54321', address: '경기도 성남시', clientName: '김철수', clientPhone: '010-2345-6789', expertName: null, bidPrice: 280000000, status: 'matching', date: '2024-02-14' }
+            ];
+
+            container.innerHTML = `
+                <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                    <table class="payments-table">
+                        <thead>
+                            <tr>
+                                <th>사건번호</th>
+                                <th>물건지</th>
+                                <th>신청자</th>
+                                <th>연락처</th>
+                                <th>담당자</th>
+                                <th>입찰가</th>
+                                <th>상태</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${mockData.map(item => `
+                                <tr data-status="${item.status}">
+                                    <td><strong>${item.caseNumber}</strong></td>
+                                    <td>${item.address}</td>
+                                    <td>${item.clientName}</td>
+                                    <td>${item.clientPhone}</td>
+                                    <td>${item.expertName || '-'}</td>
+                                    <td>${formatPrice(item.bidPrice)}원</td>
+                                    <td><span class="status-badge status-${item.status}">${getStatusText(item.status)}</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline" onclick="viewApplicationDetail(${item.id})">상세</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // 전문가 승인 로드
+        function loadExpertApprovals() {
+            const container = document.getElementById('expertApprovalList');
+            
+            const mockData = [
+                { id: 1, name: '박법무', email: 'park@example.com', phone: '010-3456-7890', license: '서울-12345', office: '서울시 강남구', regions: ['서울', '경기'], registeredAt: '2024-02-10' },
+                { id: 2, name: '최법무', email: 'choi@example.com', phone: '010-4567-8901', license: '경기-54321', office: '경기도 성남시', regions: ['경기', '인천'], registeredAt: '2024-02-12' }
+            ];
+
+            if (mockData.length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>승인 대기 중인 전문가가 없습니다.</p></div>';
+                return;
+            }
+
+            container.innerHTML = mockData.map(expert => `
+                <div class="application-card" style="margin-bottom: 1.5rem;">
+                    <div class="card-header">
+                        <div>
+                            <span class="case-number">${expert.name}</span>
+                            <span class="status-badge" style="background: #fff3cd; color: #856404;">승인 대기</span>
+                        </div>
+                        <span style="color: #666; font-size: 0.9rem;">신청일: ${expert.registeredAt}</span>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>이메일:</strong> ${expert.email}</p>
+                        <p><strong>연락처:</strong> ${expert.phone}</p>
+                        <p><strong>등록번호:</strong> ${expert.license}</p>
+                        <p><strong>사무소:</strong> ${expert.office}</p>
+                        <p><strong>서비스 지역:</strong> ${expert.regions.join(', ')}</p>
+                        <div style="margin-top: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                            <p style="margin: 0; color: #666; font-size: 0.9rem;">📎 첨부 서류: 자격증, 배상책임보험증권</p>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-success" onclick="approveExpert(${expert.id})">
+                            <i class="fas fa-check"></i> 승인
+                        </button>
+                        <button class="btn btn-danger" onclick="rejectExpert(${expert.id})">
+                            <i class="fas fa-times"></i> 거부
+                        </button>
+                        <button class="btn btn-outline" onclick="viewExpertDocuments(${expert.id})">
+                            <i class="fas fa-file-alt"></i> 서류 확인
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 회원 관리 로드
+        function loadUsers() {
+            const container = document.getElementById('usersList');
+            
+            const mockData = [
+                { id: 1, name: '홍길동', email: 'hong@example.com', phone: '010-1234-5678', userType: 'client', registeredAt: '2024-01-15' },
+                { id: 2, name: '김법무', email: 'kim@example.com', phone: '010-2345-6789', userType: 'expert', registeredAt: '2024-01-20' }
+            ];
+
+            container.innerHTML = `
+                <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                    <table class="payments-table">
+                        <thead>
+                            <tr>
+                                <th>이름</th>
+                                <th>이메일</th>
+                                <th>전화번호</th>
+                                <th>회원 유형</th>
+                                <th>가입일</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${mockData.map(user => `
+                                <tr>
+                                    <td><strong>${user.name}</strong></td>
+                                    <td>${user.email}</td>
+                                    <td>${user.phone}</td>
+                                    <td><span class="status-badge ${user.userType === 'client' ? 'status-confirmed' : 'status-success'}">${user.userType === 'client' ? '신청자' : '법무사'}</span></td>
+                                    <td>${user.registeredAt}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline" onclick="viewUserDetail(${user.id})">상세</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // 정산 관리 로드
+        function loadSettlements() {
+            const container = document.getElementById('settlementsList');
+            
+            const mockData = [
+                { expertName: '김법무', month: '2024-02', count: 5, amount: 495000, status: 'pending' },
+                { expertName: '이법무', month: '2024-01', count: 8, amount: 792000, status: 'completed' }
+            ];
+
+            container.innerHTML = `
+                <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                    <table class="payments-table">
+                        <thead>
+                            <tr>
+                                <th>법무사</th>
+                                <th>정산월</th>
+                                <th>처리 건수</th>
+                                <th>정산 금액</th>
+                                <th>상태</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${mockData.map(item => `
+                                <tr>
+                                    <td><strong>${item.expertName}</strong></td>
+                                    <td>${item.month}</td>
+                                    <td>${item.count}건</td>
+                                    <td><strong>${formatPrice(item.amount)}원</strong></td>
+                                    <td><span class="status-badge ${item.status === 'completed' ? 'status-success' : 'status-matching'}">${item.status === 'completed' ? '정산완료' : '정산대기'}</span></td>
+                                    <td>
+                                        ${item.status === 'pending' ? '<button class="btn btn-sm btn-primary" onclick="processSettlement()">정산 처리</button>' : '-'}
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // 필터링
+        function filterAdminApplications(status) {
+            document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const rows = document.querySelectorAll('#adminApplicationsList tbody tr');
+            rows.forEach(row => {
+                if (status === 'all' || row.dataset.status === status) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        // 유틸리티 함수
+        function getStatusText(status) {
+            const statusMap = {
+                'matching': '매칭중',
+                'confirmed': '확정',
+                'completed': '완료',
+                'cancelled': '취소'
+            };
+            return statusMap[status] || status;
+        }
+
+        function formatPrice(price) {
+            return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        function exportToExcel() {
+            alert('엑셀 다운로드 기능은 추후 구현 예정입니다.');
+        }
+
+        function viewApplicationDetail(id) {
+            alert('신청 상세보기: ID ' + id);
+        }
+
+        function approveExpert(id) {
+            if (confirm('이 전문가를 승인하시겠습니까?')) {
+                alert('승인되었습니다. 전문가에게 카카오톡 알림이 발송됩니다.');
+                loadExpertApprovals();
+            }
+        }
+
+        function rejectExpert(id) {
+            if (confirm('이 전문가 신청을 거부하시겠습니까?')) {
+                const reason = prompt('거부 사유를 입력해주세요:');
+                if (reason) {
+                    alert('거부되었습니다. 전문가에게 사유가 전달됩니다.');
+                    loadExpertApprovals();
+                }
+            }
+        }
+
+        function viewExpertDocuments(id) {
+            alert('서류 확인 기능은 추후 구현 예정입니다.');
+        }
+
+        function viewUserDetail(id) {
+            alert('회원 상세보기: ID ' + id);
+        }
+
+        function processSettlement() {
+            if (confirm('정산을 처리하시겠습니까?')) {
+                alert('정산이 완료되었습니다.');
+                loadSettlements();
+            }
+        }
+    </script>
+</body>
+</html>

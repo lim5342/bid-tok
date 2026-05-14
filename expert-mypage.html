@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>법무사 마이페이지 - 대리입찰 톡</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/mypage.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="nav-logo" onclick="window.location.href='index.html'" style="cursor: pointer;">
+                <i class="fas fa-comment-dots"></i>
+                <span>대리입찰 톡</span>
+            </div>
+            <div class="nav-actions">
+                <span id="userName" style="font-weight: 600; margin-right: 1rem;"></span>
+                <button class="btn btn-outline" onclick="handleLogout()">로그아웃</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="mypage-container">
+        <aside class="mypage-sidebar">
+            <div class="sidebar-profile">
+                <div class="profile-avatar">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <h3 id="profileName">법무사</h3>
+                <p id="profileEmail">expert@example.com</p>
+                <span class="expert-badge">⚖️ 법무사</span>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <a href="#requests" class="menu-item active" onclick="showSection('requests')">
+                    <i class="fas fa-bell"></i> 배정 요청
+                </a>
+                <a href="#ongoing" class="menu-item" onclick="showSection('ongoing')">
+                    <i class="fas fa-tasks"></i> 진행 중
+                </a>
+                <a href="#completed" class="menu-item" onclick="showSection('completed')">
+                    <i class="fas fa-check-circle"></i> 완료 내역
+                </a>
+                <a href="#settlement" class="menu-item" onclick="showSection('settlement')">
+                    <i class="fas fa-won-sign"></i> 정산 내역
+                </a>
+                <a href="#profile" class="menu-item" onclick="showSection('profile')">
+                    <i class="fas fa-user-edit"></i> 회원정보
+                </a>
+            </nav>
+        </aside>
+
+        <main class="mypage-content">
+            <!-- 배정 요청 섹션 -->
+            <section id="requestsSection" class="content-section active">
+                <div class="section-header">
+                    <h2><i class="fas fa-bell"></i> 배정 요청</h2>
+                    <div class="stats-mini">
+                        <span class="stat-item"><i class="fas fa-clock"></i> 대기 중: <strong id="pendingCount">0</strong></span>
+                    </div>
+                </div>
+
+                <div id="requestsList" class="applications-list">
+                    <!-- 배정 요청이 여기에 동적으로 추가됩니다 -->
+                </div>
+            </section>
+
+            <!-- 진행 중 섹션 -->
+            <section id="ongoingSection" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-tasks"></i> 진행 중인 입찰</h2>
+                </div>
+
+                <div id="ongoingList" class="applications-list">
+                    <!-- 진행 중인 입찰이 여기에 동적으로 추가됩니다 -->
+                </div>
+            </section>
+
+            <!-- 완료 내역 섹션 -->
+            <section id="completedSection" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-check-circle"></i> 완료 내역</h2>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fas fa-gavel"></i>
+                        <div class="stat-value" id="totalCompleted">0</div>
+                        <div class="stat-label">총 처리 건수</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-trophy"></i>
+                        <div class="stat-value" id="successCount">0</div>
+                        <div class="stat-label">낙찰 건수</div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-percentage"></i>
+                        <div class="stat-value" id="successRate">0%</div>
+                        <div class="stat-label">낙찰률</div>
+                    </div>
+                </div>
+
+                <div id="completedList" class="applications-list">
+                    <!-- 완료된 입찰이 여기에 동적으로 추가됩니다 -->
+                </div>
+            </section>
+
+            <!-- 정산 내역 섹션 -->
+            <section id="settlementSection" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-won-sign"></i> 정산 내역</h2>
+                </div>
+
+                <div class="settlement-summary">
+                    <div class="summary-card">
+                        <div class="summary-label">이번 달 정산 예정</div>
+                        <div class="summary-value" id="thisMonthAmount">0원</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-label">총 누적 정산</div>
+                        <div class="summary-value" id="totalAmount">0원</div>
+                    </div>
+                </div>
+
+                <div id="settlementList" class="payments-list">
+                    <!-- 정산 내역이 여기에 동적으로 추가됩니다 -->
+                </div>
+            </section>
+
+            <!-- 회원정보 섹션 -->
+            <section id="profileSection" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-user-edit"></i> 회원정보</h2>
+                </div>
+
+                <div class="profile-form-container">
+                    <form id="profileForm">
+                        <div class="form-group">
+                            <label>아이디</label>
+                            <input type="text" id="profileUserId" disabled>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>이메일</label>
+                            <input type="email" id="profileEmailInput" disabled>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>이름</label>
+                            <input type="text" id="profileNameInput" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>법무사 등록번호</label>
+                            <input type="text" id="licenseNumber" disabled>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>휴대폰 번호</label>
+                            <input type="tel" id="profilePhone" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>사무소 주소</label>
+                            <input type="text" id="officeAddress" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>비밀번호 변경</label>
+                            <input type="password" id="newPassword" placeholder="새 비밀번호 (변경 시에만 입력)">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>비밀번호 확인</label>
+                            <input type="password" id="newPasswordConfirm" placeholder="새 비밀번호 확인">
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">저장하기</button>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        // 로그인 체크
+        if (!Auth.isLoggedIn() || Auth.getUserType() !== 'expert') {
+            alert('법무사 로그인이 필요합니다.');
+            window.location.href = 'login.html';
+        }
+
+        // 사용자 정보 로드
+        const user = Auth.getCurrentUser();
+        document.getElementById('userName').textContent = user.name;
+        document.getElementById('profileName').textContent = user.name;
+        document.getElementById('profileEmail').textContent = user.email;
+        document.getElementById('profileUserId').value = user.userId || user.email;
+        document.getElementById('profileEmailInput').value = user.email;
+        document.getElementById('profileNameInput').value = user.name;
+        document.getElementById('profilePhone').value = user.phone || '';
+        document.getElementById('licenseNumber').value = user.licenseNumber || '서울-12345';
+        document.getElementById('officeAddress').value = user.officeAddress || '';
+
+        // 섹션 전환
+        function showSection(section) {
+            // 메뉴 활성화
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // 섹션 전환
+            document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
+            
+            if (section === 'requests') {
+                document.getElementById('requestsSection').classList.add('active');
+                loadRequests();
+            } else if (section === 'ongoing') {
+                document.getElementById('ongoingSection').classList.add('active');
+                loadOngoing();
+            } else if (section === 'completed') {
+                document.getElementById('completedSection').classList.add('active');
+                loadCompleted();
+            } else if (section === 'settlement') {
+                document.getElementById('settlementSection').classList.add('active');
+                loadSettlement();
+            } else if (section === 'profile') {
+                document.getElementById('profileSection').classList.add('active');
+            }
+        }
+
+        // 배정 요청 로드
+        function loadRequests() {
+            const listContainer = document.getElementById('requestsList');
+            
+            // TODO: 실제 API에서 데이터 가져오기
+            const mockData = [
+                {
+                    id: 1,
+                    caseNumber: '2024타경12345',
+                    address: '서울시 강남구 테헤란로 123',
+                    appraisalPrice: 500000000,
+                    bidPrice: 450000000,
+                    bidDate: '2024-02-15',
+                    clientName: '홍길동',
+                    requestedAt: '2024-02-10 14:30',
+                    remainingTime: 3240 // 초 단위 (54분)
+                },
+                {
+                    id: 2,
+                    caseNumber: '2024타경54321',
+                    address: '경기도 성남시 분당구 정자동 456',
+                    appraisalPrice: 300000000,
+                    bidPrice: 280000000,
+                    bidDate: '2024-02-20',
+                    clientName: '김철수',
+                    requestedAt: '2024-02-10 15:45',
+                    remainingTime: 600 // 10분 (긴급)
+                }
+            ];
+
+            document.getElementById('pendingCount').textContent = mockData.length;
+
+            if (mockData.length === 0) {
+                listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>배정 요청이 없습니다.</p></div>';
+                return;
+            }
+
+            listContainer.innerHTML = mockData.map(req => {
+                const timeRemaining = formatTimeRemaining(req.remainingTime);
+                const isUrgent = req.remainingTime < 900; // 15분 미만
+                
+                return `
+                <div class="application-card request-card">
+                    <div class="card-header">
+                        <div>
+                            <span class="case-number">${req.caseNumber}</span>
+                            <span class="timer-badge ${isUrgent ? 'urgent' : ''}">
+                                <i class="fas fa-clock"></i> ${timeRemaining} 남음
+                            </span>
+                        </div>
+                        <span class="bid-date">입찰일: ${req.bidDate}</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="address"><i class="fas fa-map-marker-alt"></i> ${req.address}</p>
+                        <p class="client-info"><i class="fas fa-user"></i> 신청자: ${req.clientName}</p>
+                        <div class="price-info">
+                            <div>
+                                <span class="label">감정가</span>
+                                <span class="value">${formatPrice(req.appraisalPrice)}원</span>
+                            </div>
+                            <div>
+                                <span class="label">입찰가</span>
+                                <span class="value highlight">${formatPrice(req.bidPrice)}원</span>
+                            </div>
+                        </div>
+                        <p class="request-time" style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">
+                            <i class="fas fa-clock"></i> 요청 시간: ${req.requestedAt}
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-success" onclick="acceptRequest(${req.id})">
+                            <i class="fas fa-check"></i> 수락하기
+                        </button>
+                        <button class="btn btn-outline" onclick="rejectRequest(${req.id})">
+                            <i class="fas fa-times"></i> 거부하기
+                        </button>
+                    </div>
+                </div>
+            `}).join('');
+
+            // 타이머 시작
+            startTimers();
+        }
+
+        // 진행 중 로드
+        function loadOngoing() {
+            const listContainer = document.getElementById('ongoingList');
+            
+            const mockData = [
+                {
+                    id: 3,
+                    caseNumber: '2024타경99999',
+                    address: '서울시 서초구 서초동 789',
+                    appraisalPrice: 800000000,
+                    bidPrice: 750000000,
+                    bidDate: '2024-02-25',
+                    clientName: '박영희',
+                    status: 'preparing'
+                }
+            ];
+
+            if (mockData.length === 0) {
+                listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>진행 중인 입찰이 없습니다.</p></div>';
+                return;
+            }
+
+            listContainer.innerHTML = mockData.map(item => `
+                <div class="application-card">
+                    <div class="card-header">
+                        <div>
+                            <span class="case-number">${item.caseNumber}</span>
+                            <span class="status-badge status-confirmed">진행중</span>
+                        </div>
+                        <span class="bid-date">입찰일: ${item.bidDate}</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="address"><i class="fas fa-map-marker-alt"></i> ${item.address}</p>
+                        <p class="client-info"><i class="fas fa-user"></i> 신청자: ${item.clientName}</p>
+                        <div class="price-info">
+                            <div>
+                                <span class="label">감정가</span>
+                                <span class="value">${formatPrice(item.appraisalPrice)}원</span>
+                            </div>
+                            <div>
+                                <span class="label">입찰가</span>
+                                <span class="value highlight">${formatPrice(item.bidPrice)}원</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-outline" onclick="viewDetail(${item.id})">상세보기</button>
+                        <button class="btn btn-primary" onclick="updateStatus(${item.id})">진행상황 업데이트</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 완료 내역 로드
+        function loadCompleted() {
+            const listContainer = document.getElementById('completedList');
+            
+            const mockData = [
+                {
+                    id: 4,
+                    caseNumber: '2024타경11111',
+                    address: '인천시 연수구 송도동 111',
+                    bidPrice: 350000000,
+                    bidDate: '2024-01-20',
+                    result: 'success',
+                    completedAt: '2024-01-20'
+                },
+                {
+                    id: 5,
+                    caseNumber: '2024타경22222',
+                    address: '경기도 용인시 수지구 222',
+                    bidPrice: 280000000,
+                    bidDate: '2024-01-15',
+                    result: 'fail',
+                    completedAt: '2024-01-15'
+                }
+            ];
+
+            // 통계 업데이트
+            document.getElementById('totalCompleted').textContent = mockData.length;
+            const successCount = mockData.filter(item => item.result === 'success').length;
+            document.getElementById('successCount').textContent = successCount;
+            document.getElementById('successRate').textContent = Math.round((successCount / mockData.length) * 100) + '%';
+
+            if (mockData.length === 0) {
+                listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>완료된 입찰이 없습니다.</p></div>';
+                return;
+            }
+
+            listContainer.innerHTML = mockData.map(item => `
+                <div class="application-card">
+                    <div class="card-header">
+                        <div>
+                            <span class="case-number">${item.caseNumber}</span>
+                            <span class="status-badge ${item.result === 'success' ? 'status-success' : 'status-cancelled'}">
+                                ${item.result === 'success' ? '낙찰' : '패찰'}
+                            </span>
+                        </div>
+                        <span class="bid-date">완료: ${item.completedAt}</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="address"><i class="fas fa-map-marker-alt"></i> ${item.address}</p>
+                        <div class="price-info">
+                            <div>
+                                <span class="label">입찰가</span>
+                                <span class="value">${formatPrice(item.bidPrice)}원</span>
+                            </div>
+                            <div>
+                                <span class="label">수수료</span>
+                                <span class="value highlight">99,000원</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 정산 내역 로드
+        function loadSettlement() {
+            const listContainer = document.getElementById('settlementList');
+            
+            const mockData = [
+                {
+                    date: '2024-01',
+                    count: 5,
+                    amount: 495000,
+                    status: 'completed'
+                },
+                {
+                    date: '2023-12',
+                    count: 8,
+                    amount: 792000,
+                    status: 'completed'
+                }
+            ];
+
+            const thisMonth = mockData[0].amount;
+            const total = mockData.reduce((sum, item) => sum + item.amount, 0);
+            
+            document.getElementById('thisMonthAmount').textContent = formatPrice(thisMonth) + '원';
+            document.getElementById('totalAmount').textContent = formatPrice(total) + '원';
+
+            listContainer.innerHTML = `
+                <table class="payments-table">
+                    <thead>
+                        <tr>
+                            <th>정산월</th>
+                            <th>처리 건수</th>
+                            <th>정산 금액</th>
+                            <th>상태</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${mockData.map(item => `
+                            <tr>
+                                <td>${item.date}</td>
+                                <td>${item.count}건</td>
+                                <td><strong>${formatPrice(item.amount)}원</strong></td>
+                                <td><span class="status-badge status-success">정산완료</span></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        // 타이머 함수
+        function formatTimeRemaining(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            
+            if (hours > 0) {
+                return `${hours}시간 ${minutes}분`;
+            }
+            return `${minutes}분`;
+        }
+
+        function startTimers() {
+            setInterval(() => {
+                const timers = document.querySelectorAll('.timer-badge');
+                timers.forEach(timer => {
+                    // TODO: 실제 타이머 업데이트 로직
+                });
+            }, 60000); // 1분마다 업데이트
+        }
+
+        // 수락/거부
+        function acceptRequest(id) {
+            if (confirm('이 요청을 수락하시겠습니까?')) {
+                alert('수락되었습니다. 신청자에게 카카오톡 알림이 발송됩니다.');
+                loadRequests();
+            }
+        }
+
+        function rejectRequest(id) {
+            if (confirm('이 요청을 거부하시겠습니까?\n거부 시 다른 법무사에게 자동 배정됩니다.')) {
+                alert('거부되었습니다.');
+                loadRequests();
+            }
+        }
+
+        // 기타 함수
+        function formatPrice(price) {
+            return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        function viewDetail(id) {
+            alert('상세보기 기능은 추후 구현 예정입니다.');
+        }
+
+        function updateStatus(id) {
+            alert('진행상황 업데이트 기능은 추후 구현 예정입니다.');
+        }
+
+        function handleLogout() {
+            if (confirm('로그아웃 하시겠습니까?')) {
+                Auth.logout();
+            }
+        }
+
+        // 회원정보 수정
+        document.getElementById('profileForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newPassword = document.getElementById('newPassword').value;
+            const newPasswordConfirm = document.getElementById('newPasswordConfirm').value;
+            
+            if (newPassword && newPassword !== newPasswordConfirm) {
+                alert('비밀번호가 일치하지 않습니다.');
+                return;
+            }
+            
+            alert('회원정보가 수정되었습니다.');
+        });
+
+        // 초기 로드
+        loadRequests();
+    </script>
+
+    <style>
+        .expert-badge {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        .client-info {
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+            color: #333;
+        }
+
+        .client-info i {
+            color: #667eea;
+            margin-right: 0.5rem;
+        }
+
+        .stats-mini {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .stat-item {
+            padding: 0.5rem 1rem;
+            background: white;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .stat-item strong {
+            color: #667eea;
+            font-size: 1.1rem;
+            margin-left: 0.3rem;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .settlement-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        .summary-label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .summary-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+    </style>
+</body>
+</html>
