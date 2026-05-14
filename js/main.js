@@ -145,40 +145,46 @@ function setupEventListeners() {
     
     if (applyBtn) {
         applyBtn.addEventListener('click', () => {
-            console.log('Apply button clicked');
-            // 로그인 체크
             if (!Auth.isLoggedIn()) {
                 alert('로그인이 필요한 서비스입니다.');
                 window.location.href = 'login.html';
                 return;
             }
-            switchToApplicationPage();
+            if (Auth.getUserType() !== 'client') {
+                alert('신청자 계정으로 로그인해주세요.');
+                return;
+            }
+            window.location.href = 'apply.html';
         });
     }
     
     if (heroApplyBtn) {
         heroApplyBtn.addEventListener('click', () => {
-            console.log('Hero apply button clicked');
-            // 로그인 체크
             if (!Auth.isLoggedIn()) {
                 alert('로그인이 필요한 서비스입니다.');
                 window.location.href = 'login.html';
                 return;
             }
-            switchToApplicationPage();
+            if (Auth.getUserType() !== 'client') {
+                alert('신청자 계정으로 로그인해주세요.');
+                return;
+            }
+            window.location.href = 'apply.html';
         });
     }
     
     if (ctaApplyBtn) {
         ctaApplyBtn.addEventListener('click', () => {
-            console.log('CTA apply button clicked');
-            // 로그인 체크
             if (!Auth.isLoggedIn()) {
                 alert('로그인이 필요한 서비스입니다.');
                 window.location.href = 'login.html';
                 return;
             }
-            switchToApplicationPage();
+            if (Auth.getUserType() !== 'client') {
+                alert('신청자 계정으로 로그인해주세요.');
+                return;
+            }
+            window.location.href = 'apply.html';
         });
     }
     

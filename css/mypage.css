@@ -306,6 +306,77 @@
     background: #c82333;
 }
 
+.btn-success {
+    background: #10B981;
+    color: white;
+    border: none;
+}
+
+.btn-success:hover {
+    background: #059669;
+}
+
+/* 프로필 폼 */
+.profile-form-container {
+    max-width: 600px;
+}
+
+.profile-form-container .form-group {
+    margin-bottom: 1.2rem;
+}
+
+.profile-form-container label {
+    display: block;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 0.4rem;
+    font-size: 0.9rem;
+}
+
+.profile-form-container input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+}
+
+.profile-form-container input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.profile-form-container input:disabled {
+    background: #f8f9fa;
+    color: #888;
+    cursor: not-allowed;
+}
+
+/* 빈 상태 */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #999;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+    color: #ccc;
+}
+
+.empty-state p {
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+.empty-state a {
+    color: #667eea;
+    font-weight: 600;
+}
+
 /* ============================================
    통계 카드 (stats-grid)
    ============================================ */

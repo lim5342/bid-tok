@@ -343,6 +343,9 @@
                     return;
                 }
 
+                // 전역 앱 목록 저장 (배정 모달에서 사용)
+                window._adminApps = apps;
+
                 container.innerHTML = `
                     <table class="payments-table">
                         <thead>
@@ -355,13 +358,20 @@
                             ${apps.map(item => `
                                 <tr data-status="${item.status || ''}">
                                     <td><strong>${item.case_number || '-'}</strong></td>
-                                    <td>${item.address || item.court || '-'}</td>
+                                    <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${item.address || item.court || ''}">${item.address || item.court || '-'}</td>
                                     <td>${item.applicant_name || '-'}</td>
                                     <td>${item.phone || '-'}</td>
-                                    <td>${item.expert_name || '-'}</td>
+                                    <td>${item.expert_name
+                                        ? `<span style="color:#10B981;font-weight:600;">${item.expert_name}</span>`
+                                        : '<span style="color:#999;">미배정</span>'}</td>
                                     <td>${formatPrice(item.bid_amount)}원</td>
                                     <td><span class="status-badge ${getStatusClass(item.status)}">${getStatusText(item.status)}</span></td>
-                                    <td><button class="btn btn-sm btn-outline" onclick="viewApplicationDetail('${item.id}')">상세</button></td>
+                                    <td style="white-space:nowrap;">
+                                        <button class="btn btn-sm btn-outline" onclick="viewApplicationDetail('${item.id}')" style="margin-right:4px;">상세</button>
+                                        ${(!item.expert_name && item.status !== '완료' && item.status !== '취소')
+                                            ? `<button class="btn btn-sm btn-primary" onclick="openAssignModal('${item.id}')">배정</button>`
+                                            : ''}
+                                    </td>
                                 </tr>`).join('')}
                         </tbody>
                     </table>`;
@@ -625,7 +635,93 @@
                 loadSettlements();
             }
         }
+
+        // ── 법무사 배정 모달 ───────────────────────────────────
+        let assignTargetId = null;
+
+        async function openAssignModal(appId) {
+            assignTargetId = appId;
+            const modal = document.getElementById('assignModal');
+            const list  = document.getElementById('assignExpertList');
+            modal.style.display = 'flex';
+            list.innerHTML = '<div style="text-align:center;padding:1.5rem;color:#999;"><i class="fas fa-spinner fa-spin"></i> 불러오는 중...</div>';
+
+            try {
+                const data = await API.users.getAll('userType=expert&status=active&limit=100');
+                const experts = (data && data.data) ? data.data : [];
+
+                if (experts.length === 0) {
+                    list.innerHTML = '<p style="color:#999;text-align:center;padding:1.5rem;">활성 법무사가 없습니다.</p>';
+                    return;
+                }
+                list.innerHTML = experts.map(ex => `
+                    <div class="assign-expert-row" onclick="selectExpert('${ex.id}','${ex.name || ex.userId}')" id="exRow_${ex.id}">
+                        <div class="assign-avatar"><i class="fas fa-user-tie"></i></div>
+                        <div class="assign-info">
+                            <strong>${ex.name || ex.userId}</strong>
+                            <span>${ex.phone || ex.email || '-'}</span>
+                            <span style="font-size:0.78rem;color:#999;">${Array.isArray(ex.serviceRegions) ? ex.serviceRegions.join(', ') : (ex.serviceRegions || '전국')}</span>
+                        </div>
+                        <div class="assign-check" id="exCheck_${ex.id}" style="display:none;"><i class="fas fa-check-circle" style="color:#1550E8;font-size:1.3rem;"></i></div>
+                    </div>`).join('');
+            } catch(e) {
+                list.innerHTML = '<p style="color:#e55;text-align:center;padding:1.5rem;">목록 로드 실패</p>';
+            }
+        }
+
+        let selectedExpertId = null, selectedExpertName = null;
+
+        function selectExpert(id, name) {
+            // 이전 선택 해제
+            document.querySelectorAll('.assign-expert-row').forEach(r => r.classList.remove('selected'));
+            document.querySelectorAll('[id^="exCheck_"]').forEach(c => c.style.display = 'none');
+            // 새로 선택
+            selectedExpertId = id;
+            selectedExpertName = name;
+            const row = document.getElementById('exRow_' + id);
+            const chk = document.getElementById('exCheck_' + id);
+            if (row) row.classList.add('selected');
+            if (chk) chk.style.display = 'block';
+            document.getElementById('btnConfirmAssign').disabled = false;
+        }
+
+        function closeAssignModal() {
+            document.getElementById('assignModal').style.display = 'none';
+            assignTargetId = null;
+            selectedExpertId = null;
+            selectedExpertName = null;
+        }
+
+        async function confirmAssign() {
+            if (!selectedExpertId || !assignTargetId) return;
+            const btn = document.getElementById('btnConfirmAssign');
+            btn.disabled = true; btn.textContent = '배정 중...';
+            try {
+                await API.applications.assignExpert(assignTargetId, selectedExpertId, selectedExpertName);
+                closeAssignModal();
+                alert(`✅ ${selectedExpertName} 법무사에게 배정 완료!`);
+                loadApplications();
+            } catch(e) {
+                alert('배정 중 오류가 발생했습니다.');
+                btn.disabled = false; btn.textContent = '배정 확정';
+            }
+        }
     </script>
+
+    <!-- 법무사 배정 모달 -->
+    <div id="assignModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center; padding:1rem;">
+        <div style="background:white; border-radius:20px; width:100%; max-width:500px; max-height:80vh; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+            <div style="padding:1.5rem 2rem 1rem; border-bottom:1px solid #e0e0e0; display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0; font-size:1.15rem; color:#333;"><i class="fas fa-user-tie" style="color:#1550E8;margin-right:0.5rem;"></i>법무사 배정</h3>
+                <button onclick="closeAssignModal()" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:#999;line-height:1;">&times;</button>
+            </div>
+            <div id="assignExpertList" style="overflow-y:auto; flex:1; padding:1rem 1.5rem;"></div>
+            <div style="padding:1rem 2rem 1.5rem; border-top:1px solid #e0e0e0; display:flex; gap:0.8rem;">
+                <button onclick="closeAssignModal()" style="flex:1; padding:0.9rem; background:white; border:2px solid #e0e0e0; border-radius:10px; font-weight:600; cursor:pointer; color:#666;">취소</button>
+                <button id="btnConfirmAssign" onclick="confirmAssign()" disabled style="flex:1; padding:0.9rem; background:#1550E8; color:white; border:none; border-radius:10px; font-weight:700; cursor:pointer; opacity:0.6;">배정 확정</button>
+            </div>
+        </div>
+    </div>
 
     <style>
         /* 관리자 전용 추가 스타일 */
@@ -696,6 +792,43 @@
                 font-size: 1.3rem;
             }
         }
+
+        /* 배정 모달 전문가 행 */
+        .assign-expert-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.9rem 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.15s;
+            border: 2px solid transparent;
+            margin-bottom: 0.5rem;
+        }
+        .assign-expert-row:hover { background: #f8f9fa; }
+        .assign-expert-row.selected {
+            border-color: #1550E8;
+            background: #f0f4ff;
+        }
+        .assign-avatar {
+            width: 44px; height: 44px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.1rem; flex-shrink: 0;
+        }
+        .assign-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+        .assign-info strong { font-size: 0.97rem; color: #222; }
+        .assign-info span { font-size: 0.82rem; color: #888; }
+        .assign-check { flex-shrink: 0; }
+
+        /* 배정 버튼 활성 */
+        #btnConfirmAssign:not(:disabled) { opacity: 1 !important; }
     </style>
 </body>
 </html>
