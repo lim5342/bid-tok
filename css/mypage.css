@@ -1,0 +1,11 @@
+/* 마이페이지 전용 스타일 */
+.btn-outline {
+    background-color: white;
+    color: #1550E8;
+    border: 2px solid #1550E8;
+}
+
+.btn-outline:hover {
+    background-color: #1550E8;
+    color: white;
+}
