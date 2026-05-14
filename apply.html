@@ -8,6 +8,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <!-- 다음 우편번호 API -->
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <style>
         /* ── 전체 레이아웃 ── */
         body { background: #f8f9fa; }
@@ -499,7 +501,13 @@
             <div class="form-row full">
                 <div class="form-group">
                     <label>물건 주소 <span class="required">*</span></label>
-                    <input type="text" id="propertyAddress" placeholder="예) 서울특별시 강남구 역삼동 123-4">
+                    <div class="input-btn-group">
+                        <input type="text" id="propertyAddress" placeholder="주소 검색 버튼을 눌러 입력하세요" readonly style="cursor:pointer; background:#fff;" onclick="searchAddress()">
+                        <button class="btn-verify" type="button" onclick="searchAddress()">
+                            <i class="fas fa-search"></i> 주소 검색
+                        </button>
+                    </div>
+                    <input type="text" id="propertyAddressDetail" placeholder="상세 주소 입력 (동/호수 등)" style="margin-top:0.5rem; padding:0.8rem 1rem; border:2px solid #e0e0e0; border-radius:10px; width:100%; font-size:0.95rem;">
                     <div class="error-msg">물건 주소를 입력해주세요.</div>
                 </div>
             </div>
@@ -952,7 +960,7 @@ function fillSummary() {
         ['법원', val2('courtSelect')],
         ['사건번호', val2('caseNumber')],
         ['입찰 기일', val2('bidDate')],
-        ['물건 주소', val2('propertyAddress')],
+        ['물건 주소', (val2('propertyAddress') + ' ' + val2('propertyAddressDetail')).trim()],
         ['물건 종류', val2('propertyType') || '-'],
         ['신청자 이름', val2('applicantName')],
         ['휴대폰 번호', val2('applicantPhone')],
@@ -999,7 +1007,7 @@ async function submitApplication() {
         court: val2('courtSelect'),
         case_number: rawCase,
         bid_date: val2('bidDate'),
-        address: val2('propertyAddress'),
+        address: (val2('propertyAddress') + ' ' + val2('propertyAddressDetail')).trim(),
         appraisal_price: parseNumber(val2('appraisalPrice')),
         min_bid_price: parseNumber(val2('minBidPrice')),
         property_type: val2('propertyType'),
@@ -1207,6 +1215,35 @@ function toast(msg, type = 'info') {
 const style = document.createElement('style');
 style.textContent = `@keyframes fadeInUp { from { opacity:0; transform: translate(-50%,20px); } to { opacity:1; transform: translate(-50%,0); } }`;
 document.head.appendChild(style);
+
+// ─────────────────────────────────────────────
+// 다음 주소 검색 API
+// ─────────────────────────────────────────────
+function searchAddress() {
+    // 다음 우편번호 API 로드 확인
+    if (typeof daum === 'undefined' || !daum.Postcode) {
+        // API 로드 실패 시 직접 입력으로 전환
+        const input = document.getElementById('propertyAddress');
+        input.readOnly = false;
+        input.placeholder = '주소를 직접 입력해주세요';
+        input.focus();
+        toast('주소 검색 서비스에 연결할 수 없습니다. 직접 입력해주세요.', 'info');
+        return;
+    }
+
+    new daum.Postcode({
+        oncomplete: function(data) {
+            // 도로명 주소 우선, 없으면 지번 주소
+            const address = data.roadAddress || data.jibunAddress;
+            document.getElementById('propertyAddress').value = address;
+            document.getElementById('propertyAddressDetail').focus();
+            toast('주소가 입력되었습니다. 상세 주소를 입력해주세요.', 'success');
+        },
+        onclose: function() {
+            // 팝업 닫힐 때 아무것도 안 함
+        }
+    }).open();
+}
 </script>
 
 </body>
