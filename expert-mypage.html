@@ -35,19 +35,19 @@
             </div>
             
             <nav class="sidebar-menu">
-                <a href="#requests" class="menu-item active" onclick="showSection('requests')">
+                <a href="#requests" class="menu-item active" onclick="showSection('requests', this)">
                     <i class="fas fa-bell"></i> 배정 요청
                 </a>
-                <a href="#ongoing" class="menu-item" onclick="showSection('ongoing')">
+                <a href="#ongoing" class="menu-item" onclick="showSection('ongoing', this)">
                     <i class="fas fa-tasks"></i> 진행 중
                 </a>
-                <a href="#completed" class="menu-item" onclick="showSection('completed')">
+                <a href="#completed" class="menu-item" onclick="showSection('completed', this)">
                     <i class="fas fa-check-circle"></i> 완료 내역
                 </a>
-                <a href="#settlement" class="menu-item" onclick="showSection('settlement')">
+                <a href="#settlement" class="menu-item" onclick="showSection('settlement', this)">
                     <i class="fas fa-won-sign"></i> 정산 내역
                 </a>
-                <a href="#profile" class="menu-item" onclick="showSection('profile')">
+                <a href="#profile" class="menu-item" onclick="showSection('profile', this)">
                     <i class="fas fa-user-edit"></i> 회원정보
                 </a>
             </nav>
@@ -206,14 +206,15 @@
         document.getElementById('officeAddress').value = user.officeAddress || '';
 
         // 섹션 전환
-        function showSection(section) {
-            // 메뉴 활성화
+        function showSection(section, el) {
+            // 메뉴 활성화 (클릭된 a 태그 또는 가장 가까운 .menu-item 찾기)
+            const clickedItem = el ? el.closest('.menu-item') || el : event.currentTarget;
             document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
-            event.target.classList.add('active');
-            
+            if (clickedItem) clickedItem.classList.add('active');
+
             // 섹션 전환
             document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
-            
+
             if (section === 'requests') {
                 document.getElementById('requestsSection').classList.add('active');
                 loadRequests();
@@ -555,6 +556,7 @@
     </script>
 
     <style>
+        /* expert-mypage 전용 추가 스타일 */
         .expert-badge {
             display: inline-block;
             padding: 0.4rem 1rem;
@@ -568,10 +570,11 @@
 
         .client-info {
             margin: 0.5rem 0;
-            padding: 0.5rem;
+            padding: 0.6rem 0.8rem;
             background: #f8f9fa;
             border-radius: 6px;
             color: #333;
+            font-size: 0.95rem;
         }
 
         .client-info i {
@@ -582,6 +585,7 @@
         .stats-mini {
             display: flex;
             gap: 1rem;
+            flex-wrap: wrap;
         }
 
         .stat-item {
@@ -590,6 +594,7 @@
             border-radius: 8px;
             font-size: 0.9rem;
             color: #666;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
         }
 
         .stat-item strong {
@@ -598,18 +603,9 @@
             margin-left: 0.3rem;
         }
 
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #218838;
-        }
-
         .settlement-summary {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
@@ -620,11 +616,17 @@
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102,126,234,0.12);
         }
 
         .summary-label {
-            color: #666;
-            font-size: 0.9rem;
+            color: #999;
+            font-size: 0.88rem;
             margin-bottom: 0.8rem;
         }
 
@@ -632,6 +634,15 @@
             font-size: 2rem;
             font-weight: 700;
             color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .stats-mini {
+                margin-top: 0.5rem;
+            }
+            .summary-value {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </body>

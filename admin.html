@@ -59,19 +59,19 @@
                 </div>
                 
                 <nav class="sidebar-menu">
-                    <a href="#dashboard" class="menu-item active" onclick="showAdminSection('dashboard')">
+                    <a href="#dashboard" class="menu-item active" onclick="showAdminSection('dashboard', this)">
                         <i class="fas fa-chart-line"></i> 대시보드
                     </a>
-                    <a href="#applications" class="menu-item" onclick="showAdminSection('applications')">
+                    <a href="#applications" class="menu-item" onclick="showAdminSection('applications', this)">
                         <i class="fas fa-file-alt"></i> 신청 관리
                     </a>
-                    <a href="#experts" class="menu-item" onclick="showAdminSection('experts')">
+                    <a href="#experts" class="menu-item" onclick="showAdminSection('experts', this)">
                         <i class="fas fa-user-tie"></i> 전문가 승인
                     </a>
-                    <a href="#users" class="menu-item" onclick="showAdminSection('users')">
+                    <a href="#users" class="menu-item" onclick="showAdminSection('users', this)">
                         <i class="fas fa-users"></i> 회원 관리
                     </a>
-                    <a href="#settlements" class="menu-item" onclick="showAdminSection('settlements')">
+                    <a href="#settlements" class="menu-item" onclick="showAdminSection('settlements', this)">
                         <i class="fas fa-won-sign"></i> 정산 관리
                     </a>
                 </nav>
@@ -107,9 +107,9 @@
                         </div>
                     </div>
 
-                    <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-top: 2rem;">
-                        <h3 style="margin-bottom: 1rem;">최근 신청 현황</h3>
-                        <div id="recentApplications"></div>
+                    <div class="recent-card">
+                        <h3>최근 신청 현황</h3>
+                        <div class="table-wrap" id="recentApplications"></div>
                     </div>
                 </section>
 
@@ -117,19 +117,19 @@
                 <section id="applicationsSection" class="content-section">
                     <div class="section-header">
                         <h2><i class="fas fa-file-alt"></i> 신청 관리</h2>
-                        <button class="btn btn-primary" onclick="exportToExcel()">
+                        <button class="btn btn-excel" onclick="exportToExcel()">
                             <i class="fas fa-file-excel"></i> 엑셀 다운로드
                         </button>
                     </div>
 
                     <div class="filter-tabs">
-                        <button class="filter-tab active" onclick="filterAdminApplications('all')">전체</button>
-                        <button class="filter-tab" onclick="filterAdminApplications('matching')">매칭중</button>
-                        <button class="filter-tab" onclick="filterAdminApplications('confirmed')">확정</button>
-                        <button class="filter-tab" onclick="filterAdminApplications('completed')">완료</button>
+                        <button class="filter-tab active" onclick="filterAdminApplications('all', this)">전체</button>
+                        <button class="filter-tab" onclick="filterAdminApplications('matching', this)">매칭중</button>
+                        <button class="filter-tab" onclick="filterAdminApplications('confirmed', this)">확정</button>
+                        <button class="filter-tab" onclick="filterAdminApplications('completed', this)">완료</button>
                     </div>
 
-                    <div id="adminApplicationsList"></div>
+                    <div class="table-wrap" id="adminApplicationsList"></div>
                 </section>
 
                 <!-- 전문가 승인 섹션 -->
@@ -148,10 +148,10 @@
                     </div>
 
                     <div style="margin-bottom: 1.5rem;">
-                        <input type="text" id="userSearch" placeholder="이름, 이메일, 전화번호로 검색" style="width: 100%; padding: 0.8rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;">
+                        <input type="text" id="userSearch" placeholder="이름, 이메일, 전화번호로 검색">
                     </div>
 
-                    <div id="usersList"></div>
+                    <div class="table-wrap" id="usersList"></div>
                 </section>
 
                 <!-- 정산 관리 섹션 -->
@@ -160,7 +160,7 @@
                         <h2><i class="fas fa-won-sign"></i> 정산 관리</h2>
                     </div>
 
-                    <div id="settlementsList"></div>
+                    <div class="table-wrap" id="settlementsList"></div>
                 </section>
             </main>
         </div>
@@ -210,9 +210,10 @@
         }
 
         // 섹션 전환
-        function showAdminSection(section) {
+        function showAdminSection(section, el) {
+            const clickedItem = el ? el.closest('.menu-item') || el : event.currentTarget;
             document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
-            event.target.classList.add('active');
+            if (clickedItem) clickedItem.classList.add('active');
             
             document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
             
@@ -280,38 +281,36 @@
             ];
 
             container.innerHTML = `
-                <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-                    <table class="payments-table">
-                        <thead>
-                            <tr>
-                                <th>사건번호</th>
-                                <th>물건지</th>
-                                <th>신청자</th>
-                                <th>연락처</th>
-                                <th>담당자</th>
-                                <th>입찰가</th>
-                                <th>상태</th>
-                                <th>관리</th>
+                <table class="payments-table">
+                    <thead>
+                        <tr>
+                            <th>사건번호</th>
+                            <th>물건지</th>
+                            <th>신청자</th>
+                            <th>연락처</th>
+                            <th>담당자</th>
+                            <th>입찰가</th>
+                            <th>상태</th>
+                            <th>관리</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${mockData.map(item => `
+                            <tr data-status="${item.status}">
+                                <td><strong>${item.caseNumber}</strong></td>
+                                <td>${item.address}</td>
+                                <td>${item.clientName}</td>
+                                <td>${item.clientPhone}</td>
+                                <td>${item.expertName || '-'}</td>
+                                <td>${formatPrice(item.bidPrice)}원</td>
+                                <td><span class="status-badge status-${item.status}">${getStatusText(item.status)}</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline" onclick="viewApplicationDetail(${item.id})">상세</button>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            ${mockData.map(item => `
-                                <tr data-status="${item.status}">
-                                    <td><strong>${item.caseNumber}</strong></td>
-                                    <td>${item.address}</td>
-                                    <td>${item.clientName}</td>
-                                    <td>${item.clientPhone}</td>
-                                    <td>${item.expertName || '-'}</td>
-                                    <td>${formatPrice(item.bidPrice)}원</td>
-                                    <td><span class="status-badge status-${item.status}">${getStatusText(item.status)}</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-outline" onclick="viewApplicationDetail(${item.id})">상세</button>
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
+                        `).join('')}
+                    </tbody>
+                </table>
             `;
         }
 
@@ -373,34 +372,32 @@
             ];
 
             container.innerHTML = `
-                <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-                    <table class="payments-table">
-                        <thead>
+                <table class="payments-table">
+                    <thead>
+                        <tr>
+                            <th>이름</th>
+                            <th>이메일</th>
+                            <th>전화번호</th>
+                            <th>회원 유형</th>
+                            <th>가입일</th>
+                            <th>관리</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${mockData.map(user => `
                             <tr>
-                                <th>이름</th>
-                                <th>이메일</th>
-                                <th>전화번호</th>
-                                <th>회원 유형</th>
-                                <th>가입일</th>
-                                <th>관리</th>
+                                <td><strong>${user.name}</strong></td>
+                                <td>${user.email}</td>
+                                <td>${user.phone}</td>
+                                <td><span class="status-badge ${user.userType === 'client' ? 'status-confirmed' : 'status-success'}">${user.userType === 'client' ? '신청자' : '법무사'}</span></td>
+                                <td>${user.registeredAt}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline" onclick="viewUserDetail(${user.id})">상세</button>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            ${mockData.map(user => `
-                                <tr>
-                                    <td><strong>${user.name}</strong></td>
-                                    <td>${user.email}</td>
-                                    <td>${user.phone}</td>
-                                    <td><span class="status-badge ${user.userType === 'client' ? 'status-confirmed' : 'status-success'}">${user.userType === 'client' ? '신청자' : '법무사'}</span></td>
-                                    <td>${user.registeredAt}</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-outline" onclick="viewUserDetail(${user.id})">상세</button>
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
+                        `).join('')}
+                    </tbody>
+                </table>
             `;
         }
 
@@ -414,41 +411,39 @@
             ];
 
             container.innerHTML = `
-                <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-                    <table class="payments-table">
-                        <thead>
+                <table class="payments-table">
+                    <thead>
+                        <tr>
+                            <th>법무사</th>
+                            <th>정산월</th>
+                            <th>처리 건수</th>
+                            <th>정산 금액</th>
+                            <th>상태</th>
+                            <th>관리</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${mockData.map(item => `
                             <tr>
-                                <th>법무사</th>
-                                <th>정산월</th>
-                                <th>처리 건수</th>
-                                <th>정산 금액</th>
-                                <th>상태</th>
-                                <th>관리</th>
+                                <td><strong>${item.expertName}</strong></td>
+                                <td>${item.month}</td>
+                                <td>${item.count}건</td>
+                                <td><strong>${formatPrice(item.amount)}원</strong></td>
+                                <td><span class="status-badge ${item.status === 'completed' ? 'status-success' : 'status-matching'}">${item.status === 'completed' ? '정산완료' : '정산대기'}</span></td>
+                                <td>
+                                    ${item.status === 'pending' ? '<button class="btn btn-sm btn-primary" onclick="processSettlement()">정산 처리</button>' : '-'}
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            ${mockData.map(item => `
-                                <tr>
-                                    <td><strong>${item.expertName}</strong></td>
-                                    <td>${item.month}</td>
-                                    <td>${item.count}건</td>
-                                    <td><strong>${formatPrice(item.amount)}원</strong></td>
-                                    <td><span class="status-badge ${item.status === 'completed' ? 'status-success' : 'status-matching'}">${item.status === 'completed' ? '정산완료' : '정산대기'}</span></td>
-                                    <td>
-                                        ${item.status === 'pending' ? '<button class="btn btn-sm btn-primary" onclick="processSettlement()">정산 처리</button>' : '-'}
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
+                        `).join('')}
+                    </tbody>
+                </table>
             `;
         }
 
         // 필터링
-        function filterAdminApplications(status) {
+        function filterAdminApplications(status, el) {
             document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
-            event.target.classList.add('active');
+            if (el) el.classList.add('active');
             
             const rows = document.querySelectorAll('#adminApplicationsList tbody tr');
             rows.forEach(row => {
@@ -515,5 +510,76 @@
             }
         }
     </script>
+
+    <style>
+        /* 관리자 전용 추가 스타일 */
+        .admin-stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        /* 테이블 래퍼 (모바일 스크롤) */
+        .table-wrap {
+            background: white;
+            border-radius: 12px;
+            overflow-x: auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* 검색 인풋 */
+        #userSearch {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        #userSearch:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        /* 대시보드 최근현황 카드 */
+        .recent-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-top: 2rem;
+        }
+        .recent-card h3 {
+            margin-bottom: 1.2rem;
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        /* 엑셀 버튼 */
+        .btn-excel {
+            background: #1e7e34;
+            color: white;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-excel:hover {
+            background: #155724;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .admin-stats-row {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+            .stat-value {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
 </body>
 </html>
