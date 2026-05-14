@@ -117,19 +117,33 @@ const API = {
             return API.get(`applications/${id}`);
         },
 
-        // 특정 사용자의 신청 내역
+        // 특정 사용자의 신청 내역 (phone 또는 email 기반 조회)
         async getByUserId(userId) {
+            // applications 테이블에는 userId 필드가 없으므로
+            // phone 또는 email로 매핑된 전체 데이터를 가져온 후 클라이언트에서 필터링
+            // 단, 신청 시 userId를 저장했다면 해당 필드로 조회
             const data = await API.get(`applications?userId=${encodeURIComponent(userId)}&sort=-createdAt`);
-            return (data && data.data) ? data.data : [];
+            if (data && data.data && data.data.length > 0) return data.data;
+            // fallback: applicant_phone 또는 user_id 필드 시도
+            const data2 = await API.get(`applications?user_id=${encodeURIComponent(userId)}&sort=-createdAt`);
+            return (data2 && data2.data) ? data2.data : [];
         },
 
-        // 특정 법무사에게 배정된 신청 내역
+        // 특정 법무사에게 배정된 신청 내역 (assigned_expert_id 필드 사용)
         async getByExpertId(expertId, status = '') {
+            // README 스키마: assigned_expert_id 필드
+            const baseQuery = `assigned_expert_id=${encodeURIComponent(expertId)}`;
             const query = status
+                ? `${baseQuery}&status=${status}&sort=-createdAt`
+                : `${baseQuery}&sort=-createdAt`;
+            const data = await API.get(`applications?${query}`);
+            if (data && data.data && data.data.length > 0) return data.data;
+            // fallback: expertId 필드 시도
+            const fallbackQuery = status
                 ? `expertId=${encodeURIComponent(expertId)}&status=${status}&sort=-createdAt`
                 : `expertId=${encodeURIComponent(expertId)}&sort=-createdAt`;
-            const data = await API.get(`applications?${query}`);
-            return (data && data.data) ? data.data : [];
+            const data2 = await API.get(`applications?${fallbackQuery}`);
+            return (data2 && data2.data) ? data2.data : [];
         },
 
         // 신규 신청 저장
@@ -150,13 +164,13 @@ const API = {
             });
         },
 
-        // 법무사 배정
+        // 법무사 배정 (README 스키마: assigned_expert_id)
         assignExpert(id, expertId, expertName) {
             return API.patch(`applications/${id}`, {
-                expertId,
-                expertName,
+                assigned_expert_id: expertId,
+                expert_name: expertName,
                 status: '매칭완료',
-                assignedAt: new Date().toISOString(),
+                assigned_at: new Date().toISOString(),
                 updatedAt: new Date().toISOString()
             });
         }
