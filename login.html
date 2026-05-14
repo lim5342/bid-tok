@@ -319,6 +319,7 @@
         </div>
     </div>
     
+    <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script>
         // 탭 전환
@@ -364,10 +365,10 @@
             const result = await Auth.login(userId, password, 'client', remember);
             
             if (result.success) {
-                alert('로그인 성공!');
+                // 로그인 성공 알림 없이 바로 이동 (UX 개선)
                 window.location.href = 'mypage.html';
             } else {
-                alert(result.message || '로그인 실패');
+                alert(result.message || '아이디 또는 비밀번호를 확인해주세요.');
             }
         });
         
@@ -382,10 +383,9 @@
             const result = await Auth.login(userId, password, 'expert', remember);
             
             if (result.success) {
-                alert('로그인 성공!');
                 window.location.href = 'expert-mypage.html';
             } else {
-                alert(result.message || '로그인 실패');
+                alert(result.message || '아이디 또는 비밀번호를 확인해주세요.');
             }
         });
     </script>

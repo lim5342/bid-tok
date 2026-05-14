@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>마이페이지 - 대리입찰 톡</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/mypage.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/mypage.css">
 </head>
 <body>
     <!-- Navigation -->
@@ -34,14 +34,14 @@
             </div>
             
             <nav class="sidebar-menu">
-                <a href="#applications" class="menu-item active" onclick="showSection('applications')">
+                <a href="#applications" class="menu-item active" onclick="showSection('applications', this)">
                     <i class="fas fa-file-alt"></i> 신청 내역
                 </a>
-                <a href="#profile" class="menu-item" onclick="showSection('profile')">
-                    <i class="fas fa-user-edit"></i> 회원정보 수정
-                </a>
-                <a href="#payments" class="menu-item" onclick="showSection('payments')">
+                <a href="#payments" class="menu-item" onclick="showSection('payments', this)">
                     <i class="fas fa-credit-card"></i> 결제 내역
+                </a>
+                <a href="#profile" class="menu-item" onclick="showSection('profile', this)">
+                    <i class="fas fa-user-edit"></i> 회원정보 수정
                 </a>
             </nav>
         </aside>
@@ -51,20 +51,37 @@
             <section id="applicationsSection" class="content-section active">
                 <div class="section-header">
                     <h2><i class="fas fa-file-alt"></i> 신청 내역</h2>
-                    <button class="btn btn-primary" onclick="window.location.href='index.html#application'">
-                        <i class="fas fa-plus"></i> 신청하기
+                    <button class="btn btn-primary" onclick="window.location.href='index.html'">
+                        <i class="fas fa-plus"></i> 새 신청
                     </button>
                 </div>
 
                 <div class="filter-tabs">
-                    <button class="filter-tab active" onclick="filterApplications('all')">전체</button>
-                    <button class="filter-tab" onclick="filterApplications('matching')">매칭중</button>
-                    <button class="filter-tab" onclick="filterApplications('confirmed')">확정</button>
-                    <button class="filter-tab" onclick="filterApplications('completed')">완료</button>
+                    <button class="filter-tab active" onclick="filterApplications('all', this)">전체</button>
+                    <button class="filter-tab" onclick="filterApplications('접수', this)">접수</button>
+                    <button class="filter-tab" onclick="filterApplications('매칭중', this)">매칭중</button>
+                    <button class="filter-tab" onclick="filterApplications('매칭완료', this)">확정</button>
+                    <button class="filter-tab" onclick="filterApplications('완료', this)">완료</button>
                 </div>
 
                 <div id="applicationsList" class="applications-list">
-                    <!-- 신청 내역이 여기에 동적으로 추가됩니다 -->
+                    <div class="empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>불러오는 중...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 결제 내역 섹션 -->
+            <section id="paymentsSection" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-credit-card"></i> 결제 내역</h2>
+                </div>
+                <div class="table-wrap" id="paymentsList">
+                    <div class="empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>불러오는 중...</p>
+                    </div>
                 </div>
             </section>
 
@@ -80,61 +97,45 @@
                             <label>아이디</label>
                             <input type="text" id="profileUserId" disabled>
                         </div>
-                        
                         <div class="form-group">
                             <label>이메일</label>
                             <input type="email" id="profileEmailInput" disabled>
                         </div>
-                        
                         <div class="form-group">
                             <label>이름</label>
                             <input type="text" id="profileNameInput" required>
                         </div>
-                        
                         <div class="form-group">
                             <label>휴대폰 번호</label>
-                            <input type="tel" id="profilePhone" required>
+                            <input type="tel" id="profilePhone" required placeholder="010-1234-5678">
                         </div>
-                        
                         <div class="form-group">
-                            <label>비밀번호 변경</label>
-                            <input type="password" id="newPassword" placeholder="새 비밀번호 (변경 시에만 입력)">
+                            <label>새 비밀번호 <span style="color:#999; font-weight:400;">(변경 시에만 입력)</span></label>
+                            <input type="password" id="newPassword" placeholder="8자 이상">
                         </div>
-                        
                         <div class="form-group">
-                            <label>비밀번호 확인</label>
-                            <input type="password" id="newPasswordConfirm" placeholder="새 비밀번호 확인">
+                            <label>새 비밀번호 확인</label>
+                            <input type="password" id="newPasswordConfirm" placeholder="비밀번호 재입력">
                         </div>
-                        
-                        <button type="submit" class="btn btn-primary">저장하기</button>
+                        <button type="submit" class="btn btn-primary" id="profileSaveBtn">저장하기</button>
                     </form>
-                </div>
-            </section>
-
-            <!-- 결제 내역 섹션 -->
-            <section id="paymentsSection" class="content-section">
-                <div class="section-header">
-                    <h2><i class="fas fa-credit-card"></i> 결제 내역</h2>
-                </div>
-
-                <div id="paymentsList" class="payments-list">
-                    <!-- 결제 내역이 여기에 동적으로 추가됩니다 -->
                 </div>
             </section>
         </main>
     </div>
 
+    <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script>
-        // 로그인 체크
+        // ── 로그인 체크 ────────────────────────────────────────
         if (!Auth.isLoggedIn() || Auth.getUserType() !== 'client') {
             alert('로그인이 필요합니다.');
             window.location.href = 'login.html';
         }
 
-        // 사용자 정보 로드
+        // ── 사용자 정보 초기화 ─────────────────────────────────
         const user = Auth.getCurrentUser();
-        document.getElementById('userName').textContent = user.name;
+        document.getElementById('userName').textContent = user.name || user.userId;
         document.getElementById('profileName').textContent = user.name;
         document.getElementById('profileEmail').textContent = user.email;
         document.getElementById('profileUserId').value = user.userId || user.email;
@@ -142,215 +143,249 @@
         document.getElementById('profileNameInput').value = user.name;
         document.getElementById('profilePhone').value = user.phone || '';
 
-        // 섹션 전환
-        function showSection(section) {
-            // 메뉴 활성화
+        // ── 섹션 전환 ──────────────────────────────────────────
+        function showSection(section, el) {
+            const clickedItem = el ? el.closest('.menu-item') || el : null;
             document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            // 섹션 전환
+            if (clickedItem) clickedItem.classList.add('active');
             document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
-            
+
             if (section === 'applications') {
                 document.getElementById('applicationsSection').classList.add('active');
                 loadApplications();
-            } else if (section === 'profile') {
-                document.getElementById('profileSection').classList.add('active');
             } else if (section === 'payments') {
                 document.getElementById('paymentsSection').classList.add('active');
                 loadPayments();
+            } else if (section === 'profile') {
+                document.getElementById('profileSection').classList.add('active');
             }
         }
 
-        // 신청 내역 로드
-        function loadApplications() {
-            const listContainer = document.getElementById('applicationsList');
-            
-            // TODO: 실제 API에서 데이터 가져오기
-            const mockData = [
-                {
-                    id: 1,
-                    caseNumber: '2024타경12345',
-                    address: '서울시 강남구 테헤란로 123',
-                    appraisalPrice: 500000000,
-                    bidPrice: 450000000,
-                    bidDate: '2024-02-15',
-                    status: 'matching',
-                    statusText: '전문가 매칭중',
-                    expertName: null
-                },
-                {
-                    id: 2,
-                    caseNumber: '2024타경54321',
-                    address: '경기도 성남시 분당구 정자동 456',
-                    appraisalPrice: 300000000,
-                    bidPrice: 280000000,
-                    bidDate: '2024-02-20',
-                    status: 'confirmed',
-                    statusText: '전문가 배정완료',
-                    expertName: '김법무'
-                },
-                {
-                    id: 3,
-                    caseNumber: '2024타경99999',
-                    address: '서울시 서초구 서초동 789',
-                    appraisalPrice: 800000000,
-                    bidPrice: 750000000,
-                    bidDate: '2024-01-25',
-                    status: 'completed',
-                    statusText: '낙찰',
-                    expertName: '이법무',
-                    result: 'success'
-                }
-            ];
+        // ── 상태 텍스트/클래스 매핑 ────────────────────────────
+        const STATUS_MAP = {
+            '접수':     { cls: 'status-matching',   text: '접수' },
+            '매칭중':   { cls: 'status-matching',   text: '매칭중' },
+            '매칭완료': { cls: 'status-confirmed',  text: '전문가 확정' },
+            '진행중':   { cls: 'status-confirmed',  text: '진행중' },
+            '완료':     { cls: 'status-completed',  text: '완료' },
+            '낙찰':     { cls: 'status-success',    text: '낙찰 🎉' },
+            '유찰':     { cls: 'status-cancelled',  text: '유찰' },
+            '취소':     { cls: 'status-cancelled',  text: '취소' }
+        };
 
-            if (mockData.length === 0) {
-                listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>아직 신청 내역이 없습니다.</p></div>';
+        function getStatusInfo(status) {
+            return STATUS_MAP[status] || { cls: 'status-matching', text: status || '접수' };
+        }
+
+        function formatPrice(price) {
+            if (!price) return '0';
+            return Number(price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        // ── 신청 내역 로드 (실제 API) ──────────────────────────
+        let allApplications = [];
+
+        async function loadApplications() {
+            const listContainer = document.getElementById('applicationsList');
+            listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>불러오는 중...</p></div>';
+
+            try {
+                const data = await API.applications.getByUserId(user.userId || user.id);
+                allApplications = data;
+                renderApplications(allApplications);
+            } catch (err) {
+                console.error('신청 내역 로드 오류:', err);
+                // API 실패 시 로컬 스토리지 fallback
+                const saved = localStorage.getItem('myApplications_' + (user.userId || user.id));
+                if (saved) {
+                    allApplications = JSON.parse(saved);
+                    renderApplications(allApplications);
+                } else {
+                    listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>신청 내역이 없습니다.<br><a href="index.html" style="color:#667eea;">첫 번째 신청하기</a></p></div>';
+                }
+            }
+        }
+
+        function renderApplications(apps) {
+            const listContainer = document.getElementById('applicationsList');
+            if (!apps || apps.length === 0) {
+                listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>신청 내역이 없습니다.<br><a href="index.html" style="color:#667eea;">첫 번째 신청하기</a></p></div>';
                 return;
             }
 
-            listContainer.innerHTML = mockData.map(app => `
-                <div class="application-card" data-status="${app.status}">
+            listContainer.innerHTML = apps.map(app => {
+                const si = getStatusInfo(app.status);
+                const canCancel = ['접수', '매칭중'].includes(app.status);
+                return `
+                <div class="application-card" data-status="${app.status || '접수'}">
                     <div class="card-header">
                         <div>
-                            <span class="case-number">${app.caseNumber}</span>
-                            <span class="status-badge status-${app.status}">${app.statusText}</span>
+                            <span class="case-number">${app.case_number || app.caseNumber || '-'}</span>
+                            <span class="status-badge ${si.cls}">${si.text}</span>
                         </div>
-                        <span class="bid-date">${app.bidDate}</span>
+                        <span class="bid-date">입찰일: ${app.bid_date || app.bidDate || '-'}</span>
                     </div>
                     <div class="card-body">
-                        <p class="address"><i class="fas fa-map-marker-alt"></i> ${app.address}</p>
+                        <p class="address"><i class="fas fa-map-marker-alt"></i> ${app.address || app.court || '-'}</p>
                         <div class="price-info">
                             <div>
                                 <span class="label">감정가</span>
-                                <span class="value">${formatPrice(app.appraisalPrice)}원</span>
+                                <span class="value">${formatPrice(app.appraisal_price || app.appraisalPrice)}원</span>
                             </div>
                             <div>
                                 <span class="label">입찰가</span>
-                                <span class="value highlight">${formatPrice(app.bidPrice)}원</span>
+                                <span class="value highlight">${formatPrice(app.bid_amount || app.bidPrice)}원</span>
                             </div>
                         </div>
-                        ${app.expertName ? `<p class="expert-info"><i class="fas fa-user-tie"></i> 담당 법무사: ${app.expertName}</p>` : ''}
+                        ${app.expert_name || app.expertName
+                            ? `<p class="expert-info"><i class="fas fa-user-tie"></i> 담당 법무사: ${app.expert_name || app.expertName}</p>`
+                            : ''}
                     </div>
                     <div class="card-footer">
-                        <button class="btn btn-sm btn-outline" onclick="viewDetail(${app.id})">상세보기</button>
-                        ${app.status === 'matching' ? '<button class="btn btn-sm btn-danger" onclick="cancelApplication(' + app.id + ')">취소하기</button>' : ''}
+                        <button class="btn btn-sm btn-outline" onclick="viewDetail('${app.id}')">상세보기</button>
+                        ${canCancel ? `<button class="btn btn-sm btn-danger" onclick="cancelApplication('${app.id}')">취소하기</button>` : ''}
                     </div>
-                </div>
-            `).join('');
+                </div>`;
+            }).join('');
         }
 
-        // 결제 내역 로드
-        function loadPayments() {
-            const listContainer = document.getElementById('paymentsList');
-            
-            // TODO: 실제 API에서 데이터 가져오기
-            const mockData = [
-                {
-                    id: 1,
-                    date: '2024-02-10 14:30',
-                    amount: 99000,
-                    method: '카드',
-                    status: 'completed',
-                    caseNumber: '2024타경12345'
-                },
-                {
-                    id: 2,
-                    date: '2024-02-15 10:20',
-                    amount: 99000,
-                    method: '계좌이체',
-                    status: 'completed',
-                    caseNumber: '2024타경54321'
+        // ── 결제 내역 로드 (실제 API) ──────────────────────────
+        async function loadPayments() {
+            const container = document.getElementById('paymentsList');
+            container.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>불러오는 중...</p></div>';
+
+            try {
+                // applications 에서 결제 완료 건만 표시
+                const data = await API.applications.getByUserId(user.userId || user.id);
+                const paid = data.filter(app => app.payment_status === '결제완료' || app.paymentStatus === '결제완료');
+
+                if (!paid.length) {
+                    container.innerHTML = '<div class="empty-state"><i class="fas fa-receipt"></i><p>결제 내역이 없습니다.</p></div>';
+                    return;
                 }
-            ];
 
-            if (mockData.length === 0) {
-                listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>결제 내역이 없습니다.</p></div>';
-                return;
-            }
-
-            listContainer.innerHTML = `
-                <table class="payments-table">
-                    <thead>
-                        <tr>
-                            <th>결제일시</th>
-                            <th>사건번호</th>
-                            <th>금액</th>
-                            <th>결제수단</th>
-                            <th>상태</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${mockData.map(payment => `
+                container.innerHTML = `
+                    <table class="payments-table">
+                        <thead>
                             <tr>
-                                <td>${payment.date}</td>
-                                <td>${payment.caseNumber}</td>
-                                <td><strong>${formatPrice(payment.amount)}원</strong></td>
-                                <td>${payment.method}</td>
-                                <td><span class="status-badge status-success">결제완료</span></td>
+                                <th>결제일시</th>
+                                <th>사건번호</th>
+                                <th>금액</th>
+                                <th>결제수단</th>
+                                <th>상태</th>
                             </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
+                        </thead>
+                        <tbody>
+                            ${paid.map(app => `
+                                <tr>
+                                    <td>${app.paid_at || app.created_at || '-'}</td>
+                                    <td>${app.case_number || app.caseNumber || '-'}</td>
+                                    <td><strong>${formatPrice(app.service_fee || app.serviceFee || 99000)}원</strong></td>
+                                    <td>${app.payment_method || app.paymentMethod || '카드'}</td>
+                                    <td><span class="status-badge status-success">결제완료</span></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>`;
+            } catch (err) {
+                console.error('결제 내역 로드 오류:', err);
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-receipt"></i><p>결제 내역이 없습니다.</p></div>';
+            }
         }
 
-        // 필터링
-        function filterApplications(status) {
+        // ── 필터링 ─────────────────────────────────────────────
+        function filterApplications(status, el) {
             document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
-            event.target.classList.add('active');
-            
+            if (el) el.classList.add('active');
+
             const cards = document.querySelectorAll('.application-card');
             cards.forEach(card => {
-                if (status === 'all' || card.dataset.status === status) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
+                card.style.display = (status === 'all' || card.dataset.status === status) ? '' : 'none';
             });
         }
 
-        // 가격 포맷팅
-        function formatPrice(price) {
-            return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-        }
-
-        // 상세보기
-        function viewDetail(id) {
-            alert('상세보기 기능은 추후 구현 예정입니다.\n신청 ID: ' + id);
-        }
-
-        // 취소하기
-        function cancelApplication(id) {
-            if (confirm('정말 취소하시겠습니까?')) {
-                alert('취소 기능은 추후 구현 예정입니다.\n신청 ID: ' + id);
+        // ── 상세보기 ───────────────────────────────────────────
+        async function viewDetail(id) {
+            try {
+                const app = await API.applications.getById(id);
+                if (!app) { alert('상세 정보를 불러올 수 없습니다.'); return; }
+                const si = getStatusInfo(app.status);
+                alert([
+                    `📋 신청 상세 정보`,
+                    `━━━━━━━━━━━━━━━━━━━━`,
+                    `사건번호: ${app.case_number || '-'}`,
+                    `법원: ${app.court || '-'}`,
+                    `주소: ${app.address || '-'}`,
+                    `입찰가: ${formatPrice(app.bid_amount)}원`,
+                    `입찰일: ${app.bid_date || '-'}`,
+                    `상태: ${si.text}`,
+                    `담당 법무사: ${app.expert_name || '미배정'}`,
+                    `신청일: ${app.created_at ? app.created_at.slice(0, 10) : '-'}`
+                ].join('\n'));
+            } catch (err) {
+                alert('상세 정보를 불러오는 중 오류가 발생했습니다.');
             }
         }
 
-        // 회원정보 수정
-        document.getElementById('profileForm').addEventListener('submit', function(e) {
+        // ── 취소하기 ───────────────────────────────────────────
+        async function cancelApplication(id) {
+            if (!confirm('신청을 취소하시겠습니까?\n입찰일 2영업일 전까지만 취소 가능합니다.')) return;
+
+            try {
+                await API.applications.updateStatus(id, '취소', {
+                    cancelledAt: new Date().toISOString(),
+                    cancelledBy: user.userId || user.id
+                });
+                alert('취소가 완료되었습니다.');
+                loadApplications();
+            } catch (err) {
+                alert('취소 처리 중 오류가 발생했습니다.');
+            }
+        }
+
+        // ── 회원정보 저장 ──────────────────────────────────────
+        document.getElementById('profileForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
+
             const newPassword = document.getElementById('newPassword').value;
             const newPasswordConfirm = document.getElementById('newPasswordConfirm').value;
-            
+
             if (newPassword && newPassword !== newPasswordConfirm) {
                 alert('비밀번호가 일치하지 않습니다.');
                 return;
             }
-            
-            // TODO: API 연동
-            alert('회원정보가 수정되었습니다.');
+            if (newPassword && newPassword.length < 8) {
+                alert('비밀번호는 8자 이상이어야 합니다.');
+                return;
+            }
+
+            const updates = {
+                name: document.getElementById('profileNameInput').value,
+                phone: document.getElementById('profilePhone').value
+            };
+            if (newPassword) updates.password = newPassword;
+
+            const saveBtn = document.getElementById('profileSaveBtn');
+            saveBtn.disabled = true;
+            saveBtn.textContent = '저장 중...';
+
+            const result = await Auth.saveProfile(updates);
+            if (result.success) {
+                // 화면 업데이트
+                document.getElementById('userName').textContent = updates.name;
+                document.getElementById('profileName').textContent = updates.name;
+                document.getElementById('newPassword').value = '';
+                document.getElementById('newPasswordConfirm').value = '';
+                alert('회원정보가 저장되었습니다.');
+            } else {
+                alert(result.message || '저장 중 오류가 발생했습니다.');
+            }
+
+            saveBtn.disabled = false;
+            saveBtn.textContent = '저장하기';
         });
 
-        // 로그아웃
-        function handleLogout() {
-            if (confirm('로그아웃 하시겠습니까?')) {
-                Auth.logout();
-            }
-        }
-
-        // 초기 로드
+        // ── 초기 로드 ──────────────────────────────────────────
         loadApplications();
     </script>
 </body>

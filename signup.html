@@ -615,7 +615,7 @@
         }
 
         // 아이디 중복 체크
-        function checkUserIdDuplicate(type) {
+        async function checkUserIdDuplicate(type) {
             const userIdInput = document.getElementById(`${type}UserId`);
             const userId = userIdInput.value.trim();
             
@@ -625,7 +625,6 @@
                 return;
             }
             
-            // 영문, 숫자만 허용
             const regex = /^[a-z0-9]+$/;
             if (!regex.test(userId)) {
                 alert('아이디는 영문 소문자와 숫자만 사용 가능합니다.');
@@ -633,25 +632,23 @@
                 return;
             }
             
-            // TODO: 실제 API 연동
-            console.log(`아이디 중복 체크: ${userId}`);
-            
-            // 임시로 랜덤하게 중복 판정
-            const isDuplicate = Math.random() < 0.3;
-            
-            if (isDuplicate) {
-                alert('이미 사용 중인 아이디입니다.');
-                checkedUserIds[type] = false;
-            } else {
-                alert('사용 가능한 아이디입니다.');
-                checkedUserIds[type] = true;
-                document.getElementById(`${type}UserIdSuccess`).style.display = 'block';
-                userIdInput.disabled = true;
+            try {
+                const result = await Auth.checkUserIdDuplicate(userId);
+                if (!result.available) {
+                    alert('이미 사용 중인 아이디입니다.');
+                    checkedUserIds[type] = false;
+                } else {
+                    checkedUserIds[type] = true;
+                    document.getElementById(`${type}UserIdSuccess`).style.display = 'block';
+                    userIdInput.disabled = true;
+                }
+            } catch (err) {
+                alert('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
             }
         }
 
         // 이메일 중복 체크
-        function checkEmailDuplicate(type) {
+        async function checkEmailDuplicate(type) {
             const emailInput = document.getElementById(`${type}Email`);
             const email = emailInput.value.trim();
             
@@ -661,7 +658,6 @@
                 return;
             }
             
-            // 이메일 형식 체크
             const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!regex.test(email)) {
                 alert('올바른 이메일 형식이 아닙니다.');
@@ -669,20 +665,18 @@
                 return;
             }
             
-            // TODO: 실제 API 연동
-            console.log(`이메일 중복 체크: ${email}`);
-            
-            // 임시로 랜덤하게 중복 판정
-            const isDuplicate = Math.random() < 0.3;
-            
-            if (isDuplicate) {
-                alert('이미 사용 중인 이메일입니다.');
-                checkedEmails[type] = false;
-            } else {
-                alert('사용 가능한 이메일입니다.');
-                checkedEmails[type] = true;
-                document.getElementById(`${type}EmailSuccess`).style.display = 'block';
-                emailInput.disabled = true;
+            try {
+                const result = await Auth.checkEmailDuplicate(email);
+                if (!result.available) {
+                    alert('이미 사용 중인 이메일입니다.');
+                    checkedEmails[type] = false;
+                } else {
+                    checkedEmails[type] = true;
+                    document.getElementById(`${type}EmailSuccess`).style.display = 'block';
+                    emailInput.disabled = true;
+                }
+            } catch (err) {
+                alert('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
             }
         }
 
@@ -843,14 +837,25 @@
                 createdAt: new Date().toISOString()
             };
             
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '처리 중...';
+            
             try {
-                // TODO: API 호출로 변경 예정
-                console.log('신청자 회원가입:', formData);
-                alert('회원가입이 완료되었습니다!');
-                window.location.href = 'login.html';
+                const result = await Auth.signup(formData);
+                if (result.success) {
+                    alert('회원가입이 완료되었습니다!\n로그인 페이지로 이동합니다.');
+                    window.location.href = 'login.html';
+                } else {
+                    alert(result.message || '회원가입에 실패했습니다.');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '회원가입';
+                }
             } catch (error) {
                 alert('회원가입 중 오류가 발생했습니다. 다시 시도해주세요.');
                 console.error(error);
+                submitBtn.disabled = false;
+                submitBtn.textContent = '회원가입';
             }
         });
 
@@ -929,18 +934,33 @@
                 createdAt: new Date().toISOString()
             };
             
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '처리 중...';
+            
             try {
-                // TODO: 파일 업로드 및 API 호출로 변경 예정
-                console.log('법무사 회원가입:', formData);
-                console.log('자격증 파일:', licenseFile.name);
-                console.log('보험증권 파일:', insuranceFile.name);
-                alert('법무사 가입 신청이 완료되었습니다.\n관리자 승인 후 이용 가능합니다.');
-                window.location.href = 'login.html';
+                // 파일명만 저장 (실제 파일 업로드는 추후 스토리지 연동)
+                formData.licenseFileName = licenseFile.name;
+                formData.insuranceFileName = insuranceFile.name;
+                
+                const result = await Auth.signup(formData);
+                if (result.success) {
+                    alert('법무사 가입 신청이 완료되었습니다.\n관리자 승인 후 이용 가능합니다.');
+                    window.location.href = 'login.html';
+                } else {
+                    alert(result.message || '가입 신청에 실패했습니다.');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '법무사 가입 신청';
+                }
             } catch (error) {
                 alert('회원가입 중 오류가 발생했습니다. 다시 시도해주세요.');
                 console.error(error);
+                submitBtn.disabled = false;
+                submitBtn.textContent = '법무사 가입 신청';
             }
         });
     </script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
 </body>
 </html>

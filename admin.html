@@ -166,6 +166,7 @@
         </div>
     </div>
 
+    <script src="js/api.js"></script>
     <script>
         let currentAdmin = null;
 
@@ -235,272 +236,387 @@
             }
         }
 
-        // 대시보드 로드
-        function loadDashboard() {
-            const container = document.getElementById('recentApplications');
-            
-            const mockData = [
-                { id: 1, caseNumber: '2024타경12345', clientName: '홍길동', expertName: '김법무', status: 'confirmed', date: '2024-02-15' },
-                { id: 2, caseNumber: '2024타경54321', clientName: '김철수', expertName: null, status: 'matching', date: '2024-02-14' },
-                { id: 3, caseNumber: '2024타경99999', clientName: '박영희', expertName: '이법무', status: 'completed', date: '2024-02-13' }
-            ];
-
-            container.innerHTML = `
-                <table class="payments-table">
-                    <thead>
-                        <tr>
-                            <th>사건번호</th>
-                            <th>신청자</th>
-                            <th>담당 법무사</th>
-                            <th>상태</th>
-                            <th>신청일</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${mockData.map(item => `
-                            <tr>
-                                <td>${item.caseNumber}</td>
-                                <td>${item.clientName}</td>
-                                <td>${item.expertName || '-'}</td>
-                                <td><span class="status-badge status-${item.status}">${getStatusText(item.status)}</span></td>
-                                <td>${item.date}</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
+        // ── 공통 유틸 ───────────────────────────────────────────
+        function formatPrice(price) {
+            if (!price) return '0';
+            return Number(price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         }
 
-        // 신청 관리 로드
-        function loadApplications() {
-            const container = document.getElementById('adminApplicationsList');
-            
-            const mockData = [
-                { id: 1, caseNumber: '2024타경12345', address: '서울시 강남구', clientName: '홍길동', clientPhone: '010-1234-5678', expertName: '김법무', bidPrice: 450000000, status: 'confirmed', date: '2024-02-15' },
-                { id: 2, caseNumber: '2024타경54321', address: '경기도 성남시', clientName: '김철수', clientPhone: '010-2345-6789', expertName: null, bidPrice: 280000000, status: 'matching', date: '2024-02-14' }
-            ];
-
-            container.innerHTML = `
-                <table class="payments-table">
-                    <thead>
-                        <tr>
-                            <th>사건번호</th>
-                            <th>물건지</th>
-                            <th>신청자</th>
-                            <th>연락처</th>
-                            <th>담당자</th>
-                            <th>입찰가</th>
-                            <th>상태</th>
-                            <th>관리</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${mockData.map(item => `
-                            <tr data-status="${item.status}">
-                                <td><strong>${item.caseNumber}</strong></td>
-                                <td>${item.address}</td>
-                                <td>${item.clientName}</td>
-                                <td>${item.clientPhone}</td>
-                                <td>${item.expertName || '-'}</td>
-                                <td>${formatPrice(item.bidPrice)}원</td>
-                                <td><span class="status-badge status-${item.status}">${getStatusText(item.status)}</span></td>
-                                <td>
-                                    <button class="btn btn-sm btn-outline" onclick="viewApplicationDetail(${item.id})">상세</button>
-                                </td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
+        function getStatusText(status) {
+            const map = {
+                '접수': '접수', '매칭중': '매칭중', '매칭완료': '확정',
+                '진행중': '진행중', '완료': '완료', '낙찰': '낙찰',
+                '유찰': '유찰', '취소': '취소',
+                'matching': '매칭중', 'confirmed': '확정', 'completed': '완료', 'cancelled': '취소'
+            };
+            return map[status] || status;
         }
 
-        // 전문가 승인 로드
-        function loadExpertApprovals() {
-            const container = document.getElementById('expertApprovalList');
-            
-            const mockData = [
-                { id: 1, name: '박법무', email: 'park@example.com', phone: '010-3456-7890', license: '서울-12345', office: '서울시 강남구', regions: ['서울', '경기'], registeredAt: '2024-02-10' },
-                { id: 2, name: '최법무', email: 'choi@example.com', phone: '010-4567-8901', license: '경기-54321', office: '경기도 성남시', regions: ['경기', '인천'], registeredAt: '2024-02-12' }
-            ];
+        function getStatusClass(status) {
+            const map = {
+                '접수': 'status-matching', '매칭중': 'status-matching',
+                '매칭완료': 'status-confirmed', '진행중': 'status-confirmed',
+                '완료': 'status-completed', '낙찰': 'status-success',
+                '유찰': 'status-cancelled', '취소': 'status-cancelled',
+                'matching': 'status-matching', 'confirmed': 'status-confirmed',
+                'completed': 'status-completed', 'cancelled': 'status-cancelled'
+            };
+            return map[status] || 'status-matching';
+        }
 
-            if (mockData.length === 0) {
-                container.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>승인 대기 중인 전문가가 없습니다.</p></div>';
-                return;
+        function setLoading(id) {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = '<div style="text-align:center;padding:2rem;color:#999;"><i class="fas fa-spinner fa-spin" style="font-size:2rem;"></i><p style="margin-top:1rem;">불러오는 중...</p></div>';
+        }
+
+        // ── 대시보드 로드 (실제 API) ───────────────────────────
+        async function loadDashboard() {
+            setLoading('recentApplications');
+            try {
+                const data = await API.applications.getAll('limit=10&sort=-createdAt');
+                const apps = (data && data.data) ? data.data : [];
+
+                // 통계 카드 업데이트
+                const allData = await API.applications.getAll('limit=1000');
+                const all = (allData && allData.data) ? allData.data : [];
+                const matching = all.filter(a => a.status === '매칭중' || a.status === '접수');
+
+                // 사용자 수 조회
+                let userCount = 0;
+                try {
+                    const uData = await API.users.getAll('userType=expert&status=active&limit=1000');
+                    userCount = (uData && uData.data) ? uData.data.length : 0;
+                } catch(e) {}
+
+                // 통계 카드 값 업데이트 (하드코딩 → 실제 값)
+                const statValues = document.querySelectorAll('.stat-value');
+                if (statValues[0]) statValues[0].textContent = all.length;
+                if (statValues[1]) statValues[1].textContent = matching.length;
+                if (statValues[2]) statValues[2].textContent = userCount || '-';
+
+                // 이번 달 매출 계산
+                const thisMonth = new Date().toISOString().slice(0, 7);
+                const thisMonthRevenue = all
+                    .filter(a => (a.created_at || '').slice(0, 7) === thisMonth)
+                    .reduce((s, a) => s + Number(a.service_fee || 99000), 0);
+                if (statValues[3]) statValues[3].textContent = formatPrice(thisMonthRevenue) + '원';
+
+                // 최근 신청 테이블
+                const container = document.getElementById('recentApplications');
+                if (apps.length === 0) {
+                    container.innerHTML = '<div style="text-align:center;padding:2rem;color:#999;">신청 내역이 없습니다.</div>';
+                    return;
+                }
+                container.innerHTML = `
+                    <table class="payments-table">
+                        <thead>
+                            <tr><th>사건번호</th><th>신청자</th><th>담당 법무사</th><th>상태</th><th>신청일</th></tr>
+                        </thead>
+                        <tbody>
+                            ${apps.map(item => `
+                                <tr>
+                                    <td>${item.case_number || '-'}</td>
+                                    <td>${item.applicant_name || '-'}</td>
+                                    <td>${item.expert_name || '-'}</td>
+                                    <td><span class="status-badge ${getStatusClass(item.status)}">${getStatusText(item.status)}</span></td>
+                                    <td>${(item.created_at || '-').slice(0, 10)}</td>
+                                </tr>`).join('')}
+                        </tbody>
+                    </table>`;
+            } catch (err) {
+                console.error('대시보드 로드 오류:', err);
+                document.getElementById('recentApplications').innerHTML =
+                    '<div style="text-align:center;padding:2rem;color:#999;">데이터를 불러올 수 없습니다.</div>';
             }
-
-            container.innerHTML = mockData.map(expert => `
-                <div class="application-card" style="margin-bottom: 1.5rem;">
-                    <div class="card-header">
-                        <div>
-                            <span class="case-number">${expert.name}</span>
-                            <span class="status-badge" style="background: #fff3cd; color: #856404;">승인 대기</span>
-                        </div>
-                        <span style="color: #666; font-size: 0.9rem;">신청일: ${expert.registeredAt}</span>
-                    </div>
-                    <div class="card-body">
-                        <p><strong>이메일:</strong> ${expert.email}</p>
-                        <p><strong>연락처:</strong> ${expert.phone}</p>
-                        <p><strong>등록번호:</strong> ${expert.license}</p>
-                        <p><strong>사무소:</strong> ${expert.office}</p>
-                        <p><strong>서비스 지역:</strong> ${expert.regions.join(', ')}</p>
-                        <div style="margin-top: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
-                            <p style="margin: 0; color: #666; font-size: 0.9rem;">📎 첨부 서류: 자격증, 배상책임보험증권</p>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <button class="btn btn-success" onclick="approveExpert(${expert.id})">
-                            <i class="fas fa-check"></i> 승인
-                        </button>
-                        <button class="btn btn-danger" onclick="rejectExpert(${expert.id})">
-                            <i class="fas fa-times"></i> 거부
-                        </button>
-                        <button class="btn btn-outline" onclick="viewExpertDocuments(${expert.id})">
-                            <i class="fas fa-file-alt"></i> 서류 확인
-                        </button>
-                    </div>
-                </div>
-            `).join('');
         }
 
-        // 회원 관리 로드
-        function loadUsers() {
+        // ── 신청 관리 로드 (실제 API) ──────────────────────────
+        async function loadApplications() {
+            const container = document.getElementById('adminApplicationsList');
+            setLoading('adminApplicationsList');
+            try {
+                const data = await API.applications.getAll('limit=200&sort=-createdAt');
+                const apps = (data && data.data) ? data.data : [];
+
+                if (apps.length === 0) {
+                    container.innerHTML = '<div style="text-align:center;padding:2rem;color:#999;">신청 내역이 없습니다.</div>';
+                    return;
+                }
+
+                container.innerHTML = `
+                    <table class="payments-table">
+                        <thead>
+                            <tr>
+                                <th>사건번호</th><th>물건지</th><th>신청자</th>
+                                <th>연락처</th><th>담당자</th><th>입찰가</th><th>상태</th><th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${apps.map(item => `
+                                <tr data-status="${item.status || ''}">
+                                    <td><strong>${item.case_number || '-'}</strong></td>
+                                    <td>${item.address || item.court || '-'}</td>
+                                    <td>${item.applicant_name || '-'}</td>
+                                    <td>${item.phone || '-'}</td>
+                                    <td>${item.expert_name || '-'}</td>
+                                    <td>${formatPrice(item.bid_amount)}원</td>
+                                    <td><span class="status-badge ${getStatusClass(item.status)}">${getStatusText(item.status)}</span></td>
+                                    <td><button class="btn btn-sm btn-outline" onclick="viewApplicationDetail('${item.id}')">상세</button></td>
+                                </tr>`).join('')}
+                        </tbody>
+                    </table>`;
+            } catch (err) {
+                console.error('신청 관리 로드 오류:', err);
+                container.innerHTML = '<div style="text-align:center;padding:2rem;color:#999;">데이터를 불러올 수 없습니다.</div>';
+            }
+        }
+
+        // ── 전문가 승인 로드 (실제 API) ────────────────────────
+        async function loadExpertApprovals() {
+            const container = document.getElementById('expertApprovalList');
+            container.innerHTML = '<div style="text-align:center;padding:2rem;color:#999;"><i class="fas fa-spinner fa-spin"></i></div>';
+            try {
+                const data = await API.users.getAll('userType=expert&status=pending&limit=100');
+                const experts = (data && data.data) ? data.data : [];
+
+                if (experts.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>승인 대기 중인 전문가가 없습니다.</p></div>';
+                    return;
+                }
+
+                container.innerHTML = experts.map(expert => `
+                    <div class="application-card" style="margin-bottom:1.5rem;">
+                        <div class="card-header">
+                            <div>
+                                <span class="case-number">${expert.name || '-'}</span>
+                                <span class="status-badge" style="background:#fff3cd;color:#856404;">승인 대기</span>
+                            </div>
+                            <span style="color:#666;font-size:0.9rem;">신청일: ${(expert.createdAt || '').slice(0,10)}</span>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>이메일:</strong> ${expert.email || '-'}</p>
+                            <p><strong>연락처:</strong> ${expert.phone || '-'}</p>
+                            <p><strong>등록번호:</strong> ${expert.licenseNumber || '-'}</p>
+                            <p><strong>사무소:</strong> ${expert.officeAddress || '-'}</p>
+                            <p><strong>서비스 지역:</strong> ${Array.isArray(expert.serviceRegions) ? expert.serviceRegions.join(', ') : (expert.serviceRegions || '-')}</p>
+                            <div style="margin-top:1rem;padding:0.8rem;background:#f8f9fa;border-radius:8px;">
+                                <p style="margin:0;color:#666;font-size:0.88rem;">📎 첨부 서류: ${expert.licenseFileName || '자격증'}, ${expert.insuranceFileName || '보험증권'}</p>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-success" onclick="approveExpert('${expert.id}')">
+                                <i class="fas fa-check"></i> 승인
+                            </button>
+                            <button class="btn btn-danger" onclick="rejectExpert('${expert.id}')">
+                                <i class="fas fa-times"></i> 거부
+                            </button>
+                        </div>
+                    </div>`).join('');
+            } catch (err) {
+                console.error('전문가 승인 로드 오류:', err);
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>데이터를 불러올 수 없습니다.</p></div>';
+            }
+        }
+
+        // ── 회원 관리 로드 (실제 API) ──────────────────────────
+        async function loadUsers() {
             const container = document.getElementById('usersList');
-            
-            const mockData = [
-                { id: 1, name: '홍길동', email: 'hong@example.com', phone: '010-1234-5678', userType: 'client', registeredAt: '2024-01-15' },
-                { id: 2, name: '김법무', email: 'kim@example.com', phone: '010-2345-6789', userType: 'expert', registeredAt: '2024-01-20' }
-            ];
+            container.innerHTML = '<div style="text-align:center;padding:2rem;color:#999;"><i class="fas fa-spinner fa-spin"></i></div>';
+            try {
+                const data = await API.users.getAll('limit=200&sort=-createdAt');
+                const users = (data && data.data) ? data.data : [];
 
-            container.innerHTML = `
-                <table class="payments-table">
-                    <thead>
-                        <tr>
-                            <th>이름</th>
-                            <th>이메일</th>
-                            <th>전화번호</th>
-                            <th>회원 유형</th>
-                            <th>가입일</th>
-                            <th>관리</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${mockData.map(user => `
-                            <tr>
-                                <td><strong>${user.name}</strong></td>
-                                <td>${user.email}</td>
-                                <td>${user.phone}</td>
-                                <td><span class="status-badge ${user.userType === 'client' ? 'status-confirmed' : 'status-success'}">${user.userType === 'client' ? '신청자' : '법무사'}</span></td>
-                                <td>${user.registeredAt}</td>
-                                <td>
-                                    <button class="btn btn-sm btn-outline" onclick="viewUserDetail(${user.id})">상세</button>
-                                </td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
+                if (users.length === 0) {
+                    container.innerHTML = '<div style="text-align:center;padding:2rem;color:#999;">회원이 없습니다.</div>';
+                    return;
+                }
+
+                container.innerHTML = `
+                    <table class="payments-table">
+                        <thead>
+                            <tr><th>이름</th><th>아이디</th><th>이메일</th><th>전화번호</th><th>회원유형</th><th>가입일</th><th>관리</th></tr>
+                        </thead>
+                        <tbody>
+                            ${users.map(user => `
+                                <tr>
+                                    <td><strong>${user.name || '-'}</strong></td>
+                                    <td>${user.userId || '-'}</td>
+                                    <td>${user.email || '-'}</td>
+                                    <td>${user.phone || '-'}</td>
+                                    <td><span class="status-badge ${user.userType === 'client' ? 'status-confirmed' : 'status-success'}">${user.userType === 'client' ? '신청자' : '법무사'}</span></td>
+                                    <td>${(user.createdAt || '-').slice(0, 10)}</td>
+                                    <td><button class="btn btn-sm btn-outline" onclick="viewUserDetail('${user.id}')">상세</button></td>
+                                </tr>`).join('')}
+                        </tbody>
+                    </table>`;
+
+                // 검색 기능 연결
+                document.getElementById('userSearch').addEventListener('input', function() {
+                    const q = this.value.toLowerCase();
+                    document.querySelectorAll('#usersList tbody tr').forEach(row => {
+                        row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+                    });
+                });
+            } catch (err) {
+                console.error('회원 관리 로드 오류:', err);
+                container.innerHTML = '<div style="text-align:center;padding:2rem;color:#999;">데이터를 불러올 수 없습니다.</div>';
+            }
         }
 
-        // 정산 관리 로드
-        function loadSettlements() {
+        // ── 정산 관리 로드 (실제 API) ──────────────────────────
+        async function loadSettlements() {
             const container = document.getElementById('settlementsList');
-            
-            const mockData = [
-                { expertName: '김법무', month: '2024-02', count: 5, amount: 495000, status: 'pending' },
-                { expertName: '이법무', month: '2024-01', count: 8, amount: 792000, status: 'completed' }
-            ];
+            container.innerHTML = '<div style="text-align:center;padding:2rem;color:#999;"><i class="fas fa-spinner fa-spin"></i></div>';
+            try {
+                // 완료된 신청 건들을 법무사별로 집계
+                const data = await API.applications.getAll('status=완료&limit=1000');
+                const apps = (data && data.data) ? data.data : [];
 
-            container.innerHTML = `
-                <table class="payments-table">
-                    <thead>
-                        <tr>
-                            <th>법무사</th>
-                            <th>정산월</th>
-                            <th>처리 건수</th>
-                            <th>정산 금액</th>
-                            <th>상태</th>
-                            <th>관리</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${mockData.map(item => `
-                            <tr>
-                                <td><strong>${item.expertName}</strong></td>
-                                <td>${item.month}</td>
-                                <td>${item.count}건</td>
-                                <td><strong>${formatPrice(item.amount)}원</strong></td>
-                                <td><span class="status-badge ${item.status === 'completed' ? 'status-success' : 'status-matching'}">${item.status === 'completed' ? '정산완료' : '정산대기'}</span></td>
-                                <td>
-                                    ${item.status === 'pending' ? '<button class="btn btn-sm btn-primary" onclick="processSettlement()">정산 처리</button>' : '-'}
-                                </td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
+                // 법무사별 집계
+                const expertMap = {};
+                apps.forEach(app => {
+                    const eid = app.expert_name || app.expertId || '미지정';
+                    const month = (app.completed_at || app.bid_date || '').slice(0, 7);
+                    const key = `${eid}__${month}`;
+                    if (!expertMap[key]) expertMap[key] = { expertName: eid, month, count: 0, amount: 0 };
+                    expertMap[key].count++;
+                    expertMap[key].amount += Number(app.service_fee || 99000);
+                });
+
+                const rows = Object.values(expertMap).sort((a, b) => b.month.localeCompare(a.month));
+
+                if (rows.length === 0) {
+                    container.innerHTML = '<div style="text-align:center;padding:2rem;color:#999;">정산 내역이 없습니다.</div>';
+                    return;
+                }
+
+                container.innerHTML = `
+                    <table class="payments-table">
+                        <thead>
+                            <tr><th>법무사</th><th>정산월</th><th>처리 건수</th><th>정산 금액</th><th>상태</th><th>관리</th></tr>
+                        </thead>
+                        <tbody>
+                            ${rows.map(item => `
+                                <tr>
+                                    <td><strong>${item.expertName}</strong></td>
+                                    <td>${item.month}</td>
+                                    <td>${item.count}건</td>
+                                    <td><strong>${formatPrice(item.amount)}원</strong></td>
+                                    <td><span class="status-badge status-success">정산완료</span></td>
+                                    <td>-</td>
+                                </tr>`).join('')}
+                        </tbody>
+                    </table>`;
+            } catch (err) {
+                console.error('정산 관리 로드 오류:', err);
+                container.innerHTML = '<div style="text-align:center;padding:2rem;color:#999;">데이터를 불러올 수 없습니다.</div>';
+            }
         }
 
-        // 필터링
+        // ── 필터링 ─────────────────────────────────────────────
         function filterAdminApplications(status, el) {
             document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
             if (el) el.classList.add('active');
-            
-            const rows = document.querySelectorAll('#adminApplicationsList tbody tr');
-            rows.forEach(row => {
-                if (status === 'all' || row.dataset.status === status) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
+            document.querySelectorAll('#adminApplicationsList tbody tr').forEach(row => {
+                row.style.display = (status === 'all' || row.dataset.status === status) ? '' : 'none';
             });
         }
 
-        // 유틸리티 함수
-        function getStatusText(status) {
-            const statusMap = {
-                'matching': '매칭중',
-                'confirmed': '확정',
-                'completed': '완료',
-                'cancelled': '취소'
-            };
-            return statusMap[status] || status;
+        // ── 상세보기 (실제 API) ────────────────────────────────
+        async function viewApplicationDetail(id) {
+            try {
+                const app = await API.applications.getById(id);
+                if (!app) { alert('정보를 불러올 수 없습니다.'); return; }
+                alert([
+                    `📋 신청 상세 정보`,
+                    `━━━━━━━━━━━━━━━━━━━━━━`,
+                    `사건번호: ${app.case_number || '-'}`,
+                    `법원: ${app.court || '-'}`,
+                    `주소: ${app.address || '-'}`,
+                    `신청자: ${app.applicant_name || '-'}`,
+                    `연락처: ${app.phone || '-'}`,
+                    `입찰가: ${formatPrice(app.bid_amount)}원`,
+                    `입찰일: ${app.bid_date || '-'}`,
+                    `담당 법무사: ${app.expert_name || '미배정'}`,
+                    `상태: ${getStatusText(app.status)}`,
+                    `신청일: ${(app.created_at || '-').slice(0, 16).replace('T', ' ')}`
+                ].join('\n'));
+            } catch (err) {
+                alert('상세 정보를 불러오는 중 오류가 발생했습니다.');
+            }
         }
 
-        function formatPrice(price) {
-            return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-        }
-
-        function exportToExcel() {
-            alert('엑셀 다운로드 기능은 추후 구현 예정입니다.');
-        }
-
-        function viewApplicationDetail(id) {
-            alert('신청 상세보기: ID ' + id);
-        }
-
-        function approveExpert(id) {
-            if (confirm('이 전문가를 승인하시겠습니까?')) {
-                alert('승인되었습니다. 전문가에게 카카오톡 알림이 발송됩니다.');
+        // ── 전문가 승인/거부 (실제 API) ───────────────────────
+        async function approveExpert(id) {
+            if (!confirm('이 전문가를 승인하시겠습니까?')) return;
+            try {
+                await API.users.update(id, { status: 'active', approvedAt: new Date().toISOString() });
+                alert('승인되었습니다.');
                 loadExpertApprovals();
+            } catch (err) {
+                alert('처리 중 오류가 발생했습니다.');
             }
         }
 
-        function rejectExpert(id) {
-            if (confirm('이 전문가 신청을 거부하시겠습니까?')) {
-                const reason = prompt('거부 사유를 입력해주세요:');
-                if (reason) {
-                    alert('거부되었습니다. 전문가에게 사유가 전달됩니다.');
-                    loadExpertApprovals();
-                }
+        async function rejectExpert(id) {
+            if (!confirm('이 전문가 신청을 거부하시겠습니까?')) return;
+            const reason = prompt('거부 사유를 입력해주세요:');
+            if (!reason) return;
+            try {
+                await API.users.update(id, { status: 'rejected', rejectedAt: new Date().toISOString(), rejectReason: reason });
+                alert('거부되었습니다.');
+                loadExpertApprovals();
+            } catch (err) {
+                alert('처리 중 오류가 발생했습니다.');
             }
         }
 
-        function viewExpertDocuments(id) {
-            alert('서류 확인 기능은 추후 구현 예정입니다.');
+        // ── 회원 상세보기 (실제 API) ───────────────────────────
+        async function viewUserDetail(id) {
+            try {
+                const user = await API.users.getById(id);
+                if (!user) { alert('정보를 불러올 수 없습니다.'); return; }
+                alert([
+                    `👤 회원 상세 정보`,
+                    `━━━━━━━━━━━━━━━━━━━━━━`,
+                    `이름: ${user.name || '-'}`,
+                    `아이디: ${user.userId || '-'}`,
+                    `이메일: ${user.email || '-'}`,
+                    `전화번호: ${user.phone || '-'}`,
+                    `회원유형: ${user.userType === 'client' ? '신청자' : '법무사'}`,
+                    `상태: ${user.status || '-'}`,
+                    `가입일: ${(user.createdAt || '-').slice(0, 10)}`
+                ].join('\n'));
+            } catch (err) {
+                alert('정보를 불러오는 중 오류가 발생했습니다.');
+            }
         }
 
-        function viewUserDetail(id) {
-            alert('회원 상세보기: ID ' + id);
+        // ── 엑셀 다운로드 ──────────────────────────────────────
+        async function exportToExcel() {
+            try {
+                const data = await API.applications.getAll('limit=1000');
+                const apps = (data && data.data) ? data.data : [];
+                if (apps.length === 0) { alert('다운로드할 데이터가 없습니다.'); return; }
+
+                const header = ['사건번호', '법원', '신청자', '연락처', '입찰가', '입찰일', '법무사', '상태', '신청일'];
+                const rows = apps.map(a => [
+                    a.case_number || '', a.court || '', a.applicant_name || '', a.phone || '',
+                    a.bid_amount || '', a.bid_date || '', a.expert_name || '',
+                    getStatusText(a.status), (a.created_at || '').slice(0, 10)
+                ]);
+
+                const csv = '\uFEFF' + [header, ...rows].map(r => r.join(',')).join('\n');
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `신청내역_${new Date().toISOString().slice(0,10)}.csv`;
+                a.click();
+                URL.revokeObjectURL(url);
+            } catch (err) {
+                alert('다운로드 중 오류가 발생했습니다.');
+            }
         }
 
         function processSettlement() {

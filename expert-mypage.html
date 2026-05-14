@@ -185,6 +185,7 @@
         </main>
     </div>
 
+    <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script>
         // 로그인 체크
@@ -232,323 +233,331 @@
             }
         }
 
-        // 배정 요청 로드
-        function loadRequests() {
-            const listContainer = document.getElementById('requestsList');
-            
-            // TODO: 실제 API에서 데이터 가져오기
-            const mockData = [
-                {
-                    id: 1,
-                    caseNumber: '2024타경12345',
-                    address: '서울시 강남구 테헤란로 123',
-                    appraisalPrice: 500000000,
-                    bidPrice: 450000000,
-                    bidDate: '2024-02-15',
-                    clientName: '홍길동',
-                    requestedAt: '2024-02-10 14:30',
-                    remainingTime: 3240 // 초 단위 (54분)
-                },
-                {
-                    id: 2,
-                    caseNumber: '2024타경54321',
-                    address: '경기도 성남시 분당구 정자동 456',
-                    appraisalPrice: 300000000,
-                    bidPrice: 280000000,
-                    bidDate: '2024-02-20',
-                    clientName: '김철수',
-                    requestedAt: '2024-02-10 15:45',
-                    remainingTime: 600 // 10분 (긴급)
-                }
-            ];
-
-            document.getElementById('pendingCount').textContent = mockData.length;
-
-            if (mockData.length === 0) {
-                listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>배정 요청이 없습니다.</p></div>';
-                return;
-            }
-
-            listContainer.innerHTML = mockData.map(req => {
-                const timeRemaining = formatTimeRemaining(req.remainingTime);
-                const isUrgent = req.remainingTime < 900; // 15분 미만
-                
-                return `
-                <div class="application-card request-card">
-                    <div class="card-header">
-                        <div>
-                            <span class="case-number">${req.caseNumber}</span>
-                            <span class="timer-badge ${isUrgent ? 'urgent' : ''}">
-                                <i class="fas fa-clock"></i> ${timeRemaining} 남음
-                            </span>
-                        </div>
-                        <span class="bid-date">입찰일: ${req.bidDate}</span>
-                    </div>
-                    <div class="card-body">
-                        <p class="address"><i class="fas fa-map-marker-alt"></i> ${req.address}</p>
-                        <p class="client-info"><i class="fas fa-user"></i> 신청자: ${req.clientName}</p>
-                        <div class="price-info">
-                            <div>
-                                <span class="label">감정가</span>
-                                <span class="value">${formatPrice(req.appraisalPrice)}원</span>
-                            </div>
-                            <div>
-                                <span class="label">입찰가</span>
-                                <span class="value highlight">${formatPrice(req.bidPrice)}원</span>
-                            </div>
-                        </div>
-                        <p class="request-time" style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">
-                            <i class="fas fa-clock"></i> 요청 시간: ${req.requestedAt}
-                        </p>
-                    </div>
-                    <div class="card-footer">
-                        <button class="btn btn-success" onclick="acceptRequest(${req.id})">
-                            <i class="fas fa-check"></i> 수락하기
-                        </button>
-                        <button class="btn btn-outline" onclick="rejectRequest(${req.id})">
-                            <i class="fas fa-times"></i> 거부하기
-                        </button>
-                    </div>
-                </div>
-            `}).join('');
-
-            // 타이머 시작
-            startTimers();
+        // ── 공통 유틸 ───────────────────────────────────────────
+        function formatPrice(price) {
+            if (!price) return '0';
+            return Number(price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         }
 
-        // 진행 중 로드
-        function loadOngoing() {
-            const listContainer = document.getElementById('ongoingList');
-            
-            const mockData = [
-                {
-                    id: 3,
-                    caseNumber: '2024타경99999',
-                    address: '서울시 서초구 서초동 789',
-                    appraisalPrice: 800000000,
-                    bidPrice: 750000000,
-                    bidDate: '2024-02-25',
-                    clientName: '박영희',
-                    status: 'preparing'
-                }
-            ];
-
-            if (mockData.length === 0) {
-                listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>진행 중인 입찰이 없습니다.</p></div>';
-                return;
-            }
-
-            listContainer.innerHTML = mockData.map(item => `
-                <div class="application-card">
-                    <div class="card-header">
-                        <div>
-                            <span class="case-number">${item.caseNumber}</span>
-                            <span class="status-badge status-confirmed">진행중</span>
-                        </div>
-                        <span class="bid-date">입찰일: ${item.bidDate}</span>
-                    </div>
-                    <div class="card-body">
-                        <p class="address"><i class="fas fa-map-marker-alt"></i> ${item.address}</p>
-                        <p class="client-info"><i class="fas fa-user"></i> 신청자: ${item.clientName}</p>
-                        <div class="price-info">
-                            <div>
-                                <span class="label">감정가</span>
-                                <span class="value">${formatPrice(item.appraisalPrice)}원</span>
-                            </div>
-                            <div>
-                                <span class="label">입찰가</span>
-                                <span class="value highlight">${formatPrice(item.bidPrice)}원</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <button class="btn btn-outline" onclick="viewDetail(${item.id})">상세보기</button>
-                        <button class="btn btn-primary" onclick="updateStatus(${item.id})">진행상황 업데이트</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // 완료 내역 로드
-        function loadCompleted() {
-            const listContainer = document.getElementById('completedList');
-            
-            const mockData = [
-                {
-                    id: 4,
-                    caseNumber: '2024타경11111',
-                    address: '인천시 연수구 송도동 111',
-                    bidPrice: 350000000,
-                    bidDate: '2024-01-20',
-                    result: 'success',
-                    completedAt: '2024-01-20'
-                },
-                {
-                    id: 5,
-                    caseNumber: '2024타경22222',
-                    address: '경기도 용인시 수지구 222',
-                    bidPrice: 280000000,
-                    bidDate: '2024-01-15',
-                    result: 'fail',
-                    completedAt: '2024-01-15'
-                }
-            ];
-
-            // 통계 업데이트
-            document.getElementById('totalCompleted').textContent = mockData.length;
-            const successCount = mockData.filter(item => item.result === 'success').length;
-            document.getElementById('successCount').textContent = successCount;
-            document.getElementById('successRate').textContent = Math.round((successCount / mockData.length) * 100) + '%';
-
-            if (mockData.length === 0) {
-                listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>완료된 입찰이 없습니다.</p></div>';
-                return;
-            }
-
-            listContainer.innerHTML = mockData.map(item => `
-                <div class="application-card">
-                    <div class="card-header">
-                        <div>
-                            <span class="case-number">${item.caseNumber}</span>
-                            <span class="status-badge ${item.result === 'success' ? 'status-success' : 'status-cancelled'}">
-                                ${item.result === 'success' ? '낙찰' : '패찰'}
-                            </span>
-                        </div>
-                        <span class="bid-date">완료: ${item.completedAt}</span>
-                    </div>
-                    <div class="card-body">
-                        <p class="address"><i class="fas fa-map-marker-alt"></i> ${item.address}</p>
-                        <div class="price-info">
-                            <div>
-                                <span class="label">입찰가</span>
-                                <span class="value">${formatPrice(item.bidPrice)}원</span>
-                            </div>
-                            <div>
-                                <span class="label">수수료</span>
-                                <span class="value highlight">99,000원</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // 정산 내역 로드
-        function loadSettlement() {
-            const listContainer = document.getElementById('settlementList');
-            
-            const mockData = [
-                {
-                    date: '2024-01',
-                    count: 5,
-                    amount: 495000,
-                    status: 'completed'
-                },
-                {
-                    date: '2023-12',
-                    count: 8,
-                    amount: 792000,
-                    status: 'completed'
-                }
-            ];
-
-            const thisMonth = mockData[0].amount;
-            const total = mockData.reduce((sum, item) => sum + item.amount, 0);
-            
-            document.getElementById('thisMonthAmount').textContent = formatPrice(thisMonth) + '원';
-            document.getElementById('totalAmount').textContent = formatPrice(total) + '원';
-
-            listContainer.innerHTML = `
-                <table class="payments-table">
-                    <thead>
-                        <tr>
-                            <th>정산월</th>
-                            <th>처리 건수</th>
-                            <th>정산 금액</th>
-                            <th>상태</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${mockData.map(item => `
-                            <tr>
-                                <td>${item.date}</td>
-                                <td>${item.count}건</td>
-                                <td><strong>${formatPrice(item.amount)}원</strong></td>
-                                <td><span class="status-badge status-success">정산완료</span></td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
-        }
-
-        // 타이머 함수
         function formatTimeRemaining(seconds) {
-            const hours = Math.floor(seconds / 3600);
-            const minutes = Math.floor((seconds % 3600) / 60);
-            
-            if (hours > 0) {
-                return `${hours}시간 ${minutes}분`;
-            }
-            return `${minutes}분`;
+            if (seconds <= 0) return '마감';
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            return h > 0 ? `${h}시간 ${m}분` : `${m}분`;
         }
 
-        function startTimers() {
-            setInterval(() => {
-                const timers = document.querySelectorAll('.timer-badge');
-                timers.forEach(timer => {
-                    // TODO: 실제 타이머 업데이트 로직
+        // ── 로딩 스피너 ─────────────────────────────────────────
+        function setLoading(containerId) {
+            document.getElementById(containerId).innerHTML =
+                '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>불러오는 중...</p></div>';
+        }
+
+        // ── 배정 요청 로드 (실제 API) ───────────────────────────
+        async function loadRequests() {
+            const listContainer = document.getElementById('requestsList');
+            setLoading('requestsList');
+            try {
+                const data = await API.applications.getByExpertId(user.userId || user.id, '매칭중');
+                document.getElementById('pendingCount').textContent = data.length;
+
+                if (data.length === 0) {
+                    listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>배정 요청이 없습니다.</p></div>';
+                    return;
+                }
+
+                listContainer.innerHTML = data.map(req => {
+                    const bidDateMs = req.bid_date ? new Date(req.bid_date).getTime() - Date.now() : 0;
+                    const remainSec = Math.floor(bidDateMs / 1000);
+                    const isUrgent = remainSec > 0 && remainSec < 900;
+                    const timeLabel = remainSec > 0 ? formatTimeRemaining(remainSec) + ' 남음' : '마감';
+
+                    return `
+                    <div class="application-card request-card">
+                        <div class="card-header">
+                            <div>
+                                <span class="case-number">${req.case_number || '-'}</span>
+                                <span class="timer-badge ${isUrgent ? 'urgent' : ''}">
+                                    <i class="fas fa-clock"></i> ${timeLabel}
+                                </span>
+                            </div>
+                            <span class="bid-date">입찰일: ${req.bid_date || '-'}</span>
+                        </div>
+                        <div class="card-body">
+                            <p class="address"><i class="fas fa-map-marker-alt"></i> ${req.address || req.court || '-'}</p>
+                            <p class="client-info"><i class="fas fa-user"></i> 신청자: ${req.applicant_name || '-'}</p>
+                            <div class="price-info">
+                                <div>
+                                    <span class="label">감정가</span>
+                                    <span class="value">${formatPrice(req.appraisal_price)}원</span>
+                                </div>
+                                <div>
+                                    <span class="label">입찰가</span>
+                                    <span class="value highlight">${formatPrice(req.bid_amount)}원</span>
+                                </div>
+                            </div>
+                            <p style="color:#666;font-size:0.88rem;margin-top:0.5rem;">
+                                <i class="fas fa-clock"></i> 요청: ${req.assigned_at ? req.assigned_at.slice(0,16).replace('T',' ') : '-'}
+                            </p>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-success" onclick="acceptRequest('${req.id}')">
+                                <i class="fas fa-check"></i> 수락하기
+                            </button>
+                            <button class="btn btn-outline" onclick="rejectRequest('${req.id}')">
+                                <i class="fas fa-times"></i> 거부하기
+                            </button>
+                        </div>
+                    </div>`;
+                }).join('');
+            } catch (err) {
+                console.error('배정 요청 로드 오류:', err);
+                listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>배정 요청이 없습니다.</p></div>';
+                document.getElementById('pendingCount').textContent = '0';
+            }
+        }
+
+        // ── 진행 중 로드 (실제 API) ────────────────────────────
+        async function loadOngoing() {
+            const listContainer = document.getElementById('ongoingList');
+            setLoading('ongoingList');
+            try {
+                const data = await API.applications.getByExpertId(user.userId || user.id, '진행중');
+
+                if (data.length === 0) {
+                    listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>진행 중인 입찰이 없습니다.</p></div>';
+                    return;
+                }
+
+                listContainer.innerHTML = data.map(item => `
+                    <div class="application-card">
+                        <div class="card-header">
+                            <div>
+                                <span class="case-number">${item.case_number || '-'}</span>
+                                <span class="status-badge status-confirmed">진행중</span>
+                            </div>
+                            <span class="bid-date">입찰일: ${item.bid_date || '-'}</span>
+                        </div>
+                        <div class="card-body">
+                            <p class="address"><i class="fas fa-map-marker-alt"></i> ${item.address || item.court || '-'}</p>
+                            <p class="client-info"><i class="fas fa-user"></i> 신청자: ${item.applicant_name || '-'}</p>
+                            <div class="price-info">
+                                <div>
+                                    <span class="label">감정가</span>
+                                    <span class="value">${formatPrice(item.appraisal_price)}원</span>
+                                </div>
+                                <div>
+                                    <span class="label">입찰가</span>
+                                    <span class="value highlight">${formatPrice(item.bid_amount)}원</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-outline" onclick="viewDetail('${item.id}')">상세보기</button>
+                            <button class="btn btn-primary" onclick="updateStatus('${item.id}')">결과 입력</button>
+                        </div>
+                    </div>`).join('');
+            } catch (err) {
+                console.error('진행 중 로드 오류:', err);
+                listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>진행 중인 입찰이 없습니다.</p></div>';
+            }
+        }
+
+        // ── 완료 내역 로드 (실제 API) ──────────────────────────
+        async function loadCompleted() {
+            const listContainer = document.getElementById('completedList');
+            setLoading('completedList');
+            try {
+                const data = await API.applications.getByExpertId(user.userId || user.id, '완료');
+                const successList = data.filter(i => i.status === '낙찰' || i.result === 'success');
+
+                document.getElementById('totalCompleted').textContent = data.length;
+                document.getElementById('successCount').textContent = successList.length;
+                document.getElementById('successRate').textContent = data.length
+                    ? Math.round((successList.length / data.length) * 100) + '%' : '0%';
+
+                if (data.length === 0) {
+                    listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>완료된 입찰이 없습니다.</p></div>';
+                    return;
+                }
+
+                listContainer.innerHTML = data.map(item => {
+                    const isSuccess = item.status === '낙찰' || item.result === 'success';
+                    return `
+                    <div class="application-card">
+                        <div class="card-header">
+                            <div>
+                                <span class="case-number">${item.case_number || '-'}</span>
+                                <span class="status-badge ${isSuccess ? 'status-success' : 'status-cancelled'}">
+                                    ${isSuccess ? '낙찰 🎉' : '패찰'}
+                                </span>
+                            </div>
+                            <span class="bid-date">완료: ${item.completed_at ? item.completed_at.slice(0,10) : (item.bid_date || '-')}</span>
+                        </div>
+                        <div class="card-body">
+                            <p class="address"><i class="fas fa-map-marker-alt"></i> ${item.address || item.court || '-'}</p>
+                            <div class="price-info">
+                                <div>
+                                    <span class="label">입찰가</span>
+                                    <span class="value">${formatPrice(item.bid_amount)}원</span>
+                                </div>
+                                <div>
+                                    <span class="label">수수료</span>
+                                    <span class="value highlight">${formatPrice(item.service_fee || 99000)}원</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+                }).join('');
+            } catch (err) {
+                console.error('완료 내역 로드 오류:', err);
+                listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>완료된 입찰이 없습니다.</p></div>';
+            }
+        }
+
+        // ── 정산 내역 로드 (실제 API – 완료 건 집계) ──────────
+        async function loadSettlement() {
+            const listContainer = document.getElementById('settlementList');
+            setLoading('settlementList');
+            try {
+                const data = await API.applications.getByExpertId(user.userId || user.id, '완료');
+
+                // 월별 집계
+                const monthly = {};
+                data.forEach(app => {
+                    const month = (app.completed_at || app.bid_date || '').slice(0, 7);
+                    if (!month) return;
+                    if (!monthly[month]) monthly[month] = { count: 0, amount: 0 };
+                    monthly[month].count++;
+                    monthly[month].amount += Number(app.service_fee || 99000);
                 });
-            }, 60000); // 1분마다 업데이트
-        }
 
-        // 수락/거부
-        function acceptRequest(id) {
-            if (confirm('이 요청을 수락하시겠습니까?')) {
-                alert('수락되었습니다. 신청자에게 카카오톡 알림이 발송됩니다.');
-                loadRequests();
+                const months = Object.keys(monthly).sort().reverse();
+                const thisMonthAmt = months.length ? monthly[months[0]].amount : 0;
+                const totalAmt = months.reduce((s, m) => s + monthly[m].amount, 0);
+
+                document.getElementById('thisMonthAmount').textContent = formatPrice(thisMonthAmt) + '원';
+                document.getElementById('totalAmount').textContent = formatPrice(totalAmt) + '원';
+
+                if (months.length === 0) {
+                    listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>정산 내역이 없습니다.</p></div>';
+                    return;
+                }
+
+                listContainer.innerHTML = `
+                    <table class="payments-table">
+                        <thead>
+                            <tr><th>정산월</th><th>처리 건수</th><th>정산 금액</th><th>상태</th></tr>
+                        </thead>
+                        <tbody>
+                            ${months.map(m => `
+                                <tr>
+                                    <td>${m}</td>
+                                    <td>${monthly[m].count}건</td>
+                                    <td><strong>${formatPrice(monthly[m].amount)}원</strong></td>
+                                    <td><span class="status-badge status-success">정산완료</span></td>
+                                </tr>`).join('')}
+                        </tbody>
+                    </table>`;
+            } catch (err) {
+                console.error('정산 내역 로드 오류:', err);
+                listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>정산 내역이 없습니다.</p></div>';
             }
         }
 
-        function rejectRequest(id) {
-            if (confirm('이 요청을 거부하시겠습니까?\n거부 시 다른 법무사에게 자동 배정됩니다.')) {
+        // ── 수락 / 거부 (실제 API) ─────────────────────────────
+        async function acceptRequest(id) {
+            if (!confirm('이 요청을 수락하시겠습니까?')) return;
+            try {
+                await API.applications.updateStatus(id, '진행중', {
+                    acceptedAt: new Date().toISOString(),
+                    expertId: user.userId || user.id,
+                    expertName: user.name
+                });
+                alert('수락되었습니다. 신청자에게 알림이 발송됩니다.');
+                loadRequests();
+            } catch (err) {
+                alert('처리 중 오류가 발생했습니다.');
+            }
+        }
+
+        async function rejectRequest(id) {
+            if (!confirm('이 요청을 거부하시겠습니까?\n거부 시 다른 법무사에게 자동 배정됩니다.')) return;
+            try {
+                await API.applications.updateStatus(id, '매칭중', {
+                    rejectedExpert: user.userId || user.id,
+                    rejectedAt: new Date().toISOString()
+                });
                 alert('거부되었습니다.');
                 loadRequests();
+            } catch (err) {
+                alert('처리 중 오류가 발생했습니다.');
             }
         }
 
-        // 기타 함수
-        function formatPrice(price) {
-            return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        // ── 결과 입력 ──────────────────────────────────────────
+        async function updateStatus(id) {
+            const result = prompt('입찰 결과를 입력하세요:\n1 = 낙찰\n2 = 패찰');
+            if (!result) return;
+            const status = result === '1' ? '낙찰' : '완료';
+            try {
+                await API.applications.updateStatus(id, status, {
+                    completedAt: new Date().toISOString(),
+                    result: result === '1' ? 'success' : 'fail'
+                });
+                alert('결과가 입력되었습니다.');
+                loadOngoing();
+            } catch (err) {
+                alert('처리 중 오류가 발생했습니다.');
+            }
         }
 
-        function viewDetail(id) {
-            alert('상세보기 기능은 추후 구현 예정입니다.');
-        }
-
-        function updateStatus(id) {
-            alert('진행상황 업데이트 기능은 추후 구현 예정입니다.');
+        async function viewDetail(id) {
+            try {
+                const app = await API.applications.getById(id);
+                if (!app) { alert('정보를 불러올 수 없습니다.'); return; }
+                alert([
+                    `📋 상세 정보`,
+                    `━━━━━━━━━━━━━━━━━━━━`,
+                    `사건번호: ${app.case_number || '-'}`,
+                    `법원: ${app.court || '-'}`,
+                    `주소: ${app.address || '-'}`,
+                    `입찰가: ${formatPrice(app.bid_amount)}원`,
+                    `입찰일: ${app.bid_date || '-'}`,
+                    `신청자: ${app.applicant_name || '-'}`,
+                    `연락처: ${app.phone || '-'}`,
+                    `상태: ${app.status || '-'}`
+                ].join('\n'));
+            } catch (err) {
+                alert('상세 정보를 불러오는 중 오류가 발생했습니다.');
+            }
         }
 
         function handleLogout() {
-            if (confirm('로그아웃 하시겠습니까?')) {
-                Auth.logout();
-            }
+            if (confirm('로그아웃 하시겠습니까?')) Auth.logout();
         }
 
-        // 회원정보 수정
-        document.getElementById('profileForm').addEventListener('submit', function(e) {
+        // ── 회원정보 저장 (실제 API) ───────────────────────────
+        document.getElementById('profileForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
             const newPassword = document.getElementById('newPassword').value;
             const newPasswordConfirm = document.getElementById('newPasswordConfirm').value;
-            
             if (newPassword && newPassword !== newPasswordConfirm) {
                 alert('비밀번호가 일치하지 않습니다.');
                 return;
             }
-            
-            alert('회원정보가 수정되었습니다.');
+            const updates = {
+                name: document.getElementById('profileNameInput').value,
+                phone: document.getElementById('profilePhone').value,
+                officeAddress: document.getElementById('officeAddress').value
+            };
+            if (newPassword) updates.password = newPassword;
+
+            const btn = this.querySelector('button[type="submit"]');
+            btn.disabled = true; btn.textContent = '저장 중...';
+
+            const result = await Auth.saveProfile(updates);
+            alert(result.success ? '회원정보가 저장되었습니다.' : (result.message || '저장 중 오류가 발생했습니다.'));
+            btn.disabled = false; btn.textContent = '저장하기';
         });
 
         // 초기 로드
