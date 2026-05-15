@@ -8,81 +8,177 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <style>
-        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .card { background: white; border-radius: 20px; padding: 3rem 2rem; max-width: 500px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
-        .icon-wrap { font-size: 4rem; margin-bottom: 1rem; }
-        h1 { font-size: 1.6rem; color: #1a1a2e; margin-bottom: 0.5rem; }
-        p { color: #666; line-height: 1.7; margin-bottom: 1.5rem; }
-        .app-id { background: #f0f4ff; border: 1.5px solid #c7d4f8; color: #1550E8; border-radius: 10px; padding: 0.75rem 1.5rem; font-weight: 700; display: inline-block; margin-bottom: 1.5rem; }
-        .info-box { background: #f8f9fa; border-radius: 12px; padding: 1.2rem; text-align: left; margin-bottom: 1.5rem; font-size: 0.88rem; color: #555; line-height: 1.9; }
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Noto Sans KR', sans-serif; }
+        .card { background: white; border-radius: 24px; padding: 3rem 2rem; max-width: 520px; width: 92%; text-align: center; box-shadow: 0 30px 80px rgba(0,0,0,0.25); }
+        .icon-wrap { font-size: 4rem; margin-bottom: 1rem; animation: bounce 0.6s ease; }
+        @keyframes bounce { 0%,100%{transform:scale(1)} 50%{transform:scale(1.15)} }
+        h1 { font-size: 1.6rem; color: #1a1a2e; margin-bottom: 0.5rem; font-weight: 800; }
+        p { color: #666; line-height: 1.7; margin-bottom: 1.5rem; font-size: 0.95rem; }
+        .app-id { background: #f0f4ff; border: 1.5px solid #c7d4f8; color: #1550E8; border-radius: 12px; padding: 0.75rem 1.5rem; font-weight: 800; display: inline-block; margin-bottom: 1.5rem; font-size: 1rem; }
+        .info-box { background: #f8f9fa; border-radius: 14px; padding: 1.3rem 1.5rem; text-align: left; margin-bottom: 1.5rem; font-size: 0.9rem; color: #555; line-height: 2; }
+        .info-box strong { color: #1a1a2e; }
+        .steps { text-align: left; margin-bottom: 1.5rem; }
+        .step-item { display: flex; gap: 0.75rem; align-items: flex-start; padding: 0.6rem 0; border-bottom: 1px solid #f0f0f0; }
+        .step-item:last-child { border-bottom: none; }
+        .step-num { width: 28px; height: 28px; background: #1550E8; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.78rem; font-weight: 700; flex-shrink: 0; }
+        .step-num.done { background: #10B981; }
+        .step-text strong { display: block; font-size: 0.9rem; color: #333; }
+        .step-text small { color: #888; font-size: 0.8rem; }
         .btn-wrap { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
-        .btn { padding: 0.85rem 1.5rem; border-radius: 10px; font-weight: 600; cursor: pointer; border: none; font-size: 0.95rem; text-decoration: none; }
+        .btn { padding: 0.85rem 1.5rem; border-radius: 12px; font-weight: 700; cursor: pointer; border: none; font-size: 0.95rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; transition: all 0.2s; font-family: inherit; }
         .btn-primary { background: #1550E8; color: white; }
+        .btn-primary:hover { background: #0d3ba8; transform: translateY(-2px); }
         .btn-outline { background: white; color: #1550E8; border: 2px solid #1550E8; }
+        .btn-outline:hover { background: #f0f4ff; }
         .loading { color: #999; font-size: 0.9rem; }
+        .step-loading { display: flex; align-items: center; gap: 0.75rem; padding: 1rem; background: #f8f9fa; border-radius: 12px; margin-bottom: 1rem; }
+        .step-loading .spin { width: 32px; height: 32px; border: 3px solid #e0e0e0; border-top-color: #1550E8; border-radius: 50%; animation: spin 1s linear infinite; flex-shrink: 0; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .step-loading p { margin: 0; font-size: 0.88rem; color: #666; text-align: left; }
+        .step-loading p strong { display: block; color: #333; margin-bottom: 0.1rem; }
+        .expert-assigned { background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 12px; padding: 1rem 1.2rem; text-align: left; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.75rem; }
+        .expert-avatar { width: 44px; height: 44px; background: linear-gradient(135deg, #10B981, #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.1rem; flex-shrink: 0; }
+        .expert-info strong { display: block; font-size: 0.95rem; color: #065f46; }
+        .expert-info small { font-size: 0.8rem; color: #6b7280; }
     </style>
 </head>
 <body>
 <div class="card">
+    <!-- 로딩 -->
     <div id="loadingView">
         <div class="icon-wrap">⏳</div>
         <h1>결제 확인 중...</h1>
-        <p class="loading">잠시만 기다려주세요.</p>
+        <p class="loading">결제 정보를 확인하고 담당 법무사를 매칭하고 있습니다.</p>
+        <div class="step-loading">
+            <div class="spin"></div>
+            <p><strong id="loadingStep">결제 상태 확인 중...</strong><small>잠시만 기다려주세요</small></p>
+        </div>
     </div>
+
+    <!-- 성공 -->
     <div id="successView" style="display:none;">
         <div class="icon-wrap">🎉</div>
         <h1>결제 & 신청 완료!</h1>
-        <p>대리입찰 서비스 수수료 결제가 완료되었습니다.<br>담당 법무사 배정 후 연락드립니다.</p>
+        <p>대리입찰 서비스 수수료 <strong style="color:#1550E8;">99,000원</strong> 결제가 완료되었습니다.</p>
+
         <div class="app-id" id="appIdBadge">신청번호: -</div>
+
+        <!-- 법무사 배정 결과 -->
+        <div id="expertAssignedBox" style="display:none;">
+            <div class="expert-assigned">
+                <div class="expert-avatar"><i class="fas fa-user-tie"></i></div>
+                <div class="expert-info">
+                    <strong id="expertNameDisplay">-</strong>
+                    <small>담당 법무사 배정 완료 ✅</small>
+                </div>
+            </div>
+        </div>
+        <div id="expertPendingBox">
+            <div style="background:#fff7ed;border:1.5px solid #fed7aa;border-radius:12px;padding:0.85rem 1.1rem;text-align:left;margin-bottom:1.2rem;font-size:0.85rem;color:#c2410c;">
+                ⏰ 담당 법무사 배정 중... <strong>2~4시간 내</strong> SMS로 안내드립니다.
+            </div>
+        </div>
+
         <div class="info-box">
             ✅ 결제금액: <strong>99,000원</strong><br>
-            📋 신청번호: <span id="appIdText">-</span><br>
-            ⏰ 법무사 배정: <strong>2~4시간 내</strong><br>
-            📱 배정 완료 시 카카오톡/이메일 알림 발송
+            📋 신청번호: <strong id="appIdText">-</strong><br>
+            📱 배정 완료 시 카카오톡 / 이메일 알림 발송<br>
+            🔒 입찰 기일 48시간 전까지 취소 시 전액 환불
         </div>
+
+        <!-- 진행 단계 -->
+        <div class="steps">
+            <div class="step-item">
+                <div class="step-num done"><i class="fas fa-check" style="font-size:0.7rem;"></i></div>
+                <div class="step-text"><strong>결제 완료</strong><small>99,000원 결제 성공</small></div>
+            </div>
+            <div class="step-item">
+                <div class="step-num" id="stepMatchNum">2</div>
+                <div class="step-text"><strong>법무사 매칭</strong><small id="stepMatchTxt">2~4시간 내 배정</small></div>
+            </div>
+            <div class="step-item">
+                <div class="step-num" style="background:#e0e0e0;">3</div>
+                <div class="step-text"><strong>입찰 진행</strong><small>법무사가 직접 법원 출석</small></div>
+            </div>
+            <div class="step-item">
+                <div class="step-num" style="background:#e0e0e0;">4</div>
+                <div class="step-text"><strong>결과 통보</strong><small>낙찰/패찰 즉시 SMS 안내</small></div>
+            </div>
+        </div>
+
         <div class="btn-wrap">
             <a href="mypage.html" class="btn btn-outline"><i class="fas fa-list"></i> 신청 내역</a>
             <a href="index.html" class="btn btn-primary"><i class="fas fa-home"></i> 홈으로</a>
         </div>
     </div>
+
+    <!-- 실패 -->
     <div id="errorView" style="display:none;">
         <div class="icon-wrap">❌</div>
         <h1>결제 확인 실패</h1>
         <p>결제 정보 확인 중 오류가 발생했습니다.<br>고객센터로 문의해주세요.</p>
-        <p style="font-size:0.85rem; color:#1550E8;">📞 02-853-5875</p>
+        <p style="font-size:0.88rem;background:#f0f4ff;padding:0.75rem 1rem;border-radius:10px;color:#1550E8;">
+            📞 <strong>02-853-5875</strong> &nbsp;|&nbsp; 평일 09:00~18:00
+        </p>
         <div class="btn-wrap">
-            <a href="apply.html" class="btn btn-outline">다시 신청</a>
-            <a href="index.html" class="btn btn-primary">홈으로</a>
+            <a href="apply.html" class="btn btn-outline"><i class="fas fa-redo"></i> 다시 신청</a>
+            <a href="index.html" class="btn btn-primary"><i class="fas fa-home"></i> 홈으로</a>
         </div>
     </div>
 </div>
 
+<!-- EmailJS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script src="js/api.js"></script>
 <script src="js/auth.js"></script>
 <script>
+// ══════════════════════════════════════════════════════
+// EmailJS 설정 (https://www.emailjs.com 에서 발급)
+// ══════════════════════════════════════════════════════
+const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';    // ← emailjs.com → Account → Public Key
+const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';    // ← emailjs.com → Email Services → Service ID
+const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';   // ← emailjs.com → Email Templates → Template ID
+
+// EmailJS 초기화 (Public Key 설정 후 활성화됨)
+if (EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
+    emailjs.init(EMAILJS_PUBLIC_KEY);
+}
+
+// ══════════════════════════════════════════════════════
+// 메인 처리
+// ══════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', async function() {
-    const params = new URLSearchParams(window.location.search);
+    const params     = new URLSearchParams(window.location.search);
     const paymentKey = params.get('paymentKey');
     const orderId    = params.get('orderId');
     const amount     = params.get('amount');
     const appId      = params.get('appId');
 
+    const setStep = (msg) => {
+        const el = document.getElementById('loadingStep');
+        if (el) el.textContent = msg;
+    };
+
     try {
-        // ── 1. 결제 상태 업데이트 (DB) ──────────────────
+        // ── 1. 결제 상태 DB 업데이트 ───────────────────
         if (typeof API !== 'undefined' && appId) {
+            setStep('결제 상태 저장 중...');
             await API.applications.updateStatus(appId, '결제완료', {
-                payment_key: paymentKey,
-                order_id: orderId,
+                payment_key:    paymentKey,
+                order_id:       orderId,
                 payment_status: '결제완료',
-                paid_at: new Date().toISOString()
+                paid_at:        new Date().toISOString()
             });
 
-            // ── 2. 지역별 법무사 자동 매칭 ──────────────
+            // ── 2. 지역별 법무사 자동 매칭 ─────────────
+            setStep('담당 법무사 매칭 중...');
             await autoMatchExpert(appId);
         }
 
-        // ── 3. 완료 화면 표시 ────────────────────────
-        const shortId = appId ? appId.toString().slice(-8).toUpperCase() : orderId;
+        // ── 3. 완료 화면 표시 ──────────────────────────
+        const shortId = appId
+            ? appId.toString().slice(-8).toUpperCase()
+            : (orderId || 'UNKNOWN');
         document.getElementById('appIdBadge').textContent = '신청번호: ' + shortId;
         document.getElementById('appIdText').textContent  = shortId;
 
@@ -92,83 +188,140 @@ document.addEventListener('DOMContentLoaded', async function() {
     } catch(e) {
         console.error('결제 확인 오류:', e);
         document.getElementById('loadingView').style.display = 'none';
-        document.getElementById('errorView').style.display = 'block';
+        document.getElementById('errorView').style.display  = 'block';
     }
 });
 
-// ── 지역별 법무사 자동 매칭 ──────────────────────────────
+// ══════════════════════════════════════════════════════
+// 지역별 법무사 자동 매칭 (C방식 — 지역 우선, 없으면 전국 랜덤)
+// ══════════════════════════════════════════════════════
 async function autoMatchExpert(appId) {
     try {
-        // 신청 정보 가져오기
         const app = await API.applications.getById(appId);
         if (!app) return;
 
         const region = app.region || '';
+        let matched  = null;
 
-        // 해당 지역 법무사 조회 (region 필드 기준)
-        const expertsData = await API.get(`users?userType=expert&status=active&region=${encodeURIComponent(region)}&limit=10`);
-        const experts = expertsData?.data || [];
+        // ① 해당 지역 법무사 조회
+        if (region) {
+            const res = await API.users.getAll(
+                `userType=expert&status=active&limit=50`
+            );
+            const allExperts = res?.data || [];
 
-        if (experts.length === 0) {
-            // 지역 법무사 없으면 전국 법무사 중 랜덤 배정
-            const allExperts = await API.get(`users?userType=expert&status=active&limit=10`);
-            const allList = allExperts?.data || [];
-            if (allList.length > 0) {
-                const expert = allList[Math.floor(Math.random() * allList.length)];
-                await assignAndNotify(appId, app, expert);
+            // serviceRegions 필드에 region 포함 여부로 필터
+            const regional = allExperts.filter(e => {
+                const regs = Array.isArray(e.serviceRegions)
+                    ? e.serviceRegions
+                    : [e.serviceRegions || ''];
+                return regs.some(r => r && r.includes(region));
+            });
+
+            if (regional.length > 0) {
+                // 로드밸런싱: 현재 배정 건수가 가장 적은 법무사 우선
+                matched = await pickLeastBusy(regional);
             }
-            return;
         }
 
-        // 신청 건수 가장 적은 법무사 배정 (로드밸런싱)
-        const expert = experts[0];
-        await assignAndNotify(appId, app, expert);
+        // ② 지역 법무사 없으면 전국 전체에서 랜덤 배정
+        if (!matched) {
+            const res    = await API.users.getAll('userType=expert&status=active&limit=50');
+            const all    = res?.data || [];
+            if (all.length > 0) {
+                matched = await pickLeastBusy(all);
+            }
+        }
 
+        if (matched) {
+            await assignAndNotify(appId, app, matched);
+        }
     } catch(e) {
         console.error('법무사 자동 매칭 오류:', e);
     }
 }
 
-// ── 법무사 배정 + 이메일 알림 ────────────────────────────
+// 배정 건수가 가장 적은 법무사 선택
+async function pickLeastBusy(experts) {
+    // 각 법무사의 현재 배정 건수 조회
+    const counts = await Promise.all(
+        experts.map(async ex => {
+            try {
+                const res = await API.applications.getAll(
+                    `assigned_expert_id=${ex.id}&status=매칭완료&limit=1000`
+                );
+                return { expert: ex, count: res?.data?.length || 0 };
+            } catch { return { expert: ex, count: 0 }; }
+        })
+    );
+    // 건수 가장 적은 법무사 반환
+    counts.sort((a, b) => a.count - b.count);
+    return counts[0]?.expert || experts[0];
+}
+
+// ══════════════════════════════════════════════════════
+// 법무사 배정 + 알림 발송
+// ══════════════════════════════════════════════════════
 async function assignAndNotify(appId, app, expert) {
     // DB 배정 업데이트
-    await API.applications.assignExpert(appId, expert.id, expert.name);
+    await API.applications.assignExpert(appId, expert.id, expert.name || expert.userId);
 
-    // 이메일 알림 (EmailJS 사용)
+    // UI 업데이트 — 법무사 배정 완료 표시
+    const name = expert.name || expert.userId || '담당 법무사';
+    document.getElementById('expertNameDisplay').textContent = name + ' 법무사';
+    document.getElementById('expertAssignedBox').style.display = 'block';
+    document.getElementById('expertPendingBox').style.display  = 'none';
+
+    const stepNum = document.getElementById('stepMatchNum');
+    const stepTxt = document.getElementById('stepMatchTxt');
+    if (stepNum) { stepNum.classList.add('done'); stepNum.innerHTML = '<i class="fas fa-check" style="font-size:0.7rem;"></i>'; }
+    if (stepTxt) stepTxt.textContent = name + ' 법무사 배정 완료';
+
+    // 이메일 알림
     await sendEmailNotification(app, expert);
 }
 
-// ── EmailJS 이메일 발송 ──────────────────────────────────
+// ══════════════════════════════════════════════════════
+// EmailJS 알림 발송
+// ══════════════════════════════════════════════════════
 async function sendEmailNotification(app, expert) {
-    // EmailJS 무료 플랜 사용 (월 200건)
-    // 설정 필요: https://www.emailjs.com
-    const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';   // 나중에 설정
-    const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';  // 나중에 설정
-    const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';   // 나중에 설정
-
     if (EMAILJS_SERVICE_ID === 'YOUR_SERVICE_ID') {
-        console.log('📧 이메일 알림 (EmailJS 미설정 - 콘솔 출력)');
-        console.log('→ 법무사:', expert.name, expert.email);
-        console.log('→ 신청자:', app.applicant_name, app.phone);
-        console.log('→ 사건번호:', app.case_number);
+        // 미설정 시 콘솔 로그만
+        console.log('📧 [EmailJS 미설정] 이메일 알림 스킵');
+        console.log('  → 법무사:', expert.name || expert.userId, '/', expert.email);
+        console.log('  → 신청자:', app.applicant_name, '/', app.phone);
+        console.log('  → 사건번호:', app.case_number, '@', app.court);
         return;
     }
 
+    const templateParams = {
+        // 법무사에게 발송
+        to_email:         expert.email || '',
+        to_name:          expert.name  || expert.userId || '법무사',
+        // 신청 정보
+        applicant_name:   app.applicant_name || '',
+        applicant_phone:  app.phone || '',
+        applicant_email:  app.email || '',
+        case_number:      app.case_number || '',
+        court:            app.court || '',
+        region:           app.region || '',
+        bid_date:         app.bid_date || '',
+        address:          app.address || '',
+        bid_amount:       Number(app.bid_amount || 0).toLocaleString('ko-KR') + '원',
+        deposit_method:   app.deposit_method || '',
+        bid_type:         app.bid_type || '단독',
+        memo:             app.memo || '없음',
+        service_fee:      '99,000원',
+        assigned_at:      new Date().toLocaleString('ko-KR'),
+        mypage_url:       'https://lim5342.github.io/bid-tok/expert-mypage.html',
+    };
+
     try {
-        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-            to_email:       expert.email,
-            to_name:        expert.name,
-            applicant_name: app.applicant_name,
-            applicant_phone: app.phone,
-            case_number:    app.case_number,
-            court:          app.court,
-            bid_date:       app.bid_date,
-            address:        app.address,
-            bid_amount:     Number(app.bid_amount).toLocaleString() + '원',
-        }, EMAILJS_PUBLIC_KEY);
+        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
         console.log('✅ 법무사 이메일 알림 발송 완료');
     } catch(e) {
-        console.error('이메일 발송 오류:', e);
+        // 이메일 실패해도 결제 완료 화면은 정상 표시
+        console.error('📧 이메일 발송 오류 (무시):', e);
     }
 }
 </script>
