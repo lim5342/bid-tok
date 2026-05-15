@@ -4,959 +4,1683 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>관리자 페이지 - 대리입찰 톡</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/mypage.css">
-</head>
-<body>
-    <!-- 로그인 화면 -->
-    <div id="adminLoginScreen" style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-        <div style="background: white; padding: 3rem; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); width: 100%; max-width: 400px;">
-            <h1 style="text-align: center; margin-bottom: 2rem; color: #333;">
-                <i class="fas fa-shield-alt"></i> 관리자 로그인
-            </h1>
-            <form id="adminLoginForm">
-                <div style="margin-bottom: 1.5rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 600;">아이디</label>
-                    <input type="text" id="adminId" required placeholder="bootv1, bootv2, bootv3, bootv4" style="width: 100%; padding: 0.8rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;">
-                </div>
-                <div style="margin-bottom: 1.5rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; color: #333; font-weight: 600;">비밀번호</label>
-                    <input type="password" id="adminPassword" required placeholder="비밀번호 입력" style="width: 100%; padding: 0.8rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;">
-                </div>
-                <button type="submit" style="width: 100%; padding: 1rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 700; cursor: pointer;">로그인</button>
-            </form>
-            <p style="text-align: center; margin-top: 1.5rem; color: #666; font-size: 0.9rem;">
-                bootv1: 대표 (마스터) | bootv2~4: 팀장
-            </p>
-        </div>
-    </div>
-
-    <!-- 관리자 대시보드 -->
-    <div id="adminDashboard" style="display: none;">
-        <!-- Navigation -->
-        <nav class="navbar">
-            <div class="container nav-container">
-                <div class="nav-logo">
-                    <i class="fas fa-shield-alt"></i>
-                    <span>관리자 대시보드</span>
-                </div>
-                <div class="nav-actions">
-                    <span id="adminName" style="font-weight: 600; margin-right: 1rem;"></span>
-                    <button class="btn btn-outline" onclick="adminLogout()">로그아웃</button>
-                </div>
-            </div>
-        </nav>
-
-        <div class="mypage-container">
-            <aside class="mypage-sidebar">
-                <div class="sidebar-profile">
-                    <div class="profile-avatar">
-                        <i class="fas fa-user-shield"></i>
-                    </div>
-                    <h3 id="adminRoleName">관리자</h3>
-                    <p id="adminUserId"></p>
-                </div>
-                
-                <nav class="sidebar-menu">
-                    <a href="#dashboard" class="menu-item active" onclick="showAdminSection('dashboard', this)">
-                        <i class="fas fa-chart-line"></i> 대시보드
-                    </a>
-                    <a href="#applications" class="menu-item" onclick="showAdminSection('applications', this)">
-                        <i class="fas fa-file-alt"></i> 신청 관리
-                    </a>
-                    <a href="#experts" class="menu-item" onclick="showAdminSection('experts', this)">
-                        <i class="fas fa-user-tie"></i> 전문가 승인
-                    </a>
-                    <a href="#users" class="menu-item" onclick="showAdminSection('users', this)">
-                        <i class="fas fa-users"></i> 회원 관리
-                    </a>
-                    <a href="#settlements" class="menu-item" onclick="showAdminSection('settlements', this)">
-                        <i class="fas fa-won-sign"></i> 정산 관리
-                    </a>
-                </nav>
-            </aside>
-
-            <main class="mypage-content">
-                <!-- 대시보드 섹션 -->
-                <section id="dashboardSection" class="content-section active">
-                    <div class="section-header">
-                        <h2><i class="fas fa-chart-line"></i> 대시보드</h2>
-                    </div>
-
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <i class="fas fa-file-alt"></i>
-                            <div class="stat-value">24</div>
-                            <div class="stat-label">전체 신청</div>
-                        </div>
-                        <div class="stat-card">
-                            <i class="fas fa-clock"></i>
-                            <div class="stat-value">5</div>
-                            <div class="stat-label">매칭 대기</div>
-                        </div>
-                        <div class="stat-card">
-                            <i class="fas fa-user-tie"></i>
-                            <div class="stat-value">12</div>
-                            <div class="stat-label">활동 법무사</div>
-                        </div>
-                        <div class="stat-card">
-                            <i class="fas fa-won-sign"></i>
-                            <div class="stat-value">2,376,000원</div>
-                            <div class="stat-label">이번 달 매출</div>
-                        </div>
-                    </div>
-
-                    <div class="recent-card">
-                        <h3>최근 신청 현황</h3>
-                        <div class="table-wrap" id="recentApplications"></div>
-                    </div>
-                </section>
-
-                <!-- 신청 관리 섹션 -->
-                <section id="applicationsSection" class="content-section">
-                    <div class="section-header">
-                        <h2><i class="fas fa-file-alt"></i> 신청 관리</h2>
-                        <button class="btn btn-excel" onclick="exportToExcel()">
-                            <i class="fas fa-file-excel"></i> 엑셀 다운로드
-                        </button>
-                    </div>
-
-                    <div class="filter-tabs">
-                        <button class="filter-tab active" onclick="filterAdminApplications('all', this)">전체</button>
-                        <button class="filter-tab" onclick="filterAdminApplications('matching', this)">매칭중</button>
-                        <button class="filter-tab" onclick="filterAdminApplications('confirmed', this)">확정</button>
-                        <button class="filter-tab" onclick="filterAdminApplications('completed', this)">완료</button>
-                    </div>
-
-                    <div class="table-wrap" id="adminApplicationsList"></div>
-                </section>
-
-                <!-- 전문가 승인 섹션 -->
-                <section id="expertsSection" class="content-section">
-                    <div class="section-header">
-                        <h2><i class="fas fa-user-tie"></i> 전문가 승인 대기</h2>
-                    </div>
-
-                    <div id="expertApprovalList"></div>
-                </section>
-
-                <!-- 회원 관리 섹션 -->
-                <section id="usersSection" class="content-section">
-                    <div class="section-header">
-                        <h2><i class="fas fa-users"></i> 회원 관리</h2>
-                    </div>
-
-                    <div style="margin-bottom: 1.5rem;">
-                        <input type="text" id="userSearch" placeholder="이름, 이메일, 전화번호로 검색">
-                    </div>
-
-                    <div class="table-wrap" id="usersList"></div>
-                </section>
-
-                <!-- 정산 관리 섹션 -->
-                <section id="settlementsSection" class="content-section">
-                    <div class="section-header">
-                        <h2><i class="fas fa-won-sign"></i> 정산 관리</h2>
-                    </div>
-
-                    <div class="table-wrap" id="settlementsList"></div>
-                </section>
-            </main>
-        </div>
-    </div>
-
-    <script src="js/api.js"></script>
-    <script>
-        let currentAdmin = null;
-
-        // 관리자 로그인
-        document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const id = document.getElementById('adminId').value;
-            const password = document.getElementById('adminPassword').value;
-            
-            // 임시 인증 (실제로는 서버 인증 필요)
-            const validAdmins = {
-                'bootv1': { name: '대표 (마스터)', role: 'master', password: '1234' },
-                'bootv2': { name: '팀장 2', role: 'team', password: '1234' },
-                'bootv3': { name: '팀장 3', role: 'team', password: '1234' },
-                'bootv4': { name: '팀장 4', role: 'team', password: '1234' }
-            };
-            
-            if (validAdmins[id] && validAdmins[id].password === password) {
-                currentAdmin = { id: id, ...validAdmins[id] };
-                
-                document.getElementById('adminLoginScreen').style.display = 'none';
-                document.getElementById('adminDashboard').style.display = 'block';
-                document.getElementById('adminName').textContent = currentAdmin.name;
-                document.getElementById('adminRoleName').textContent = currentAdmin.name;
-                document.getElementById('adminUserId').textContent = id;
-                
-                loadDashboard();
-            } else {
-                alert('아이디 또는 비밀번호가 올바르지 않습니다.');
-            }
-        });
-
-        // 로그아웃
-        function adminLogout() {
-            if (confirm('로그아웃 하시겠습니까?')) {
-                currentAdmin = null;
-                document.getElementById('adminLoginScreen').style.display = 'flex';
-                document.getElementById('adminDashboard').style.display = 'none';
-                document.getElementById('adminLoginForm').reset();
-            }
-        }
-
-        // 섹션 전환
-        function showAdminSection(section, el) {
-            const clickedItem = el ? el.closest('.menu-item') || el : event.currentTarget;
-            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
-            if (clickedItem) clickedItem.classList.add('active');
-            
-            document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
-            
-            if (section === 'dashboard') {
-                document.getElementById('dashboardSection').classList.add('active');
-                loadDashboard();
-            } else if (section === 'applications') {
-                document.getElementById('applicationsSection').classList.add('active');
-                loadApplications();
-            } else if (section === 'experts') {
-                document.getElementById('expertsSection').classList.add('active');
-                loadExpertApprovals();
-            } else if (section === 'users') {
-                document.getElementById('usersSection').classList.add('active');
-                loadUsers();
-            } else if (section === 'settlements') {
-                document.getElementById('settlementsSection').classList.add('active');
-                loadSettlements();
-            }
-        }
-
-        // ── 공통 유틸 ───────────────────────────────────────────
-        function formatPrice(price) {
-            if (!price) return '0';
-            return Number(price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-        }
-
-        function getStatusText(status) {
-            const map = {
-                '접수': '접수', '매칭중': '매칭중', '매칭완료': '확정',
-                '진행중': '진행중', '완료': '완료', '낙찰': '낙찰',
-                '유찰': '유찰', '취소': '취소',
-                'matching': '매칭중', 'confirmed': '확정', 'completed': '완료', 'cancelled': '취소'
-            };
-            return map[status] || status;
-        }
-
-        function getStatusClass(status) {
-            const map = {
-                '접수': 'status-matching', '매칭중': 'status-matching',
-                '매칭완료': 'status-confirmed', '진행중': 'status-confirmed',
-                '완료': 'status-completed', '낙찰': 'status-success',
-                '유찰': 'status-cancelled', '취소': 'status-cancelled',
-                'matching': 'status-matching', 'confirmed': 'status-confirmed',
-                'completed': 'status-completed', 'cancelled': 'status-cancelled'
-            };
-            return map[status] || 'status-matching';
-        }
-
-        function setLoading(id) {
-            const el = document.getElementById(id);
-            if (el) el.innerHTML = '<div style="text-align:center;padding:2rem;color:#999;"><i class="fas fa-spinner fa-spin" style="font-size:2rem;"></i><p style="margin-top:1rem;">불러오는 중...</p></div>';
-        }
-
-        // ── 대시보드 로드 (실제 API) ───────────────────────────
-        async function loadDashboard() {
-            setLoading('recentApplications');
-            try {
-                const data = await API.applications.getAll('limit=10&sort=-createdAt');
-                const apps = (data && data.data) ? data.data : [];
-
-                // 통계 카드 업데이트
-                const allData = await API.applications.getAll('limit=1000');
-                const all = (allData && allData.data) ? allData.data : [];
-                const matching = all.filter(a => a.status === '매칭중' || a.status === '접수');
-
-                // 사용자 수 조회
-                let userCount = 0;
-                try {
-                    const uData = await API.users.getAll('userType=expert&status=active&limit=1000');
-                    userCount = (uData && uData.data) ? uData.data.length : 0;
-                } catch(e) {}
-
-                // 통계 카드 값 업데이트 (하드코딩 → 실제 값)
-                const statValues = document.querySelectorAll('.stat-value');
-                if (statValues[0]) statValues[0].textContent = all.length;
-                if (statValues[1]) statValues[1].textContent = matching.length;
-                if (statValues[2]) statValues[2].textContent = userCount || '-';
-
-                // 이번 달 매출 계산
-                const thisMonth = new Date().toISOString().slice(0, 7);
-                const thisMonthRevenue = all
-                    .filter(a => (a.created_at || '').slice(0, 7) === thisMonth)
-                    .reduce((s, a) => s + Number(a.service_fee || 99000), 0);
-                if (statValues[3]) statValues[3].textContent = formatPrice(thisMonthRevenue) + '원';
-
-                // 최근 신청 테이블
-                const container = document.getElementById('recentApplications');
-                if (apps.length === 0) {
-                    container.innerHTML = '<div style="text-align:center;padding:2rem;color:#999;">신청 내역이 없습니다.</div>';
-                    return;
-                }
-                container.innerHTML = `
-                    <table class="payments-table">
-                        <thead>
-                            <tr><th>사건번호</th><th>신청자</th><th>담당 법무사</th><th>상태</th><th>신청일</th></tr>
-                        </thead>
-                        <tbody>
-                            ${apps.map(item => `
-                                <tr>
-                                    <td>${item.case_number || '-'}</td>
-                                    <td>${item.applicant_name || '-'}</td>
-                                    <td>${item.expert_name || '-'}</td>
-                                    <td><span class="status-badge ${getStatusClass(item.status)}">${getStatusText(item.status)}</span></td>
-                                    <td>${(item.created_at || '-').slice(0, 10)}</td>
-                                </tr>`).join('')}
-                        </tbody>
-                    </table>`;
-            } catch (err) {
-                console.error('대시보드 로드 오류:', err);
-                document.getElementById('recentApplications').innerHTML =
-                    '<div style="text-align:center;padding:2rem;color:#999;">데이터를 불러올 수 없습니다.</div>';
-            }
-        }
-
-        // ── 신청 관리 로드 (실제 API) ──────────────────────────
-        async function loadApplications() {
-            const container = document.getElementById('adminApplicationsList');
-            setLoading('adminApplicationsList');
-            try {
-                const data = await API.applications.getAll('limit=200&sort=-createdAt');
-                const apps = (data && data.data) ? data.data : [];
-
-                if (apps.length === 0) {
-                    container.innerHTML = '<div style="text-align:center;padding:2rem;color:#999;">신청 내역이 없습니다.</div>';
-                    return;
-                }
-
-                // 전역 앱 목록 저장 (배정 모달에서 사용)
-                window._adminApps = apps;
-
-                container.innerHTML = `
-                    <table class="payments-table">
-                        <thead>
-                            <tr>
-                                <th>사건번호</th><th>물건지</th><th>신청자</th>
-                                <th>연락처</th><th>담당자</th><th>입찰가</th><th>상태</th><th>관리</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${apps.map(item => `
-                                <tr data-status="${item.status || ''}">
-                                    <td><strong>${item.case_number || '-'}</strong></td>
-                                    <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${item.address || item.court || ''}">${item.address || item.court || '-'}</td>
-                                    <td>${item.applicant_name || '-'}</td>
-                                    <td>${item.phone || '-'}</td>
-                                    <td>${item.expert_name
-                                        ? `<span style="color:#10B981;font-weight:600;">${item.expert_name}</span>`
-                                        : '<span style="color:#999;">미배정</span>'}</td>
-                                    <td>${formatPrice(item.bid_amount)}원</td>
-                                    <td><span class="status-badge ${getStatusClass(item.status)}">${getStatusText(item.status)}</span></td>
-                                    <td style="white-space:nowrap;">
-                                        <button class="btn btn-sm btn-outline" onclick="viewApplicationDetail('${item.id}')" style="margin-right:4px;">상세</button>
-                                        ${(!item.expert_name && item.status !== '완료' && item.status !== '취소')
-                                            ? `<button class="btn btn-sm btn-primary" onclick="openAssignModal('${item.id}')">배정</button>`
-                                            : ''}
-                                    </td>
-                                </tr>`).join('')}
-                        </tbody>
-                    </table>`;
-            } catch (err) {
-                console.error('신청 관리 로드 오류:', err);
-                container.innerHTML = '<div style="text-align:center;padding:2rem;color:#999;">데이터를 불러올 수 없습니다.</div>';
-            }
-        }
-
-        // ── 전문가 승인 로드 (실제 API) ────────────────────────
-        async function loadExpertApprovals() {
-            const container = document.getElementById('expertApprovalList');
-            container.innerHTML = '<div style="text-align:center;padding:2rem;color:#999;"><i class="fas fa-spinner fa-spin"></i></div>';
-            try {
-                const data = await API.users.getAll('userType=expert&status=pending&limit=100');
-                const experts = (data && data.data) ? data.data : [];
-
-                if (experts.length === 0) {
-                    container.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>승인 대기 중인 전문가가 없습니다.</p></div>';
-                    return;
-                }
-
-                container.innerHTML = experts.map(expert => `
-                    <div class="application-card" style="margin-bottom:1.5rem;">
-                        <div class="card-header">
-                            <div>
-                                <span class="case-number">${expert.name || '-'}</span>
-                                <span class="status-badge" style="background:#fff3cd;color:#856404;">승인 대기</span>
-                            </div>
-                            <span style="color:#666;font-size:0.9rem;">신청일: ${(expert.createdAt || '').slice(0,10)}</span>
-                        </div>
-                        <div class="card-body">
-                            <p><strong>이메일:</strong> ${expert.email || '-'}</p>
-                            <p><strong>연락처:</strong> ${expert.phone || '-'}</p>
-                            <p><strong>등록번호:</strong> ${expert.licenseNumber || '-'}</p>
-                            <p><strong>사무소:</strong> ${expert.officeAddress || '-'}</p>
-                            <p><strong>서비스 지역:</strong> ${Array.isArray(expert.serviceRegions) ? expert.serviceRegions.join(', ') : (expert.serviceRegions || '-')}</p>
-                            <div style="margin-top:1rem;padding:0.8rem;background:#f8f9fa;border-radius:8px;">
-                                <p style="margin:0;color:#666;font-size:0.88rem;">📎 첨부 서류: ${expert.licenseFileName || '자격증'}, ${expert.insuranceFileName || '보험증권'}</p>
-                            </div>
-                        </div>
-                        <div class="card-footer">
-                            <button class="btn btn-success" onclick="approveExpert('${expert.id}')">
-                                <i class="fas fa-check"></i> 승인
-                            </button>
-                            <button class="btn btn-danger" onclick="rejectExpert('${expert.id}')">
-                                <i class="fas fa-times"></i> 거부
-                            </button>
-                        </div>
-                    </div>`).join('');
-            } catch (err) {
-                console.error('전문가 승인 로드 오류:', err);
-                container.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>데이터를 불러올 수 없습니다.</p></div>';
-            }
-        }
-
-        // ── 회원 관리 로드 (실제 API) ──────────────────────────
-        async function loadUsers() {
-            const container = document.getElementById('usersList');
-            container.innerHTML = '<div style="text-align:center;padding:2rem;color:#999;"><i class="fas fa-spinner fa-spin"></i></div>';
-            try {
-                const data = await API.users.getAll('limit=200&sort=-createdAt');
-                const users = (data && data.data) ? data.data : [];
-
-                if (users.length === 0) {
-                    container.innerHTML = '<div style="text-align:center;padding:2rem;color:#999;">회원이 없습니다.</div>';
-                    return;
-                }
-
-                container.innerHTML = `
-                    <table class="payments-table">
-                        <thead>
-                            <tr><th>이름</th><th>아이디</th><th>이메일</th><th>전화번호</th><th>회원유형</th><th>가입일</th><th>관리</th></tr>
-                        </thead>
-                        <tbody>
-                            ${users.map(user => `
-                                <tr>
-                                    <td><strong>${user.name || '-'}</strong></td>
-                                    <td>${user.userId || '-'}</td>
-                                    <td>${user.email || '-'}</td>
-                                    <td>${user.phone || '-'}</td>
-                                    <td><span class="status-badge ${user.userType === 'client' ? 'status-confirmed' : 'status-success'}">${user.userType === 'client' ? '신청자' : '법무사'}</span></td>
-                                    <td>${(user.createdAt || '-').slice(0, 10)}</td>
-                                    <td><button class="btn btn-sm btn-outline" onclick="viewUserDetail('${user.id}')">상세</button></td>
-                                </tr>`).join('')}
-                        </tbody>
-                    </table>`;
-
-                // 검색 기능 연결
-                document.getElementById('userSearch').addEventListener('input', function() {
-                    const q = this.value.toLowerCase();
-                    document.querySelectorAll('#usersList tbody tr').forEach(row => {
-                        row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
-                    });
-                });
-            } catch (err) {
-                console.error('회원 관리 로드 오류:', err);
-                container.innerHTML = '<div style="text-align:center;padding:2rem;color:#999;">데이터를 불러올 수 없습니다.</div>';
-            }
-        }
-
-        // ── 정산 관리 로드 (실제 API) ──────────────────────────
-        async function loadSettlements() {
-            const container = document.getElementById('settlementsList');
-            container.innerHTML = '<div style="text-align:center;padding:2rem;color:#999;"><i class="fas fa-spinner fa-spin"></i></div>';
-            try {
-                // 완료된 신청 건들을 법무사별로 집계
-                const data = await API.applications.getAll('status=완료&limit=1000');
-                const apps = (data && data.data) ? data.data : [];
-
-                // 법무사별 집계
-                const expertMap = {};
-                apps.forEach(app => {
-                    const eid = app.expert_name || app.expertId || '미지정';
-                    const month = (app.completed_at || app.bid_date || '').slice(0, 7);
-                    const key = `${eid}__${month}`;
-                    if (!expertMap[key]) expertMap[key] = { expertName: eid, month, count: 0, amount: 0 };
-                    expertMap[key].count++;
-                    expertMap[key].amount += Number(app.service_fee || 99000);
-                });
-
-                const rows = Object.values(expertMap).sort((a, b) => b.month.localeCompare(a.month));
-
-                if (rows.length === 0) {
-                    container.innerHTML = '<div style="text-align:center;padding:2rem;color:#999;">정산 내역이 없습니다.</div>';
-                    return;
-                }
-
-                container.innerHTML = `
-                    <table class="payments-table">
-                        <thead>
-                            <tr><th>법무사</th><th>정산월</th><th>처리 건수</th><th>정산 금액</th><th>상태</th><th>관리</th></tr>
-                        </thead>
-                        <tbody>
-                            ${rows.map(item => `
-                                <tr>
-                                    <td><strong>${item.expertName}</strong></td>
-                                    <td>${item.month}</td>
-                                    <td>${item.count}건</td>
-                                    <td><strong>${formatPrice(item.amount)}원</strong></td>
-                                    <td><span class="status-badge status-success">정산완료</span></td>
-                                    <td>-</td>
-                                </tr>`).join('')}
-                        </tbody>
-                    </table>`;
-            } catch (err) {
-                console.error('정산 관리 로드 오류:', err);
-                container.innerHTML = '<div style="text-align:center;padding:2rem;color:#999;">데이터를 불러올 수 없습니다.</div>';
-            }
-        }
-
-        // ── 필터링 ─────────────────────────────────────────────
-        function filterAdminApplications(status, el) {
-            document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
-            if (el) el.classList.add('active');
-            document.querySelectorAll('#adminApplicationsList tbody tr').forEach(row => {
-                row.style.display = (status === 'all' || row.dataset.status === status) ? '' : 'none';
-            });
-        }
-
-        // ── 상세보기 (실제 API) ────────────────────────────────
-        async function viewApplicationDetail(id) {
-            try {
-                const app = await API.applications.getById(id);
-                if (!app) { alert('정보를 불러올 수 없습니다.'); return; }
-                document.getElementById('adminDetailModal').style.display = 'flex';
-                document.getElementById('adminDetailContent').innerHTML = `
-                    <table class="detail-table">
-                        <tr><td>사건번호</td><td><strong>${app.case_number || '-'}</strong></td></tr>
-                        <tr><td>법원</td><td>${app.court || '-'}</td></tr>
-                        <tr><td>물건 주소</td><td>${app.address || '-'}</td></tr>
-                        <tr><td>신청자</td><td>${app.applicant_name || '-'}</td></tr>
-                        <tr><td>연락처</td><td>${app.phone || '-'}</td></tr>
-                        <tr><td>감정가</td><td>${formatPrice(app.appraisal_price || 0)}원</td></tr>
-                        <tr><td>입찰가</td><td><strong style="color:#1550E8;">${formatPrice(app.bid_amount || 0)}원</strong></td></tr>
-                        <tr><td>입찰일</td><td>${app.bid_date || '-'}</td></tr>
-                        <tr><td>물건 종류</td><td>${app.property_type || '-'}</td></tr>
-                        <tr><td>입찰 형태</td><td>${app.bid_type || '-'}</td></tr>
-                        <tr><td>담당 법무사</td><td>${app.expert_name
-                            ? `<span style="color:#10B981;font-weight:600;">${app.expert_name}</span>`
-                            : '<span style="color:#999;">미배정</span>'}</td></tr>
-                        <tr><td>서비스 수수료</td><td>${formatPrice(app.service_fee || 99000)}원</td></tr>
-                        <tr><td>결제 상태</td><td>${app.payment_status || '결제대기'}</td></tr>
-                        <tr><td>상태</td><td><span class="status-badge ${getStatusClass(app.status)}">${getStatusText(app.status)}</span></td></tr>
-                        <tr><td>신청일시</td><td>${app.created_at ? app.created_at.slice(0,16).replace('T',' ') : '-'}</td></tr>
-                    </table>`;
-            } catch (err) {
-                alert('상세 정보를 불러오는 중 오류가 발생했습니다.');
-            }
-        }
-
-        // ── 전문가 승인/거부 (실제 API) ───────────────────────
-        async function approveExpert(id) {
-            if (!confirm('이 법무사를 승인하시겠습니까?\n승인 후 즉시 로그인 및 서비스 이용이 가능합니다.')) return;
-
-            // 버튼 비활성화 (중복 클릭 방지)
-            const approveBtn = document.querySelector(`button[onclick="approveExpert('${id}')"]`);
-            const rejectBtn  = document.querySelector(`button[onclick="rejectExpert('${id}')"]`);
-            if (approveBtn) { approveBtn.disabled = true; approveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 처리 중...'; }
-            if (rejectBtn)  { rejectBtn.disabled = true; }
-
-            try {
-                await API.users.update(id, { status: 'active', approvedAt: new Date().toISOString() });
-                showAdminToast('✅ 법무사 승인 완료! 해당 법무사에게 이메일/SMS가 발송됩니다.', 'success');
-                // 카드 페이드아웃 후 목록 새로고침
-                const card = approveBtn?.closest('.application-card');
-                if (card) {
-                    card.style.transition = 'opacity 0.4s';
-                    card.style.opacity = '0';
-                    setTimeout(() => loadExpertApprovals(), 450);
-                } else {
-                    loadExpertApprovals();
-                }
-            } catch (err) {
-                showAdminToast('처리 중 오류가 발생했습니다. 다시 시도해주세요.', 'error');
-                if (approveBtn) { approveBtn.disabled = false; approveBtn.innerHTML = '<i class="fas fa-check"></i> 승인'; }
-                if (rejectBtn)  { rejectBtn.disabled = false; }
-            }
-        }
-
-        async function rejectExpert(id) {
-            // 거부 사유 입력 모달 (confirm 대신)
-            const reason = prompt('거부 사유를 입력해주세요:\n(입력 후 확인을 누르면 거부 처리됩니다)');
-            if (reason === null) return; // 취소
-            if (!reason.trim()) {
-                alert('거부 사유를 입력해야 합니다.');
-                return;
-            }
-
-            const approveBtn = document.querySelector(`button[onclick="approveExpert('${id}')"]`);
-            const rejectBtn  = document.querySelector(`button[onclick="rejectExpert('${id}')"]`);
-            if (rejectBtn)  { rejectBtn.disabled = true; rejectBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 처리 중...'; }
-            if (approveBtn) { approveBtn.disabled = true; }
-
-            try {
-                await API.users.update(id, {
-                    status: 'rejected',
-                    rejectedAt: new Date().toISOString(),
-                    rejectReason: reason.trim()
-                });
-                showAdminToast('❌ 거부 처리 완료. 해당 법무사에게 거부 사유가 전달됩니다.', 'info');
-                const card = rejectBtn?.closest('.application-card');
-                if (card) {
-                    card.style.transition = 'opacity 0.4s';
-                    card.style.opacity = '0';
-                    setTimeout(() => loadExpertApprovals(), 450);
-                } else {
-                    loadExpertApprovals();
-                }
-            } catch (err) {
-                showAdminToast('처리 중 오류가 발생했습니다. 다시 시도해주세요.', 'error');
-                if (rejectBtn)  { rejectBtn.disabled = false; rejectBtn.innerHTML = '<i class="fas fa-times"></i> 거부'; }
-                if (approveBtn) { approveBtn.disabled = false; }
-            }
-        }
-
-        // ── 토스트 알림 (alert 대체) ─────────────────────────
-        function showAdminToast(message, type = 'success') {
-            // 기존 토스트 제거
-            const existing = document.getElementById('adminToast');
-            if (existing) existing.remove();
-
-            const colors = {
-                success: { bg: '#d1fae5', border: '#10B981', text: '#065f46' },
-                error:   { bg: '#fee2e2', border: '#ef4444', text: '#7f1d1d' },
-                info:    { bg: '#e0f2fe', border: '#0ea5e9', text: '#0c4a6e' }
-            };
-            const c = colors[type] || colors.success;
-
-            const toast = document.createElement('div');
-            toast.id = 'adminToast';
-            toast.style.cssText = `
-                position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
-                background: ${c.bg}; border: 2px solid ${c.border}; color: ${c.text};
-                padding: 1rem 1.8rem; border-radius: 12px; font-weight: 600; font-size: 0.95rem;
-                box-shadow: 0 8px 24px rgba(0,0,0,0.15); z-index: 99999;
-                animation: toastIn 0.3s ease; max-width: 90vw; text-align: center;
-            `;
-            toast.textContent = message;
-            document.body.appendChild(toast);
-
-            // 4초 후 자동 제거
-            setTimeout(() => {
-                toast.style.animation = 'toastOut 0.3s ease forwards';
-                setTimeout(() => toast.remove(), 300);
-            }, 4000);
-        }
-
-        // ── 회원 상세보기 (실제 API) ───────────────────────────
-        async function viewUserDetail(id) {
-            try {
-                const user = await API.users.getById(id);
-                if (!user) { alert('정보를 불러올 수 없습니다.'); return; }
-                document.getElementById('adminDetailModal').style.display = 'flex';
-                document.getElementById('adminDetailContent').innerHTML = `
-                    <table class="detail-table">
-                        <tr><td>이름</td><td><strong>${user.name || '-'}</strong></td></tr>
-                        <tr><td>아이디</td><td>${user.userId || '-'}</td></tr>
-                        <tr><td>이메일</td><td>${user.email || '-'}</td></tr>
-                        <tr><td>전화번호</td><td>${user.phone || '-'}</td></tr>
-                        <tr><td>회원유형</td><td><span class="status-badge ${user.userType === 'client' ? 'status-confirmed' : 'status-success'}">${user.userType === 'client' ? '신청자' : '법무사'}</span></td></tr>
-                        <tr><td>상태</td><td>${user.status === 'active' ? '<span style="color:#10B981;font-weight:600;">활성</span>' : user.status || '-'}</td></tr>
-                        ${user.userType === 'expert' ? `
-                        <tr><td>등록번호</td><td>${user.licenseNumber || '-'}</td></tr>
-                        <tr><td>사무소 주소</td><td>${user.officeAddress || '-'}</td></tr>
-                        <tr><td>서비스 지역</td><td>${Array.isArray(user.serviceRegions) ? user.serviceRegions.join(', ') : (user.serviceRegions || '-')}</td></tr>
-                        ` : ''}
-                        <tr><td>가입일</td><td>${(user.createdAt || '-').slice(0, 10)}</td></tr>
-                    </table>`;
-            } catch (err) {
-                alert('정보를 불러오는 중 오류가 발생했습니다.');
-            }
-        }
-
-        // ── 엑셀 다운로드 ──────────────────────────────────────
-        async function exportToExcel() {
-            try {
-                const data = await API.applications.getAll('limit=1000');
-                const apps = (data && data.data) ? data.data : [];
-                if (apps.length === 0) { alert('다운로드할 데이터가 없습니다.'); return; }
-
-                const header = ['사건번호', '법원', '신청자', '연락처', '입찰가', '입찰일', '법무사', '상태', '신청일'];
-                const rows = apps.map(a => [
-                    a.case_number || '', a.court || '', a.applicant_name || '', a.phone || '',
-                    a.bid_amount || '', a.bid_date || '', a.expert_name || '',
-                    getStatusText(a.status), (a.created_at || '').slice(0, 10)
-                ]);
-
-                const csv = '\uFEFF' + [header, ...rows].map(r => r.join(',')).join('\n');
-                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `신청내역_${new Date().toISOString().slice(0,10)}.csv`;
-                a.click();
-                URL.revokeObjectURL(url);
-            } catch (err) {
-                alert('다운로드 중 오류가 발생했습니다.');
-            }
-        }
-
-        function processSettlement() {
-            if (confirm('정산을 처리하시겠습니까?')) {
-                alert('정산이 완료되었습니다.');
-                loadSettlements();
-            }
-        }
-
-        // ── 공통 상세보기 모달 닫기 ───────────────────────────
-        function closeAdminDetailModal() {
-            document.getElementById('adminDetailModal').style.display = 'none';
-        }
-
-        // ESC 키로 모달 닫기
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeAdminDetailModal();
-                closeAssignModal();
-            }
-        });
-
-        // ── 법무사 배정 모달 ───────────────────────────────────
-        let assignTargetId = null;
-
-        async function openAssignModal(appId) {
-            assignTargetId = appId;
-            const modal = document.getElementById('assignModal');
-            const list  = document.getElementById('assignExpertList');
-            modal.style.display = 'flex';
-            list.innerHTML = '<div style="text-align:center;padding:1.5rem;color:#999;"><i class="fas fa-spinner fa-spin"></i> 불러오는 중...</div>';
-
-            try {
-                const data = await API.users.getAll('userType=expert&status=active&limit=100');
-                const experts = (data && data.data) ? data.data : [];
-
-                if (experts.length === 0) {
-                    list.innerHTML = '<p style="color:#999;text-align:center;padding:1.5rem;">활성 법무사가 없습니다.</p>';
-                    return;
-                }
-                list.innerHTML = experts.map(ex => `
-                    <div class="assign-expert-row" onclick="selectExpert('${ex.id}','${ex.name || ex.userId}')" id="exRow_${ex.id}">
-                        <div class="assign-avatar"><i class="fas fa-user-tie"></i></div>
-                        <div class="assign-info">
-                            <strong>${ex.name || ex.userId}</strong>
-                            <span>${ex.phone || ex.email || '-'}</span>
-                            <span style="font-size:0.78rem;color:#999;">${Array.isArray(ex.serviceRegions) ? ex.serviceRegions.join(', ') : (ex.serviceRegions || '전국')}</span>
-                        </div>
-                        <div class="assign-check" id="exCheck_${ex.id}" style="display:none;"><i class="fas fa-check-circle" style="color:#1550E8;font-size:1.3rem;"></i></div>
-                    </div>`).join('');
-            } catch(e) {
-                list.innerHTML = '<p style="color:#e55;text-align:center;padding:1.5rem;">목록 로드 실패</p>';
-            }
-        }
-
-        let selectedExpertId = null, selectedExpertName = null;
-
-        function selectExpert(id, name) {
-            // 이전 선택 해제
-            document.querySelectorAll('.assign-expert-row').forEach(r => r.classList.remove('selected'));
-            document.querySelectorAll('[id^="exCheck_"]').forEach(c => c.style.display = 'none');
-            // 새로 선택
-            selectedExpertId = id;
-            selectedExpertName = name;
-            const row = document.getElementById('exRow_' + id);
-            const chk = document.getElementById('exCheck_' + id);
-            if (row) row.classList.add('selected');
-            if (chk) chk.style.display = 'block';
-            document.getElementById('btnConfirmAssign').disabled = false;
-        }
-
-        function closeAssignModal() {
-            document.getElementById('assignModal').style.display = 'none';
-            assignTargetId = null;
-            selectedExpertId = null;
-            selectedExpertName = null;
-        }
-
-        async function confirmAssign() {
-            if (!selectedExpertId || !assignTargetId) return;
-            const btn = document.getElementById('btnConfirmAssign');
-            btn.disabled = true; btn.textContent = '배정 중...';
-            try {
-                await API.applications.assignExpert(assignTargetId, selectedExpertId, selectedExpertName);
-                closeAssignModal();
-                alert(`✅ ${selectedExpertName} 법무사에게 배정 완료!`);
-                loadApplications();
-            } catch(e) {
-                alert('배정 중 오류가 발생했습니다.');
-                btn.disabled = false; btn.textContent = '배정 확정';
-            }
-        }
-    </script>
-
-    <!-- 공통 상세보기 모달 -->
-    <div id="adminDetailModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center; padding:1rem;">
-        <div style="background:white; border-radius:20px; width:100%; max-width:520px; max-height:85vh; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
-            <div style="padding:1.5rem 2rem 1rem; border-bottom:1px solid #e0e0e0; display:flex; justify-content:space-between; align-items:center;">
-                <h3 style="margin:0; font-size:1.1rem; color:#333;"><i class="fas fa-clipboard-list" style="color:#1550E8; margin-right:0.5rem;"></i>상세 정보</h3>
-                <button onclick="closeAdminDetailModal()" style="background:none; border:none; font-size:1.5rem; cursor:pointer; color:#999; line-height:1;">&times;</button>
-            </div>
-            <div id="adminDetailContent" style="overflow-y:auto; flex:1; padding:1.5rem 2rem;"></div>
-            <div style="padding:1rem 2rem 1.5rem; border-top:1px solid #e0e0e0;">
-                <button onclick="closeAdminDetailModal()" style="width:100%; padding:0.9rem; background:#1550E8; color:white; border:none; border-radius:10px; font-weight:700; cursor:pointer; font-size:0.95rem;">닫기</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 법무사 배정 모달 -->
-    <div id="assignModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center; padding:1rem;">
-        <div style="background:white; border-radius:20px; width:100%; max-width:500px; max-height:80vh; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
-            <div style="padding:1.5rem 2rem 1rem; border-bottom:1px solid #e0e0e0; display:flex; justify-content:space-between; align-items:center;">
-                <h3 style="margin:0; font-size:1.15rem; color:#333;"><i class="fas fa-user-tie" style="color:#1550E8;margin-right:0.5rem;"></i>법무사 배정</h3>
-                <button onclick="closeAssignModal()" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:#999;line-height:1;">&times;</button>
-            </div>
-            <div id="assignExpertList" style="overflow-y:auto; flex:1; padding:1rem 1.5rem;"></div>
-            <div style="padding:1rem 2rem 1.5rem; border-top:1px solid #e0e0e0; display:flex; gap:0.8rem;">
-                <button onclick="closeAssignModal()" style="flex:1; padding:0.9rem; background:white; border:2px solid #e0e0e0; border-radius:10px; font-weight:600; cursor:pointer; color:#666;">취소</button>
-                <button id="btnConfirmAssign" onclick="confirmAssign()" disabled style="flex:1; padding:0.9rem; background:#1550E8; color:white; border:none; border-radius:10px; font-weight:700; cursor:pointer; opacity:0.6;">배정 확정</button>
-            </div>
-        </div>
-    </div>
-
     <style>
-        /* 관리자 전용 추가 스타일 */
-        .detail-table { width:100%; border-collapse:collapse; }
-        .detail-table tr { border-bottom:1px solid #f0f0f0; }
-        .detail-table tr:last-child { border-bottom:none; }
-        .detail-table td { padding:0.65rem 0.5rem; font-size:0.92rem; }
-        .detail-table td:first-child { color:#888; width:38%; font-weight:500; }
-        .detail-table td:last-child { color:#222; font-weight:600; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Noto Sans KR', sans-serif; background: #f0f2f5; margin: 0; }
 
-        .admin-stats-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+        /* ── 로그인 화면 ── */
+        .login-screen {
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
         }
-
-        /* 테이블 래퍼 (모바일 스크롤) */
-        .table-wrap {
-            background: white;
-            border-radius: 12px;
-            overflow-x: auto;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            -webkit-overflow-scrolling: touch;
+        .login-card {
+            background: white; padding: 3rem 2.5rem; border-radius: 24px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.4); width: 100%; max-width: 420px;
         }
-
-        /* 검색 인풋 */
-        #userSearch {
-            width: 100%;
-            padding: 0.9rem 1rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1rem;
+        .login-card .brand {
+            text-align: center; margin-bottom: 2rem;
+        }
+        .login-card .brand i { font-size: 2.5rem; color: #667eea; }
+        .login-card .brand h1 { font-size: 1.4rem; color: #1a1a2e; margin: 0.5rem 0 0.25rem; }
+        .login-card .brand p { color: #888; font-size: 0.88rem; margin: 0; }
+        .login-field { margin-bottom: 1.2rem; }
+        .login-field label { display: block; font-weight: 600; color: #444; margin-bottom: 0.4rem; font-size: 0.9rem; }
+        .login-field input {
+            width: 100%; padding: 0.85rem 1rem; border: 2px solid #e0e0e0;
+            border-radius: 10px; font-size: 0.95rem; font-family: inherit;
             transition: border-color 0.2s;
         }
-        #userSearch:focus {
-            outline: none;
-            border-color: #667eea;
+        .login-field input:focus { outline: none; border-color: #667eea; }
+        .login-btn {
+            width: 100%; padding: 1rem; border: none; border-radius: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; font-size: 1rem; font-weight: 700; cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s; margin-top: 0.5rem;
         }
+        .login-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(102,126,234,0.4); }
+        .login-hint { text-align: center; margin-top: 1.2rem; color: #999; font-size: 0.82rem; line-height: 1.7; }
 
-        /* 대시보드 최근현황 카드 */
-        .recent-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            margin-top: 2rem;
-        }
-        .recent-card h3 {
-            margin-bottom: 1.2rem;
-            font-size: 1.1rem;
-            color: #333;
-        }
+        /* ── 대시보드 레이아웃 ── */
+        .admin-wrap { display: flex; min-height: 100vh; }
 
-        /* 엑셀 버튼 */
-        .btn-excel {
-            background: #1e7e34;
-            color: white;
-            border: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
+        /* 사이드바 */
+        .admin-sidebar {
+            width: 240px; background: #1a1a2e; color: white;
+            display: flex; flex-direction: column;
+            position: fixed; top: 0; left: 0; bottom: 0;
+            z-index: 100; transition: transform 0.3s;
         }
-        .btn-excel:hover {
-            background: #155724;
-            color: white;
+        .sidebar-brand {
+            padding: 1.8rem 1.5rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
         }
-
-        @media (max-width: 768px) {
-            .admin-stats-row {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1rem;
-            }
-            .stat-value {
-                font-size: 1.3rem;
-            }
+        .sidebar-brand h2 { font-size: 1.05rem; color: white; margin: 0 0 0.2rem; }
+        .sidebar-brand span { font-size: 0.78rem; color: #aaa; }
+        .admin-badge {
+            display: inline-block; background: #667eea; color: white;
+            font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.5rem;
+            border-radius: 20px; margin-left: 0.4rem;
         }
-
-        /* 배정 모달 전문가 행 */
-        .assign-expert-row {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 0.9rem 1rem;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: background 0.15s;
-            border: 2px solid transparent;
-            margin-bottom: 0.5rem;
+        .sidebar-nav { flex: 1; padding: 1rem 0; overflow-y: auto; }
+        .sidebar-nav .nav-item {
+            display: flex; align-items: center; gap: 0.75rem;
+            padding: 0.85rem 1.5rem; color: #aaa; font-size: 0.92rem;
+            font-weight: 500; cursor: pointer; transition: all 0.2s;
+            border: none; background: none; width: 100%; text-align: left;
+            border-left: 3px solid transparent;
         }
-        .assign-expert-row:hover { background: #f8f9fa; }
-        .assign-expert-row.selected {
-            border-color: #1550E8;
-            background: #f0f4ff;
+        .sidebar-nav .nav-item:hover { color: white; background: rgba(255,255,255,0.06); }
+        .sidebar-nav .nav-item.active {
+            color: white; background: rgba(102,126,234,0.2);
+            border-left-color: #667eea;
         }
-        .assign-avatar {
-            width: 44px; height: 44px;
+        .sidebar-nav .nav-item i { width: 18px; text-align: center; }
+        .nav-badge {
+            margin-left: auto; background: #ef4444; color: white;
+            font-size: 0.68rem; font-weight: 700; padding: 0.1rem 0.45rem;
+            border-radius: 20px; min-width: 18px; text-align: center;
+        }
+        .sidebar-footer {
+            padding: 1.2rem 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+        .sidebar-footer .admin-info {
+            display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.8rem;
+        }
+        .admin-avatar {
+            width: 36px; height: 36px; border-radius: 50%;
             background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            color: white; font-size: 1.1rem; flex-shrink: 0;
+            font-size: 0.9rem; color: white; flex-shrink: 0;
         }
-        .assign-info {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 0.15rem;
+        .admin-info-text { flex: 1; overflow: hidden; }
+        .admin-info-text strong { display: block; font-size: 0.88rem; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .admin-info-text span { font-size: 0.76rem; color: #888; }
+        .logout-btn {
+            width: 100%; padding: 0.6rem; background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+            color: #ccc; font-size: 0.85rem; cursor: pointer; font-family: inherit;
+            transition: all 0.2s;
         }
-        .assign-info strong { font-size: 0.97rem; color: #222; }
-        .assign-info span { font-size: 0.82rem; color: #888; }
-        .assign-check { flex-shrink: 0; }
+        .logout-btn:hover { background: rgba(255,255,255,0.12); color: white; }
 
-        /* 배정 버튼 활성 */
-        #btnConfirmAssign:not(:disabled) { opacity: 1 !important; }
-
-        /* 토스트 애니메이션 */
-        @keyframes toastIn {
-            from { opacity: 0; transform: translateX(-50%) translateY(12px); }
-            to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+        /* 메인 컨텐츠 */
+        .admin-main {
+            margin-left: 240px; flex: 1; display: flex; flex-direction: column;
+            min-height: 100vh;
         }
-        @keyframes toastOut {
-            from { opacity: 1; transform: translateX(-50%) translateY(0); }
-            to   { opacity: 0; transform: translateX(-50%) translateY(12px); }
+        .admin-topbar {
+            background: white; padding: 0.9rem 2rem;
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid #e0e0e0; position: sticky; top: 0; z-index: 50;
+        }
+        .topbar-title { font-size: 1.1rem; font-weight: 700; color: #1a1a2e; }
+        .topbar-actions { display: flex; align-items: center; gap: 0.75rem; }
+        .topbar-time { font-size: 0.82rem; color: #888; }
+        .refresh-btn {
+            padding: 0.5rem 0.9rem; background: #f0f2f5; border: none;
+            border-radius: 8px; cursor: pointer; color: #555; font-size: 0.85rem;
+            font-family: inherit; transition: background 0.2s;
+        }
+        .refresh-btn:hover { background: #e0e2e5; }
+        .admin-content { padding: 2rem; flex: 1; }
+
+        /* 섹션 */
+        .section { display: none; }
+        .section.active { display: block; }
+        .section-title {
+            font-size: 1.3rem; font-weight: 700; color: #1a1a2e;
+            margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.6rem;
+        }
+        .section-title i { color: #667eea; }
+
+        /* ── 통계 카드 ── */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.2rem; margin-bottom: 1.5rem;
+        }
+        .stat-box {
+            background: white; border-radius: 16px; padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex; align-items: center; gap: 1.2rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .stat-box:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+        .stat-icon {
+            width: 52px; height: 52px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem; flex-shrink: 0;
+        }
+        .stat-icon.blue { background: #eff3ff; color: #667eea; }
+        .stat-icon.orange { background: #fff7ed; color: #f97316; }
+        .stat-icon.green { background: #f0fdf4; color: #22c55e; }
+        .stat-icon.purple { background: #faf5ff; color: #a855f7; }
+        .stat-icon.red { background: #fef2f2; color: #ef4444; }
+        .stat-body {}
+        .stat-num { font-size: 1.6rem; font-weight: 800; color: #1a1a2e; line-height: 1.2; }
+        .stat-lbl { font-size: 0.8rem; color: #888; margin-top: 0.2rem; font-weight: 500; }
+        .stat-change { font-size: 0.75rem; font-weight: 600; margin-top: 0.2rem; }
+        .stat-change.up { color: #22c55e; }
+        .stat-change.down { color: #ef4444; }
+
+        /* ── 카드/패널 ── */
+        .panel {
+            background: white; border-radius: 16px; padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 1.5rem;
+        }
+        .panel-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 1.2rem;
+        }
+        .panel-title { font-size: 1rem; font-weight: 700; color: #1a1a2e; }
+
+        /* ── 테이블 ── */
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table thead th {
+            background: #f8f9fa; padding: 0.75rem 1rem;
+            text-align: left; font-size: 0.82rem; font-weight: 600;
+            color: #888; border-bottom: 1px solid #e0e0e0; white-space: nowrap;
+        }
+        .data-table tbody td {
+            padding: 0.85rem 1rem; border-bottom: 1px solid #f5f5f5;
+            font-size: 0.88rem; color: #333;
+        }
+        .data-table tbody tr:last-child td { border-bottom: none; }
+        .data-table tbody tr:hover td { background: #fafbff; }
+        .overflow-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+        /* ── 뱃지 ── */
+        .badge {
+            display: inline-flex; align-items: center;
+            padding: 0.25rem 0.7rem; border-radius: 20px;
+            font-size: 0.75rem; font-weight: 600; white-space: nowrap;
+        }
+        .badge-접수, .badge-결제대기   { background: #eff6ff; color: #3b82f6; }
+        .badge-결제완료, .badge-매칭중  { background: #fff7ed; color: #f97316; }
+        .badge-매칭완료, .badge-진행중  { background: #f0fdf4; color: #22c55e; }
+        .badge-완료, .badge-낙찰       { background: #f5f3ff; color: #7c3aed; }
+        .badge-취소, .badge-유찰       { background: #fef2f2; color: #ef4444; }
+        .badge-pending                  { background: #fff7ed; color: #f97316; }
+        .badge-active                   { background: #f0fdf4; color: #22c55e; }
+        .badge-rejected                 { background: #fef2f2; color: #ef4444; }
+        .badge-정산대기                 { background: #fef9c3; color: #ca8a04; }
+        .badge-정산완료                 { background: #f0fdf4; color: #22c55e; }
+
+        /* ── 필터 탭 ── */
+        .filter-bar {
+            display: flex; align-items: center; gap: 0.5rem;
+            flex-wrap: wrap; margin-bottom: 1.2rem;
+        }
+        .ftab {
+            padding: 0.5rem 1rem; border-radius: 20px;
+            background: #f0f2f5; border: none; cursor: pointer;
+            font-size: 0.85rem; font-weight: 600; color: #666;
+            font-family: inherit; transition: all 0.2s;
+        }
+        .ftab:hover { background: #e0e2e5; }
+        .ftab.active { background: #667eea; color: white; }
+        .ftab .cnt {
+            display: inline-block; background: rgba(255,255,255,0.3);
+            border-radius: 10px; font-size: 0.72rem; padding: 0 0.4rem;
+            margin-left: 0.3rem;
+        }
+        .ftab:not(.active) .cnt { background: rgba(0,0,0,0.08); }
+
+        /* 검색/도구바 */
+        .toolbar {
+            display: flex; align-items: center; gap: 0.75rem;
+            flex-wrap: wrap; margin-bottom: 1.2rem;
+        }
+        .search-box {
+            flex: 1; min-width: 200px; position: relative;
+        }
+        .search-box i {
+            position: absolute; left: 0.85rem; top: 50%;
+            transform: translateY(-50%); color: #999; font-size: 0.85rem;
+        }
+        .search-box input {
+            width: 100%; padding: 0.65rem 1rem 0.65rem 2.2rem;
+            border: 2px solid #e0e0e0; border-radius: 10px;
+            font-size: 0.88rem; font-family: inherit; transition: border-color 0.2s;
+        }
+        .search-box input:focus { outline: none; border-color: #667eea; }
+
+        /* 버튼 */
+        .btn-sm {
+            padding: 0.35rem 0.75rem; border-radius: 7px;
+            font-size: 0.8rem; font-weight: 600; cursor: pointer;
+            border: none; font-family: inherit; transition: all 0.15s;
+            display: inline-flex; align-items: center; gap: 0.3rem;
+        }
+        .btn-blue  { background: #eff3ff; color: #667eea; }
+        .btn-blue:hover { background: #667eea; color: white; }
+        .btn-green { background: #f0fdf4; color: #22c55e; }
+        .btn-green:hover { background: #22c55e; color: white; }
+        .btn-red   { background: #fef2f2; color: #ef4444; }
+        .btn-red:hover { background: #ef4444; color: white; }
+        .btn-purple { background: #f5f3ff; color: #7c3aed; }
+        .btn-purple:hover { background: #7c3aed; color: white; }
+        .btn-excel {
+            padding: 0.6rem 1.1rem; background: #16a34a; color: white;
+            border: none; border-radius: 10px; cursor: pointer; font-size: 0.85rem;
+            font-weight: 600; font-family: inherit; display: inline-flex; align-items: center; gap: 0.4rem;
+            transition: background 0.2s;
+        }
+        .btn-excel:hover { background: #15803d; }
+
+        /* 빈 상태 */
+        .empty-box {
+            text-align: center; padding: 3rem 1rem; color: #999;
+        }
+        .empty-box i { font-size: 2.5rem; margin-bottom: 0.75rem; display: block; opacity: 0.4; }
+        .empty-box p { font-size: 0.92rem; }
+
+        /* 스켈레톤 로딩 */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 6px; height: 14px;
+        }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        /* ── 차트 대체 - 미니 바 ── */
+        .mini-bar-wrap { display: flex; flex-direction: column; gap: 0.6rem; }
+        .mini-bar-item { display: flex; align-items: center; gap: 0.75rem; font-size: 0.82rem; }
+        .mini-bar-label { width: 70px; color: #666; flex-shrink: 0; text-align: right; }
+        .mini-bar-track { flex: 1; background: #f0f2f5; border-radius: 20px; height: 10px; overflow: hidden; }
+        .mini-bar-fill { height: 100%; border-radius: 20px; transition: width 0.6s ease; }
+        .mini-bar-val { width: 50px; color: #333; font-weight: 600; text-align: right; flex-shrink: 0; }
+
+        /* 2열 그리드 */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+
+        /* 전문가 승인 카드 */
+        .expert-card {
+            border: 1px solid #e0e0e0; border-radius: 14px;
+            overflow: hidden; margin-bottom: 1rem; transition: box-shadow 0.2s;
+        }
+        .expert-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+        .expert-card-head {
+            background: #f8f9fa; padding: 1rem 1.2rem;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .expert-card-body { padding: 1.2rem; }
+        .expert-card-body .info-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 1rem;
+            margin-bottom: 1rem;
+        }
+        .info-item { font-size: 0.85rem; }
+        .info-item .lbl { color: #999; font-size: 0.78rem; margin-bottom: 0.1rem; }
+        .info-item .val { color: #333; font-weight: 600; }
+        .expert-card-foot {
+            padding: 0.75rem 1.2rem; border-top: 1px solid #f0f0f0;
+            display: flex; gap: 0.6rem; justify-content: flex-end;
+        }
+
+        /* 정산 요약 */
+        .settlement-summary {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;
+        }
+        .sum-box {
+            background: white; border-radius: 12px; padding: 1.2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-align: center;
+        }
+        .sum-box .num { font-size: 1.4rem; font-weight: 800; color: #1a1a2e; }
+        .sum-box .lbl { font-size: 0.8rem; color: #888; margin-top: 0.2rem; }
+
+        /* 상태 변경 셀렉트 */
+        .status-select {
+            padding: 0.3rem 0.6rem; border: 1.5px solid #e0e0e0;
+            border-radius: 7px; font-size: 0.8rem; cursor: pointer;
+            font-family: inherit; background: white; color: #333;
+        }
+        .status-select:focus { outline: none; border-color: #667eea; }
+
+        /* 모달 */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55); z-index: 9999;
+            align-items: center; justify-content: center; padding: 1rem;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-box {
+            background: white; border-radius: 20px; width: 100%;
+            max-width: 540px; max-height: 88vh; display: flex;
+            flex-direction: column; box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+            animation: modalIn 0.25s ease;
+        }
+        @keyframes modalIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .modal-head {
+            padding: 1.4rem 1.8rem; border-bottom: 1px solid #e0e0e0;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .modal-head h3 { margin: 0; font-size: 1.05rem; color: #1a1a2e; }
+        .modal-close {
+            background: none; border: none; font-size: 1.4rem;
+            cursor: pointer; color: #999; line-height: 1; padding: 0;
+        }
+        .modal-body { overflow-y: auto; flex: 1; padding: 1.5rem 1.8rem; }
+        .modal-foot { padding: 1rem 1.8rem; border-top: 1px solid #e0e0e0; display: flex; gap: 0.75rem; }
+        .modal-foot .btn-full { flex: 1; padding: 0.85rem; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 0.95rem; font-family: inherit; }
+        .detail-table { width: 100%; border-collapse: collapse; }
+        .detail-table tr { border-bottom: 1px solid #f5f5f5; }
+        .detail-table tr:last-child { border-bottom: none; }
+        .detail-table td { padding: 0.65rem 0.5rem; font-size: 0.88rem; }
+        .detail-table td:first-child { color: #999; width: 36%; font-weight: 500; font-size: 0.82rem; }
+        .detail-table td:last-child { color: #222; font-weight: 600; }
+
+        /* 법무사 배정 목록 */
+        .assign-row {
+            display: flex; align-items: center; gap: 1rem; padding: 0.85rem 1rem;
+            border-radius: 10px; cursor: pointer; transition: background 0.15s;
+            border: 2px solid transparent; margin-bottom: 0.4rem;
+        }
+        .assign-row:hover { background: #f8f9fa; }
+        .assign-row.selected { border-color: #667eea; background: #f0f0ff; }
+        .assign-ava {
+            width: 42px; height: 42px; border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1rem; flex-shrink: 0;
+        }
+        .assign-info { flex: 1; }
+        .assign-info strong { display: block; font-size: 0.92rem; color: #222; }
+        .assign-info small { color: #888; font-size: 0.78rem; }
+        .assign-chk { display: none; color: #667eea; font-size: 1.2rem; }
+        .assign-row.selected .assign-chk { display: block; }
+
+        /* 토스트 */
+        .toast {
+            position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(10px);
+            padding: 0.9rem 1.8rem; border-radius: 30px; font-weight: 600; font-size: 0.9rem;
+            z-index: 99999; box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            opacity: 0; transition: opacity 0.3s, transform 0.3s; white-space: nowrap;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .toast.success { background: #22c55e; color: white; }
+        .toast.error   { background: #ef4444; color: white; }
+        .toast.info    { background: #3b82f6; color: white; }
+
+        /* 모바일 메뉴 토글 */
+        .sidebar-toggle {
+            display: none; position: fixed; top: 1rem; left: 1rem; z-index: 200;
+            background: #1a1a2e; color: white; border: none; border-radius: 8px;
+            width: 40px; height: 40px; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 1.1rem;
+        }
+
+        /* 반응형 */
+        @media (max-width: 1100px) {
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 900px) {
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .admin-sidebar { transform: translateX(-100%); }
+            .admin-sidebar.open { transform: translateX(0); }
+            .admin-main { margin-left: 0; }
+            .sidebar-toggle { display: flex; }
+            .admin-content { padding: 1rem; }
+            .stats-row { grid-template-columns: repeat(2, 1fr); gap: 0.8rem; }
+            .settlement-summary { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 480px) {
+            .stats-row { grid-template-columns: 1fr 1fr; }
         }
     </style>
+</head>
+<body>
+
+<!-- 모바일 토글 -->
+<button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+</button>
+
+<!-- ══════════════════════════════════════════
+     로그인 화면
+══════════════════════════════════════════ -->
+<div class="login-screen" id="loginScreen">
+    <div class="login-card">
+        <div class="brand">
+            <i class="fas fa-shield-alt"></i>
+            <h1>관리자 대시보드</h1>
+            <p>대리입찰 톡 운영 관리자 전용</p>
+        </div>
+        <form id="loginForm">
+            <div class="login-field">
+                <label>관리자 아이디</label>
+                <input type="text" id="adminId" placeholder="bootv1, bootv2, bootv3, bootv4" autocomplete="username">
+            </div>
+            <div class="login-field">
+                <label>비밀번호</label>
+                <input type="password" id="adminPw" placeholder="비밀번호 입력" autocomplete="current-password">
+            </div>
+            <button type="submit" class="login-btn">
+                <i class="fas fa-sign-in-alt"></i> 로그인
+            </button>
+        </form>
+        <p class="login-hint">bootv1: 대표(마스터) | bootv2~4: 팀장</p>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     대시보드 본체
+══════════════════════════════════════════ -->
+<div class="admin-wrap" id="adminWrap" style="display:none;">
+
+    <!-- 사이드바 -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="sidebar-brand">
+            <h2><i class="fas fa-comment-dots" style="color:#667eea;"></i> 대리입찰 톡</h2>
+            <span>관리자 대시보드 <span class="admin-badge">ADMIN</span></span>
+        </div>
+        <nav class="sidebar-nav">
+            <button class="nav-item active" onclick="goto('dashboard',this)">
+                <i class="fas fa-chart-line"></i> 대시보드
+            </button>
+            <button class="nav-item" onclick="goto('applications',this)">
+                <i class="fas fa-file-alt"></i> 신청 관리
+                <span class="nav-badge" id="navBadgeApp" style="display:none;"></span>
+            </button>
+            <button class="nav-item" onclick="goto('experts',this)">
+                <i class="fas fa-user-tie"></i> 전문가 승인
+                <span class="nav-badge" id="navBadgeExp" style="display:none;"></span>
+            </button>
+            <button class="nav-item" onclick="goto('users',this)">
+                <i class="fas fa-users"></i> 회원 관리
+            </button>
+            <button class="nav-item" onclick="goto('settlements',this)">
+                <i class="fas fa-won-sign"></i> 정산 관리
+            </button>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="admin-info">
+                <div class="admin-avatar"><i class="fas fa-user-shield"></i></div>
+                <div class="admin-info-text">
+                    <strong id="sidebarName">관리자</strong>
+                    <span id="sidebarId"></span>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="doLogout()">
+                <i class="fas fa-sign-out-alt"></i> 로그아웃
+            </button>
+        </div>
+    </aside>
+
+    <!-- 메인 -->
+    <main class="admin-main">
+        <!-- 상단바 -->
+        <div class="admin-topbar">
+            <div class="topbar-title" id="topbarTitle">대시보드</div>
+            <div class="topbar-actions">
+                <span class="topbar-time" id="topbarTime"></span>
+                <button class="refresh-btn" onclick="refreshCurrent()">
+                    <i class="fas fa-sync-alt"></i> 새로고침
+                </button>
+            </div>
+        </div>
+
+        <div class="admin-content">
+
+            <!-- ════ 대시보드 ════ -->
+            <div class="section active" id="sec-dashboard">
+                <div class="section-title"><i class="fas fa-chart-line"></i> 대시보드</div>
+
+                <!-- 통계 카드 -->
+                <div class="stats-row" id="statsRow">
+                    <div class="stat-box">
+                        <div class="stat-icon blue"><i class="fas fa-file-alt"></i></div>
+                        <div class="stat-body">
+                            <div class="stat-num" id="st-total">-</div>
+                            <div class="stat-lbl">전체 신청</div>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon orange"><i class="fas fa-hourglass-half"></i></div>
+                        <div class="stat-body">
+                            <div class="stat-num" id="st-pending">-</div>
+                            <div class="stat-lbl">배정 대기</div>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon green"><i class="fas fa-user-tie"></i></div>
+                        <div class="stat-body">
+                            <div class="stat-num" id="st-experts">-</div>
+                            <div class="stat-lbl">활동 법무사</div>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon purple"><i class="fas fa-won-sign"></i></div>
+                        <div class="stat-body">
+                            <div class="stat-num" id="st-revenue">-</div>
+                            <div class="stat-lbl">이번 달 매출</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2열: 최근신청 + 지역별 현황 -->
+                <div class="grid-2">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <span class="panel-title">📋 최근 신청 (10건)</span>
+                            <button class="btn-sm btn-blue" onclick="goto('applications',null)">전체 보기</button>
+                        </div>
+                        <div class="overflow-wrap" id="recentApps">
+                            <div style="text-align:center;padding:2rem;color:#ccc;"><i class="fas fa-spinner fa-spin fa-2x"></i></div>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-header">
+                            <span class="panel-title">📊 지역별 신청 현황</span>
+                        </div>
+                        <div class="mini-bar-wrap" id="regionChart">
+                            <div style="text-align:center;padding:2rem;color:#ccc;"><i class="fas fa-spinner fa-spin fa-2x"></i></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2열: 이번달 요약 + 승인대기 -->
+                <div class="grid-2">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <span class="panel-title">💰 결제 현황</span>
+                        </div>
+                        <div id="paymentSummary">
+                            <div style="text-align:center;padding:2rem;color:#ccc;"><i class="fas fa-spinner fa-spin fa-2x"></i></div>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-header">
+                            <span class="panel-title">⏳ 승인 대기 전문가</span>
+                            <button class="btn-sm btn-orange" onclick="goto('experts',null)" style="background:#fff7ed;color:#f97316;">처리하기</button>
+                        </div>
+                        <div id="pendingExpertsMini">
+                            <div style="text-align:center;padding:2rem;color:#ccc;"><i class="fas fa-spinner fa-spin fa-2x"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ════ 신청 관리 ════ -->
+            <div class="section" id="sec-applications">
+                <div class="section-title" style="justify-content:space-between; flex-wrap:wrap; gap:0.5rem;">
+                    <span><i class="fas fa-file-alt"></i> 신청 관리</span>
+                    <button class="btn-excel" onclick="exportCSV()">
+                        <i class="fas fa-file-csv"></i> CSV 다운로드
+                    </button>
+                </div>
+
+                <!-- 필터 탭 -->
+                <div class="filter-bar" id="appFilterBar">
+                    <button class="ftab active" data-status="all"    onclick="setAppFilter('all',this)">전체 <span class="cnt" id="cnt-all">0</span></button>
+                    <button class="ftab"         data-status="결제대기" onclick="setAppFilter('결제대기',this)">결제대기 <span class="cnt" id="cnt-결제대기">0</span></button>
+                    <button class="ftab"         data-status="접수"   onclick="setAppFilter('접수',this)">접수 <span class="cnt" id="cnt-접수">0</span></button>
+                    <button class="ftab"         data-status="매칭중" onclick="setAppFilter('매칭중',this)">매칭중 <span class="cnt" id="cnt-매칭중">0</span></button>
+                    <button class="ftab"         data-status="매칭완료" onclick="setAppFilter('매칭완료',this)">매칭완료 <span class="cnt" id="cnt-매칭완료">0</span></button>
+                    <button class="ftab"         data-status="완료"   onclick="setAppFilter('완료',this)">완료 <span class="cnt" id="cnt-완료">0</span></button>
+                    <button class="ftab"         data-status="취소"   onclick="setAppFilter('취소',this)">취소 <span class="cnt" id="cnt-취소">0</span></button>
+                </div>
+
+                <!-- 검색 -->
+                <div class="toolbar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="appSearch" placeholder="사건번호, 신청자, 연락처 검색..." oninput="filterAppTable()">
+                    </div>
+                </div>
+
+                <div class="panel" style="padding:0; overflow:hidden;">
+                    <div class="overflow-wrap" id="appTableWrap">
+                        <div style="text-align:center;padding:3rem;color:#ccc;"><i class="fas fa-spinner fa-spin fa-2x"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ════ 전문가 승인 ════ -->
+            <div class="section" id="sec-experts">
+                <div class="section-title"><i class="fas fa-user-tie"></i> 전문가 승인</div>
+
+                <div class="filter-bar">
+                    <button class="ftab active" onclick="setExpertFilter('pending',this)">승인 대기</button>
+                    <button class="ftab" onclick="setExpertFilter('active',this)">승인 완료</button>
+                    <button class="ftab" onclick="setExpertFilter('rejected',this)">거부</button>
+                </div>
+
+                <div id="expertListWrap">
+                    <div style="text-align:center;padding:3rem;color:#ccc;"><i class="fas fa-spinner fa-spin fa-2x"></i></div>
+                </div>
+            </div>
+
+            <!-- ════ 회원 관리 ════ -->
+            <div class="section" id="sec-users">
+                <div class="section-title"><i class="fas fa-users"></i> 회원 관리</div>
+
+                <div class="filter-bar">
+                    <button class="ftab active" onclick="setUserFilter('all',this)">전체</button>
+                    <button class="ftab" onclick="setUserFilter('client',this)">신청자</button>
+                    <button class="ftab" onclick="setUserFilter('expert',this)">법무사</button>
+                </div>
+
+                <div class="toolbar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="userSearch" placeholder="이름, 이메일, 전화번호 검색..." oninput="filterUserTable()">
+                    </div>
+                </div>
+
+                <div class="panel" style="padding:0; overflow:hidden;">
+                    <div class="overflow-wrap" id="userTableWrap">
+                        <div style="text-align:center;padding:3rem;color:#ccc;"><i class="fas fa-spinner fa-spin fa-2x"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ════ 정산 관리 ════ -->
+            <div class="section" id="sec-settlements">
+                <div class="section-title"><i class="fas fa-won-sign"></i> 정산 관리</div>
+
+                <!-- 요약 -->
+                <div class="settlement-summary" id="settleSummary">
+                    <div class="sum-box"><div class="num" id="settle-total">-</div><div class="lbl">전체 완료 건</div></div>
+                    <div class="sum-box"><div class="num" id="settle-month">-</div><div class="lbl">이번 달 건</div></div>
+                    <div class="sum-box"><div class="num" id="settle-amount">-</div><div class="lbl">이번 달 매출</div></div>
+                </div>
+
+                <!-- 월별 필터 -->
+                <div class="toolbar">
+                    <select id="settleMonthFilter" onchange="filterSettleTable()" style="padding:0.65rem 1rem; border:2px solid #e0e0e0; border-radius:10px; font-size:0.88rem; font-family:inherit;">
+                        <option value="all">전체 기간</option>
+                    </select>
+                    <button class="btn-excel" onclick="exportSettleCSV()">
+                        <i class="fas fa-file-csv"></i> 정산 CSV
+                    </button>
+                </div>
+
+                <div class="panel" style="padding:0; overflow:hidden;">
+                    <div class="overflow-wrap" id="settleTableWrap">
+                        <div style="text-align:center;padding:3rem;color:#ccc;"><i class="fas fa-spinner fa-spin fa-2x"></i></div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /admin-content -->
+    </main>
+</div><!-- /admin-wrap -->
+
+
+<!-- ══ 모달: 신청 상세 ══ -->
+<div class="modal-overlay" id="modalDetail">
+    <div class="modal-box">
+        <div class="modal-head">
+            <h3><i class="fas fa-clipboard-list" style="color:#667eea;margin-right:0.5rem;"></i> 신청 상세 정보</h3>
+            <button class="modal-close" onclick="closeModal('modalDetail')">&times;</button>
+        </div>
+        <div class="modal-body" id="modalDetailBody"></div>
+        <div class="modal-foot">
+            <button class="btn-full" onclick="closeModal('modalDetail')" style="background:#f0f2f5;color:#666;">닫기</button>
+            <button class="btn-full" id="modalDetailAssignBtn" style="background:#667eea;color:white;display:none;" onclick="openAssignFromDetail()">법무사 배정</button>
+        </div>
+    </div>
+</div>
+
+<!-- ══ 모달: 법무사 배정 ══ -->
+<div class="modal-overlay" id="modalAssign">
+    <div class="modal-box">
+        <div class="modal-head">
+            <h3><i class="fas fa-user-check" style="color:#667eea;margin-right:0.5rem;"></i> 법무사 배정</h3>
+            <button class="modal-close" onclick="closeModal('modalAssign')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p style="font-size:0.85rem;color:#888;margin-bottom:1rem;">배정할 법무사를 선택하세요</p>
+            <div id="assignList"></div>
+        </div>
+        <div class="modal-foot">
+            <button class="btn-full" onclick="closeModal('modalAssign')" style="background:#f0f2f5;color:#666;">취소</button>
+            <button class="btn-full" id="btnConfirmAssign" onclick="confirmAssign()" disabled style="background:#667eea;color:white;opacity:0.5;">배정 확정</button>
+        </div>
+    </div>
+</div>
+
+<!-- ══ 모달: 회원 상세 ══ -->
+<div class="modal-overlay" id="modalUser">
+    <div class="modal-box">
+        <div class="modal-head">
+            <h3><i class="fas fa-user" style="color:#667eea;margin-right:0.5rem;"></i> 회원 상세 정보</h3>
+            <button class="modal-close" onclick="closeModal('modalUser')">&times;</button>
+        </div>
+        <div class="modal-body" id="modalUserBody"></div>
+        <div class="modal-foot">
+            <button class="btn-full" onclick="closeModal('modalUser')" style="background:#f0f2f5;color:#666;">닫기</button>
+        </div>
+    </div>
+</div>
+
+<!-- 토스트 -->
+<div class="toast" id="toast"></div>
+
+<!-- 오버레이 (모바일 사이드바) -->
+<div id="sidebarOverlay" onclick="toggleSidebar()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:90;"></div>
+
+<script src="js/api.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════
+// 상수 & 전역 상태
+// ═══════════════════════════════════════════════════════
+const ADMINS = {
+    bootv1: { name: '대표 (마스터)', role: 'master', pw: '1234' },
+    bootv2: { name: '팀장 2',        role: 'team',   pw: '1234' },
+    bootv3: { name: '팀장 3',        role: 'team',   pw: '1234' },
+    bootv4: { name: '팀장 4',        role: 'team',   pw: '1234' },
+};
+
+let currentAdmin   = null;
+let currentSection = 'dashboard';
+let allApps        = [];   // 신청 전체 캐시
+let allUsers       = [];   // 회원 전체 캐시
+let appFilter      = 'all';
+let expertFilter   = 'pending';
+let userFilter     = 'all';
+let assignTargetId = null;
+let selectedExpertId   = null;
+let selectedExpertName = null;
+let detailAppId    = null;  // 상세 모달에서 열린 신청 id
+
+// ═══════════════════════════════════════════════════════
+// 유틸
+// ═══════════════════════════════════════════════════════
+function fmtNum(n) {
+    return Number(n || 0).toLocaleString('ko-KR');
+}
+function fmtDate(d) {
+    if (!d) return '-';
+    return String(d).slice(0, 10);
+}
+function fmtDateTime(d) {
+    if (!d) return '-';
+    return String(d).slice(0, 16).replace('T', ' ');
+}
+function badge(status) {
+    const cls = 'badge badge-' + (status || '').replace(/\s/g, '');
+    return `<span class="${cls}">${status || '-'}</span>`;
+}
+
+function showToast(msg, type = 'success') {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = `toast ${type} show`;
+    clearTimeout(el._timer);
+    el._timer = setTimeout(() => el.classList.remove('show'), 3500);
+}
+
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+        closeModal('modalDetail');
+        closeModal('modalAssign');
+        closeModal('modalUser');
+    }
+});
+
+function setLoading(id) {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = `<div style="text-align:center;padding:3rem;color:#ccc;"><i class="fas fa-spinner fa-spin fa-2x"></i></div>`;
+}
+
+// 시계
+function updateClock() {
+    const now = new Date();
+    document.getElementById('topbarTime').textContent =
+        now.toLocaleDateString('ko-KR') + ' ' + now.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ═══════════════════════════════════════════════════════
+// 로그인 / 로그아웃
+// ═══════════════════════════════════════════════════════
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const id = document.getElementById('adminId').value.trim();
+    const pw = document.getElementById('adminPw').value;
+    const found = ADMINS[id];
+    if (!found || found.pw !== pw) {
+        showToast('아이디 또는 비밀번호가 올바르지 않습니다.', 'error');
+        document.getElementById('adminPw').value = '';
+        return;
+    }
+    currentAdmin = { id, ...found };
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminWrap').style.display   = 'flex';
+    document.getElementById('sidebarName').textContent   = found.name;
+    document.getElementById('sidebarId').textContent     = id;
+    loadDashboard();
+});
+
+function doLogout() {
+    if (!confirm('로그아웃 하시겠습니까?')) return;
+    currentAdmin = null;
+    document.getElementById('adminWrap').style.display   = 'none';
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('loginForm').reset();
+}
+
+// ═══════════════════════════════════════════════════════
+// 섹션 이동
+// ═══════════════════════════════════════════════════════
+const SECTION_TITLES = {
+    dashboard: '대시보드', applications: '신청 관리',
+    experts: '전문가 승인', users: '회원 관리', settlements: '정산 관리'
+};
+
+function goto(sec, el) {
+    currentSection = sec;
+
+    // 사이드바 강조
+    document.querySelectorAll('.sidebar-nav .nav-item').forEach(b => b.classList.remove('active'));
+    if (el) el.classList.add('active');
+    else {
+        // el 없이 호출 시 데이터로 찾기
+        document.querySelectorAll('.sidebar-nav .nav-item').forEach(b => {
+            if (b.getAttribute('onclick') && b.getAttribute('onclick').includes(`'${sec}'`)) b.classList.add('active');
+        });
+    }
+
+    // 섹션 전환
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById('sec-' + sec).classList.add('active');
+    document.getElementById('topbarTitle').textContent = SECTION_TITLES[sec] || sec;
+
+    // 모바일 사이드바 닫기
+    closeSidebar();
+
+    // 각 섹션 데이터 로드
+    if (sec === 'dashboard')    loadDashboard();
+    if (sec === 'applications') loadApplications();
+    if (sec === 'experts')      loadExperts();
+    if (sec === 'users')        loadUsers();
+    if (sec === 'settlements')  loadSettlements();
+}
+
+function refreshCurrent() { goto(currentSection, null); }
+
+// ═══════════════════════════════════════════════════════
+// 사이드바 (모바일)
+// ═══════════════════════════════════════════════════════
+function toggleSidebar() {
+    const sb = document.getElementById('adminSidebar');
+    const ov = document.getElementById('sidebarOverlay');
+    sb.classList.toggle('open');
+    ov.style.display = sb.classList.contains('open') ? 'block' : 'none';
+}
+function closeSidebar() {
+    document.getElementById('adminSidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').style.display = 'none';
+}
+
+// ═══════════════════════════════════════════════════════
+// 대시보드
+// ═══════════════════════════════════════════════════════
+async function loadDashboard() {
+    try {
+        // 신청 전체
+        const appRes  = await API.applications.getAll('limit=1000&sort=-createdAt');
+        const apps    = (appRes?.data) || [];
+        allApps = apps;
+
+        // 전문가
+        const expRes  = await API.users.getAll('userType=expert&status=active&limit=500');
+        const experts = (expRes?.data) || [];
+
+        // 승인대기 전문가
+        const pendRes = await API.users.getAll('userType=expert&status=pending&limit=100');
+        const pending = (pendRes?.data) || [];
+
+        // ── 통계 카드 ──────────────────────────────
+        const thisMonth = new Date().toISOString().slice(0, 7);
+        const waiting   = apps.filter(a => !a.expert_name && a.status !== '취소' && a.status !== '완료');
+        const revenue   = apps
+            .filter(a => (a.created_at || a.createdAt || '').slice(0, 7) === thisMonth && a.payment_status === '결제완료')
+            .reduce((s, a) => s + Number(a.service_fee || 99000), 0);
+
+        document.getElementById('st-total').textContent   = fmtNum(apps.length);
+        document.getElementById('st-pending').textContent = fmtNum(waiting.length);
+        document.getElementById('st-experts').textContent = fmtNum(experts.length);
+        document.getElementById('st-revenue').textContent = fmtNum(revenue) + '원';
+
+        // 뱃지 업데이트
+        updateNavBadge('navBadgeApp', waiting.length);
+        updateNavBadge('navBadgeExp', pending.length);
+
+        // ── 최근 신청 10건 ─────────────────────────
+        const recent10 = apps.slice(0, 10);
+        const rWrap = document.getElementById('recentApps');
+        if (recent10.length === 0) {
+            rWrap.innerHTML = `<div class="empty-box"><i class="fas fa-inbox"></i><p>신청 내역이 없습니다.</p></div>`;
+        } else {
+            rWrap.innerHTML = `
+            <table class="data-table">
+                <thead><tr>
+                    <th>사건번호</th><th>신청자</th><th>담당 법무사</th><th>상태</th><th>신청일</th>
+                </tr></thead>
+                <tbody>
+                ${recent10.map(a => `<tr>
+                    <td><strong>${a.case_number || '-'}</strong></td>
+                    <td>${a.applicant_name || '-'}</td>
+                    <td>${a.expert_name ? `<span style="color:#22c55e;font-weight:600;">${a.expert_name}</span>` : '<span style="color:#ccc;">미배정</span>'}</td>
+                    <td>${badge(a.status)}</td>
+                    <td style="color:#888;">${fmtDate(a.created_at || a.createdAt)}</td>
+                </tr>`).join('')}
+                </tbody>
+            </table>`;
+        }
+
+        // ── 지역별 현황 ─────────────────────────────
+        const regionMap = {};
+        apps.forEach(a => {
+            const r = a.region || '기타';
+            regionMap[r] = (regionMap[r] || 0) + 1;
+        });
+        const regionSorted = Object.entries(regionMap).sort((a, b) => b[1] - a[1]).slice(0, 8);
+        const maxVal = regionSorted[0]?.[1] || 1;
+        const colors = ['#667eea','#764ba2','#f97316','#22c55e','#3b82f6','#ef4444','#a855f7','#eab308'];
+        document.getElementById('regionChart').innerHTML = regionSorted.length === 0
+            ? `<div class="empty-box"><i class="fas fa-map-marker-alt"></i><p>데이터 없음</p></div>`
+            : regionSorted.map(([region, cnt], i) => `
+                <div class="mini-bar-item">
+                    <span class="mini-bar-label">${region}</span>
+                    <div class="mini-bar-track">
+                        <div class="mini-bar-fill" style="width:${Math.round(cnt/maxVal*100)}%;background:${colors[i%colors.length]};"></div>
+                    </div>
+                    <span class="mini-bar-val">${cnt}건</span>
+                </div>`).join('');
+
+        // ── 결제 현황 ────────────────────────────────
+        const paid    = apps.filter(a => a.payment_status === '결제완료').length;
+        const waiting2 = apps.filter(a => a.payment_status === '결제대기' || !a.payment_status).length;
+        document.getElementById('paymentSummary').innerHTML = `
+            <div style="display:flex;flex-direction:column;gap:0.75rem;">
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:#f0fdf4;border-radius:10px;">
+                    <span style="font-size:0.9rem;color:#166534;font-weight:600;">✅ 결제 완료</span>
+                    <strong style="font-size:1.1rem;color:#16a34a;">${fmtNum(paid)}건</strong>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:#fff7ed;border-radius:10px;">
+                    <span style="font-size:0.9rem;color:#9a3412;font-weight:600;">⏳ 결제 대기</span>
+                    <strong style="font-size:1.1rem;color:#ea580c;">${fmtNum(waiting2)}건</strong>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:#f5f3ff;border-radius:10px;">
+                    <span style="font-size:0.9rem;color:#5b21b6;font-weight:600;">💰 이번 달 매출</span>
+                    <strong style="font-size:1.1rem;color:#7c3aed;">${fmtNum(revenue)}원</strong>
+                </div>
+                <div style="font-size:0.78rem;color:#999;text-align:right;">수수료 1건 = 99,000원</div>
+            </div>`;
+
+        // ── 승인대기 전문가 (미니) ────────────────────
+        const pendWrap = document.getElementById('pendingExpertsMini');
+        if (pending.length === 0) {
+            pendWrap.innerHTML = `<div class="empty-box"><i class="fas fa-check-circle" style="color:#22c55e;opacity:1;"></i><p style="color:#22c55e;">모든 전문가가 처리되었습니다.</p></div>`;
+        } else {
+            pendWrap.innerHTML = pending.slice(0, 3).map(ex => `
+                <div style="display:flex;align-items:center;gap:0.75rem;padding:0.75rem;background:#fff7ed;border-radius:10px;margin-bottom:0.5rem;">
+                    <div class="assign-ava" style="width:36px;height:36px;font-size:0.85rem;"><i class="fas fa-user-tie"></i></div>
+                    <div style="flex:1;">
+                        <strong style="font-size:0.88rem;">${ex.name || ex.userId || '-'}</strong>
+                        <div style="font-size:0.75rem;color:#888;">${ex.phone || ex.email || '-'}</div>
+                    </div>
+                    <button class="btn-sm btn-green" onclick="quickApprove('${ex.id}')">승인</button>
+                </div>`).join('') + (pending.length > 3 ? `<p style="font-size:0.82rem;color:#888;text-align:center;margin-top:0.5rem;">+ ${pending.length - 3}명 더 있습니다</p>` : '');
+        }
+
+    } catch(err) {
+        console.error('대시보드 로드 오류:', err);
+        showToast('대시보드 데이터 로드 실패', 'error');
+    }
+}
+
+function updateNavBadge(id, count) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (count > 0) { el.textContent = count; el.style.display = 'inline-block'; }
+    else { el.style.display = 'none'; }
+}
+
+// ═══════════════════════════════════════════════════════
+// 신청 관리
+// ═══════════════════════════════════════════════════════
+async function loadApplications() {
+    setLoading('appTableWrap');
+    try {
+        const res  = await API.applications.getAll('limit=500&sort=-createdAt');
+        allApps    = (res?.data) || [];
+
+        // 탭 카운트
+        const statuses = ['결제대기','접수','매칭중','매칭완료','완료','취소'];
+        document.getElementById('cnt-all').textContent = allApps.length;
+        statuses.forEach(s => {
+            const el = document.getElementById('cnt-' + s);
+            if (el) el.textContent = allApps.filter(a => a.status === s).length;
+        });
+
+        renderAppTable(allApps);
+    } catch(err) {
+        document.getElementById('appTableWrap').innerHTML =
+            `<div class="empty-box"><i class="fas fa-exclamation-circle"></i><p>데이터를 불러올 수 없습니다.</p></div>`;
+    }
+}
+
+function renderAppTable(apps) {
+    const wrap = document.getElementById('appTableWrap');
+    if (apps.length === 0) {
+        wrap.innerHTML = `<div class="empty-box"><i class="fas fa-inbox"></i><p>신청 내역이 없습니다.</p></div>`;
+        return;
+    }
+    wrap.innerHTML = `
+    <table class="data-table">
+        <thead><tr>
+            <th>사건번호</th><th>지역/법원</th><th>신청자</th><th>연락처</th>
+            <th>입찰일</th><th>법무사</th><th>결제</th><th>상태</th><th style="text-align:center;">관리</th>
+        </tr></thead>
+        <tbody>
+        ${apps.map(a => `<tr data-id="${a.id}" data-status="${a.status || ''}">
+            <td><strong style="color:#667eea;">${a.case_number || '-'}</strong></td>
+            <td style="font-size:0.82rem;">${a.region || ''}${a.court ? '<br><span style="color:#999;">'+a.court+'</span>' : ''}</td>
+            <td>${a.applicant_name || '-'}</td>
+            <td style="font-size:0.82rem;">${a.phone || '-'}</td>
+            <td style="color:#888;font-size:0.82rem;">${fmtDate(a.bid_date)}</td>
+            <td>${a.expert_name
+                ? `<span style="color:#22c55e;font-weight:600;font-size:0.85rem;">${a.expert_name}</span>`
+                : '<span style="color:#ccc;font-size:0.82rem;">미배정</span>'}</td>
+            <td>${badge(a.payment_status || '결제대기')}</td>
+            <td>
+                <select class="status-select" onchange="changeStatus('${a.id}', this.value, this)">
+                    ${['접수','결제대기','결제완료','매칭중','매칭완료','진행중','완료','낙찰','유찰','취소']
+                        .map(s => `<option value="${s}" ${a.status===s?'selected':''}>${s}</option>`).join('')}
+                </select>
+            </td>
+            <td style="text-align:center;white-space:nowrap;">
+                <button class="btn-sm btn-blue" onclick="openDetail('${a.id}')">상세</button>
+                ${!a.expert_name && a.status !== '취소' && a.status !== '완료'
+                    ? `<button class="btn-sm btn-green" onclick="openAssign('${a.id}')">배정</button>`
+                    : ''}
+            </td>
+        </tr>`).join('')}
+        </tbody>
+    </table>`;
+}
+
+function setAppFilter(status, el) {
+    appFilter = status;
+    document.querySelectorAll('#appFilterBar .ftab').forEach(b => b.classList.remove('active'));
+    if (el) el.classList.add('active');
+    filterAppTable();
+}
+
+function filterAppTable() {
+    const q   = (document.getElementById('appSearch')?.value || '').toLowerCase();
+    const filtered = allApps.filter(a => {
+        const matchStatus = appFilter === 'all' || (a.status || '') === appFilter;
+        const matchSearch = !q ||
+            (a.case_number || '').toLowerCase().includes(q) ||
+            (a.applicant_name || '').toLowerCase().includes(q) ||
+            (a.phone || '').includes(q) ||
+            (a.expert_name || '').toLowerCase().includes(q);
+        return matchStatus && matchSearch;
+    });
+    renderAppTable(filtered);
+}
+
+async function changeStatus(id, newStatus, sel) {
+    const old = allApps.find(a => a.id === id)?.status || '';
+    try {
+        await API.applications.updateStatus(id, newStatus);
+        const app = allApps.find(a => a.id === id);
+        if (app) app.status = newStatus;
+        showToast(`✅ 상태 변경: ${old} → ${newStatus}`, 'success');
+        // 탭 카운트 재계산
+        const statuses = ['결제대기','접수','매칭중','매칭완료','완료','취소'];
+        document.getElementById('cnt-all').textContent = allApps.length;
+        statuses.forEach(s => {
+            const el = document.getElementById('cnt-' + s);
+            if (el) el.textContent = allApps.filter(a => a.status === s).length;
+        });
+    } catch(err) {
+        showToast('상태 변경 실패', 'error');
+        sel.value = old; // 롤백
+    }
+}
+
+// ═══════════════════════════════════════════════════════
+// 신청 상세
+// ═══════════════════════════════════════════════════════
+async function openDetail(id) {
+    detailAppId = id;
+    document.getElementById('modalDetailBody').innerHTML =
+        `<div style="text-align:center;padding:2rem;"><i class="fas fa-spinner fa-spin fa-2x" style="color:#ccc;"></i></div>`;
+    openModal('modalDetail');
+    try {
+        const a = await API.applications.getById(id);
+        if (!a) throw new Error('not found');
+
+        const noExpert = !a.expert_name && a.status !== '취소' && a.status !== '완료';
+        document.getElementById('modalDetailAssignBtn').style.display = noExpert ? 'block' : 'none';
+
+        document.getElementById('modalDetailBody').innerHTML = `
+        <table class="detail-table">
+            <tr><td>사건번호</td><td><strong style="color:#667eea;">${a.case_number||'-'}</strong></td></tr>
+            <tr><td>법원</td><td>${a.court||'-'}</td></tr>
+            <tr><td>지역</td><td>${a.region||'-'}</td></tr>
+            <tr><td>물건 주소</td><td>${a.address||'-'}</td></tr>
+            <tr><td>물건 종류</td><td>${a.property_type||'-'}</td></tr>
+            <tr><td>신청자</td><td><strong>${a.applicant_name||'-'}</strong></td></tr>
+            <tr><td>연락처</td><td>${a.phone||'-'}</td></tr>
+            <tr><td>이메일</td><td>${a.email||'-'}</td></tr>
+            <tr><td>생년월일</td><td>${a.applicant_birth||'-'}</td></tr>
+            <tr><td>은행/계좌</td><td>${a.bank_name||''} ${a.account_number||''}</td></tr>
+            <tr><td>예금주</td><td>${a.account_holder||'-'}</td></tr>
+            <tr><td>입찰 기일</td><td>${fmtDate(a.bid_date)}</td></tr>
+            <tr><td>입찰 금액</td><td><strong style="color:#667eea;">${fmtNum(a.bid_amount)}원</strong></td></tr>
+            <tr><td>입찰 형태</td><td>${a.bid_type||'-'}</td></tr>
+            <tr><td>보증금 납부</td><td>${a.deposit_method||'-'}</td></tr>
+            <tr><td>감정가</td><td>${fmtNum(a.appraisal_price)}원</td></tr>
+            <tr><td>최저입찰가</td><td>${fmtNum(a.min_bid_price)}원</td></tr>
+            <tr><td>수수료</td><td>${fmtNum(a.service_fee||99000)}원</td></tr>
+            <tr><td>결제 상태</td><td>${badge(a.payment_status||'결제대기')}</td></tr>
+            <tr><td>신청 상태</td><td>${badge(a.status)}</td></tr>
+            <tr><td>담당 법무사</td><td>${a.expert_name
+                ? `<span style="color:#22c55e;font-weight:700;">${a.expert_name}</span>`
+                : '<span style="color:#ccc;">미배정</span>'}</td></tr>
+            ${a.memo ? `<tr><td>메모</td><td>${a.memo}</td></tr>` : ''}
+            <tr><td>신청 일시</td><td style="color:#888;">${fmtDateTime(a.created_at||a.createdAt)}</td></tr>
+        </table>`;
+    } catch(e) {
+        document.getElementById('modalDetailBody').innerHTML =
+            `<div class="empty-box"><i class="fas fa-exclamation-circle"></i><p>정보를 불러올 수 없습니다.</p></div>`;
+    }
+}
+
+function openAssignFromDetail() {
+    closeModal('modalDetail');
+    openAssign(detailAppId);
+}
+
+// ═══════════════════════════════════════════════════════
+// 법무사 배정
+// ═══════════════════════════════════════════════════════
+async function openAssign(appId) {
+    assignTargetId = appId;
+    selectedExpertId = null; selectedExpertName = null;
+    document.getElementById('btnConfirmAssign').disabled = true;
+    document.getElementById('btnConfirmAssign').style.opacity = '0.5';
+    document.getElementById('assignList').innerHTML =
+        `<div style="text-align:center;padding:2rem;color:#ccc;"><i class="fas fa-spinner fa-spin fa-2x"></i></div>`;
+    openModal('modalAssign');
+
+    try {
+        // 해당 신청 지역 파악
+        const app  = allApps.find(a => a.id === appId) || await API.applications.getById(appId);
+        const region = app?.region || '';
+
+        const res    = await API.users.getAll('userType=expert&status=active&limit=200');
+        const experts = (res?.data) || [];
+
+        if (experts.length === 0) {
+            document.getElementById('assignList').innerHTML =
+                `<div class="empty-box"><i class="fas fa-user-slash"></i><p>활성 법무사가 없습니다.</p></div>`;
+            return;
+        }
+
+        // 해당 지역 먼저 표시
+        const inRegion    = experts.filter(e => {
+            const regs = Array.isArray(e.serviceRegions) ? e.serviceRegions : [e.serviceRegions || ''];
+            return regs.some(r => r && r.includes(region));
+        });
+        const outRegion   = experts.filter(e => !inRegion.includes(e));
+        const sorted      = [...inRegion, ...outRegion];
+
+        document.getElementById('assignList').innerHTML =
+            (region && inRegion.length > 0 ? `<p style="font-size:0.78rem;color:#667eea;font-weight:700;margin-bottom:0.5rem;">📍 ${region} 담당 법무사 (${inRegion.length}명)</p>` : '') +
+            sorted.map(ex => {
+                const regs = Array.isArray(ex.serviceRegions) ? ex.serviceRegions.join(', ') : (ex.serviceRegions || '전국');
+                const isMatch = inRegion.includes(ex);
+                return `<div class="assign-row ${isMatch ? 'region-match' : ''}" id="ar_${ex.id}" onclick="selectExpert('${ex.id}','${(ex.name||ex.userId||'').replace(/'/g,'')}')">
+                    <div class="assign-ava"${isMatch ? ' style="background:linear-gradient(135deg,#22c55e,#16a34a);"' : ''}><i class="fas fa-user-tie"></i></div>
+                    <div class="assign-info">
+                        <strong>${ex.name || ex.userId || '-'}</strong>
+                        <small>${ex.phone || ex.email || '-'}</small>
+                        <small style="color:${isMatch?'#22c55e':'#aaa'};">${isMatch ? '📍 ' : ''}${regs}</small>
+                    </div>
+                    <i class="fas fa-check-circle assign-chk" id="ac_${ex.id}"></i>
+                </div>`;
+            }).join('');
+    } catch(e) {
+        document.getElementById('assignList').innerHTML =
+            `<div class="empty-box"><i class="fas fa-exclamation-circle"></i><p>목록 로드 실패</p></div>`;
+    }
+}
+
+function selectExpert(id, name) {
+    document.querySelectorAll('.assign-row').forEach(r => r.classList.remove('selected'));
+    document.querySelectorAll('[id^="ac_"]').forEach(c => c.style.display = 'none');
+    selectedExpertId   = id;
+    selectedExpertName = name;
+    document.getElementById('ar_' + id)?.classList.add('selected');
+    const chk = document.getElementById('ac_' + id);
+    if (chk) chk.style.display = 'block';
+    const btn = document.getElementById('btnConfirmAssign');
+    btn.disabled = false; btn.style.opacity = '1';
+}
+
+async function confirmAssign() {
+    if (!selectedExpertId || !assignTargetId) return;
+    const btn = document.getElementById('btnConfirmAssign');
+    btn.disabled = true; btn.textContent = '배정 중...';
+    try {
+        await API.applications.assignExpert(assignTargetId, selectedExpertId, selectedExpertName);
+        // 캐시 업데이트
+        const app = allApps.find(a => a.id === assignTargetId);
+        if (app) { app.expert_name = selectedExpertName; app.status = '매칭완료'; }
+        closeModal('modalAssign');
+        showToast(`✅ ${selectedExpertName} 법무사에게 배정 완료!`, 'success');
+        filterAppTable();
+    } catch(e) {
+        showToast('배정 중 오류가 발생했습니다.', 'error');
+        btn.disabled = false; btn.textContent = '배정 확정';
+    }
+}
+
+// CSV 내보내기
+async function exportCSV() {
+    try {
+        const data = allApps.length > 0 ? allApps
+            : (await API.applications.getAll('limit=1000'))?.data || [];
+        if (data.length === 0) { showToast('다운로드할 데이터가 없습니다.', 'info'); return; }
+        const header = ['사건번호','법원','지역','신청자','연락처','입찰가','입찰일','법무사','결제상태','상태','신청일'];
+        const rows   = data.map(a => [
+            a.case_number||'', a.court||'', a.region||'', a.applicant_name||'', a.phone||'',
+            a.bid_amount||'', a.bid_date||'', a.expert_name||'',
+            a.payment_status||'', a.status||'', fmtDate(a.created_at||a.createdAt)
+        ]);
+        downloadCSV([header, ...rows], `신청내역_${new Date().toISOString().slice(0,10)}`);
+        showToast('CSV 다운로드 완료!', 'success');
+    } catch(e) { showToast('다운로드 실패', 'error'); }
+}
+
+function downloadCSV(rows, filename) {
+    const csv  = '\uFEFF' + rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a'); a.href = url; a.download = filename + '.csv'; a.click();
+    URL.revokeObjectURL(url);
+}
+
+// ═══════════════════════════════════════════════════════
+// 전문가 승인
+// ═══════════════════════════════════════════════════════
+async function loadExperts() {
+    setLoading('expertListWrap');
+    const statusMap = { pending: 'pending', active: 'active', rejected: 'rejected' };
+    const statusParam = statusMap[expertFilter] || 'pending';
+    try {
+        const res     = await API.users.getAll(`userType=expert&status=${statusParam}&limit=200&sort=-createdAt`);
+        const experts = (res?.data) || [];
+        renderExpertList(experts);
+    } catch(e) {
+        document.getElementById('expertListWrap').innerHTML =
+            `<div class="empty-box"><i class="fas fa-exclamation-circle"></i><p>데이터를 불러올 수 없습니다.</p></div>`;
+    }
+}
+
+function renderExpertList(experts) {
+    const wrap = document.getElementById('expertListWrap');
+    if (experts.length === 0) {
+        const msg = { pending:'승인 대기 중인 법무사가 없습니다.', active:'활성 법무사가 없습니다.', rejected:'거부된 법무사가 없습니다.' };
+        wrap.innerHTML = `<div class="empty-box"><i class="fas fa-inbox"></i><p>${msg[expertFilter]||'없습니다.'}</p></div>`;
+        return;
+    }
+    wrap.innerHTML = experts.map(ex => `
+    <div class="expert-card" id="ec_${ex.id}">
+        <div class="expert-card-head">
+            <div style="display:flex;align-items:center;gap:0.75rem;">
+                <div class="assign-ava"><i class="fas fa-user-tie"></i></div>
+                <div>
+                    <strong style="font-size:1rem;">${ex.name||'-'}</strong>
+                    ${badge(ex.status)}
+                </div>
+            </div>
+            <span style="font-size:0.8rem;color:#888;">신청: ${fmtDate(ex.createdAt)}</span>
+        </div>
+        <div class="expert-card-body">
+            <div class="info-grid">
+                <div class="info-item"><div class="lbl">이메일</div><div class="val">${ex.email||'-'}</div></div>
+                <div class="info-item"><div class="lbl">연락처</div><div class="val">${ex.phone||'-'}</div></div>
+                <div class="info-item"><div class="lbl">등록번호</div><div class="val">${ex.licenseNumber||'-'}</div></div>
+                <div class="info-item"><div class="lbl">사무소</div><div class="val">${ex.officeAddress||'-'}</div></div>
+                <div class="info-item" style="grid-column:span 2;">
+                    <div class="lbl">서비스 지역</div>
+                    <div class="val">${Array.isArray(ex.serviceRegions) ? ex.serviceRegions.join(', ') : (ex.serviceRegions||'-')}</div>
+                </div>
+            </div>
+            <div style="background:#f8f9fa;border-radius:8px;padding:0.75rem;font-size:0.82rem;color:#666;">
+                📎 첨부서류: ${ex.licenseFileName||'자격증'} / ${ex.insuranceFileName||'보험증권'}
+            </div>
+            ${ex.rejectReason ? `<div style="margin-top:0.5rem;background:#fef2f2;border-radius:8px;padding:0.75rem;font-size:0.82rem;color:#ef4444;">거부 사유: ${ex.rejectReason}</div>` : ''}
+        </div>
+        <div class="expert-card-foot">
+            ${expertFilter === 'pending' ? `
+                <button class="btn-sm btn-green" onclick="approveExpert('${ex.id}')"><i class="fas fa-check"></i> 승인</button>
+                <button class="btn-sm btn-red" onclick="rejectExpert('${ex.id}')"><i class="fas fa-times"></i> 거부</button>
+            ` : ''}
+            ${expertFilter === 'active' ? `
+                <button class="btn-sm btn-red" onclick="blockExpert('${ex.id}')"><i class="fas fa-ban"></i> 정지</button>
+            ` : ''}
+            ${expertFilter === 'rejected' ? `
+                <button class="btn-sm btn-blue" onclick="reApproveExpert('${ex.id}')"><i class="fas fa-redo"></i> 재승인</button>
+            ` : ''}
+        </div>
+    </div>`).join('');
+}
+
+function setExpertFilter(status, el) {
+    expertFilter = status;
+    document.querySelectorAll('#sec-experts .ftab').forEach(b => b.classList.remove('active'));
+    if (el) el.classList.add('active');
+    loadExperts();
+}
+
+async function approveExpert(id) {
+    if (!confirm('이 법무사를 승인하시겠습니까?')) return;
+    try {
+        await API.users.update(id, { status: 'active', approvedAt: new Date().toISOString() });
+        showToast('✅ 법무사 승인 완료!', 'success');
+        fadeRemoveCard('ec_' + id, loadExperts);
+    } catch(e) { showToast('처리 실패', 'error'); }
+}
+
+async function quickApprove(id) {
+    if (!confirm('이 법무사를 승인하시겠습니까?')) return;
+    try {
+        await API.users.update(id, { status: 'active', approvedAt: new Date().toISOString() });
+        showToast('✅ 법무사 승인 완료!', 'success');
+        loadDashboard();
+    } catch(e) { showToast('처리 실패', 'error'); }
+}
+
+async function rejectExpert(id) {
+    const reason = prompt('거부 사유를 입력해주세요:');
+    if (reason === null) return;
+    if (!reason.trim()) { showToast('거부 사유를 입력해주세요.', 'error'); return; }
+    try {
+        await API.users.update(id, { status: 'rejected', rejectedAt: new Date().toISOString(), rejectReason: reason.trim() });
+        showToast('거부 처리 완료', 'info');
+        fadeRemoveCard('ec_' + id, loadExperts);
+    } catch(e) { showToast('처리 실패', 'error'); }
+}
+
+async function blockExpert(id) {
+    if (!confirm('이 법무사를 정지하시겠습니까?')) return;
+    try {
+        await API.users.update(id, { status: 'blocked' });
+        showToast('해당 법무사가 정지되었습니다.', 'info');
+        fadeRemoveCard('ec_' + id, loadExperts);
+    } catch(e) { showToast('처리 실패', 'error'); }
+}
+
+async function reApproveExpert(id) {
+    if (!confirm('이 법무사를 재승인하시겠습니까?')) return;
+    try {
+        await API.users.update(id, { status: 'active', approvedAt: new Date().toISOString(), rejectReason: '' });
+        showToast('✅ 재승인 완료!', 'success');
+        fadeRemoveCard('ec_' + id, loadExperts);
+    } catch(e) { showToast('처리 실패', 'error'); }
+}
+
+function fadeRemoveCard(id, cb) {
+    const card = document.getElementById(id);
+    if (card) {
+        card.style.transition = 'opacity 0.4s, transform 0.4s';
+        card.style.opacity = '0'; card.style.transform = 'translateX(20px)';
+        setTimeout(cb, 430);
+    } else { cb(); }
+}
+
+// ═══════════════════════════════════════════════════════
+// 회원 관리
+// ═══════════════════════════════════════════════════════
+async function loadUsers() {
+    setLoading('userTableWrap');
+    try {
+        const res  = await API.users.getAll('limit=500&sort=-createdAt');
+        allUsers   = (res?.data) || [];
+        renderUserTable(allUsers);
+    } catch(e) {
+        document.getElementById('userTableWrap').innerHTML =
+            `<div class="empty-box"><i class="fas fa-exclamation-circle"></i><p>데이터를 불러올 수 없습니다.</p></div>`;
+    }
+}
+
+function renderUserTable(users) {
+    const wrap = document.getElementById('userTableWrap');
+    if (users.length === 0) {
+        wrap.innerHTML = `<div class="empty-box"><i class="fas fa-users"></i><p>회원이 없습니다.</p></div>`;
+        return;
+    }
+    wrap.innerHTML = `
+    <table class="data-table">
+        <thead><tr>
+            <th>이름</th><th>아이디</th><th>이메일</th><th>연락처</th>
+            <th>유형</th><th>상태</th><th>가입일</th><th style="text-align:center;">관리</th>
+        </tr></thead>
+        <tbody>
+        ${users.map(u => `<tr>
+            <td><strong>${u.name||'-'}</strong></td>
+            <td style="color:#888;font-size:0.85rem;">${u.userId||'-'}</td>
+            <td style="font-size:0.82rem;">${u.email||'-'}</td>
+            <td style="font-size:0.82rem;">${u.phone||'-'}</td>
+            <td>${badge(u.userType === 'client' ? '신청자' : u.userType === 'expert' ? '법무사' : u.userType)}</td>
+            <td>${badge(u.status === 'active' ? '활성' : u.status === 'pending' ? '대기' : u.status === 'blocked' ? '정지' : (u.status||'-'))}</td>
+            <td style="color:#888;font-size:0.82rem;">${fmtDate(u.createdAt)}</td>
+            <td style="text-align:center;">
+                <button class="btn-sm btn-blue" onclick="openUserDetail('${u.id}')">상세</button>
+                ${u.status === 'active'
+                    ? `<button class="btn-sm btn-red" onclick="blockUser('${u.id}','${(u.name||'').replace(/'/g,'')}')">정지</button>`
+                    : u.status === 'blocked'
+                    ? `<button class="btn-sm btn-green" onclick="unblockUser('${u.id}','${(u.name||'').replace(/'/g,'')}')">해제</button>`
+                    : ''}
+            </td>
+        </tr>`).join('')}
+        </tbody>
+    </table>`;
+}
+
+function setUserFilter(type, el) {
+    userFilter = type;
+    document.querySelectorAll('#sec-users .ftab').forEach(b => b.classList.remove('active'));
+    if (el) el.classList.add('active');
+    filterUserTable();
+}
+
+function filterUserTable() {
+    const q = (document.getElementById('userSearch')?.value || '').toLowerCase();
+    const filtered = allUsers.filter(u => {
+        const matchType = userFilter === 'all' || u.userType === userFilter;
+        const matchQ = !q ||
+            (u.name||'').toLowerCase().includes(q) ||
+            (u.email||'').toLowerCase().includes(q) ||
+            (u.phone||'').includes(q) ||
+            (u.userId||'').toLowerCase().includes(q);
+        return matchType && matchQ;
+    });
+    renderUserTable(filtered);
+}
+
+async function openUserDetail(id) {
+    document.getElementById('modalUserBody').innerHTML =
+        `<div style="text-align:center;padding:2rem;"><i class="fas fa-spinner fa-spin fa-2x" style="color:#ccc;"></i></div>`;
+    openModal('modalUser');
+    try {
+        const u = allUsers.find(a => a.id === id) || await API.users.getById(id);
+        if (!u) throw new Error();
+        document.getElementById('modalUserBody').innerHTML = `
+        <table class="detail-table">
+            <tr><td>이름</td><td><strong>${u.name||'-'}</strong></td></tr>
+            <tr><td>아이디</td><td>${u.userId||'-'}</td></tr>
+            <tr><td>이메일</td><td>${u.email||'-'}</td></tr>
+            <tr><td>전화번호</td><td>${u.phone||'-'}</td></tr>
+            <tr><td>회원 유형</td><td>${badge(u.userType==='client'?'신청자':'법무사')}</td></tr>
+            <tr><td>상태</td><td>${badge(u.status==='active'?'활성':u.status==='pending'?'대기':(u.status||'-'))}</td></tr>
+            ${u.userType === 'expert' ? `
+            <tr><td>등록번호</td><td>${u.licenseNumber||'-'}</td></tr>
+            <tr><td>사무소</td><td>${u.officeAddress||'-'}</td></tr>
+            <tr><td>서비스 지역</td><td>${Array.isArray(u.serviceRegions)?u.serviceRegions.join(', '):(u.serviceRegions||'-')}</td></tr>
+            ` : ''}
+            <tr><td>가입일</td><td style="color:#888;">${fmtDate(u.createdAt)}</td></tr>
+            ${u.loginType ? `<tr><td>로그인 방식</td><td>${u.loginType}</td></tr>` : ''}
+        </table>`;
+    } catch(e) {
+        document.getElementById('modalUserBody').innerHTML =
+            `<div class="empty-box"><i class="fas fa-exclamation-circle"></i><p>정보를 불러올 수 없습니다.</p></div>`;
+    }
+}
+
+async function blockUser(id, name) {
+    if (!confirm(`${name} 회원을 정지하시겠습니까?`)) return;
+    try {
+        await API.users.update(id, { status: 'blocked' });
+        const u = allUsers.find(a => a.id === id);
+        if (u) u.status = 'blocked';
+        showToast(`${name} 회원이 정지되었습니다.`, 'info');
+        filterUserTable();
+    } catch(e) { showToast('처리 실패', 'error'); }
+}
+
+async function unblockUser(id, name) {
+    if (!confirm(`${name} 회원의 정지를 해제하시겠습니까?`)) return;
+    try {
+        await API.users.update(id, { status: 'active' });
+        const u = allUsers.find(a => a.id === id);
+        if (u) u.status = 'active';
+        showToast(`${name} 회원 정지가 해제되었습니다.`, 'success');
+        filterUserTable();
+    } catch(e) { showToast('처리 실패', 'error'); }
+}
+
+// ═══════════════════════════════════════════════════════
+// 정산 관리
+// ═══════════════════════════════════════════════════════
+let settleData = [];
+
+async function loadSettlements() {
+    setLoading('settleTableWrap');
+    try {
+        // 결제완료 신청 전체 조회
+        const res  = await API.applications.getAll('limit=1000&sort=-createdAt');
+        const all  = (res?.data) || [];
+        const paid = all.filter(a => a.payment_status === '결제완료');
+
+        // 법무사별 + 월별 집계
+        const map = {};
+        paid.forEach(a => {
+            const expert = a.expert_name || '(미배정)';
+            const month  = (a.created_at || a.createdAt || '').slice(0, 7) || '미확인';
+            const key    = `${expert}__${month}`;
+            if (!map[key]) map[key] = { expert, month, count: 0, amount: 0, apps: [] };
+            map[key].count++;
+            map[key].amount += Number(a.service_fee || 99000);
+            map[key].apps.push(a);
+        });
+
+        settleData = Object.values(map).sort((a, b) => b.month.localeCompare(a.month) || a.expert.localeCompare(b.expert));
+
+        // 요약
+        const thisMonth = new Date().toISOString().slice(0, 7);
+        const thisData  = settleData.filter(r => r.month === thisMonth);
+        document.getElementById('settle-total').textContent  = paid.length + '건';
+        document.getElementById('settle-month').textContent  = thisData.reduce((s, r) => s + r.count, 0) + '건';
+        document.getElementById('settle-amount').textContent = fmtNum(thisData.reduce((s, r) => s + r.amount, 0)) + '원';
+
+        // 월 필터 옵션 구성
+        const months = [...new Set(settleData.map(r => r.month))].sort((a, b) => b.localeCompare(a));
+        const sel    = document.getElementById('settleMonthFilter');
+        sel.innerHTML = '<option value="all">전체 기간</option>' +
+            months.map(m => `<option value="${m}">${m}</option>`).join('');
+
+        renderSettleTable(settleData);
+    } catch(e) {
+        document.getElementById('settleTableWrap').innerHTML =
+            `<div class="empty-box"><i class="fas fa-exclamation-circle"></i><p>데이터를 불러올 수 없습니다.</p></div>`;
+    }
+}
+
+function renderSettleTable(rows) {
+    const wrap = document.getElementById('settleTableWrap');
+    if (rows.length === 0) {
+        wrap.innerHTML = `<div class="empty-box"><i class="fas fa-receipt"></i><p>정산 내역이 없습니다.</p></div>`;
+        return;
+    }
+    wrap.innerHTML = `
+    <table class="data-table">
+        <thead><tr>
+            <th>법무사</th><th>정산 월</th><th>처리 건수</th>
+            <th>수수료 합계</th><th>법무사 지급액 (70%)</th><th>플랫폼 수익 (30%)</th><th>상태</th>
+        </tr></thead>
+        <tbody>
+        ${rows.map(r => `<tr>
+            <td><strong>${r.expert}</strong></td>
+            <td><span style="background:#f0f2f5;padding:0.2rem 0.6rem;border-radius:6px;font-size:0.82rem;">${r.month}</span></td>
+            <td><strong style="color:#667eea;">${r.count}건</strong></td>
+            <td><strong>${fmtNum(r.amount)}원</strong></td>
+            <td style="color:#22c55e;font-weight:600;">${fmtNum(Math.round(r.amount * 0.7))}원</td>
+            <td style="color:#764ba2;font-weight:600;">${fmtNum(Math.round(r.amount * 0.3))}원</td>
+            <td>${badge('정산완료')}</td>
+        </tr>`).join('')}
+        </tbody>
+    </table>`;
+}
+
+function filterSettleTable() {
+    const m = document.getElementById('settleMonthFilter').value;
+    const filtered = m === 'all' ? settleData : settleData.filter(r => r.month === m);
+    renderSettleTable(filtered);
+
+    // 필터된 합계 업데이트
+    if (m !== 'all') {
+        document.getElementById('settle-month').textContent  = filtered.reduce((s, r) => s + r.count, 0) + '건';
+        document.getElementById('settle-amount').textContent = fmtNum(filtered.reduce((s, r) => s + r.amount, 0)) + '원';
+    }
+}
+
+async function exportSettleCSV() {
+    if (settleData.length === 0) { showToast('데이터가 없습니다.', 'info'); return; }
+    const header = ['법무사','정산월','처리건수','수수료합계','법무사지급(70%)','플랫폼수익(30%)'];
+    const rows   = settleData.map(r => [
+        r.expert, r.month, r.count, r.amount,
+        Math.round(r.amount * 0.7), Math.round(r.amount * 0.3)
+    ]);
+    downloadCSV([header, ...rows], `정산내역_${new Date().toISOString().slice(0,10)}`);
+    showToast('정산 CSV 다운로드 완료!', 'success');
+}
+</script>
+
+<!-- 회사 푸터 -->
+<footer style="background:#1a1a2e;color:#aaa;padding:1.5rem 0;margin-top:0;margin-left:240px;">
+    <div style="max-width:1200px;margin:0 auto;padding:0 2rem;display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:center;">
+        <div style="font-size:0.82rem;line-height:1.8;">
+            <span style="color:white;font-weight:600;">(주)원스타프로비</span> &nbsp;|&nbsp;
+            서울특별시 금천구 가산디지털1로 75-24 90호 &nbsp;|&nbsp;
+            <a href="tel:02-853-5875" style="color:#667eea;">02-853-5875</a>
+        </div>
+        <div style="font-size:0.78rem;color:#555;">&copy; 2026 대리입찰 톡. All rights reserved.</div>
+    </div>
+</footer>
+
 </body>
 </html>
