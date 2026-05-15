@@ -110,101 +110,6 @@
             </div>
         </section>
 
-        <!-- 법무사 모집 배너 섹션 -->
-        <section class="section expert-recruit-section">
-            <div class="container">
-                <!-- 긴급 모집 배지 -->
-                <div class="recruit-urgent-badge">
-                    <span class="pulse-dot"></span>
-                    🔥 법무사 긴급 모집 중 — 선착순 마감 예정
-                </div>
-
-                <div class="recruit-card">
-                    <!-- 왼쪽: 텍스트 -->
-                    <div class="recruit-text">
-                        <div class="recruit-tag">⚖️ 법무사 전용</div>
-                        <h2 class="recruit-title">
-                            부업으로 월 <span class="highlight-text">300만원+</span><br>
-                            지금 바로 시작하세요
-                        </h2>
-                        <p class="recruit-desc">
-                            대리입찰 톡에 등록하고 의뢰를 받아보세요.<br>
-                            건당 99,000원, 추가 업무 없이 수수료 전액 수령.
-                        </p>
-
-                        <div class="recruit-benefits">
-                            <div class="recruit-benefit">
-                                <i class="fas fa-check-circle"></i>
-                                <div>
-                                    <strong>플랫폼 수수료 0%</strong>
-                                    <span>베타 기간 수수료 전액 본인 수령</span>
-                                </div>
-                            </div>
-                            <div class="recruit-benefit">
-                                <i class="fas fa-check-circle"></i>
-                                <div>
-                                    <strong>입찰 익일 즉시 입금</strong>
-                                    <span>낙찰·패찰 무관, 다음날 정산</span>
-                                </div>
-                            </div>
-                            <div class="recruit-benefit">
-                                <i class="fas fa-check-circle"></i>
-                                <div>
-                                    <strong>전국 의뢰 자동 매칭</strong>
-                                    <span>원하는 지역만 선택, 알림으로 배정</span>
-                                </div>
-                            </div>
-                            <div class="recruit-benefit">
-                                <i class="fas fa-check-circle"></i>
-                                <div>
-                                    <strong>선착순 50명 우선 매칭</strong>
-                                    <span>먼저 등록할수록 더 많은 의뢰 배정</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="recruit-actions">
-                            <button class="btn btn-recruit-primary" onclick="window.location.href='signup.html?type=expert'">
-                                <i class="fas fa-user-tie"></i> 지금 법무사 등록하기
-                            </button>
-                            <a href="mailto:bidtok@naver.com" class="btn btn-recruit-outline">
-                                <i class="fas fa-envelope"></i> 사전 문의
-                            </a>
-                        </div>
-                        <p class="recruit-note">* 법무사 자격증 + 배상책임보험 보유자만 가입 가능</p>
-                    </div>
-
-                    <!-- 오른쪽: 수익 시뮬레이터 -->
-                    <div class="recruit-simulator">
-                        <div class="sim-title">💰 월 수익 시뮬레이터</div>
-                        <div class="sim-row">
-                            <label>월 처리 건수</label>
-                            <div class="sim-slider-wrap">
-                                <input type="range" id="simCount" min="1" max="30" value="10" oninput="updateSimulator()">
-                                <span id="simCountVal">10건</span>
-                            </div>
-                        </div>
-                        <div class="sim-result">
-                            <div class="sim-result-row">
-                                <span>건당 수수료</span>
-                                <span>99,000원</span>
-                            </div>
-                            <div class="sim-result-row">
-                                <span>플랫폼 수수료</span>
-                                <span class="green">0원 (베타 무료)</span>
-                            </div>
-                            <div class="sim-result-divider"></div>
-                            <div class="sim-result-row total">
-                                <span>예상 월 수익</span>
-                                <span id="simTotal" class="sim-total-val">990,000원</span>
-                            </div>
-                        </div>
-                        <p class="sim-note">실제 수익은 처리 건수에 따라 달라질 수 있습니다</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <!-- Experts Section -->
         <section id="experts" class="section experts-section">
             <div class="container">
@@ -920,6 +825,86 @@
                     <p>대리입찰 톡과 함께 전국의 입찰의뢰인을 만나보세요</p>
                 </div>
             </div>
+
+            <!-- 법무사 모집 배너 (전문가 신청 페이지 전용) -->
+            <div class="expert-recruit-banner">
+                <div class="container">
+                    <div class="recruit-urgent-badge">
+                        <span class="pulse-dot"></span>
+                        🔥 법무사 긴급 모집 중 — 선착순 마감 예정
+                    </div>
+
+                    <div class="recruit-card">
+                        <!-- 왼쪽: 텍스트 -->
+                        <div class="recruit-text">
+                            <div class="recruit-tag">⚖️ 법무사 전용</div>
+                            <h2 class="recruit-title">
+                                대장TV와 함께 수익<br>
+                                <span class="highlight-text">지금 바로 시작하세요</span>
+                            </h2>
+                            <p class="recruit-desc">
+                                대리입찰 톡에 등록하고 의뢰를 받아보세요.<br>
+                                건당 99,000원, 추가 업무 없이 수수료 전액 수령.
+                            </p>
+
+                            <div class="recruit-benefits">
+                                <div class="recruit-benefit">
+                                    <i class="fas fa-check-circle"></i>
+                                    <div>
+                                        <strong>플랫폼 수수료 0%</strong>
+                                        <span>베타 기간 수수료 전액 본인 수령</span>
+                                    </div>
+                                </div>
+                                <div class="recruit-benefit">
+                                    <i class="fas fa-check-circle"></i>
+                                    <div>
+                                        <strong>전국 의뢰 자동 매칭</strong>
+                                        <span>원하는 지역만 선택, 알림으로 배정</span>
+                                    </div>
+                                </div>
+                                <div class="recruit-benefit">
+                                    <i class="fas fa-check-circle"></i>
+                                    <div>
+                                        <strong>선착순 50명 우선 매칭</strong>
+                                        <span>먼저 등록할수록 더 많은 의뢰 배정</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p class="recruit-note">* 법무사 자격증 + 배상책임보험 보유자만 가입 가능</p>
+                        </div>
+
+                        <!-- 오른쪽: 수익 시뮬레이터 -->
+                        <div class="recruit-simulator">
+                            <div class="sim-title">💰 월 수익 시뮬레이터</div>
+                            <div class="sim-row">
+                                <label>월 처리 건수</label>
+                                <div class="sim-slider-wrap">
+                                    <input type="range" id="simCount" min="1" max="30" value="10" oninput="updateSimulator()">
+                                    <span id="simCountVal">10건</span>
+                                </div>
+                            </div>
+                            <div class="sim-result">
+                                <div class="sim-result-row">
+                                    <span>건당 수수료</span>
+                                    <span>99,000원</span>
+                                </div>
+                                <div class="sim-result-row">
+                                    <span>플랫폼 수수료</span>
+                                    <span class="green">0원 (베타 무료)</span>
+                                </div>
+                                <div class="sim-result-divider"></div>
+                                <div class="sim-result-row total">
+                                    <span>예상 월 수익</span>
+                                    <span id="simTotal" class="sim-total-val">990,000원</span>
+                                </div>
+                            </div>
+                            <p class="sim-note">실제 수익은 처리 건수에 따라 달라질 수 있습니다</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /법무사 모집 배너 -->
 
             <div class="container" style="max-width: 900px; padding: 3rem 20px;">
                 <div class="form-card">

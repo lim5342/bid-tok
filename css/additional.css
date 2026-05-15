@@ -1203,3 +1203,50 @@ a:focus-visible {
         padding: 1.5rem 1.25rem;
     }
 }
+
+/* ============================================
+   법무사 모집 배너 — 전문가 신청 페이지 전용
+   (메인에서 제거, expertPage 상단에만 표시)
+   ============================================ */
+.expert-recruit-banner {
+    background: linear-gradient(135deg, #0f1340 0%, #1550E8 60%, #1a7fd4 100%);
+    padding: 4rem 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.expert-recruit-banner::before {
+    content: '';
+    position: absolute;
+    top: -80px;
+    right: -80px;
+    width: 400px;
+    height: 400px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.expert-recruit-banner::after {
+    content: '';
+    position: absolute;
+    bottom: -120px;
+    left: -60px;
+    width: 500px;
+    height: 500px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+@media (max-width: 600px) {
+    .expert-recruit-banner {
+        padding: 2.5rem 0;
+    }
+    .expert-recruit-banner .recruit-title {
+        font-size: 1.6rem;
+    }
+    .expert-recruit-banner .container {
+        padding: 0 1rem;
+    }
+}
