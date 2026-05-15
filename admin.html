@@ -537,20 +537,27 @@
             try {
                 const app = await API.applications.getById(id);
                 if (!app) { alert('정보를 불러올 수 없습니다.'); return; }
-                alert([
-                    `📋 신청 상세 정보`,
-                    `━━━━━━━━━━━━━━━━━━━━━━`,
-                    `사건번호: ${app.case_number || '-'}`,
-                    `법원: ${app.court || '-'}`,
-                    `주소: ${app.address || '-'}`,
-                    `신청자: ${app.applicant_name || '-'}`,
-                    `연락처: ${app.phone || '-'}`,
-                    `입찰가: ${formatPrice(app.bid_amount)}원`,
-                    `입찰일: ${app.bid_date || '-'}`,
-                    `담당 법무사: ${app.expert_name || '미배정'}`,
-                    `상태: ${getStatusText(app.status)}`,
-                    `신청일: ${(app.created_at || '-').slice(0, 16).replace('T', ' ')}`
-                ].join('\n'));
+                document.getElementById('adminDetailModal').style.display = 'flex';
+                document.getElementById('adminDetailContent').innerHTML = `
+                    <table class="detail-table">
+                        <tr><td>사건번호</td><td><strong>${app.case_number || '-'}</strong></td></tr>
+                        <tr><td>법원</td><td>${app.court || '-'}</td></tr>
+                        <tr><td>물건 주소</td><td>${app.address || '-'}</td></tr>
+                        <tr><td>신청자</td><td>${app.applicant_name || '-'}</td></tr>
+                        <tr><td>연락처</td><td>${app.phone || '-'}</td></tr>
+                        <tr><td>감정가</td><td>${formatPrice(app.appraisal_price || 0)}원</td></tr>
+                        <tr><td>입찰가</td><td><strong style="color:#1550E8;">${formatPrice(app.bid_amount || 0)}원</strong></td></tr>
+                        <tr><td>입찰일</td><td>${app.bid_date || '-'}</td></tr>
+                        <tr><td>물건 종류</td><td>${app.property_type || '-'}</td></tr>
+                        <tr><td>입찰 형태</td><td>${app.bid_type || '-'}</td></tr>
+                        <tr><td>담당 법무사</td><td>${app.expert_name
+                            ? `<span style="color:#10B981;font-weight:600;">${app.expert_name}</span>`
+                            : '<span style="color:#999;">미배정</span>'}</td></tr>
+                        <tr><td>서비스 수수료</td><td>${formatPrice(app.service_fee || 99000)}원</td></tr>
+                        <tr><td>결제 상태</td><td>${app.payment_status || '결제대기'}</td></tr>
+                        <tr><td>상태</td><td><span class="status-badge ${getStatusClass(app.status)}">${getStatusText(app.status)}</span></td></tr>
+                        <tr><td>신청일시</td><td>${app.created_at ? app.created_at.slice(0,16).replace('T',' ') : '-'}</td></tr>
+                    </table>`;
             } catch (err) {
                 alert('상세 정보를 불러오는 중 오류가 발생했습니다.');
             }
@@ -586,17 +593,22 @@
             try {
                 const user = await API.users.getById(id);
                 if (!user) { alert('정보를 불러올 수 없습니다.'); return; }
-                alert([
-                    `👤 회원 상세 정보`,
-                    `━━━━━━━━━━━━━━━━━━━━━━`,
-                    `이름: ${user.name || '-'}`,
-                    `아이디: ${user.userId || '-'}`,
-                    `이메일: ${user.email || '-'}`,
-                    `전화번호: ${user.phone || '-'}`,
-                    `회원유형: ${user.userType === 'client' ? '신청자' : '법무사'}`,
-                    `상태: ${user.status || '-'}`,
-                    `가입일: ${(user.createdAt || '-').slice(0, 10)}`
-                ].join('\n'));
+                document.getElementById('adminDetailModal').style.display = 'flex';
+                document.getElementById('adminDetailContent').innerHTML = `
+                    <table class="detail-table">
+                        <tr><td>이름</td><td><strong>${user.name || '-'}</strong></td></tr>
+                        <tr><td>아이디</td><td>${user.userId || '-'}</td></tr>
+                        <tr><td>이메일</td><td>${user.email || '-'}</td></tr>
+                        <tr><td>전화번호</td><td>${user.phone || '-'}</td></tr>
+                        <tr><td>회원유형</td><td><span class="status-badge ${user.userType === 'client' ? 'status-confirmed' : 'status-success'}">${user.userType === 'client' ? '신청자' : '법무사'}</span></td></tr>
+                        <tr><td>상태</td><td>${user.status === 'active' ? '<span style="color:#10B981;font-weight:600;">활성</span>' : user.status || '-'}</td></tr>
+                        ${user.userType === 'expert' ? `
+                        <tr><td>등록번호</td><td>${user.licenseNumber || '-'}</td></tr>
+                        <tr><td>사무소 주소</td><td>${user.officeAddress || '-'}</td></tr>
+                        <tr><td>서비스 지역</td><td>${Array.isArray(user.serviceRegions) ? user.serviceRegions.join(', ') : (user.serviceRegions || '-')}</td></tr>
+                        ` : ''}
+                        <tr><td>가입일</td><td>${(user.createdAt || '-').slice(0, 10)}</td></tr>
+                    </table>`;
             } catch (err) {
                 alert('정보를 불러오는 중 오류가 발생했습니다.');
             }
@@ -635,6 +647,19 @@
                 loadSettlements();
             }
         }
+
+        // ── 공통 상세보기 모달 닫기 ───────────────────────────
+        function closeAdminDetailModal() {
+            document.getElementById('adminDetailModal').style.display = 'none';
+        }
+
+        // ESC 키로 모달 닫기
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeAdminDetailModal();
+                closeAssignModal();
+            }
+        });
 
         // ── 법무사 배정 모달 ───────────────────────────────────
         let assignTargetId = null;
@@ -708,6 +733,20 @@
         }
     </script>
 
+    <!-- 공통 상세보기 모달 -->
+    <div id="adminDetailModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center; padding:1rem;">
+        <div style="background:white; border-radius:20px; width:100%; max-width:520px; max-height:85vh; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+            <div style="padding:1.5rem 2rem 1rem; border-bottom:1px solid #e0e0e0; display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0; font-size:1.1rem; color:#333;"><i class="fas fa-clipboard-list" style="color:#1550E8; margin-right:0.5rem;"></i>상세 정보</h3>
+                <button onclick="closeAdminDetailModal()" style="background:none; border:none; font-size:1.5rem; cursor:pointer; color:#999; line-height:1;">&times;</button>
+            </div>
+            <div id="adminDetailContent" style="overflow-y:auto; flex:1; padding:1.5rem 2rem;"></div>
+            <div style="padding:1rem 2rem 1.5rem; border-top:1px solid #e0e0e0;">
+                <button onclick="closeAdminDetailModal()" style="width:100%; padding:0.9rem; background:#1550E8; color:white; border:none; border-radius:10px; font-weight:700; cursor:pointer; font-size:0.95rem;">닫기</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 법무사 배정 모달 -->
     <div id="assignModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center; padding:1rem;">
         <div style="background:white; border-radius:20px; width:100%; max-width:500px; max-height:80vh; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
@@ -725,6 +764,13 @@
 
     <style>
         /* 관리자 전용 추가 스타일 */
+        .detail-table { width:100%; border-collapse:collapse; }
+        .detail-table tr { border-bottom:1px solid #f0f0f0; }
+        .detail-table tr:last-child { border-bottom:none; }
+        .detail-table td { padding:0.65rem 0.5rem; font-size:0.92rem; }
+        .detail-table td:first-child { color:#888; width:38%; font-weight:500; }
+        .detail-table td:last-child { color:#222; font-weight:600; }
+
         .admin-stats-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));

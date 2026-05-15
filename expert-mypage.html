@@ -188,10 +188,12 @@
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script>
+    (function() {
         // 로그인 체크
         if (!Auth.isLoggedIn() || Auth.getUserType() !== 'expert') {
             alert('법무사 로그인이 필요합니다.');
             window.location.href = 'login.html';
+            return; // 이후 코드 실행 방지
         }
 
         // 사용자 정보 로드
@@ -515,26 +517,39 @@
             try {
                 const app = await API.applications.getById(id);
                 if (!app) { alert('정보를 불러올 수 없습니다.'); return; }
-                alert([
-                    `📋 상세 정보`,
-                    `━━━━━━━━━━━━━━━━━━━━`,
-                    `사건번호: ${app.case_number || '-'}`,
-                    `법원: ${app.court || '-'}`,
-                    `주소: ${app.address || '-'}`,
-                    `입찰가: ${formatPrice(app.bid_amount)}원`,
-                    `입찰일: ${app.bid_date || '-'}`,
-                    `신청자: ${app.applicant_name || '-'}`,
-                    `연락처: ${app.phone || '-'}`,
-                    `상태: ${app.status || '-'}`
-                ].join('\n'));
+                document.getElementById('expertDetailModal').style.display = 'flex';
+                document.getElementById('expertDetailContent').innerHTML = `
+                    <table class="detail-table">
+                        <tr><td>사건번호</td><td><strong>${app.case_number || '-'}</strong></td></tr>
+                        <tr><td>법원</td><td>${app.court || '-'}</td></tr>
+                        <tr><td>물건 주소</td><td>${app.address || '-'}</td></tr>
+                        <tr><td>입찰 기일</td><td>${app.bid_date || '-'}</td></tr>
+                        <tr><td>감정가</td><td>${formatPrice(app.appraisal_price || 0)}원</td></tr>
+                        <tr><td>희망 입찰가</td><td><strong style="color:#1550E8;">${formatPrice(app.bid_amount || 0)}원</strong></td></tr>
+                        <tr><td>물건 종류</td><td>${app.property_type || '-'}</td></tr>
+                        <tr><td>신청자</td><td>${app.applicant_name || '-'}</td></tr>
+                        <tr><td>신청자 연락처</td><td>${app.phone || '-'}</td></tr>
+                        <tr><td>입찰 형태</td><td>${app.bid_type || '-'}</td></tr>
+                        <tr><td>상태</td><td>${app.status || '-'}</td></tr>
+                        <tr><td>신청일시</td><td>${app.created_at ? app.created_at.slice(0,16).replace('T',' ') : '-'}</td></tr>
+                    </table>`;
             } catch (err) {
                 alert('상세 정보를 불러오는 중 오류가 발생했습니다.');
             }
         }
 
+        function closeExpertDetailModal() {
+            document.getElementById('expertDetailModal').style.display = 'none';
+        }
+
         function handleLogout() {
             if (confirm('로그아웃 하시겠습니까?')) Auth.logout();
         }
+
+        // ESC 키로 모달 닫기
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeExpertDetailModal();
+        });
 
         // ── 회원정보 저장 (실제 API) ───────────────────────────
         document.getElementById('profileForm').addEventListener('submit', async function(e) {
@@ -562,7 +577,22 @@
 
         // 초기 로드
         loadRequests();
+    })(); // IIFE 끝 – 비로그인 시 null 접근 방지
     </script>
+
+    <!-- 신청 상세보기 모달 -->
+    <div id="expertDetailModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center; padding:1rem;">
+        <div style="background:white; border-radius:20px; width:100%; max-width:520px; max-height:85vh; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+            <div style="padding:1.5rem 2rem 1rem; border-bottom:1px solid #e0e0e0; display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0; font-size:1.1rem; color:#333;"><i class="fas fa-clipboard-list" style="color:#667eea; margin-right:0.5rem;"></i>신청 상세 정보</h3>
+                <button onclick="closeExpertDetailModal()" style="background:none; border:none; font-size:1.5rem; cursor:pointer; color:#999; line-height:1;">&times;</button>
+            </div>
+            <div id="expertDetailContent" style="overflow-y:auto; flex:1; padding:1.5rem 2rem;"></div>
+            <div style="padding:1rem 2rem 1.5rem; border-top:1px solid #e0e0e0;">
+                <button onclick="closeExpertDetailModal()" style="width:100%; padding:0.9rem; background:#667eea; color:white; border:none; border-radius:10px; font-weight:700; cursor:pointer; font-size:0.95rem;">닫기</button>
+            </div>
+        </div>
+    </div>
 
     <style>
         /* expert-mypage 전용 추가 스타일 */
