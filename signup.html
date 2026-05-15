@@ -599,6 +599,18 @@
     </div><!-- /signup-wrapper -->
 
     <script>
+        // ── 페이지 로드 후 이름 필드 강제 초기화 (브라우저 자동완성 차단) ──
+        window.addEventListener('load', function() {
+            const nameFields = ['clientName', 'expertName'];
+            nameFields.forEach(function(id) {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.value = '';
+                    el.setAttribute('autocomplete', 'new-password');
+                }
+            });
+        });
+
         function switchTab(type) {
             // 탭 전환
             const tabs = document.querySelectorAll('.signup-tab');
