@@ -440,19 +440,19 @@
         <div class="progress-line-fill" id="progressFill"></div>
         <div class="step-item active" id="stepItem1">
             <div class="step-circle">1</div>
-            <div class="step-label">사건 정보</div>
+            <div class="step-label">사건 조회</div>
         </div>
         <div class="step-item" id="stepItem2">
             <div class="step-circle">2</div>
-            <div class="step-label">신청자 정보</div>
+            <div class="step-label">입찰정보작성</div>
         </div>
         <div class="step-item" id="stepItem3">
             <div class="step-circle">3</div>
-            <div class="step-label">입찰 정보</div>
+            <div class="step-label">전자계약</div>
         </div>
         <div class="step-item" id="stepItem4">
             <div class="step-circle">4</div>
-            <div class="step-label">확인 및 제출</div>
+            <div class="step-label">수수료결제</div>
         </div>
     </div>
 </div>
@@ -460,10 +460,10 @@
 <!-- 컨텐츠 -->
 <div class="apply-body">
 
-    <!-- ══ STEP 1: 사건 정보 ══ -->
+    <!-- ══ STEP 1: 사건 조회 ══ -->
     <div class="step-panel active" id="panel1">
         <div class="apply-card">
-            <h3><i class="fas fa-gavel"></i> 사건 정보 입력</h3>
+            <h3><i class="fas fa-search"></i> 사건 조회 및 정보 입력</h3>
 
             <div class="form-row">
                 <div class="form-group">
@@ -539,16 +539,12 @@
         </div>
 
         <div class="apply-btn-row">
-            <button class="btn-back" onclick="window.location.href='index.html'">
-                <i class="fas fa-arrow-left"></i> 홈으로
-            </button>
-            <button class="btn-next" onclick="goStep(2)">
-                다음 단계 <i class="fas fa-arrow-right"></i>
-            </button>
+            <button class="btn-back" onclick="window.location.href='index.html'"><i class="fas fa-arrow-left"></i> 홈으로</button>
+            <button class="btn-next" onclick="goStep(2)">다음 단계 &nbsp;<i class="fas fa-arrow-right"></i></button>
         </div>
     </div>
 
-    <!-- ══ STEP 2: 신청자 정보 ══ -->
+    <!-- ══ STEP 2: 입찰정보작성 ══ -->
     <div class="step-panel" id="panel2">
         <div class="apply-card">
             <h3><i class="fas fa-user"></i> 신청자 정보</h3>
@@ -629,37 +625,36 @@
         </div>
 
         <div class="apply-btn-row">
-            <button class="btn-back" onclick="goStep(1)">
-                <i class="fas fa-arrow-left"></i> 이전
-            </button>
-            <button class="btn-next" onclick="goStep(3)">
-                다음 단계 <i class="fas fa-arrow-right"></i>
-            </button>
+            <button class="btn-back" onclick="goStep(1)"><i class="fas fa-arrow-left"></i> 이전</button>
+            <button class="btn-next" onclick="goStep(3)">다음 단계 &nbsp;<i class="fas fa-arrow-right"></i></button>
         </div>
     </div>
 
-    <!-- ══ STEP 3: 입찰 정보 ══ -->
+    <!-- ══ STEP 3: 전자계약 (입찰 정보 + 계약서 서명) ══ -->
     <div class="step-panel" id="panel3">
-        <!-- 수수료 안내 -->
-        <div class="fee-notice">
-            <div class="fee-title">⚖️ 법무사 대리입찰 수수료</div>
-            <div class="fee-amount">99,000원 <span style="font-size:1rem; font-weight:400; color:#555;">(부가세 포함)</span></div>
-            <div class="fee-desc">✓ 전국 어디든 동일 수수료 &nbsp;|&nbsp; ✓ 낙찰·패찰 상관없이 고정 &nbsp;|&nbsp; ✓ 베타기간 특가</div>
-        </div>
 
         <div class="apply-card">
             <h3><i class="fas fa-money-bill-wave"></i> 입찰 금액 설정</h3>
 
-            <div class="form-row full">
+            <div class="form-row">
                 <div class="form-group">
                     <label>희망 입찰가 (원) <span class="required">*</span></label>
                     <div class="bid-amount-wrap">
                         <input type="text" id="bidAmount" placeholder="입찰 금액을 입력하세요"
-                               oninput="formatInputNumber(this); updateBidPreview()">
+                               oninput="formatInputNumber(this); updateBidPreview(); updateDepositAmount();">
                         <span class="unit">원</span>
                     </div>
                     <div class="bid-amount-preview" id="bidAmountPreview"></div>
                     <div class="error-msg" id="bidAmountError">입찰가를 입력해주세요.</div>
+                </div>
+                <div class="form-group">
+                    <label>입찰 보증금 (자동계산 10%)</label>
+                    <div style="position:relative;">
+                        <input type="text" id="depositAmount" placeholder="희망 입찰가 입력 시 자동 계산" readonly
+                               style="background:#f0f4ff; border:2px solid #c7d7fd; color:#1550E8; font-weight:700; cursor:default; padding:0.8rem 3.5rem 0.8rem 1rem; border-radius:10px; width:100%; font-size:0.95rem;">
+                        <span style="position:absolute; right:0.75rem; top:50%; transform:translateY(-50%); font-size:0.75rem; color:#1550E8; font-weight:700; white-space:nowrap;">원</span>
+                    </div>
+                    <div class="hint" style="color:#1550E8; font-weight:600;">희망 입찰가의 10% 자동 계산</div>
                 </div>
             </div>
 
@@ -668,11 +663,11 @@
                     <label>입찰 보증금 납부 방법 <span class="required">*</span></label>
                     <select id="depositMethod">
                         <option value="">선택하세요</option>
-                        <option value="직접">직접 납부 (법원에 직접 보증금 납부)</option>
-                        <option value="이체">계좌 이체 (법무사에게 미리 이체)</option>
-                        <option value="보증서">입찰보증보험증권 발급 요청</option>
+                        <option value="직접납부">직접 납부 (법원에 직접 보증금 납부)</option>
+                        <option value="계좌이체">계좌 이체 (법무사에게 미리 이체)</option>
+                        <option value="보증보험">입찰보증보험증권 발급 요청</option>
                     </select>
-                    <div class="hint">보증금 = 최저입찰가의 10%입니다</div>
+                    <div class="hint">보증금 = 희망 입찰가의 10%입니다</div>
                     <div class="error-msg">납부 방법을 선택해주세요.</div>
                 </div>
             </div>
@@ -690,8 +685,6 @@
                     </select>
                 </div>
             </div>
-
-            <!-- 공동 입찰 시 추가 정보 -->
             <div id="jointInfo" style="display:none;">
                 <div class="form-row">
                     <div class="form-group">
@@ -706,6 +699,46 @@
             </div>
         </div>
 
+        <!-- 전자계약서 + 서명 -->
+        <div class="apply-card">
+            <h3><i class="fas fa-file-signature"></i> 전자계약 및 서명</h3>
+
+            <div style="background:#f8f9fa; border:1px solid #e0e0e0; border-radius:10px; padding:1.25rem 1.5rem; margin-bottom:1.25rem; max-height:200px; overflow-y:auto; font-size:0.82rem; color:#555; line-height:1.9;">
+                <strong style="color:#333; font-size:0.9rem; display:block; margin-bottom:0.75rem;">📋 대리입찰 위임 계약서</strong>
+                <strong>위임인(이하 "갑"):</strong> 신청자 &nbsp;&nbsp; <strong>수임인(이하 "을"):</strong> 담당 법무사<br><br>
+                <strong>제1조 (위임 내용)</strong> 갑은 을에게 아래 경매 물건에 대한 입찰 대리권을 위임합니다.<br>
+                <strong>제2조 (위임 범위)</strong> 을은 갑을 대신하여 지정 법원에 출석, 지정 금액으로 입찰표를 제출합니다.<br>
+                <strong>제3조 (보증금 관리)</strong> 을은 갑으로부터 전달받은 입찰보증금을 안전하게 관리하고, 낙찰 실패 시 즉시 반환합니다.<br>
+                <strong>제4조 (수수료)</strong> 갑은 을에게 서비스 수수료 99,000원(VAT 포함)을 지급합니다. 수수료는 낙찰 여부와 관계없이 동일합니다.<br>
+                <strong>제5조 (책임)</strong> 을은 입찰 대리 중 발생하는 사고에 대해 배상책임보험 한도 내에서 책임집니다.<br>
+                <strong>제6조 (취소)</strong> 입찰 기일 48시간 전까지 취소 시 수수료 전액 환불합니다.
+            </div>
+
+            <!-- 서명 캔버스 -->
+            <div style="margin-bottom:1rem;">
+                <label style="font-size:0.9rem; font-weight:600; color:#444; margin-bottom:0.5rem; display:block;">
+                    전자서명 <span style="color:#EF4444;">*</span>
+                    <span style="font-size:0.78rem; color:#999; font-weight:400; margin-left:0.5rem;">아래 박스에 마우스 또는 손가락으로 서명해주세요</span>
+                </label>
+                <div style="border:2px solid #e0e0e0; border-radius:10px; background:white; overflow:hidden; position:relative;" id="signaturePadWrap">
+                    <canvas id="signatureCanvas" width="700" height="150"
+                        style="width:100%; height:150px; display:block; cursor:crosshair; touch-action:none;"></canvas>
+                    <div id="signaturePlaceholder" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; color:#ccc; font-size:0.92rem; gap:0.4rem;">
+                        <i class="fas fa-pen-nib"></i> 여기에 서명하세요
+                    </div>
+                </div>
+                <div style="display:flex; gap:0.5rem; margin-top:0.4rem; justify-content:flex-end;">
+                    <button type="button" onclick="clearSignature()" style="padding:0.35rem 0.9rem; background:#f3f4f6; border:1px solid #d1d5db; border-radius:7px; font-size:0.82rem; cursor:pointer; color:#666; font-weight:600;"><i class="fas fa-undo"></i> 서명 지우기</button>
+                </div>
+                <div id="signatureError" style="font-size:0.8rem; color:#EF4444; display:none; margin-top:0.3rem;">서명이 필요합니다.</div>
+            </div>
+
+            <div class="agree-check">
+                <input type="checkbox" id="agreeContract">
+                <label for="agreeContract" style="font-size:0.9rem; color:#333; cursor:pointer; font-weight:500;">위 계약 내용을 확인하였으며 전자서명으로 계약에 동의합니다 <span style="color:#EF4444;">(필수)</span></label>
+            </div>
+        </div>
+
         <div class="apply-card">
             <h3><i class="fas fa-comment-alt"></i> 추가 요청사항</h3>
             <div class="form-row full">
@@ -717,22 +750,27 @@
         </div>
 
         <div class="apply-btn-row">
-            <button class="btn-back" onclick="goStep(2)">
-                <i class="fas fa-arrow-left"></i> 이전
-            </button>
-            <button class="btn-next" onclick="goStep(4)">
-                다음 단계 <i class="fas fa-arrow-right"></i>
-            </button>
+            <button class="btn-back" onclick="goStep(2)"><i class="fas fa-arrow-left"></i> 이전</button>
+            <button class="btn-next" onclick="goStep(4)">다음 단계 &nbsp;<i class="fas fa-arrow-right"></i></button>
         </div>
     </div>
 
-    <!-- ══ STEP 4: 확인 및 제출 ══ -->
+    <!-- ══ STEP 4: 수수료결제 ══ -->
     <div class="step-panel" id="panel4">
+
+        <!-- 신청 내용 요약 -->
         <div class="apply-card">
             <h3><i class="fas fa-clipboard-check"></i> 신청 내용 최종 확인</h3>
             <table class="summary-table" id="summaryTable">
                 <!-- JS로 채워짐 -->
             </table>
+        </div>
+
+        <!-- 수수료 안내 -->
+        <div class="fee-notice">
+            <div class="fee-title">💳 서비스 수수료 결제</div>
+            <div class="fee-amount">99,000원 <span style="font-size:1rem; font-weight:400; color:#555;">(부가세 포함)</span></div>
+            <div class="fee-desc">✓ 전국 어디든 동일 수수료 &nbsp;|&nbsp; ✓ 낙찰·패찰 상관없이 고정 &nbsp;|&nbsp; ✓ 베타기간 특가</div>
         </div>
 
         <div class="apply-card">
@@ -764,11 +802,9 @@
         </div>
 
         <div class="apply-btn-row">
-            <button class="btn-back" onclick="goStep(3)">
-                <i class="fas fa-arrow-left"></i> 이전
-            </button>
+            <button class="btn-back" onclick="goStep(3)"><i class="fas fa-arrow-left"></i> 이전</button>
             <button class="btn-submit" onclick="submitApplication()">
-                <i class="fas fa-paper-plane"></i> 신청 완료하기
+                <i class="fas fa-credit-card"></i> 결제하고 신청 완료
             </button>
         </div>
     </div>
@@ -987,6 +1023,16 @@ function validateStep(step) {
         let ok = true;
         if (!val('bidAmount'))     { showError('bidAmount');     ok = false; }
         if (!val('depositMethod')) { showError('depositMethod'); ok = false; }
+        if (!document.getElementById('agreeContract') || !document.getElementById('agreeContract').checked) {
+            toast('전자계약 동의(서명)가 필요합니다.', 'error');
+            ok = false;
+        }
+        if (!signatureData) {
+            const errEl = document.getElementById('signatureError');
+            if (errEl) errEl.style.display = 'block';
+            toast('서명이 필요합니다.', 'error');
+            ok = false;
+        }
         if (!ok) { toast('필수 항목을 모두 입력해주세요.', 'error'); }
         return ok;
     }
@@ -1020,6 +1066,8 @@ function clearErrors() {
 // 요약 채우기
 // ─────────────────────────────────────────────
 function fillSummary() {
+    const bidAmt = val2('bidAmount');
+    const deposit = bidAmt ? (Math.floor(parseNumber(bidAmt) * 0.1)).toLocaleString('ko-KR') + '원' : '-';
     const rows = [
         ['법원', val2('courtSelect')],
         ['사건번호', val2('caseNumber')],
@@ -1029,14 +1077,16 @@ function fillSummary() {
         ['신청자 이름', val2('applicantName')],
         ['휴대폰 번호', val2('applicantPhone')],
         ['환급 계좌', val2('bankName') + ' ' + val2('accountNumber')],
-        ['입찰 금액', val2('bidAmount') + '원'],
+        ['희망 입찰가', bidAmt + '원'],
+        ['입찰 보증금 (10%)', deposit],
+        ['보증금 납부 방법', val2('depositMethod')],
         ['입찰 형태', val2('bidType')],
-        ['보증금 납부', val2('depositMethod')],
+        ['전자계약 서명', '완료'],
         ['서비스 수수료', '99,000원 (베타 특가)'],
     ];
 
     document.getElementById('summaryTable').innerHTML = rows
-        .filter(([_, v]) => v && v.trim() !== '')
+        .filter(([_, v]) => v && v.trim() !== '' && v.trim() !== '원')
         .map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`)
         .join('');
 }
@@ -1059,6 +1109,10 @@ async function submitApplication() {
     }
     if (!document.getElementById('agreePrivacy').checked) {
         toast('개인정보 수집·이용에 동의해주세요.', 'error'); return;
+    }
+    // 서명 확인
+    if (!signatureData) {
+        toast('전자계약 서명이 필요합니다. 3단계로 돌아가서 서명해주세요.', 'error'); return;
     }
 
     const btn = document.querySelector('.btn-submit');
@@ -1085,7 +1139,9 @@ async function submitApplication() {
         account_holder: val2('accountHolder'),
         account_number: val2('accountNumber'),
         bid_amount: parseNumber(val2('bidAmount')),
+        deposit_amount: Math.floor(parseNumber(val2('bidAmount')) * 0.1),
         deposit_method: val2('depositMethod'),
+        signature_data: signatureData ? 'signed' : '',
         bid_type: val2('bidType'),
         joint_name: val2('jointName'),
         share_ratio: val2('shareRatio'),
@@ -1135,7 +1191,7 @@ async function submitApplication() {
             toast('처리 중 오류가 발생했습니다: ' + (err.message || ''), 'error');
         }
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-paper-plane"></i> 신청 완료하기';
+        btn.innerHTML = '<i class="fas fa-credit-card"></i> 결제하고 신청 완료';
     }
 }
 
@@ -1162,6 +1218,18 @@ function toggleJointInfo() {
 }
 
 // ─────────────────────────────────────────────
+// 보증금 10% 자동 계산
+// ─────────────────────────────────────────────
+function updateDepositAmount() {
+    const raw = document.getElementById('bidAmount').value.replace(/[^0-9]/g, '');
+    const depositEl = document.getElementById('depositAmount');
+    if (!depositEl) return;
+    if (!raw) { depositEl.value = ''; return; }
+    const deposit = Math.floor(Number(raw) * 0.1);
+    depositEl.value = deposit.toLocaleString('ko-KR');
+}
+
+// ─────────────────────────────────────────────
 // 숫자 포맷
 // ─────────────────────────────────────────────
 function formatInputNumber(input) {
@@ -1173,6 +1241,7 @@ function parseNumber(str) {
 }
 
 function updateBidPreview() {
+    updateDepositAmount();
     const raw = document.getElementById('bidAmount').value.replace(/[^0-9]/g, '');
     const preview = document.getElementById('bidAmountPreview');
     if (!raw) { preview.textContent = ''; return; }
@@ -1273,6 +1342,85 @@ function toast(msg, type = 'info') {
 const style = document.createElement('style');
 style.textContent = `@keyframes fadeInUp { from { opacity:0; transform: translate(-50%,20px); } to { opacity:1; transform: translate(-50%,0); } }`;
 document.head.appendChild(style);
+
+// ─────────────────────────────────────────────
+// 전자서명 패드
+// ─────────────────────────────────────────────
+let signatureData = null;
+
+(function initSignaturePad() {
+    const canvas = document.getElementById('signatureCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let drawing = false;
+    let hasMark = false;
+
+    function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        if (e.touches) {
+            return {
+                x: (e.touches[0].clientX - rect.left) * scaleX,
+                y: (e.touches[0].clientY - rect.top) * scaleY
+            };
+        }
+        return {
+            x: (e.clientX - rect.left) * scaleX,
+            y: (e.clientY - rect.top) * scaleY
+        };
+    }
+
+    ctx.strokeStyle = '#1550E8';
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    function startDraw(e) {
+        e.preventDefault();
+        drawing = true;
+        const p = getPos(e);
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+    }
+    function moveDraw(e) {
+        e.preventDefault();
+        if (!drawing) return;
+        const p = getPos(e);
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+        hasMark = true;
+        const ph = document.getElementById('signaturePlaceholder');
+        if (ph) ph.style.display = 'none';
+        const errEl = document.getElementById('signatureError');
+        if (errEl) errEl.style.display = 'none';
+    }
+    function endDraw(e) {
+        e.preventDefault();
+        if (drawing && hasMark) {
+            signatureData = canvas.toDataURL('image/png');
+        }
+        drawing = false;
+    }
+
+    canvas.addEventListener('mousedown', startDraw);
+    canvas.addEventListener('mousemove', moveDraw);
+    canvas.addEventListener('mouseup', endDraw);
+    canvas.addEventListener('mouseleave', endDraw);
+    canvas.addEventListener('touchstart', startDraw, { passive: false });
+    canvas.addEventListener('touchmove', moveDraw, { passive: false });
+    canvas.addEventListener('touchend', endDraw, { passive: false });
+})();
+
+function clearSignature() {
+    const canvas = document.getElementById('signatureCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    signatureData = null;
+    const ph = document.getElementById('signaturePlaceholder');
+    if (ph) ph.style.display = 'flex';
+}
 
 // ─────────────────────────────────────────────
 // 다음 주소 검색 API
