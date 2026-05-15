@@ -558,6 +558,31 @@
                     * 법무사 회원가입은 관리자 승인 후 이용 가능합니다.
                 </p>
             </form>
+
+            <!-- 법무사 가입 완료 화면 -->
+            <div id="expertSignupSuccess" style="display:none; text-align:center; padding: 1rem 0;">
+                <div style="font-size:4rem; margin-bottom:1rem;">✅</div>
+                <h2 style="color:#333; margin-bottom:0.5rem;">가입 신청 완료!</h2>
+                <p style="color:#666; font-size:1rem; margin-bottom:2rem;">법무사 가입 신청이 성공적으로 접수되었습니다.</p>
+
+                <div style="background:#f0f4ff; border:2px solid #667eea; border-radius:12px; padding:1.5rem; text-align:left; margin-bottom:1.5rem;">
+                    <h3 style="color:#667eea; margin:0 0 1rem; font-size:1rem;">📋 승인 절차 안내</h3>
+                    <ol style="margin:0; padding-left:1.2rem; color:#555; line-height:2;">
+                        <li>제출하신 서류를 검토합니다</li>
+                        <li>법무사 등록번호 및 자격 확인</li>
+                        <li>승인 완료 후 이메일/SMS로 안내</li>
+                        <li>로그인 후 서비스 이용 가능</li>
+                    </ol>
+                </div>
+
+                <div style="background:#fff8e1; border:1px solid #ffd54f; border-radius:10px; padding:1rem 1.5rem; text-align:left; margin-bottom:1.5rem;">
+                    <p style="margin:0; color:#666; font-size:0.9rem;">⏱️ <strong>평균 승인 소요 시간: 1~2 영업일</strong><br>
+                    문의: <strong>bidtok@naver.com</strong> 또는 서비스 내 문의하기</p>
+                </div>
+
+                <a href="login.html" class="submit-btn" style="display:block; text-decoration:none; text-align:center; padding:1rem;">로그인 페이지로 이동</a>
+            </div>
+
         </div>
 
         <div class="signup-footer">
@@ -716,9 +741,8 @@
                 return;
             }
             
-            // TODO: 실제 SMS API 연동
+            // TODO: Aligo SMS API 연동 예정 (사업자 인증 승인 대기 중)
             const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
-            console.log(`[${type}] 인증번호:`, verifyCode);
             
             // 인증번호 저장 (실제로는 서버에서 처리)
             sessionStorage.setItem(`verifyCode_${type}`, verifyCode);
@@ -732,7 +756,8 @@
             // 타이머 시작 (3분)
             startVerifyTimer(type, 180);
             
-            alert('인증번호가 발송되었습니다.\n(개발 중: 콘솔에서 확인)');
+            // ⚠️ 임시: SMS 발송 전까지 alert으로 인증번호 직접 안내
+            alert(`📱 인증번호: ${verifyCode}\n\n아래 인증번호 입력란에 위 번호를 입력해주세요.\n(SMS 발송은 곧 연동될 예정입니다.)`)
         }
 
         // 인증 타이머
@@ -945,8 +970,8 @@
                 
                 const result = await Auth.signup(formData);
                 if (result.success) {
-                    alert('법무사 가입 신청이 완료되었습니다.\n관리자 승인 후 이용 가능합니다.');
-                    window.location.href = 'login.html';
+                    showExpertSignupSuccess();
+                    return;
                 } else {
                     alert(result.message || '가입 신청에 실패했습니다.');
                     submitBtn.disabled = false;
@@ -959,6 +984,18 @@
                 submitBtn.textContent = '법무사 가입 신청';
             }
         });
+
+        // 법무사 가입 완료 화면 표시
+        function showExpertSignupSuccess() {
+            // 폼 숨기기
+            document.getElementById('expertSignupForm').style.display = 'none';
+            // 탭 숨기기 (완료 화면에서는 탭 불필요)
+            document.querySelector('.signup-tabs').style.display = 'none';
+            // 완료 화면 표시
+            document.getElementById('expertSignupSuccess').style.display = 'block';
+            // 페이지 상단으로 스크롤
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     </script>
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>

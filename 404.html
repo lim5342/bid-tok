@@ -3,79 +3,202 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 - 페이지를 찾을 수 없습니다</title>
+    <title>404 - 페이지를 찾을 수 없습니다 | 대리입찰 톡</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0f1340 0%, #1550E8 60%, #1a7fd4 100%);
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 2rem;
         }
 
-        .error-container {
+        .error-card {
             text-align: center;
             background: white;
-            padding: 3rem;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            max-width: 500px;
+            padding: 3.5rem 3rem;
+            border-radius: 24px;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.35);
+            max-width: 480px;
+            width: 100%;
+            animation: cardIn 0.4s ease;
         }
 
-        .error-icon {
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(24px) scale(0.97); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .logo-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1550E8;
+            margin-bottom: 2rem;
+            text-decoration: none;
+        }
+
+        .logo-row i { font-size: 1.2rem; }
+
+        .error-number {
             font-size: 6rem;
-            color: #667eea;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1550E8, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.04em;
+        }
+
+        .error-emoji {
+            font-size: 2.5rem;
             margin-bottom: 1rem;
         }
 
         h1 {
-            font-size: 3rem;
-            color: #333;
-            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            color: #1a1a2e;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
         }
 
         p {
-            color: #666;
-            font-size: 1.1rem;
+            color: #777;
+            font-size: 0.92rem;
+            line-height: 1.75;
             margin-bottom: 2rem;
-            line-height: 1.6;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
         .btn {
-            display: inline-block;
-            padding: 1rem 2rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.8rem 1.6rem;
+            border-radius: 10px;
+            font-size: 0.88rem;
             font-weight: 700;
-            transition: transform 0.3s;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
         }
 
-        .btn:hover {
+        .btn-primary {
+            background: linear-gradient(135deg, #1550E8, #764ba2);
+            color: white;
+            box-shadow: 0 4px 14px rgba(21,80,232,0.3);
+        }
+
+        .btn-primary:hover {
             transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(21,80,232,0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #667eea;
+            border: 1.5px solid #c7d4f8 !important;
+        }
+
+        .btn-outline:hover {
+            background: #f0f4ff;
+            border-color: #667eea !important;
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid #f0f0f0;
+            margin: 2rem 0 1.5rem;
+        }
+
+        .quick-links {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .quick-link {
+            font-size: 0.8rem;
+            color: #999;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: color 0.2s;
+        }
+
+        .quick-link:hover { color: #1550E8; }
+
+        @media (max-width: 480px) {
+            .error-card { padding: 2.5rem 1.75rem; }
+            .error-number { font-size: 5rem; }
+            .btn-row { flex-direction: column; }
+            .btn { justify-content: center; }
         }
     </style>
 </head>
 <body>
-    <div class="error-container">
-        <div class="error-icon">
-            <i class="fas fa-exclamation-triangle"></i>
-        </div>
-        <h1>404</h1>
-        <p>죄송합니다.<br>요청하신 페이지를 찾을 수 없습니다.</p>
-        <a href="index.html" class="btn">
-            <i class="fas fa-home"></i> 홈으로 돌아가기
+    <div class="error-card">
+        <a href="index.html" class="logo-row">
+            <i class="fas fa-comment-dots"></i>
+            <span>대리입찰 톡</span>
         </a>
+
+        <div class="error-number">404</div>
+        <div class="error-emoji">🔍</div>
+
+        <h1>페이지를 찾을 수 없습니다</h1>
+        <p>
+            요청하신 페이지가 존재하지 않거나,<br>
+            이동되었거나, 삭제되었을 수 있습니다.
+        </p>
+
+        <div class="btn-row">
+            <a href="index.html" class="btn btn-primary">
+                <i class="fas fa-home"></i> 홈으로 이동
+            </a>
+            <a href="javascript:history.back()" class="btn btn-outline">
+                <i class="fas fa-arrow-left"></i> 이전 페이지
+            </a>
+        </div>
+
+        <hr class="divider">
+
+        <div class="quick-links">
+            <a href="apply.html" class="quick-link">
+                <i class="fas fa-gavel"></i> 대리입찰 신청
+            </a>
+            <a href="login.html" class="quick-link">
+                <i class="fas fa-sign-in-alt"></i> 로그인
+            </a>
+            <a href="mypage.html" class="quick-link">
+                <i class="fas fa-user"></i> 마이페이지
+            </a>
+            <a href="mailto:bidtok@naver.com" class="quick-link">
+                <i class="fas fa-envelope"></i> 문의하기
+            </a>
+        </div>
     </div>
 </body>
 </html>

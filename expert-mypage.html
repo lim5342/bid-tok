@@ -496,21 +496,35 @@
             }
         }
 
-        // ── 결과 입력 ──────────────────────────────────────────
-        async function updateStatus(id) {
-            const result = prompt('입찰 결과를 입력하세요:\n1 = 낙찰\n2 = 패찰');
-            if (!result) return;
-            const status = result === '1' ? '낙찰' : '완료';
-            try {
-                await API.applications.updateStatus(id, status, {
-                    completedAt: new Date().toISOString(),
-                    result: result === '1' ? 'success' : 'fail'
-                });
-                alert('결과가 입력되었습니다.');
-                loadOngoing();
-            } catch (err) {
-                alert('처리 중 오류가 발생했습니다.');
-            }
+        // ── 결과 입력 (모달 방식) ───────────────────────────
+        function updateStatus(id) {
+            const modal = document.getElementById('resultModal');
+            modal.style.display = 'flex';
+            modal.dataset.appId = id;
+            document.querySelectorAll('input[name="bidResult"]').forEach(r => r.checked = false);
+            const btn = document.getElementById('resultSubmitBtn');
+            btn.disabled = true;
+            btn.style.opacity = '0.5';
+            btn.style.cursor = 'not-allowed';
+        }
+
+        // ── 토스트 알림 ───────────────────────────────────────
+        function showExpertToast(message, type) {
+            const colors = { success: '#10B981', error: '#ef4444', info: '#1550E8' };
+            const toast = document.createElement('div');
+            toast.style.cssText = [
+                'position:fixed','bottom:2rem','left:50%','transform:translateX(-50%)',
+                'background:' + (colors[type] || colors.success),'color:#fff',
+                'padding:0.85rem 2rem','border-radius:12px','font-weight:700',
+                'font-size:0.95rem','z-index:99999','box-shadow:0 8px 24px rgba(0,0,0,0.2)',
+                'animation:toastIn 0.3s ease','white-space:nowrap'
+            ].join(';');
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = 'toastOut 0.3s ease forwards';
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
         }
 
         async function viewDetail(id) {
@@ -548,7 +562,51 @@
 
         // ESC 키로 모달 닫기
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeExpertDetailModal();
+            if (e.key === 'Escape') {
+                closeExpertDetailModal();
+                document.getElementById('resultModal').style.display = 'none';
+            }
+        });
+
+        // 결과 모달 이벤트 (DOMContentLoaded)
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('input[name="bidResult"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const btn = document.getElementById('resultSubmitBtn');
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    btn.style.cursor = 'pointer';
+                });
+            });
+
+            document.getElementById('resultSubmitBtn').addEventListener('click', async function() {
+                const modal = document.getElementById('resultModal');
+                const id = modal.dataset.appId;
+                const selected = document.querySelector('input[name="bidResult"]:checked');
+                if (!selected) return;
+                const isSuccess = selected.value === 'success';
+                const status = isSuccess ? '낙찰' : '완료';
+                this.disabled = true;
+                this.textContent = '처리 중...';
+                try {
+                    await API.applications.updateStatus(id, status, {
+                        completedAt: new Date().toISOString(),
+                        result: isSuccess ? 'success' : 'fail'
+                    });
+                    modal.style.display = 'none';
+                    showExpertToast(isSuccess ? '🎉 낙찰 결과가 입력되었습니다!' : '입찰 결과가 입력되었습니다.', isSuccess ? 'success' : 'info');
+                    loadOngoing();
+                } catch (err) {
+                    alert('처리 중 오류가 발생했습니다.');
+                } finally {
+                    this.disabled = false;
+                    this.textContent = '결과 입력';
+                }
+            });
+
+            document.getElementById('resultModalClose').addEventListener('click', function() {
+                document.getElementById('resultModal').style.display = 'none';
+            });
         });
 
         // ── 회원정보 저장 (실제 API) ───────────────────────────
@@ -675,14 +733,103 @@
             color: #667eea;
         }
 
+        /* 결과 입력 모달 */
+        .result-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .result-modal-box {
+            background: white;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 380px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            animation: rmFadeIn 0.2s ease;
+        }
+        @keyframes rmFadeIn { from { opacity:0; transform:scale(0.95); } to { opacity:1; transform:scale(1); } }
+        .result-modal-header {
+            padding: 1.4rem 1.75rem 1rem;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .result-modal-header h3 { margin:0; font-size:1.05rem; color:#333; }
+        .result-modal-body { padding: 1.5rem 1.75rem; }
+        .result-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .result-option input[type="radio"] { display: none; }
+        .result-option label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1.25rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .result-option label .result-icon { font-size: 2rem; }
+        .result-option label .result-text { font-size: 0.9rem; font-weight: 700; color: #555; }
+        .result-option input[value="success"]:checked + label { border-color: #10B981; background: #f0fdf4; }
+        .result-option input[value="success"]:checked + label .result-text { color: #10B981; }
+        .result-option input[value="fail"]:checked + label { border-color: #667eea; background: #f0f4ff; }
+        .result-option input[value="fail"]:checked + label .result-text { color: #667eea; }
+
+        /* 토스트 애니메이션 */
+        @keyframes toastIn  { from { opacity:0; transform:translateX(-50%) translateY(12px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
+        @keyframes toastOut { from { opacity:1; transform:translateX(-50%) translateY(0); } to { opacity:0; transform:translateX(-50%) translateY(12px); } }
+
         @media (max-width: 768px) {
-            .stats-mini {
-                margin-top: 0.5rem;
-            }
-            .summary-value {
-                font-size: 1.5rem;
-            }
+            .stats-mini { margin-top: 0.5rem; }
+            .summary-value { font-size: 1.5rem; }
+            .section-header { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
         }
     </style>
+
+    <!-- 입찰 결과 입력 모달 -->
+    <div id="resultModal" class="result-modal-overlay">
+        <div class="result-modal-box">
+            <div class="result-modal-header">
+                <h3><i class="fas fa-gavel" style="color:#1550E8;margin-right:0.5rem;"></i>입찰 결과 입력</h3>
+                <button id="resultModalClose" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#999;line-height:1;">&times;</button>
+            </div>
+            <div class="result-modal-body">
+                <p style="font-size:0.88rem;color:#888;margin-bottom:1.25rem;">이번 입찰 결과를 선택해주세요.</p>
+                <div class="result-options">
+                    <div class="result-option">
+                        <input type="radio" name="bidResult" id="resultSuccess" value="success">
+                        <label for="resultSuccess">
+                            <span class="result-icon">🎉</span>
+                            <span class="result-text">낙찰</span>
+                        </label>
+                    </div>
+                    <div class="result-option">
+                        <input type="radio" name="bidResult" id="resultFail" value="fail">
+                        <label for="resultFail">
+                            <span class="result-icon">📋</span>
+                            <span class="result-text">패찰</span>
+                        </label>
+                    </div>
+                </div>
+                <button id="resultSubmitBtn" class="btn btn-primary"
+                    style="width:100%;padding:0.9rem;font-size:1rem;opacity:0.5;cursor:not-allowed;"
+                    disabled>결과 입력</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

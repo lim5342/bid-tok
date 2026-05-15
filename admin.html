@@ -565,27 +565,99 @@
 
         // ── 전문가 승인/거부 (실제 API) ───────────────────────
         async function approveExpert(id) {
-            if (!confirm('이 전문가를 승인하시겠습니까?')) return;
+            if (!confirm('이 법무사를 승인하시겠습니까?\n승인 후 즉시 로그인 및 서비스 이용이 가능합니다.')) return;
+
+            // 버튼 비활성화 (중복 클릭 방지)
+            const approveBtn = document.querySelector(`button[onclick="approveExpert('${id}')"]`);
+            const rejectBtn  = document.querySelector(`button[onclick="rejectExpert('${id}')"]`);
+            if (approveBtn) { approveBtn.disabled = true; approveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 처리 중...'; }
+            if (rejectBtn)  { rejectBtn.disabled = true; }
+
             try {
                 await API.users.update(id, { status: 'active', approvedAt: new Date().toISOString() });
-                alert('승인되었습니다.');
-                loadExpertApprovals();
+                showAdminToast('✅ 법무사 승인 완료! 해당 법무사에게 이메일/SMS가 발송됩니다.', 'success');
+                // 카드 페이드아웃 후 목록 새로고침
+                const card = approveBtn?.closest('.application-card');
+                if (card) {
+                    card.style.transition = 'opacity 0.4s';
+                    card.style.opacity = '0';
+                    setTimeout(() => loadExpertApprovals(), 450);
+                } else {
+                    loadExpertApprovals();
+                }
             } catch (err) {
-                alert('처리 중 오류가 발생했습니다.');
+                showAdminToast('처리 중 오류가 발생했습니다. 다시 시도해주세요.', 'error');
+                if (approveBtn) { approveBtn.disabled = false; approveBtn.innerHTML = '<i class="fas fa-check"></i> 승인'; }
+                if (rejectBtn)  { rejectBtn.disabled = false; }
             }
         }
 
         async function rejectExpert(id) {
-            if (!confirm('이 전문가 신청을 거부하시겠습니까?')) return;
-            const reason = prompt('거부 사유를 입력해주세요:');
-            if (!reason) return;
-            try {
-                await API.users.update(id, { status: 'rejected', rejectedAt: new Date().toISOString(), rejectReason: reason });
-                alert('거부되었습니다.');
-                loadExpertApprovals();
-            } catch (err) {
-                alert('처리 중 오류가 발생했습니다.');
+            // 거부 사유 입력 모달 (confirm 대신)
+            const reason = prompt('거부 사유를 입력해주세요:\n(입력 후 확인을 누르면 거부 처리됩니다)');
+            if (reason === null) return; // 취소
+            if (!reason.trim()) {
+                alert('거부 사유를 입력해야 합니다.');
+                return;
             }
+
+            const approveBtn = document.querySelector(`button[onclick="approveExpert('${id}')"]`);
+            const rejectBtn  = document.querySelector(`button[onclick="rejectExpert('${id}')"]`);
+            if (rejectBtn)  { rejectBtn.disabled = true; rejectBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 처리 중...'; }
+            if (approveBtn) { approveBtn.disabled = true; }
+
+            try {
+                await API.users.update(id, {
+                    status: 'rejected',
+                    rejectedAt: new Date().toISOString(),
+                    rejectReason: reason.trim()
+                });
+                showAdminToast('❌ 거부 처리 완료. 해당 법무사에게 거부 사유가 전달됩니다.', 'info');
+                const card = rejectBtn?.closest('.application-card');
+                if (card) {
+                    card.style.transition = 'opacity 0.4s';
+                    card.style.opacity = '0';
+                    setTimeout(() => loadExpertApprovals(), 450);
+                } else {
+                    loadExpertApprovals();
+                }
+            } catch (err) {
+                showAdminToast('처리 중 오류가 발생했습니다. 다시 시도해주세요.', 'error');
+                if (rejectBtn)  { rejectBtn.disabled = false; rejectBtn.innerHTML = '<i class="fas fa-times"></i> 거부'; }
+                if (approveBtn) { approveBtn.disabled = false; }
+            }
+        }
+
+        // ── 토스트 알림 (alert 대체) ─────────────────────────
+        function showAdminToast(message, type = 'success') {
+            // 기존 토스트 제거
+            const existing = document.getElementById('adminToast');
+            if (existing) existing.remove();
+
+            const colors = {
+                success: { bg: '#d1fae5', border: '#10B981', text: '#065f46' },
+                error:   { bg: '#fee2e2', border: '#ef4444', text: '#7f1d1d' },
+                info:    { bg: '#e0f2fe', border: '#0ea5e9', text: '#0c4a6e' }
+            };
+            const c = colors[type] || colors.success;
+
+            const toast = document.createElement('div');
+            toast.id = 'adminToast';
+            toast.style.cssText = `
+                position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
+                background: ${c.bg}; border: 2px solid ${c.border}; color: ${c.text};
+                padding: 1rem 1.8rem; border-radius: 12px; font-weight: 600; font-size: 0.95rem;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.15); z-index: 99999;
+                animation: toastIn 0.3s ease; max-width: 90vw; text-align: center;
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            // 4초 후 자동 제거
+            setTimeout(() => {
+                toast.style.animation = 'toastOut 0.3s ease forwards';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
         }
 
         // ── 회원 상세보기 (실제 API) ───────────────────────────
@@ -875,6 +947,16 @@
 
         /* 배정 버튼 활성 */
         #btnConfirmAssign:not(:disabled) { opacity: 1 !important; }
+
+        /* 토스트 애니메이션 */
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+            to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        @keyframes toastOut {
+            from { opacity: 1; transform: translateX(-50%) translateY(0); }
+            to   { opacity: 0; transform: translateX(-50%) translateY(12px); }
+        }
     </style>
 </body>
 </html>

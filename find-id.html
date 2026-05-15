@@ -276,7 +276,6 @@
             }
             // 6자리 인증번호 생성 (실제 SMS API 연동 전 시뮬레이션)
             const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
-            console.log('[개발용] 인증번호:', verifyCode);
             sessionStorage.setItem('findId_verifyCode', verifyCode);
 
             document.getElementById('verifyCodeGroup').style.display = 'block';
@@ -285,7 +284,7 @@
             document.getElementById('phone').disabled = true;
 
             startTimer(180);
-            alert('인증번호가 발송되었습니다.\n※ 개발 중: 브라우저 콘솔(F12)에서 확인하세요.');
+            alert(`📱 인증번호: ${verifyCode}\n\n아래 인증번호 입력란에 위 번호를 입력해주세요.\n(SMS 발송은 곧 연동될 예정입니다.)`);
         }
 
         // 타이머

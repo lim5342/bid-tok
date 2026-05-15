@@ -70,6 +70,22 @@
                         <p>불러오는 중...</p>
                     </div>
                 </div>
+
+                <!-- 진행상태 가이드 -->
+                <div class="status-guide" id="statusGuide" style="display:none; margin-top:2rem; background:#f8f9fa; border-radius:12px; padding:1.25rem 1.5rem;">
+                    <p style="font-size:0.8rem; font-weight:700; color:#888; margin-bottom:0.75rem; text-transform:uppercase; letter-spacing:0.05em;">진행 단계 안내</p>
+                    <div style="display:flex; flex-wrap:wrap; gap:0.5rem 1rem; font-size:0.8rem; color:#666;">
+                        <span><span class="status-badge status-matching">접수</span> 신청 접수 완료</span>
+                        <span style="color:#ccc;">→</span>
+                        <span><span class="status-badge status-matching">매칭중</span> 법무사 배정 중</span>
+                        <span style="color:#ccc;">→</span>
+                        <span><span class="status-badge status-confirmed">전문가 확정</span> 담당자 확정</span>
+                        <span style="color:#ccc;">→</span>
+                        <span><span class="status-badge status-confirmed">진행중</span> 입찰 진행</span>
+                        <span style="color:#ccc;">→</span>
+                        <span><span class="status-badge status-completed">완료</span> 입찰 완료</span>
+                    </div>
+                </div>
             </section>
 
             <!-- 결제 내역 섹션 -->
@@ -142,12 +158,224 @@
     </div>
 
     <style>
+        /* ── 상세 테이블 ── */
         .detail-table { width:100%; border-collapse:collapse; }
         .detail-table tr { border-bottom:1px solid #f0f0f0; }
         .detail-table tr:last-child { border-bottom:none; }
         .detail-table td { padding:0.65rem 0.5rem; font-size:0.92rem; }
         .detail-table td:first-child { color:#888; width:38%; font-weight:500; }
         .detail-table td:last-child { color:#222; font-weight:600; }
+
+        /* ── 신청 카드 개선 ── */
+        .application-card {
+            background: #fff;
+            border-radius: 14px;
+            border: 1px solid #e8eaf0;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1rem;
+            transition: box-shadow 0.2s, transform 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        .application-card::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 4px;
+            background: #667eea;
+            border-radius: 4px 0 0 4px;
+        }
+        .application-card[data-status="완료"]::before,
+        .application-card[data-status="낙찰"]::before { background: #10B981; }
+        .application-card[data-status="취소"]::before,
+        .application-card[data-status="유찰"]::before { background: #9ca3af; }
+        .application-card[data-status="매칭완료"]::before,
+        .application-card[data-status="진행중"]::before { background: #1550E8; }
+        .application-card:hover {
+            box-shadow: 0 6px 24px rgba(102,126,234,0.13);
+            transform: translateY(-2px);
+        }
+
+        /* 카드 헤더 */
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .case-number {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #1550E8;
+            background: #f0f4ff;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+            margin-right: 0.5rem;
+        }
+        .bid-date {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        /* 카드 본문 */
+        .card-body { margin-bottom: 0.85rem; }
+        .address {
+            font-size: 0.92rem;
+            color: #444;
+            margin-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .address i { color: #667eea; }
+        .price-info {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .price-info .label {
+            font-size: 0.75rem;
+            color: #999;
+            display: block;
+            margin-bottom: 0.2rem;
+        }
+        .price-info .value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #333;
+        }
+        .price-info .value.highlight { color: #1550E8; }
+        .expert-info {
+            font-size: 0.85rem;
+            color: #10B981;
+            margin-top: 0.5rem;
+            font-weight: 600;
+        }
+
+        /* 카드 푸터 */
+        .card-footer {
+            display: flex;
+            gap: 0.6rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #f0f0f0;
+        }
+        .btn-sm {
+            padding: 0.45rem 1rem;
+            font-size: 0.82rem;
+            border-radius: 7px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #667eea !important;
+            color: #667eea;
+        }
+        .btn-outline:hover { background: #f0f4ff; }
+        .btn-danger {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+        .btn-danger:hover { background: #fecaca; }
+
+        /* 상태 배지 */
+        .status-badge {
+            display: inline-block;
+            padding: 0.22rem 0.65rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+        .status-matching  { background:#fef3c7; color:#d97706; }
+        .status-confirmed { background:#dbeafe; color:#1d4ed8; }
+        .status-completed { background:#d1fae5; color:#065f46; }
+        .status-success   { background:#d1fae5; color:#065f46; }
+        .status-cancelled { background:#f3f4f6; color:#6b7280; }
+
+        /* 빈 상태 */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #aaa;
+        }
+        .empty-state i { font-size: 3rem; margin-bottom: 1rem; color: #d1d5db; }
+        .empty-state p { font-size: 0.95rem; line-height: 1.7; }
+        .empty-state a { color: #667eea; font-weight: 600; text-decoration: none; }
+        .empty-state a:hover { text-decoration: underline; }
+
+        /* 빈 상태 CTA 버튼 */
+        .empty-state-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.25rem;
+            padding: 0.75rem 1.75rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(102,126,234,0.3);
+        }
+        .empty-state-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102,126,234,0.4);
+            text-decoration: none;
+            color: white;
+        }
+
+        /* 필터 탭 */
+        .filter-tabs { display:flex; gap:0.5rem; margin-bottom:1.25rem; flex-wrap:wrap; }
+        .filter-tab {
+            padding: 0.4rem 0.9rem;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            background: #fff;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: #666;
+            transition: all 0.2s;
+        }
+        .filter-tab:hover { border-color: #667eea; color: #667eea; }
+        .filter-tab.active { background: #667eea; color: #fff; border-color: #667eea; }
+
+        /* 결제 테이블 */
+        .payments-table { width:100%; border-collapse:collapse; font-size:0.88rem; }
+        .payments-table th {
+            background:#f8f9fa;
+            padding:0.75rem 1rem;
+            text-align:left;
+            font-weight:700;
+            color:#555;
+            border-bottom:2px solid #e0e0e0;
+        }
+        .payments-table td {
+            padding:0.75rem 1rem;
+            border-bottom:1px solid #f0f0f0;
+            color:#444;
+        }
+        .payments-table tr:hover td { background:#fafafa; }
+
+        /* 섹션 헤더 */
+        .section-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; }
+        .section-header h2 { font-size:1.2rem; color:#333; margin:0; display:flex; align-items:center; gap:0.5rem; }
+        .section-header h2 i { color:#667eea; }
+
+        /* 모바일 */
+        @media (max-width:600px) {
+            .application-card { padding:1rem 1rem 1rem 1.2rem; }
+            .price-info { gap:1rem; }
+            .card-footer { flex-wrap:wrap; }
+            .section-header { flex-direction:column; align-items:flex-start; gap:0.75rem; }
+        }
     </style>
     <script>
     (function() {
@@ -226,7 +454,7 @@
                     allApplications = JSON.parse(saved);
                     renderApplications(allApplications);
                 } else {
-                    listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>신청 내역이 없습니다.<br><a href="index.html" style="color:#667eea;">첫 번째 신청하기</a></p></div>';
+                    listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>아직 신청 내역이 없습니다.<br>대리입찰 신청을 시작해보세요!</p><a href="apply.html" class="empty-state-btn"><i class="fas fa-plus"></i> 첫 번째 신청하기</a></div>';
                 }
             }
         }
@@ -234,9 +462,13 @@
         function renderApplications(apps) {
             const listContainer = document.getElementById('applicationsList');
             if (!apps || apps.length === 0) {
-                listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>신청 내역이 없습니다.<br><a href="index.html" style="color:#667eea;">첫 번째 신청하기</a></p></div>';
+                listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>아직 신청 내역이 없습니다.<br>대리입찰 신청을 시작해보세요!</p><a href="apply.html" class="empty-state-btn"><i class="fas fa-plus"></i> 첫 번째 신청하기</a></div>';
                 return;
             }
+
+            // 신청 건수가 있으면 가이드 표시
+            const guide = document.getElementById('statusGuide');
+            if (guide) guide.style.display = 'block';
 
             listContainer.innerHTML = apps.map(app => {
                 const si = getStatusInfo(app.status);
