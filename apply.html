@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>대리입찰 신청 - 대리입찰 톡</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1122,8 +1123,8 @@ async function submitApplication() {
             customerName: val2('applicantName'),
             customerEmail: val2('applicantEmail') || undefined,
             customerMobilePhone: val2('applicantPhone').replace(/-/g, '') || undefined,
-            successUrl: window.location.origin + '/bid-tok/payment-success.html?appId=' + appId,
-            failUrl: window.location.origin + '/bid-tok/payment-fail.html?appId=' + appId,
+            successUrl: window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/') + 'payment-success.html?appId=' + appId,
+            failUrl: window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/') + 'payment-fail.html?appId=' + appId,
         });
 
     } catch (err) {

@@ -15,7 +15,7 @@ const firebaseConfig = {
 };
 
 // Firebase SDK 로드 (CDN)
-// → 각 HTML 파일 <head>에 아래 스크립트 태그가 있어야 함:
+// → 각 HTML 파일 <body> 끝에 아래 스크립트 태그가 있어야 함:
 //   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 //   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
@@ -26,6 +26,9 @@ function getDB() {
     try {
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
+        } else {
+            // 이미 초기화된 앱 재사용
+            firebase.app();
         }
         _db = firebase.firestore();
         console.log('Firebase Firestore 연결 ✅');
@@ -49,6 +52,15 @@ function snapToArr(snap) {
     return arr;
 }
 
+// 클라이언트에서 createdAt 기준 내림차순 정렬
+function sortByCreatedAt(arr) {
+    return arr.sort((a, b) => {
+        const ta = a.createdAt || a.created_at || '';
+        const tb = b.createdAt || b.created_at || '';
+        return tb.localeCompare(ta);
+    });
+}
+
 // ============================================================
 // API 객체
 // ============================================================
@@ -60,10 +72,11 @@ const API = {
     users: {
 
         // 전체 조회 (관리자용)
+        // ⚠️ orderBy 제거 → 복합 인덱스 불필요, 클라이언트 정렬
         async getAll(params = '') {
             const db = getDB();
-            const snap = await db.collection('users').orderBy('createdAt', 'desc').get();
-            return { data: snapToArr(snap) };
+            const snap = await db.collection('users').get();
+            return { data: sortByCreatedAt(snapToArr(snap)) };
         },
 
         // ID로 단건 조회
@@ -74,6 +87,7 @@ const API = {
         },
 
         // userId 필드로 조회 (로그인용)
+        // ⚠️ where만 사용 (orderBy 없음) → 단순 인덱스로 OK
         async findByUserId(userId) {
             const db = getDB();
             const snap = await db.collection('users')
@@ -148,11 +162,11 @@ const API = {
     applications: {
 
         // 전체 조회 (관리자용)
+        // ⚠️ orderBy 제거 → 클라이언트 정렬
         async getAll(params = '') {
             const db = getDB();
-            const snap = await db.collection('applications')
-                .orderBy('createdAt', 'desc').get();
-            return { data: snapToArr(snap) };
+            const snap = await db.collection('applications').get();
+            return { data: sortByCreatedAt(snapToArr(snap)) };
         },
 
         // 단건 조회
@@ -163,22 +177,23 @@ const API = {
         },
 
         // 특정 사용자의 신청 내역
+        // ⚠️ where + orderBy 복합 인덱스 필요 → orderBy 제거, 클라이언트 정렬
         async getByUserId(userId) {
             const db = getDB();
             const snap = await db.collection('applications')
-                .where('userId', '==', userId)
-                .orderBy('createdAt', 'desc').get();
-            return snapToArr(snap);
+                .where('userId', '==', userId).get();
+            return sortByCreatedAt(snapToArr(snap));
         },
 
         // 특정 법무사에게 배정된 신청 내역
+        // ⚠️ where + where + orderBy → orderBy 제거, 클라이언트 정렬
         async getByExpertId(expertId, status = '') {
             const db = getDB();
             let query = db.collection('applications')
                 .where('assigned_expert_id', '==', expertId);
             if (status) query = query.where('status', '==', status);
-            const snap = await query.orderBy('createdAt', 'desc').get();
-            return snapToArr(snap);
+            const snap = await query.get();
+            return sortByCreatedAt(snapToArr(snap));
         },
 
         // 신규 신청 저장
@@ -225,11 +240,11 @@ const API = {
     // ============================================================
     experts: {
 
+        // ⚠️ orderBy 제거 → 클라이언트 정렬
         async getAll(params = '') {
             const db = getDB();
-            const snap = await db.collection('experts')
-                .orderBy('createdAt', 'desc').get();
-            return { data: snapToArr(snap) };
+            const snap = await db.collection('experts').get();
+            return { data: sortByCreatedAt(snapToArr(snap)) };
         },
 
         async getById(id) {
@@ -238,12 +253,15 @@ const API = {
             return docToObj(doc);
         },
 
+        // ⚠️ where + where 복합 쿼리 (인덱스 필요할 수 있음)
+        // array-contains + status 조합은 복합 인덱스 필요
+        // → status 필터를 클라이언트로 이동
         async getByRegion(region) {
             const db = getDB();
             const snap = await db.collection('experts')
-                .where('status', '==', 'active')
                 .where('serviceRegions', 'array-contains', region).get();
-            return snapToArr(snap);
+            const all = snapToArr(snap);
+            return all.filter(e => e.status === 'active');
         },
 
         async create(data) {
