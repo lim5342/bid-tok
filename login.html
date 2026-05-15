@@ -434,32 +434,68 @@
 
         async function handleKakaoCallback(code) {
             try {
-                // 카카오는 서버에서 토큰 교환이 필요하지만
-                // 정적 사이트에서는 JS SDK의 팝업 방식 사용
-                // 여기서는 간단히 카카오 계정 연동 완료 처리
-                const loginUser = {
-                    id: 'kakao_' + Date.now(),
-                    userId: 'kakao_user',
-                    name: '카카오 사용자',
-                    email: '',
-                    userType: 'client',
-                    loginType: 'kakao',
-                    status: 'active',
-                    createdAt: new Date().toISOString()
-                };
-                Auth.setCurrentUser(loginUser);
-                alert('카카오 로그인 성공! 환영합니다 😊');
-                window.location.href = 'mypage.html';
+                // 인가코드로 액세스 토큰 요청 (Kakao JS SDK)
+                Kakao.Auth.setAccessToken(code);
+
+                // 카카오 사용자 정보 요청
+                Kakao.API.request({
+                    url: '/v2/user/me',
+                    success: function(res) {
+                        const kakaoAccount = res.kakao_account || {};
+                        const profile = kakaoAccount.profile || {};
+                        const phone = kakaoAccount.phone_number || '';
+                        // 카카오 전화번호 형식: +82 10-xxxx-xxxx → 010-xxxx-xxxx 변환
+                        const phoneKR = phone.replace('+82 ', '0').replace(/[^0-9-]/g, '');
+
+                        const loginUser = {
+                            id: 'kakao_' + res.id,
+                            userId: 'kakao_' + res.id,
+                            name: profile.nickname || '카카오 사용자',
+                            email: kakaoAccount.email || '',
+                            phone: phoneKR,
+                            userType: 'client',
+                            loginType: 'kakao',
+                            status: 'active',
+                            createdAt: new Date().toISOString()
+                        };
+                        Auth.setCurrentUser(loginUser);
+
+                        // 전화번호 없으면 입력 요청
+                        if (!phoneKR) {
+                            alert('카카오 로그인 성공!\n마이페이지에서 전화번호를 입력해주세요.');
+                        }
+                        window.location.href = 'mypage.html';
+                    },
+                    fail: function(err) {
+                        console.error('카카오 사용자 정보 오류:', err);
+                        // 사용자 정보 실패해도 기본 로그인 처리
+                        const loginUser = {
+                            id: 'kakao_' + Date.now(),
+                            userId: 'kakao_user',
+                            name: '카카오 사용자',
+                            email: '',
+                            phone: '',
+                            userType: 'client',
+                            loginType: 'kakao',
+                            status: 'active',
+                            createdAt: new Date().toISOString()
+                        };
+                        Auth.setCurrentUser(loginUser);
+                        alert('카카오 로그인 성공!\n마이페이지에서 전화번호를 입력해주세요.');
+                        window.location.href = 'mypage.html';
+                    }
+                });
             } catch (e) {
                 console.error('카카오 콜백 처리 오류:', e);
                 alert('로그인 처리 중 오류가 발생했습니다.');
             }
         }
 
-        // 카카오 로그인 버튼 클릭
+        // 카카오 로그인 버튼 클릭 (전화번호 필수 동의 포함)
         function kakaoLogin() {
             Kakao.Auth.authorize({
-                redirectUri: 'https://lim5342.github.io/bid-tok/login.html'
+                redirectUri: 'https://lim5342.github.io/bid-tok/login.html',
+                scope: 'profile_nickname,phone_number'
             });
         }
         

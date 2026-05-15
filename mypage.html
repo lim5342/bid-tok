@@ -135,6 +135,18 @@
                         </div>
                         <button type="submit" class="btn btn-primary" id="profileSaveBtn">저장하기</button>
                     </form>
+
+                    <!-- 회원 탈퇴 -->
+                    <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #eee;">
+                        <h3 style="color: #e53e3e; font-size: 1rem; margin-bottom: 0.5rem;">⚠️ 회원 탈퇴</h3>
+                        <p style="color: #666; font-size: 0.88rem; margin-bottom: 1rem; line-height: 1.6;">
+                            탈퇴 시 모든 신청 내역 및 개인정보가 삭제되며 복구할 수 없습니다.
+                        </p>
+                        <button type="button" onclick="handleWithdraw()" 
+                            style="padding: 0.6rem 1.4rem; background: white; color: #e53e3e; border: 1.5px solid #e53e3e; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer;">
+                            회원 탈퇴
+                        </button>
+                    </div>
                 </div>
             </section>
         </main>
@@ -656,6 +668,30 @@
 
         // ── 초기 로드 ──────────────────────────────────────────
         loadApplications();
+
+        // ── 회원 탈퇴 ──────────────────────────────────────────
+        async function handleWithdraw() {
+            const user = Auth.getCurrentUser();
+            const confirm1 = confirm('정말 탈퇴하시겠습니까?\n탈퇴 시 모든 신청 내역 및 개인정보가 삭제됩니다.');
+            if (!confirm1) return;
+            const confirm2 = confirm('마지막 확인입니다.\n탈퇴 후 복구가 불가능합니다. 계속하시겠습니까?');
+            if (!confirm2) return;
+
+            try {
+                // API 연동된 경우 서버에서 삭제
+                if (typeof API !== 'undefined' && user.id && !user.id.startsWith('kakao_') && !user.id.startsWith('dev_')) {
+                    await API.users.delete(user.id);
+                }
+                // 로컬 세션 삭제
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('autoLogin');
+                alert('회원 탈퇴가 완료되었습니다.\n그동안 이용해주셔서 감사합니다.');
+                window.location.href = 'index.html';
+            } catch (e) {
+                console.error('탈퇴 오류:', e);
+                alert('탈퇴 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+            }
+        }
     })(); // IIFE 끝 – 비로그인 시 null 접근 방지
     </script>
 </body>
