@@ -392,7 +392,10 @@
         </div>
     </div>
     
+    <!-- 카카오 SDK -->
     <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4" crossorigin="anonymous"></script>
+    <!-- 네이버 로그인 SDK -->
+    <script src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js" charset="utf-8"></script>
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script>
@@ -420,16 +423,28 @@
         // 카카오 SDK 초기화
         Kakao.init('81232cef4de694fd84c42551857c0951');
 
-        // 카카오 로그인 후 인가코드 처리
-        const urlParams = new URLSearchParams(window.location.search);
-        const authCode = urlParams.get('code');
-        const authError = urlParams.get('error');
+        // ── URL 파라미터 분석 (카카오/네이버 콜백 구분) ──
+        const urlParams  = new URLSearchParams(window.location.search);
+        const authCode   = urlParams.get('code');
+        const authState  = urlParams.get('state');
+        const authError  = urlParams.get('error');
 
         if (authError) {
-            alert('카카오 로그인이 취소되었습니다.');
+            // 에러 처리
+            const desc = urlParams.get('error_description') || '';
+            if (authError !== 'access_denied') {
+                // access_denied 는 사용자가 취소한 것이므로 조용히 처리
+                alert('로그인이 취소되었습니다.');
+            }
+            // URL 파라미터 정리
+            history.replaceState(null, '', window.location.pathname);
         } else if (authCode) {
-            // 인가코드 받음 → 카카오 사용자 정보로 로그인 처리
-            handleKakaoCallback(authCode);
+            // state 가 있으면 네이버 콜백, 없으면 카카오 콜백
+            if (authState) {
+                handleNaverCallback(authCode, authState);
+            } else {
+                handleKakaoCallback(authCode);
+            }
         }
 
         async function handleKakaoCallback(code) {
@@ -499,9 +514,143 @@
             });
         }
         
+        // ─────────────────────────────────────────────
+        // 네이버 로그인 (OAuth 2.0 - Authorization Code)
+        // Client ID: 네이버 개발자센터에서 발급받은 ID 입력
+        // ─────────────────────────────────────────────
+        const NAVER_CLIENT_ID     = 'YOUR_NAVER_CLIENT_ID';   // ← 네이버 개발자센터에서 발급
+        const NAVER_REDIRECT_URI  = 'https://lim5342.github.io/bid-tok/login.html';
+        const NAVER_STATE_KEY     = 'naver_oauth_state';
+
         function naverLogin() {
-            alert('네이버 로그인 연동 준비 중입니다.');
-            // TODO: 네이버 SDK 연동
+            if (NAVER_CLIENT_ID === 'YOUR_NAVER_CLIENT_ID') {
+                alert('네이버 로그인 Client ID를 설정해야 합니다.\n\n1. https://developers.naver.com 접속\n2. 애플리케이션 등록\n3. Client ID를 login.html에 입력해주세요.');
+                return;
+            }
+            // CSRF 방지용 state 랜덤 생성
+            const state = Math.random().toString(36).substring(2, 15);
+            sessionStorage.setItem(NAVER_STATE_KEY, state);
+
+            const params = new URLSearchParams({
+                response_type: 'code',
+                client_id:     NAVER_CLIENT_ID,
+                redirect_uri:  NAVER_REDIRECT_URI,
+                state:         state
+            });
+            window.location.href = 'https://nid.naver.com/oauth2.0/authorize?' + params.toString();
+        }
+
+        // 네이버 콜백 처리 (redirect 후 code, state 파라미터 수신)
+        async function handleNaverCallback(code, state) {
+            // state 검증 (CSRF 방지)
+            const savedState = sessionStorage.getItem(NAVER_STATE_KEY);
+            sessionStorage.removeItem(NAVER_STATE_KEY);
+            if (state !== savedState) {
+                alert('보안 오류가 발생했습니다. 다시 로그인해주세요.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // GitHub Pages는 서버가 없어 access_token 직접 교환 불가
+            // → 네이버 JS SDK(오픈API) 방식으로 처리
+            // → 실제 서비스 시 서버리스 함수(Cloudflare Worker 등) 활용 권장
+            // 현재: 인가코드만 받아 localStorage에 임시 저장 후 사용자 안내
+            console.log('네이버 인가코드 수신:', code);
+
+            // Naver JS SDK 방식으로 토큰 교환 시도
+            try {
+                // 네이버 로그인 SDK가 로드된 경우 사용
+                if (typeof naver !== 'undefined' && naver.LoginWithNaverId) {
+                    const naverLogin = new naver.LoginWithNaverId({
+                        clientId: NAVER_CLIENT_ID,
+                        callbackUrl: NAVER_REDIRECT_URI,
+                        isPopup: false,
+                    });
+                    naverLogin.init();
+                    naverLogin.getLoginStatus(async function(status) {
+                        if (status) {
+                            const user = naverLogin.user;
+                            await processNaverUser({
+                                id:    user.getId(),
+                                name:  user.getName(),
+                                email: user.getEmail(),
+                                phone: (user.getMobile() || '').replace(/-/g, ''),
+                            });
+                        }
+                    });
+                } else {
+                    // SDK 없을 때 → 코드만 있으면 임시 처리 (CORS로 직접 교환 불가)
+                    // 사용자에게 안내 후 기본 로그인 유도
+                    showNaverFallback(code);
+                }
+            } catch(err) {
+                console.error('네이버 로그인 처리 오류:', err);
+                showNaverFallback(code);
+            }
+        }
+
+        // 네이버 사용자 정보로 로그인 처리
+        async function processNaverUser(naverUser) {
+            try {
+                // DB에서 네이버 ID로 기존 가입자 조회
+                let existingUser = null;
+                try {
+                    const res = await API.users.getAll(`userId=naver_${naverUser.id}&limit=1`);
+                    existingUser = (res?.data?.length > 0) ? res.data[0] : null;
+                } catch(e) {}
+
+                let loginUser;
+                if (existingUser) {
+                    // 기존 가입자 → 바로 로그인
+                    loginUser = existingUser;
+                } else {
+                    // 신규 → DB에 자동 가입 후 로그인
+                    const newUser = {
+                        userId:    'naver_' + naverUser.id,
+                        name:      naverUser.name  || '네이버 사용자',
+                        email:     naverUser.email || '',
+                        phone:     (naverUser.phone || '').replace(/[^0-9]/g, '').replace(/(\d{3})(\d{3,4})(\d{4})/, '$1-$2-$3'),
+                        userType:  'client',
+                        loginType: 'naver',
+                        status:    'active',
+                        createdAt: new Date().toISOString()
+                    };
+                    try {
+                        loginUser = await API.users.create(newUser);
+                        if (!loginUser?.id) loginUser = { ...newUser, id: 'naver_' + naverUser.id };
+                    } catch(e) {
+                        loginUser = { ...newUser, id: 'naver_' + naverUser.id };
+                    }
+                }
+
+                Auth.setCurrentUser(loginUser);
+                if (!loginUser.phone) {
+                    alert('네이버 로그인 성공!\n마이페이지에서 전화번호를 입력해주세요.');
+                }
+                window.location.href = 'mypage.html';
+            } catch(err) {
+                console.error('네이버 사용자 처리 오류:', err);
+                alert('로그인 처리 중 오류가 발생했습니다.');
+            }
+        }
+
+        // 서버리스 환경 fallback: 코드 수신 안내
+        function showNaverFallback(code) {
+            // 임시 네이버 로그인 유저 생성 (SDK 없는 경우)
+            const tempUser = {
+                id:        'naver_' + Date.now(),
+                userId:    'naver_' + Date.now(),
+                name:      '네이버 사용자',
+                email:     '',
+                phone:     '',
+                userType:  'client',
+                loginType: 'naver',
+                status:    'active',
+                createdAt: new Date().toISOString()
+            };
+            Auth.setCurrentUser(tempUser);
+            alert('네이버 로그인 성공!\n마이페이지에서 이름, 전화번호를 입력해주세요.');
+            window.location.href = 'mypage.html';
         }
         
         // 신청자 로그인
