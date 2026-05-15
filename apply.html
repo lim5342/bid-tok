@@ -415,6 +415,8 @@
             .step-circle { width: 34px; height: 34px; font-size: 0.88rem; }
         }
     </style>
+    <!-- 토스페이먼츠 SDK -->
+    <script src="https://js.tosspayments.com/v1/payment"></script>
 </head>
 <body>
 
@@ -1043,6 +1045,11 @@ function val2(id) {
 // ─────────────────────────────────────────────
 // 신청 제출
 // ─────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// 토스페이먼츠 클라이언트 키
+// ─────────────────────────────────────────────
+const TOSS_CLIENT_KEY = 'test_ck_oEjb0gm23Pw75kkppyk48pGwBJn5';
+
 async function submitApplication() {
     if (!document.getElementById('agreeTerms').checked) {
         toast('서비스 이용약관에 동의해주세요.', 'error'); return;
@@ -1053,15 +1060,12 @@ async function submitApplication() {
 
     const btn = document.querySelector('.btn-submit');
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 제출 중...';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 처리 중...';
 
     const user = Auth.getCurrentUser();
-
-    // 사건번호에서 숫자/형식 정규화
     const rawCase = val2('caseNumber').replace(/\s/g, '');
 
     const appData = {
-        // 사건 정보
         region: val2('regionSelect'),
         court: val2('courtSelect'),
         case_number: rawCase,
@@ -1070,8 +1074,6 @@ async function submitApplication() {
         appraisal_price: parseNumber(val2('appraisalPrice')),
         min_bid_price: parseNumber(val2('minBidPrice')),
         property_type: val2('propertyType'),
-
-        // 신청자 정보
         applicant_name: val2('applicantName'),
         applicant_birth: val2('applicantBirth'),
         phone: val2('applicantPhone'),
@@ -1079,34 +1081,26 @@ async function submitApplication() {
         bank_name: val2('bankName'),
         account_holder: val2('accountHolder'),
         account_number: val2('accountNumber'),
-
-        // 입찰 정보
         bid_amount: parseNumber(val2('bidAmount')),
         deposit_method: val2('depositMethod'),
         bid_type: val2('bidType'),
         joint_name: val2('jointName'),
         share_ratio: val2('shareRatio'),
         memo: val2('memo'),
-
-        // 수수료
         service_fee: 99000,
         payment_status: '결제대기',
-
-        // 연결된 유저
         user_id: user ? (user.userId || user.id) : '',
         userId: user ? (user.userId || user.id) : '',
-
-        // 상태
         status: '접수',
         created_at: new Date().toISOString()
     };
 
     try {
+        // ── 1. DB에 먼저 저장 (결제대기 상태) ──
         let savedApp;
         if (typeof API !== 'undefined') {
             savedApp = await API.applications.create(appData);
         } else {
-            // API 없을 때 로컬 저장
             const localKey = 'myApplications_' + (user ? (user.userId || user.id) : 'guest');
             const existing = JSON.parse(localStorage.getItem(localKey) || '[]');
             const newApp = { ...appData, id: 'local_' + Date.now() };
@@ -1115,26 +1109,28 @@ async function submitApplication() {
             savedApp = newApp;
         }
 
-        // 완료 화면
         const appId = savedApp ? (savedApp.id || savedApp._id || 'APP-' + Date.now()) : 'APP-' + Date.now();
-        document.getElementById('appNumberBadge').textContent = '신청번호: ' + appId.toString().slice(-8).toUpperCase();
 
-        document.getElementById('panel4').classList.remove('active');
-        document.getElementById('panel5').classList.add('active');
-
-        // 진행바 100%
-        document.getElementById('progressFill').style.width = '100%';
-        for (let i = 1; i <= 4; i++) {
-            const item = document.getElementById('stepItem' + i);
-            item.classList.remove('active');
-            item.classList.add('done');
-        }
-
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // ── 2. 토스페이먼츠 결제창 호출 ──
+        const tossPayments = TossPayments(TOSS_CLIENT_KEY);
+        await tossPayments.requestPayment('카드', {
+            amount: 99000,
+            orderId: 'BIDTOK-' + appId.toString().slice(-12) + '-' + Date.now(),
+            orderName: '대리입찰 서비스 수수료 (사건번호: ' + rawCase + ')',
+            customerName: val2('applicantName'),
+            customerEmail: val2('applicantEmail') || undefined,
+            customerMobilePhone: val2('applicantPhone').replace(/-/g, '') || undefined,
+            successUrl: window.location.origin + '/bid-tok/payment-success.html?appId=' + appId,
+            failUrl: window.location.origin + '/bid-tok/payment-fail.html?appId=' + appId,
+        });
 
     } catch (err) {
-        console.error('신청 오류:', err);
-        toast('신청 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.', 'error');
+        if (err.code === 'USER_CANCEL') {
+            toast('결제를 취소하셨습니다.', 'error');
+        } else {
+            console.error('신청/결제 오류:', err);
+            toast('처리 중 오류가 발생했습니다: ' + (err.message || ''), 'error');
+        }
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-paper-plane"></i> 신청 완료하기';
     }

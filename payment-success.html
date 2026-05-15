@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>결제 완료 - 대리입찰 톡</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .card { background: white; border-radius: 20px; padding: 3rem 2rem; max-width: 500px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+        .icon-wrap { font-size: 4rem; margin-bottom: 1rem; }
+        h1 { font-size: 1.6rem; color: #1a1a2e; margin-bottom: 0.5rem; }
+        p { color: #666; line-height: 1.7; margin-bottom: 1.5rem; }
+        .app-id { background: #f0f4ff; border: 1.5px solid #c7d4f8; color: #1550E8; border-radius: 10px; padding: 0.75rem 1.5rem; font-weight: 700; display: inline-block; margin-bottom: 1.5rem; }
+        .info-box { background: #f8f9fa; border-radius: 12px; padding: 1.2rem; text-align: left; margin-bottom: 1.5rem; font-size: 0.88rem; color: #555; line-height: 1.9; }
+        .btn-wrap { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+        .btn { padding: 0.85rem 1.5rem; border-radius: 10px; font-weight: 600; cursor: pointer; border: none; font-size: 0.95rem; text-decoration: none; }
+        .btn-primary { background: #1550E8; color: white; }
+        .btn-outline { background: white; color: #1550E8; border: 2px solid #1550E8; }
+        .loading { color: #999; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div id="loadingView">
+        <div class="icon-wrap">⏳</div>
+        <h1>결제 확인 중...</h1>
+        <p class="loading">잠시만 기다려주세요.</p>
+    </div>
+    <div id="successView" style="display:none;">
+        <div class="icon-wrap">🎉</div>
+        <h1>결제 & 신청 완료!</h1>
+        <p>대리입찰 서비스 수수료 결제가 완료되었습니다.<br>담당 법무사 배정 후 연락드립니다.</p>
+        <div class="app-id" id="appIdBadge">신청번호: -</div>
+        <div class="info-box">
+            ✅ 결제금액: <strong>99,000원</strong><br>
+            📋 신청번호: <span id="appIdText">-</span><br>
+            ⏰ 법무사 배정: <strong>2~4시간 내</strong><br>
+            📱 배정 완료 시 카카오톡/이메일 알림 발송
+        </div>
+        <div class="btn-wrap">
+            <a href="mypage.html" class="btn btn-outline"><i class="fas fa-list"></i> 신청 내역</a>
+            <a href="index.html" class="btn btn-primary"><i class="fas fa-home"></i> 홈으로</a>
+        </div>
+    </div>
+    <div id="errorView" style="display:none;">
+        <div class="icon-wrap">❌</div>
+        <h1>결제 확인 실패</h1>
+        <p>결제 정보 확인 중 오류가 발생했습니다.<br>고객센터로 문의해주세요.</p>
+        <p style="font-size:0.85rem; color:#1550E8;">📞 02-853-5875</p>
+        <div class="btn-wrap">
+            <a href="apply.html" class="btn btn-outline">다시 신청</a>
+            <a href="index.html" class="btn btn-primary">홈으로</a>
+        </div>
+    </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async function() {
+    const params = new URLSearchParams(window.location.search);
+    const paymentKey = params.get('paymentKey');
+    const orderId    = params.get('orderId');
+    const amount     = params.get('amount');
+    const appId      = params.get('appId');
+
+    try {
+        // ── 1. 결제 상태 업데이트 (DB) ──────────────────
+        if (typeof API !== 'undefined' && appId) {
+            await API.applications.updateStatus(appId, '결제완료', {
+                payment_key: paymentKey,
+                order_id: orderId,
+                payment_status: '결제완료',
+                paid_at: new Date().toISOString()
+            });
+
+            // ── 2. 지역별 법무사 자동 매칭 ──────────────
+            await autoMatchExpert(appId);
+        }
+
+        // ── 3. 완료 화면 표시 ────────────────────────
+        const shortId = appId ? appId.toString().slice(-8).toUpperCase() : orderId;
+        document.getElementById('appIdBadge').textContent = '신청번호: ' + shortId;
+        document.getElementById('appIdText').textContent  = shortId;
+
+        document.getElementById('loadingView').style.display = 'none';
+        document.getElementById('successView').style.display = 'block';
+
+    } catch(e) {
+        console.error('결제 확인 오류:', e);
+        document.getElementById('loadingView').style.display = 'none';
+        document.getElementById('errorView').style.display = 'block';
+    }
+});
+
+// ── 지역별 법무사 자동 매칭 ──────────────────────────────
+async function autoMatchExpert(appId) {
+    try {
+        // 신청 정보 가져오기
+        const app = await API.applications.getById(appId);
+        if (!app) return;
+
+        const region = app.region || '';
+
+        // 해당 지역 법무사 조회 (region 필드 기준)
+        const expertsData = await API.get(`users?userType=expert&status=active&region=${encodeURIComponent(region)}&limit=10`);
+        const experts = expertsData?.data || [];
+
+        if (experts.length === 0) {
+            // 지역 법무사 없으면 전국 법무사 중 랜덤 배정
+            const allExperts = await API.get(`users?userType=expert&status=active&limit=10`);
+            const allList = allExperts?.data || [];
+            if (allList.length > 0) {
+                const expert = allList[Math.floor(Math.random() * allList.length)];
+                await assignAndNotify(appId, app, expert);
+            }
+            return;
+        }
+
+        // 신청 건수 가장 적은 법무사 배정 (로드밸런싱)
+        const expert = experts[0];
+        await assignAndNotify(appId, app, expert);
+
+    } catch(e) {
+        console.error('법무사 자동 매칭 오류:', e);
+    }
+}
+
+// ── 법무사 배정 + 이메일 알림 ────────────────────────────
+async function assignAndNotify(appId, app, expert) {
+    // DB 배정 업데이트
+    await API.applications.assignExpert(appId, expert.id, expert.name);
+
+    // 이메일 알림 (EmailJS 사용)
+    await sendEmailNotification(app, expert);
+}
+
+// ── EmailJS 이메일 발송 ──────────────────────────────────
+async function sendEmailNotification(app, expert) {
+    // EmailJS 무료 플랜 사용 (월 200건)
+    // 설정 필요: https://www.emailjs.com
+    const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';   // 나중에 설정
+    const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';  // 나중에 설정
+    const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';   // 나중에 설정
+
+    if (EMAILJS_SERVICE_ID === 'YOUR_SERVICE_ID') {
+        console.log('📧 이메일 알림 (EmailJS 미설정 - 콘솔 출력)');
+        console.log('→ 법무사:', expert.name, expert.email);
+        console.log('→ 신청자:', app.applicant_name, app.phone);
+        console.log('→ 사건번호:', app.case_number);
+        return;
+    }
+
+    try {
+        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+            to_email:       expert.email,
+            to_name:        expert.name,
+            applicant_name: app.applicant_name,
+            applicant_phone: app.phone,
+            case_number:    app.case_number,
+            court:          app.court,
+            bid_date:       app.bid_date,
+            address:        app.address,
+            bid_amount:     Number(app.bid_amount).toLocaleString() + '원',
+        }, EMAILJS_PUBLIC_KEY);
+        console.log('✅ 법무사 이메일 알림 발송 완료');
+    } catch(e) {
+        console.error('이메일 발송 오류:', e);
+    }
+}
+</script>
+</body>
+</html>
