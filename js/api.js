@@ -18,9 +18,12 @@ const firebaseConfig = {
 // → 각 HTML 파일 <body> 끝에 아래 스크립트 태그가 있어야 함:
 //   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 //   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+//   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
 
 // Firebase 초기화 (중복 방지)
 let _db = null;
+let _storage = null;
+
 function getDB() {
     if (_db) return _db;
     try {
@@ -35,6 +38,20 @@ function getDB() {
         return _db;
     } catch (e) {
         console.error('Firebase 초기화 오류:', e);
+        return null;
+    }
+}
+
+function getStorage() {
+    if (_storage) return _storage;
+    try {
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        else firebase.app();
+        _storage = firebase.storage();
+        console.log('Firebase Storage 연결 ✅');
+        return _storage;
+    } catch (e) {
+        console.error('Firebase Storage 초기화 오류:', e);
         return null;
     }
 }
@@ -283,3 +300,34 @@ const API = {
 // 전역 노출
 window.API = API;
 console.log('API module loaded ✅ (Firebase Firestore)');
+
+// ============================================================
+// STORAGE — 파일 업로드
+// ============================================================
+const StorageAPI = {
+    // 단일 파일 업로드 → downloadURL 반환
+    upload: async function(file, folder, prefix) {
+        folder = folder || 'expert_docs';
+        prefix = prefix || '';
+        var storage = getStorage();
+        if (!storage) throw new Error('Firebase Storage를 초기화할 수 없습니다.');
+        var ext      = file.name.split('.').pop();
+        var safeName = (prefix ? prefix + '_' : '') + Date.now() + '.' + ext;
+        var path     = folder + '/' + safeName;
+        var ref      = storage.ref(path);
+        var snapshot = await ref.put(file);
+        var url      = await snapshot.ref.getDownloadURL();
+        return { url: url, path: path, name: file.name };
+    },
+    // 여러 파일 병렬 업로드
+    uploadMultiple: async function(items) {
+        return Promise.all(items.map(function(item) {
+            return item.file
+                ? StorageAPI.upload(item.file, item.folder, item.prefix)
+                : Promise.resolve(null);
+        }));
+    }
+};
+
+window.StorageAPI = StorageAPI;
+console.log('StorageAPI module loaded ✅ (Firebase Storage)');

@@ -970,55 +970,64 @@ function handleExpertSubmit() {
     const expertType = document.querySelector('input[name="expertType"]')?.value || '법무사';
     const expertIntro = document.getElementById('expertIntro')?.value.trim() || '';
 
-    // 파일명 수집 (Firebase Storage 미사용 → 파일명만 저장)
-    const licenseFileName  = licenseFile  ? licenseFile.name  : '';
-    const insuranceFileName = insuranceFile ? insuranceFile.name : '';
-
-    // Firestore에 저장할 데이터 (필드명 API 스펙에 맞게)
-    const expertData = {
-        expertType:        expertType,
-        name:              expertName,
-        licenseNumber:     licenseNumber,
-        phone:             expertPhone,
-        email:             expertEmail,
-        address:           expertAddress,
-        addressDetail:     expertAddressDetail,
-        activeRegions:     selectedRegions,           // 배열 그대로 저장
-        serviceFee:        parseInt(expertFee),
-        kakaoPhone:        kakaoPhone,
-        introduction:      expertIntro,
-        licenseFileName:   licenseFileName,
-        insuranceFileName: insuranceFileName,
-        status:            '대기',
-        rating:            0,
-        successCount:      0
-    };
+    // 사업자등록증 (선택)
+    const businessFile = document.getElementById('businessFile')?.files[0] || null;
 
     // 버튼 비활성화 (중복 제출 방지)
     const submitBtn = document.getElementById('submitExpertApplication');
-    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = '신청 중...'; }
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = '📤 서류 업로드 중...'; }
 
-    // Firestore에 저장 (API.experts.create 사용)
-    API.experts.create(expertData)
+    // ── 1단계: Firebase Storage에 파일 업로드 ──────────────────
+    const safeName = expertName.replace(/\s+/g, '_');
+    const uploadItems = [
+        { file: licenseFile,   folder: 'expert_docs', prefix: 'license_'   + safeName },
+        { file: insuranceFile, folder: 'expert_docs', prefix: 'insurance_' + safeName },
+        { file: businessFile,  folder: 'expert_docs', prefix: 'business_'  + safeName }
+    ];
+
+    StorageAPI.uploadMultiple(uploadItems)
+        .then(results => {
+            const [licResult, insResult, bizResult] = results;
+
+            // ── 2단계: Firestore에 URL 포함 저장 ────────────────
+            const expertData = {
+                expertType:       expertType,
+                name:             expertName,
+                licenseNumber:    licenseNumber,
+                phone:            expertPhone,
+                email:            expertEmail,
+                address:          expertAddress,
+                addressDetail:    expertAddressDetail,
+                activeRegions:    selectedRegions,
+                serviceFee:       parseInt(expertFee),
+                kakaoPhone:       kakaoPhone,
+                introduction:     expertIntro,
+                // 파일 정보 (이름 + Storage URL)
+                licenseFileName:   licResult  ? licResult.name  : '',
+                licenseFileURL:    licResult  ? licResult.url   : '',
+                insuranceFileName: insResult  ? insResult.name  : '',
+                insuranceFileURL:  insResult  ? insResult.url   : '',
+                businessFileName:  bizResult  ? bizResult.name  : '',
+                businessFileURL:   bizResult  ? bizResult.url   : '',
+                status:            '대기',
+                rating:            0,
+                successCount:      0
+            };
+
+            if (submitBtn) submitBtn.textContent = '💾 정보 저장 중...';
+            return API.experts.create(expertData);
+        })
         .then(data => {
             console.log('✅ Expert application saved to Firestore:', data.id);
             alert('전문가 신청이 완료되었습니다!\n\n관리자 승인 후 활동 가능합니다.\n승인 결과는 이메일로 안내해 드립니다.');
 
             // 폼 초기화
-            document.getElementById('expertName').value = '';
-            document.getElementById('licenseNumber').value = '';
-            document.getElementById('expertPhone').value = '';
-            document.getElementById('expertEmail').value = '';
-            document.getElementById('expertAddress').value = '';
-            document.getElementById('expertAddressDetail').value = '';
-            document.getElementById('expertFee').value = '';
-            document.getElementById('kakaoPhone').value = '';
-            if (document.getElementById('expertIntro')) document.getElementById('expertIntro').value = '';
+            ['expertName','licenseNumber','expertPhone','expertEmail',
+             'expertAddress','expertAddressDetail','kakaoPhone','expertIntro'
+            ].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
             document.querySelectorAll('.region-checkbox:checked').forEach(cb => cb.checked = false);
-            document.getElementById('agreeExpertTerms').checked = false;
-            document.getElementById('agreeExpertPrivacy').checked = false;
-            if (document.getElementById('licenseFile'))   document.getElementById('licenseFile').value = '';
-            if (document.getElementById('insuranceFile')) document.getElementById('insuranceFile').value = '';
+            ['agreeExpertTerms','agreeExpertPrivacy'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = false; });
+            ['licenseFile','insuranceFile','businessFile'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
 
             switchToMainPage();
         })
