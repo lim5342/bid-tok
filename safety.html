@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>안전 보장 제도 - 대리입찰 톡</title>
+    <meta name="description" content="대리입찰 톡의 3중 안전장치 — 법무사 자격 검증, 5억 배상책임보험, 플랫폼 전자계약으로 고객의 보증금을 철저히 보호합니다.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --navy:  #0f1340;
+            --blue:  #1550E8;
+            --blue2: #1a7fd4;
+            --gold:  #FFD700;
+            --green: #22c55e;
+            --red:   #ef4444;
+            --gray:  #f8f9fb;
+            --text:  #1a1a2e;
+            --sub:   #64748b;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, sans-serif;
+            background: #fff;
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        /* ── 네비 ── */
+        .top-nav {
+            position: sticky; top: 0; z-index: 100;
+            background: var(--navy);
+            padding: 0 2rem;
+            display: flex; align-items: center; justify-content: space-between;
+            height: 60px;
+            box-shadow: 0 2px 12px rgba(0,0,0,.3);
+        }
+        .top-nav .logo {
+            color: #fff; font-size: 1.1rem; font-weight: 800;
+            text-decoration: none; display: flex; align-items: center; gap: .5rem;
+        }
+        .top-nav .logo i { color: var(--gold); }
+        .top-nav a.back-btn {
+            color: rgba(255,255,255,.8); font-size: .88rem; text-decoration: none;
+            display: flex; align-items: center; gap: .4rem;
+        }
+        .top-nav a.back-btn:hover { color: #fff; }
+
+        /* ── 히어로 ── */
+        .hero {
+            background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 65%, var(--blue2) 100%);
+            padding: 5rem 2rem 4rem;
+            text-align: center;
+            position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute; top: -100px; right: -100px;
+            width: 500px; height: 500px;
+            background: rgba(255,255,255,.04); border-radius: 50%;
+        }
+        .hero::after {
+            content: '';
+            position: absolute; bottom: -120px; left: -80px;
+            width: 450px; height: 450px;
+            background: rgba(255,255,255,.03); border-radius: 50%;
+        }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: .5rem;
+            background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.25);
+            color: #fff; padding: .45rem 1.2rem; border-radius: 999px;
+            font-size: .82rem; font-weight: 700; letter-spacing: .04em;
+            margin-bottom: 1.5rem;
+        }
+        .hero h1 {
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 900; color: #fff; line-height: 1.25;
+            margin-bottom: 1.2rem; position: relative; z-index: 1;
+        }
+        .hero h1 .accent { color: var(--gold); }
+        .hero p {
+            font-size: 1.05rem; color: rgba(255,255,255,.82);
+            max-width: 600px; margin: 0 auto 2.5rem;
+            position: relative; z-index: 1;
+        }
+
+        /* 숫자 요약 */
+        .hero-stats {
+            display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap;
+            position: relative; z-index: 1;
+        }
+        .stat-card {
+            background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2);
+            border-radius: 14px; padding: 1.25rem 2rem; backdrop-filter: blur(8px);
+            min-width: 160px;
+        }
+        .stat-num {
+            font-size: 1.9rem; font-weight: 900; color: var(--gold);
+            display: block; line-height: 1;
+        }
+        .stat-label { font-size: .82rem; color: rgba(255,255,255,.75); margin-top: .35rem; }
+
+        /* ── 공통 섹션 ── */
+        .section { padding: 5rem 2rem; }
+        .section-alt { background: var(--gray); }
+        .container { max-width: 1080px; margin: 0 auto; }
+        .section-eyebrow {
+            font-size: .78rem; font-weight: 800; letter-spacing: .12em;
+            text-transform: uppercase; color: var(--blue); margin-bottom: .6rem;
+        }
+        .section-title {
+            font-size: clamp(1.5rem, 3vw, 2.1rem);
+            font-weight: 900; color: var(--navy); margin-bottom: .8rem;
+        }
+        .section-desc { color: var(--sub); font-size: .95rem; max-width: 560px; }
+
+        /* ── 3중 안전장치 ── */
+        .shields-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem; margin-top: 3rem;
+        }
+        .shield-card {
+            background: #fff; border-radius: 20px;
+            border: 2px solid transparent;
+            box-shadow: 0 4px 20px rgba(0,0,0,.07);
+            overflow: hidden; transition: transform .25s, box-shadow .25s;
+        }
+        .shield-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(21,80,232,.12); }
+        .shield-card .card-top {
+            padding: 2rem 2rem 1.5rem;
+            background: linear-gradient(135deg, var(--navy), var(--blue));
+            text-align: center;
+        }
+        .shield-icon {
+            width: 72px; height: 72px;
+            background: rgba(255,255,255,.15); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; margin: 0 auto 1rem;
+        }
+        .shield-num {
+            font-size: .72rem; font-weight: 800; letter-spacing: .1em;
+            color: var(--gold); text-transform: uppercase; margin-bottom: .4rem;
+        }
+        .shield-card h3 { font-size: 1.25rem; font-weight: 800; color: #fff; }
+        .shield-card .card-body { padding: 1.5rem 2rem 2rem; }
+        .shield-card .lead {
+            font-size: .95rem; font-weight: 700; color: var(--navy);
+            margin-bottom: 1rem; padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        .shield-list { list-style: none; display: flex; flex-direction: column; gap: .65rem; }
+        .shield-list li {
+            display: flex; align-items: flex-start; gap: .7rem;
+            font-size: .88rem; color: #444;
+        }
+        .shield-list li .ck {
+            color: var(--green); font-size: 1rem; flex-shrink: 0; margin-top: .05rem;
+        }
+
+        /* ── 흐름도: 매칭 후 보호 프로세스 ── */
+        .process-row {
+            display: flex; align-items: flex-start; gap: 1.5rem;
+            padding: 1.75rem 2rem; background: #fff; border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,.06); margin-bottom: 1rem;
+            transition: box-shadow .2s;
+        }
+        .process-row:hover { box-shadow: 0 6px 20px rgba(21,80,232,.1); }
+        .process-step {
+            width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;
+            background: linear-gradient(135deg, var(--navy), var(--blue));
+            color: #fff; font-size: 1.1rem; font-weight: 900;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .process-content h4 { font-size: 1rem; font-weight: 800; color: var(--navy); margin-bottom: .3rem; }
+        .process-content p { font-size: .87rem; color: var(--sub); line-height: 1.65; }
+        .process-connector {
+            width: 2px; height: 28px; background: linear-gradient(var(--blue), transparent);
+            margin: 0 auto 0 calc(24px + 1.5rem - 1px);
+        }
+
+        /* ── 사고 시 대응 ── */
+        .incident-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.25rem; margin-top: 2.5rem;
+        }
+        .incident-card {
+            border-radius: 16px; padding: 1.75rem;
+            border: 2px solid; transition: transform .2s;
+        }
+        .incident-card:hover { transform: translateY(-3px); }
+        .incident-card.type-ins  { border-color: #3b82f6; background: #eff6ff; }
+        .incident-card.type-law  { border-color: #8b5cf6; background: #f5f3ff; }
+        .incident-card.type-con  { border-color: #22c55e; background: #f0fdf4; }
+        .incident-card .ic-icon  { font-size: 2rem; margin-bottom: 1rem; }
+        .incident-card h4 { font-size: 1rem; font-weight: 800; color: var(--navy); margin-bottom: .5rem; }
+        .incident-card p  { font-size: .85rem; color: #555; line-height: 1.65; }
+        .incident-card .ic-badge {
+            display: inline-block; margin-top: .85rem;
+            padding: .3rem .85rem; border-radius: 999px; font-size: .78rem; font-weight: 700;
+        }
+        .type-ins  .ic-badge { background: #3b82f6; color: #fff; }
+        .type-law  .ic-badge { background: #8b5cf6; color: #fff; }
+        .type-con  .ic-badge { background: #22c55e; color: #fff; }
+
+        /* ── 증거보관 체크리스트 ── */
+        .evidence-box {
+            background: linear-gradient(135deg, var(--navy), #1a2a6b);
+            border-radius: 20px; padding: 3rem; margin-top: 3rem;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;
+        }
+        .evidence-box h3 { color: #fff; font-size: 1.3rem; font-weight: 800; margin-bottom: 1.25rem; }
+        .evidence-list { list-style: none; display: flex; flex-direction: column; gap: .7rem; }
+        .evidence-list li {
+            display: flex; align-items: center; gap: .75rem;
+            color: rgba(255,255,255,.85); font-size: .9rem;
+        }
+        .evidence-list li .dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--gold); flex-shrink: 0;
+        }
+        .evidence-contact {
+            background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2);
+            border-radius: 14px; padding: 1.75rem; display: flex; flex-direction: column;
+            justify-content: center;
+        }
+        .evidence-contact p { color: rgba(255,255,255,.7); font-size: .82rem; margin-bottom: .5rem; }
+        .evidence-contact a {
+            font-size: 1.6rem; font-weight: 900; color: var(--gold);
+            text-decoration: none; display: block; margin-bottom: .5rem;
+        }
+        .evidence-contact small { color: rgba(255,255,255,.5); font-size: .78rem; }
+
+        /* ── CTA 배너 ── */
+        .cta-banner {
+            background: linear-gradient(135deg, #0f1340, #1550E8);
+            padding: 4rem 2rem; text-align: center;
+        }
+        .cta-banner h2 { font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 900; color: #fff; margin-bottom: .85rem; }
+        .cta-banner p  { color: rgba(255,255,255,.78); font-size: .97rem; margin-bottom: 2rem; }
+        .cta-btn {
+            display: inline-flex; align-items: center; gap: .6rem;
+            background: var(--gold); color: var(--navy);
+            padding: 1rem 2.5rem; border-radius: 12px;
+            font-size: 1rem; font-weight: 900; text-decoration: none;
+            box-shadow: 0 4px 16px rgba(255,215,0,.4); transition: all .25s;
+        }
+        .cta-btn:hover { background: #ffca00; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,215,0,.5); }
+
+        /* ── 반응형 ── */
+        @media (max-width: 700px) {
+            .evidence-box { grid-template-columns: 1fr; }
+            .hero-stats { gap: 1rem; }
+            .stat-card { min-width: 130px; padding: 1rem 1.25rem; }
+            .process-row { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- 네비게이션 -->
+<nav class="top-nav">
+    <a href="index.html" class="logo">
+        <i class="fas fa-comment-dots"></i> 대리입찰 톡
+    </a>
+    <a href="index.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i> 메인으로
+    </a>
+</nav>
+
+<!-- ① 히어로 -->
+<section class="hero">
+    <div class="hero-badge">
+        <i class="fas fa-shield-alt"></i> 고객 자산 보호 시스템
+    </div>
+    <h1>
+        보증금이 걱정되신가요?<br>
+        <span class="accent">3중 안전장치</span>로 철저히 보호합니다
+    </h1>
+    <p>
+        대리입찰 톡은 법무사 전용 플랫폼입니다.<br>
+        국가 공인 자격증 + 배상책임보험 + 전자계약으로 고객의 입찰보증금을 지킵니다.
+    </p>
+    <div class="hero-stats">
+        <div class="stat-card">
+            <span class="stat-num">최대 5억</span>
+            <div class="stat-label">배상책임보험 보장</div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-num">법무사</span>
+            <div class="stat-label">국가 공인 자격증 보유자만</div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-num">전자계약</span>
+            <div class="stat-label">위임 내역 100% 기록 보존</div>
+        </div>
+    </div>
+</section>
+
+<!-- ② 3중 안전장치 -->
+<section class="section">
+    <div class="container">
+        <p class="section-eyebrow">Safety Shield</p>
+        <h2 class="section-title">대리입찰 톡 3중 안전장치</h2>
+        <p class="section-desc">
+            플랫폼에 등록된 모든 법무사는 아래 3가지 요건을 100% 충족해야만
+            활동이 가능합니다. 하나라도 미충족 시 승인이 거부됩니다.
+        </p>
+
+        <div class="shields-grid">
+
+            <!-- 안전장치 1 -->
+            <div class="shield-card">
+                <div class="card-top">
+                    <div class="shield-icon">⚖️</div>
+                    <div class="shield-num">Safety 01</div>
+                    <h3>법무사 자격 검증</h3>
+                </div>
+                <div class="card-body">
+                    <p class="lead">
+                        법원에서 인정하는 유일한 국가 공인 자격증 보유자만 등록 허용
+                    </p>
+                    <ul class="shield-list">
+                        <li><span class="ck">✓</span> 법무사 자격증 사본 제출 및 관리자 직접 확인</li>
+                        <li><span class="ck">✓</span> 자격증 번호로 대한법무사협회 조회 후 승인</li>
+                        <li><span class="ck">✓</span> 자격 정지·취소 시 즉시 계정 비활성화</li>
+                        <li><span class="ck">✓</span> 법무사는 배임·횡령 시 형사·민사 책임 동시 부담</li>
+                        <li><span class="ck">✓</span> 대한법무사협회 징계 이력 확인</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 안전장치 2 -->
+            <div class="shield-card">
+                <div class="card-top">
+                    <div class="shield-icon">🛡️</div>
+                    <div class="shield-num">Safety 02</div>
+                    <h3>5억 배상책임보험</h3>
+                </div>
+                <div class="card-body">
+                    <p class="lead">
+                        법무사 가입 배상책임보험으로 보증금 손실 시 실제 보상
+                    </p>
+                    <ul class="shield-list">
+                        <li><span class="ck">✓</span> 최대 5억 원 배상책임보험 증권 가입 필수</li>
+                        <li><span class="ck">✓</span> 보험증권 사본 제출 및 만료일 관리</li>
+                        <li><span class="ck">✓</span> 보험 만료 30일 전 자동 갱신 알림 발송</li>
+                        <li><span class="ck">✓</span> 보증금 미반환·분실 사고 시 보험사에 직접 청구 가능</li>
+                        <li><span class="ck">✓</span> 보험 미갱신 법무사 즉시 매칭 중단</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 안전장치 3 -->
+            <div class="shield-card">
+                <div class="card-top">
+                    <div class="shield-icon">📝</div>
+                    <div class="shield-num">Safety 03</div>
+                    <h3>플랫폼 전자계약</h3>
+                </div>
+                <div class="card-body">
+                    <p class="lead">
+                        모든 위임 내역을 플랫폼이 기록·보존 — 분쟁 시 결정적 증거
+                    </p>
+                    <ul class="shield-list">
+                        <li><span class="ck">✓</span> 입찰 위임 전자계약서 서명 의무화</li>
+                        <li><span class="ck">✓</span> 입찰 금액·보증금·위임 조건 전부 기록</li>
+                        <li><span class="ck">✓</span> 계약서는 플랫폼 서버에 영구 보존</li>
+                        <li><span class="ck">✓</span> 법무사·의뢰인 양측 서명 후 진행</li>
+                        <li><span class="ck">✓</span> 분쟁 발생 시 계약서·서명 기록 즉시 제공</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ③ 매칭 후 보호 프로세스 -->
+<section class="section section-alt">
+    <div class="container">
+        <p class="section-eyebrow">How It Works</p>
+        <h2 class="section-title">법무사 매칭 후 보호 흐름</h2>
+        <p class="section-desc" style="margin-bottom:2.5rem;">
+            매칭이 완료된 순간부터 입찰 결과 통보까지,
+            각 단계마다 고객을 보호하는 장치가 작동합니다.
+        </p>
+
+        <div class="process-connector"></div>
+        <div class="process-row">
+            <div class="process-step">1</div>
+            <div class="process-content">
+                <h4>법무사 배정 확인 알림 발송</h4>
+                <p>매칭된 법무사의 이름·자격증 번호·연락처를 의뢰인에게 즉시 카카오톡·문자로 발송합니다.<br>
+                의뢰인이 직접 대한법무사협회에서 자격 조회 가능한 링크도 함께 제공합니다.</p>
+            </div>
+        </div>
+
+        <div class="process-connector"></div>
+        <div class="process-row">
+            <div class="process-step">2</div>
+            <div class="process-content">
+                <h4>전자계약서 서명 (입찰 전 필수)</h4>
+                <p>입찰 금액·보증금·수수료·위임 범위를 명시한 전자계약서에 양측 서명이 완료되어야만
+                다음 단계로 진행됩니다. 계약 없이는 입찰이 진행되지 않습니다.</p>
+            </div>
+        </div>
+
+        <div class="process-connector"></div>
+        <div class="process-row">
+            <div class="process-step">3</div>
+            <div class="process-content">
+                <h4>보증금 납부 방식 안내 (직접납부 원칙)</h4>
+                <p>보증금은 <strong>의뢰인이 법원에 직접 납부</strong>하는 방식을 원칙으로 안내합니다.<br>
+                부득이하게 계좌이체가 필요한 경우, 법무사 사무소 공식 계좌인지 반드시 확인하세요.
+                입금 전 플랫폼 고객센터에 계좌 진위 확인을 요청하실 수 있습니다.</p>
+            </div>
+        </div>
+
+        <div class="process-connector"></div>
+        <div class="process-row">
+            <div class="process-step">4</div>
+            <div class="process-content">
+                <h4>입찰 당일 — 실시간 진행 상황 공유</h4>
+                <p>법무사가 법원 도착 후 입찰 완료까지의 주요 단계를 카카오톡으로 실시간 공유합니다.<br>
+                낙찰·유찰 결과 및 보증금 반환 예정일을 입찰 종료 즉시 통보합니다.</p>
+            </div>
+        </div>
+
+        <div class="process-connector"></div>
+        <div class="process-row">
+            <div class="process-step">5</div>
+            <div class="process-content">
+                <h4>유찰 시 보증금 반환 확인</h4>
+                <p>유찰 후 보증금이 정상 반환되었는지 플랫폼이 확인 후 의뢰인에게 통보합니다.<br>
+                반환 지연·미반환 발생 시 즉시 배상책임보험 청구 및 법적 지원 절차를 안내합니다.</p>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ④ 사고 발생 시 대응 -->
+<section class="section">
+    <div class="container">
+        <p class="section-eyebrow">Incident Response</p>
+        <h2 class="section-title">사고 발생 시 대응 방법</h2>
+        <p class="section-desc">
+            문제가 생기면 즉시 아래 3가지 경로로 대응할 수 있습니다.
+            대리입찰 톡은 의뢰인 편에서 절차를 함께 진행합니다.
+        </p>
+
+        <div class="incident-grid">
+            <div class="incident-card type-ins">
+                <div class="ic-icon">🛡️</div>
+                <h4>배상책임보험 청구</h4>
+                <p>
+                    법무사의 귀책으로 보증금이 손실된 경우,
+                    해당 법무사가 가입한 <strong>5억 배상책임보험</strong>에
+                    직접 청구할 수 있습니다.<br><br>
+                    플랫폼에 저장된 계약서·위임장·거래 기록을
+                    보험사 제출용으로 즉시 발급해 드립니다.
+                </p>
+                <span class="ic-badge">보험금 직접 청구 지원</span>
+            </div>
+            <div class="incident-card type-law">
+                <div class="ic-icon">⚖️</div>
+                <h4>법적 조치 지원</h4>
+                <p>
+                    횡령·배임·사기 등 형사 문제로 발전하는 경우,
+                    플랫폼에 보관된 <strong>전자계약서, 서명 기록,
+                    카카오톡 알림 이력</strong>이 결정적 증거가 됩니다.<br><br>
+                    고소장 작성 시 필요한 자료를 공식 문서로 발급해 드립니다.
+                </p>
+                <span class="ic-badge">증거 서류 공식 발급</span>
+            </div>
+            <div class="incident-card type-con">
+                <div class="ic-icon">📞</div>
+                <h4>플랫폼 고객센터 직접 개입</h4>
+                <p>
+                    법무사 연락 두절, 보증금 반환 지연 등
+                    이상 징후 발생 시 플랫폼이 직접 개입하여
+                    법무사에게 소명을 요구합니다.<br><br>
+                    소명 불응 시 계정 즉시 정지 및
+                    대한법무사협회에 징계 신고를 진행합니다.
+                </p>
+                <span class="ic-badge">플랫폼 직접 개입</span>
+            </div>
+        </div>
+
+        <!-- 증거보관 & 연락처 -->
+        <div class="evidence-box">
+            <div>
+                <h3>⚠️ 문제 발생 시 즉시 보관해야 할 증거</h3>
+                <ul class="evidence-list">
+                    <li><span class="dot"></span> 보증금 이체 내역 (은행 앱 캡처)</li>
+                    <li><span class="dot"></span> 법무사와의 카카오톡·문자 대화 전체</li>
+                    <li><span class="dot"></span> 플랫폼에서 발급된 전자계약서</li>
+                    <li><span class="dot"></span> 입찰 위임장 원본</li>
+                    <li><span class="dot"></span> 법원 입찰 기일 통지서</li>
+                    <li><span class="dot"></span> 기타 법무사와 주고받은 모든 서류</li>
+                </ul>
+            </div>
+            <div>
+                <div class="evidence-contact">
+                    <p>📮 문제 발생 시 즉시 연락</p>
+                    <a href="mailto:bidtok@naver.com">bidtok@naver.com</a>
+                    <small>
+                        이메일 접수 후 영업일 기준 24시간 이내 답변<br>
+                        계약서 발급·보험 청구 안내·법무사 소명 요구 진행
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ⑤ 우리가 바토너와 다른 이유 -->
+<section class="section section-alt">
+    <div class="container">
+        <p class="section-eyebrow">Why Us</p>
+        <h2 class="section-title">법무사 전용 플랫폼이 더 안전한 이유</h2>
+        <p class="section-desc" style="margin-bottom: 2.5rem;">
+            일부 플랫폼은 매수신청대리인까지 허용합니다. 우리는 법무사만 허용합니다.
+            그 차이가 고객 보호 수준을 결정합니다.
+        </p>
+
+        <div style="overflow-x:auto;">
+            <table style="width:100%; border-collapse:collapse; font-size:.9rem; background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 4px 16px rgba(0,0,0,.07);">
+                <thead>
+                    <tr style="background:var(--navy); color:#fff;">
+                        <th style="padding:1.1rem 1.5rem; text-align:left; font-weight:700;">구분</th>
+                        <th style="padding:1.1rem 1.5rem; text-align:center; font-weight:700; color:var(--gold);">대리입찰 톡</th>
+                        <th style="padding:1.1rem 1.5rem; text-align:center; font-weight:700; color:rgba(255,255,255,.6);">일반 플랫폼</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom:1px solid #f0f0f0;">
+                        <td style="padding:1rem 1.5rem; color:#444;">등록 가능 전문가</td>
+                        <td style="padding:1rem 1.5rem; text-align:center; font-weight:700; color:var(--blue);">법무사만</td>
+                        <td style="padding:1rem 1.5rem; text-align:center; color:#999;">매수신청대리인 포함</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid #f0f0f0; background:#fafafa;">
+                        <td style="padding:1rem 1.5rem; color:#444;">자격증 직접 확인</td>
+                        <td style="padding:1rem 1.5rem; text-align:center; font-weight:700; color:var(--green);">✅ 관리자 직접 검토</td>
+                        <td style="padding:1rem 1.5rem; text-align:center; color:#999;">자체 신고 방식</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid #f0f0f0;">
+                        <td style="padding:1rem 1.5rem; color:#444;">배상책임보험</td>
+                        <td style="padding:1rem 1.5rem; text-align:center; font-weight:700; color:var(--green);">✅ 증권 제출 필수</td>
+                        <td style="padding:1rem 1.5rem; text-align:center; color:#999;">권고 수준</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid #f0f0f0; background:#fafafa;">
+                        <td style="padding:1rem 1.5rem; color:#444;">전자계약서</td>
+                        <td style="padding:1rem 1.5rem; text-align:center; font-weight:700; color:var(--green);">✅ 의무 서명</td>
+                        <td style="padding:1rem 1.5rem; text-align:center; color:#999;">없음 또는 선택</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid #f0f0f0;">
+                        <td style="padding:1rem 1.5rem; color:#444;">사고 시 증거 발급</td>
+                        <td style="padding:1rem 1.5rem; text-align:center; font-weight:700; color:var(--green);">✅ 즉시 발급</td>
+                        <td style="padding:1rem 1.5rem; text-align:center; color:#999;">불명확</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:1rem 1.5rem; color:#444;">전문가 법적 책임</td>
+                        <td style="padding:1rem 1.5rem; text-align:center; font-weight:700; color:var(--green);">✅ 형사·민사·징계 동시</td>
+                        <td style="padding:1rem 1.5rem; text-align:center; color:#999;">민사 위주</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- ⑥ CTA -->
+<section class="cta-banner">
+    <h2>안전하게 경매 입찰, 지금 시작하세요</h2>
+    <p>검증된 법무사가 대신 입찰합니다. 보증금은 플랫폼이 지킵니다.</p>
+    <a href="index.html" class="cta-btn">
+        <i class="fas fa-gavel"></i> 지금 바로 신청하기
+    </a>
+</section>
+
+<!-- 푸터 -->
+<footer style="background:#0f1340; color:rgba(255,255,255,.5); text-align:center; padding:2rem; font-size:.82rem;">
+    <p>© 2026 대리입찰 톡. All rights reserved.</p>
+    <p style="margin-top:.4rem;">
+        <a href="privacy.html" style="color:rgba(255,255,255,.4); text-decoration:none; margin:0 .5rem;">개인정보처리방침</a>
+        <a href="terms.html"   style="color:rgba(255,255,255,.4); text-decoration:none; margin:0 .5rem;">이용약관</a>
+        <a href="mailto:bidtok@naver.com" style="color:rgba(255,255,255,.4); text-decoration:none; margin:0 .5rem;">bidtok@naver.com</a>
+    </p>
+</footer>
+
+</body>
+</html>
