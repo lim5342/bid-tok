@@ -304,9 +304,9 @@
                 <h2>왜 대리입찰 톡일까요?</h2>
                 <div class="why-tabs">
                     <button class="why-tab active" data-tab="price">정찰제 가격</button>
-                    <button class="why-tab" data-tab="time">시간을 돌려드려요</button>
-                    <button class="why-tab" data-tab="distance">거리는 상관없어요</button>
-                    <button class="why-tab" data-tab="worker">직장인 친화적</button>
+                    <button class="why-tab" data-tab="time">대신 입찰</button>
+                    <button class="why-tab" data-tab="distance">모든법원 가능</button>
+                    <button class="why-tab" data-tab="worker">3분 완성</button>
                     <button class="why-tab" data-tab="safe">안심 보증금</button>
                 </div>
                 <div class="why-cards" id="whyCards">
@@ -365,14 +365,10 @@
             </div>
         </section>
 
-        <!-- Experts Section -->
-        <section id="experts" class="section experts-section" style="background:#fff;">
+        <!-- Experts Section (숨김 - JS 연동용 유지) -->
+        <section id="experts" style="display:none;">
             <div class="container">
-                <h2 class="section-title" style="color:var(--text-dark);">활동 중인 전문가</h2>
-                <p class="section-subtitle" style="color:var(--text-gray);">검증된 자격증 보유 전문가가 직접 입찰합니다</p>
-                
                 <div class="experts-grid" id="expertsGrid">
-                    <!-- Experts will be loaded dynamically -->
                     <div class="expert-card">
                         <div class="expert-header">
                             <div class="expert-avatar">⚖️</div>
@@ -479,7 +475,7 @@
             <div class="container">
                 <h2 class="section-title">정찰제 수수료</h2>
                 <p class="section-subtitle" style="text-align:center; margin-bottom:2rem;">숨겨진 비용 없이 딱 하나의 가격</p>
-                <div class="pricing-grid" style="justify-content:center;">
+                <div class="pricing-grid" style="display:flex; justify-content:center; align-items:center;">
                     <div class="pricing-card recommended-pricing" style="max-width:500px;">
                         <div class="pricing-badge">정찰제</div>
                         <h3 class="pricing-title">⚖️ 법무사 대리입찰</h3>
@@ -1503,26 +1499,28 @@
                     <span>대리입찰 톡</span>
                 </div>
                 <div class="footer-info">
-                    <p><strong>상호명:</strong> (주)원스타프로비</p>
-                    <p><strong>주소:</strong> 서울특별시 금천구 가산디지털1로 75-24 90호</p>
-                    <p><strong>대표전화:</strong> 02-853-5875 &nbsp;|&nbsp; 평일 09:00~18:00</p>
-                    <p>플랫폼은 의뢰인과 매수신청대리인을 연결하는 중개 서비스입니다.</p>
-                    <p><strong>중개 수수료 무료 - 대리인이 직접 수수료를 받습니다</strong></p>
+                    <p><strong>상호명:</strong> 대리입찰톡</p>
+                    <p><strong>회사:</strong> 대장TV</p>
+                    <p><strong>주소:</strong> 서울특별시 금천구 가산디지털1로 75-24 901호</p>
+                    <p><strong>대표전화:</strong> <a href="tel:02-853-5875" style="color:var(--mint);">02-853-5875</a> &nbsp;|&nbsp; 평일 09:00~18:00</p>
+                    <p><strong>대표 관리자:</strong> 장영준 &nbsp;|&nbsp; <strong>이메일:</strong> <a href="mailto:qkqk5342@naver.com" style="color:var(--mint);">qkqk5342@naver.com</a></p>
                 </div>
                 <div class="footer-links">
-                    <a href="#">이용약관</a>
-                    <a href="#">개인정보처리방침</a>
+                    <a href="terms.html">이용약관</a>
+                    <a href="privacy.html">개인정보처리방침</a>
+                    <a href="safety.html">안전장치</a>
                 </div>
             </div>
             <div class="footer-copyright">
-                <p>&copy; 2026 대리입찰 톡. All rights reserved.</p>
+                <p>&copy; 2026 대리입찰 톡 (대장TV). All rights reserved.</p>
                 <div class="footer-disclaimer">
-                    <h4>법적 고지 및 면책 공고</h4>
-                    <p>본 플랫폼은 입찰의뢰인과 매수신청대리인을 연결하는 중개 서비스를 제공하며, 직접적인 대리입찰 업무를 수행하지 않습니다.</p>
-                    <p>실제 매수신청 대리 업무는 플랫폼과 독립된 제3자인 매수신청대리인 또는 법무사가 수행하며, 플랫폼은 대리인의 행위에 대해 원칙적으로 책임을 지지 않습니다.</p>
-                    <p>입찰 진행 중 발생하는 모든 법적 책임은 매수신청대리인 또는 법무사가 부담하며, 대리인은 배상책임보험에 가입되어 있습니다.</p>
-                    <p>입찰의뢰인은 대리입찰 신청 전 계약 내용을 충분히 확인하시고, 정확한 정보를 제공해야 합니다.</p>
-                    <p>플랫폼은 중개 수수료를 받지 않으며, 대리인이 의뢰인에게 직접 수수료를 받습니다.</p>
+                    <h4>⚖️ 법적 고지</h4>
+                    <p>플랫폼은 의뢰인과 매수신청대리인을 연결하는 중개 서비스입니다.</p>
+                    <p>본 플랫폼은 입찰 대리 서비스를 직접 제공하지 않으며, 모든 법률 행위는 자격을 갖춘 법무사가 수행합니다.</p>
+                    <p>법무사는 법무사법 제2조 및 제23조에 따라 등기 및 공탁에 관한 대리 업무를 수행할 수 있습니다.</p>
+                    <p>본 서비스 이용 시 발생하는 법률적 책임은 해당 법무사에게 있으며, 플랫폼은 중개 역할만을 담당합니다.</p>
+                    <p><strong>중개 수수료 무료 - 대리인이 직접 수수료를 받습니다.</strong></p>
+                    <p>각 법무사는 배상책임보험(최대 5억원)에 가입되어 있습니다.</p>
                 </div>
             </div>
         </div>
@@ -1576,59 +1574,63 @@
 
     // ── WHY 탭 전환 ─────────────────────────────────────────
     const WHY_DATA = {
-        price: [
-            { icon: '💰', title: '99,000원 정찰제', desc: '법무사 대리입찰 전국 동일 가격.<br>숨겨진 추가 비용 없습니다.' },
-            { icon: '🧾', title: '온라인 전자서명', desc: '인감증명서·주민센터 방문 불필요.<br>전자서명으로 3분 완료.' },
-            { icon: '🔁', title: '패찰 시 전액 환불', desc: '매각기일 전날까지 취소 시<br>수수료 전액 환불.' }
-        ],
-        time: [
-            { icon: '⏰', title: '연차 없이 경매 참여', desc: '아침부터 법원 대기 없이<br>결과만 문자로 받으세요.' },
-            { icon: '📲', title: '3분 신청 완료', desc: '사건번호 입력 → 전자서명 →<br>완료. 총 3분이면 충분합니다.' },
-            { icon: '📩', title: '당일 즉시 결과 통보', desc: '낙찰·패찰 즉시 문자 발송.<br>기다릴 필요가 없습니다.' }
-        ],
-        distance: [
-            { icon: '🗺️', title: '전국 모든 법원', desc: '서울에서 제주 물건까지<br>지역 제한 없이 입찰 가능.' },
-            { icon: '🤝', title: '전국 전문가 네트워크', desc: '각 지역 법원 경험 풍부한<br>전문가가 직접 입찰합니다.' },
-            { icon: '🏠', title: '집에서 편하게', desc: '이동 시간, 교통비 낭비 없이<br>온라인으로만 진행.' }
-        ],
-        worker: [
-            { icon: '💼', title: '직장인 최적화', desc: '연차 소진 없이 경매 참여.<br>점심시간에 신청하세요.' },
-            { icon: '📋', title: '간단한 서류', desc: '신분증 사진 1장이면 OK.<br>복잡한 서류 준비 불필요.' },
-            { icon: '🔔', title: '카카오 결과 알림', desc: '입찰 결과를 카카오톡으로<br>즉시 받아볼 수 있습니다.' }
-        ],
-        safe: [
-            { icon: '🛡️', title: '보증금 100% 보호', desc: '배상책임보험 최대 5억 가입.<br>보증금은 절대 안전합니다.' },
-            { icon: '⚖️', title: '법무사·매수신청대리인', desc: '국가 공인 자격증 보유자만<br>플랫폼에 등록됩니다.' },
-            { icon: '✅', title: '보험 증서 확인 가능', desc: '전문가 보험 증서를 직접<br>확인하고 신청할 수 있습니다.' }
-        ]
+        price:    { icon: '💰', title: '99,000원 정찰제', desc: '연차 없이 경매 참여<br>법무사 대리입찰 전국 동일 가격. 숨겨진 추가 비용 없습니다.' },
+        time:     { icon: '⏰', title: '대신 입찰',        desc: '연차 없이 경매 참여<br>아침부터 법원에 가지 않아도 됩니다. 결과만 문자로 받으세요.' },
+        distance: { icon: '🗺️', title: '모든법원 가능',   desc: '전국 모든 법원<br>서울에서 제주 물건까지 지역 제한 없이 입찰 가능합니다.' },
+        worker:   { icon: '💼', title: '3분 완성',         desc: '직장인 최적화<br>사건번호 입력 → 전자서명 → 완료. 총 3분이면 충분합니다.' },
+        safe:     { icon: '🛡️', title: '안심 보증금',      desc: '보증금 100% 보호<br>배상책임보험 최대 5억 가입. 보증금은 절대 안전합니다.' }
     };
 
+    const WHY_ORDER = ['price', 'time', 'distance', 'worker', 'safe'];
+    let whyAutoTimer = null;
+    let whyPaused = false;
+
     function renderWhyCards(tab) {
-        const cards = WHY_DATA[tab] || WHY_DATA.price;
+        const data = WHY_DATA[tab] || WHY_DATA.price;
         const container = document.getElementById('whyCards');
         if (!container) return;
-        container.innerHTML = cards.map(c =>
-            `<div class="why-card">
-                <div class="why-card-icon">${c.icon}</div>
-                <h3>${c.title}</h3>
-                <p>${c.desc}</p>
-            </div>`
-        ).join('');
+        container.innerHTML =
+            `<div class="why-card" style="max-width:480px; margin:0 auto;">
+                <div class="why-card-icon">${data.icon}</div>
+                <h3>${data.title}</h3>
+                <p>${data.desc}</p>
+            </div>`;
+    }
+
+    function activateTab(tab) {
+        document.querySelectorAll('.why-tab').forEach(b => {
+            b.classList.toggle('active', b.dataset.tab === tab);
+        });
+        renderWhyCards(tab);
+    }
+
+    function startWhyRolling() {
+        whyAutoTimer = setInterval(function() {
+            if (whyPaused) return;
+            const active = document.querySelector('.why-tab.active');
+            const currentTab = active ? active.dataset.tab : 'price';
+            const idx = WHY_ORDER.indexOf(currentTab);
+            const next = WHY_ORDER[(idx + 1) % WHY_ORDER.length];
+            activateTab(next);
+        }, 3000);
     }
 
     document.addEventListener('DOMContentLoaded', function() {
         updateSimulator();
 
-        // WHY 탭 이벤트
+        // WHY 탭 클릭 이벤트 (클릭 시 3초 일시정지 후 재개)
         document.querySelectorAll('.why-tab').forEach(btn => {
             btn.addEventListener('click', function() {
-                document.querySelectorAll('.why-tab').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                renderWhyCards(this.dataset.tab);
+                whyPaused = true;
+                activateTab(this.dataset.tab);
+                clearTimeout(window._whyResumeTimer);
+                window._whyResumeTimer = setTimeout(function() { whyPaused = false; }, 5000);
             });
         });
-        // 초기 카드 렌더
-        renderWhyCards('price');
+
+        // 초기 카드 렌더 후 자동 롤링 시작
+        activateTab('price');
+        startWhyRolling();
     });
     </script>
 </body>
