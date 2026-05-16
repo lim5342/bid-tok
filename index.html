@@ -1160,27 +1160,12 @@
                                         <th>자격증번호</th>
                                         <th>연락처</th>
                                         <th>활동지역</th>
+                                        <th>첨부서류</th>
                                         <th>관리</th>
                                     </tr>
                                 </thead>
                                 <tbody id="expertsTableBody">
-                                    <tr>
-                                        <td>2026-02-26 09:15</td>
-                                        <td>김법무</td>
-                                        <td>매수신청대리인</td>
-                                        <td>제2024-001호</td>
-                                        <td>010-9876-5432</td>
-                                        <td>서울, 경기, 인천</td>
-                                        <td>
-                                            <button class="btn btn-sm btn-secondary" onclick="alert('자격증 확인 기능 (파일 보기)')">서류확인</button>
-                                        </td>
-                                        <td><span class="status-badge status-pending">승인대기</span></td>
-                                        <td>
-                                            <button class="btn btn-sm btn-success" onclick="alert('승인되었습니다')">승인</button>
-                                            <button class="btn btn-sm btn-danger" onclick="alert('거절되었습니다')">거절</button>
-                                        </td>
-                                    </tr>
-                                    <!-- More rows will be added dynamically -->
+                                    <!-- Firestore에서 동적으로 로드됨 -->
                                 </tbody>
                             </table>
                         </div>

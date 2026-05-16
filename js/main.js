@@ -966,60 +966,69 @@ function handleExpertSubmit() {
         return;
     }
     
-    // Get expert type
-    const expertType = document.querySelector('input[name="expertType"]:checked')?.value || '매수신청대리인';
+    // Get expert type (index.html expertPage는 법무사 고정)
+    const expertType = document.querySelector('input[name="expertType"]')?.value || '법무사';
     const expertIntro = document.getElementById('expertIntro')?.value.trim() || '';
-    
-    // Save to database
+
+    // 파일명 수집 (Firebase Storage 미사용 → 파일명만 저장)
+    const licenseFileName  = licenseFile  ? licenseFile.name  : '';
+    const insuranceFileName = insuranceFile ? insuranceFile.name : '';
+
+    // Firestore에 저장할 데이터 (필드명 API 스펙에 맞게)
     const expertData = {
-        expert_type: expertType,
-        name: expertName,
-        license_number: licenseNumber,
-        phone: expertPhone,
-        email: expertEmail,
-        address: expertAddress,
-        address_detail: expertAddressDetail,
-        active_regions: JSON.stringify(selectedRegions),
-        service_fee: parseInt(expertFee),
-        kakao_phone: kakaoPhone,
-        introduction: expertIntro,
-        status: '대기',
-        rating: 0,
-        success_count: 0
+        expertType:        expertType,
+        name:              expertName,
+        licenseNumber:     licenseNumber,
+        phone:             expertPhone,
+        email:             expertEmail,
+        address:           expertAddress,
+        addressDetail:     expertAddressDetail,
+        activeRegions:     selectedRegions,           // 배열 그대로 저장
+        serviceFee:        parseInt(expertFee),
+        kakaoPhone:        kakaoPhone,
+        introduction:      expertIntro,
+        licenseFileName:   licenseFileName,
+        insuranceFileName: insuranceFileName,
+        status:            '대기',
+        rating:            0,
+        successCount:      0
     };
-    
-    // Submit to API
-    fetch('tables/experts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(expertData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Expert application submitted:', data);
-        alert('전문가 신청이 완료되었습니다!\n\n관리자 승인 후 활동 가능합니다.\n승인 결과는 이메일로 안내해 드립니다.');
-        
-        // Clear form
-        document.getElementById('expertName').value = '';
-        document.getElementById('licenseNumber').value = '';
-        document.getElementById('expertPhone').value = '';
-        document.getElementById('expertEmail').value = '';
-        document.getElementById('expertAddress').value = '';
-        document.getElementById('expertAddressDetail').value = '';
-        document.getElementById('expertFee').value = '';
-        document.getElementById('kakaoPhone').value = '';
-        document.getElementById('expertIntro').value = '';
-        document.querySelectorAll('.region-checkbox:checked').forEach(cb => cb.checked = false);
-        document.getElementById('agreeExpertTerms').checked = false;
-        document.getElementById('agreeExpertPrivacy').checked = false;
-        
-        switchToMainPage();
-    })
-    .catch(error => {
-        console.error('Expert submission error:', error);
-        alert('전문가 신청이 완료되었습니다!\n\n관리자 승인 후 활동 가능합니다.\n승인 결과는 이메일로 안내해 드립니다.\n\n(데모 환경에서 실행 중입니다)');
-        switchToMainPage();
-    });
+
+    // 버튼 비활성화 (중복 제출 방지)
+    const submitBtn = document.getElementById('submitExpertApplication');
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = '신청 중...'; }
+
+    // Firestore에 저장 (API.experts.create 사용)
+    API.experts.create(expertData)
+        .then(data => {
+            console.log('✅ Expert application saved to Firestore:', data.id);
+            alert('전문가 신청이 완료되었습니다!\n\n관리자 승인 후 활동 가능합니다.\n승인 결과는 이메일로 안내해 드립니다.');
+
+            // 폼 초기화
+            document.getElementById('expertName').value = '';
+            document.getElementById('licenseNumber').value = '';
+            document.getElementById('expertPhone').value = '';
+            document.getElementById('expertEmail').value = '';
+            document.getElementById('expertAddress').value = '';
+            document.getElementById('expertAddressDetail').value = '';
+            document.getElementById('expertFee').value = '';
+            document.getElementById('kakaoPhone').value = '';
+            if (document.getElementById('expertIntro')) document.getElementById('expertIntro').value = '';
+            document.querySelectorAll('.region-checkbox:checked').forEach(cb => cb.checked = false);
+            document.getElementById('agreeExpertTerms').checked = false;
+            document.getElementById('agreeExpertPrivacy').checked = false;
+            if (document.getElementById('licenseFile'))   document.getElementById('licenseFile').value = '';
+            if (document.getElementById('insuranceFile')) document.getElementById('insuranceFile').value = '';
+
+            switchToMainPage();
+        })
+        .catch(error => {
+            console.error('❌ Expert submission error:', error);
+            alert('신청 중 오류가 발생했습니다.\n\n' + (error.message || '잠시 후 다시 시도해주세요.'));
+        })
+        .finally(() => {
+            if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = '전문가 신청하기'; }
+        });
 }
 
 // ============================================
