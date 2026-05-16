@@ -106,7 +106,11 @@ const Auth = {
 
         } catch (error) {
             console.error('회원가입 오류:', error);
-            return { success: false, message: '회원가입 중 오류가 발생했습니다.' };
+            // 타임아웃 / DB 연결 실패 메시지 구분
+            const msg = (error.message || '').includes('timeout') || (error.message || '').includes('초과')
+                ? '서버 응답 시간이 초과됐습니다. 인터넷 연결을 확인하고 다시 시도해주세요.'
+                : (error.message || '회원가입 중 오류가 발생했습니다. 다시 시도해주세요.');
+            return { success: false, message: msg };
         }
     },
 

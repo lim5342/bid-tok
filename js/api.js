@@ -107,9 +107,12 @@ const API = {
         // ⚠️ where만 사용 (orderBy 없음) → 단순 인덱스로 OK
         async findByUserId(userId) {
             const db = getDB();
-            const snap = await db.collection('users')
-                .where('userId', '==', userId)
-                .limit(1).get();
+            if (!db) throw new Error('DB 연결 실패');
+            const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 10000));
+            const snap = await Promise.race([
+                db.collection('users').where('userId', '==', userId).limit(1).get(),
+                timeout
+            ]);
             if (snap.empty) return null;
             return docToObj(snap.docs[0]);
         },
@@ -117,9 +120,12 @@ const API = {
         // 이메일로 조회
         async findByEmail(email) {
             const db = getDB();
-            const snap = await db.collection('users')
-                .where('email', '==', email)
-                .limit(1).get();
+            if (!db) throw new Error('DB 연결 실패');
+            const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 10000));
+            const snap = await Promise.race([
+                db.collection('users').where('email', '==', email).limit(1).get(),
+                timeout
+            ]);
             if (snap.empty) return null;
             return docToObj(snap.docs[0]);
         },
@@ -139,12 +145,20 @@ const API = {
         // 회원가입 (신규 생성)
         async create(userData) {
             const db = getDB();
+            if (!db) throw new Error('데이터베이스에 연결할 수 없습니다. 잠시 후 다시 시도해주세요.');
             const data = {
                 ...userData,
                 createdAt: new Date().toISOString(),
                 status: userData.userType === 'expert' ? 'pending' : 'active'
             };
-            const ref = await db.collection('users').add(data);
+            // 10초 타임아웃
+            const timeout = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error('서버 응답 시간 초과 (10초). 네트워크를 확인하고 다시 시도해주세요.')), 10000)
+            );
+            const ref = await Promise.race([
+                db.collection('users').add(data),
+                timeout
+            ]);
             return { id: ref.id, ...data };
         },
 

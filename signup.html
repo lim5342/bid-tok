@@ -884,7 +884,7 @@
             
             const submitBtn = this.querySelector('button[type="submit"]');
             submitBtn.disabled = true;
-            submitBtn.textContent = '처리 중...';
+            submitBtn.textContent = '가입 처리 중...';
             
             try {
                 const result = await Auth.signup(formData);
@@ -897,7 +897,7 @@
                     submitBtn.textContent = '회원가입';
                 }
             } catch (error) {
-                alert('회원가입 중 오류가 발생했습니다. 다시 시도해주세요.');
+                alert('회원가입 중 오류가 발생했습니다.\n\n' + (error.message || '다시 시도해주세요.'));
                 console.error(error);
                 submitBtn.disabled = false;
                 submitBtn.textContent = '회원가입';
@@ -981,13 +981,14 @@
             
             const submitBtn = this.querySelector('button[type="submit"]');
             submitBtn.disabled = true;
-            submitBtn.textContent = '처리 중...';
+            submitBtn.textContent = '정보 확인 중...';
             
             try {
                 // 파일명만 저장 (실제 파일 업로드는 추후 스토리지 연동)
                 formData.licenseFileName = licenseFile.name;
                 formData.insuranceFileName = insuranceFile.name;
                 
+                submitBtn.textContent = '가입 처리 중...';
                 const result = await Auth.signup(formData);
                 if (result.success) {
                     showExpertSignupSuccess();
@@ -998,7 +999,7 @@
                     submitBtn.textContent = '법무사 가입 신청';
                 }
             } catch (error) {
-                alert('회원가입 중 오류가 발생했습니다. 다시 시도해주세요.');
+                alert('회원가입 중 오류가 발생했습니다.\n\n' + (error.message || '다시 시도해주세요.'));
                 console.error(error);
                 submitBtn.disabled = false;
                 submitBtn.textContent = '법무사 가입 신청';
