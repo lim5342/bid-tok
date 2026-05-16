@@ -11,6 +11,237 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/additional.css">
+    <style>
+    /* ── 새 디자인 오버라이드 ── */
+    :root {
+        --mint: #2DD4BF;
+        --mint-dark: #0D9488;
+        --mint-light: #CCFBF1;
+        --text-dark: #111827;
+        --text-gray: #6B7280;
+        --bg-hero: #F0FFFE;
+    }
+
+    /* 네비 새 스타일 */
+    .navbar {
+        background: #fff !important;
+        border-bottom: 1px solid #E5E7EB !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        height: 60px;
+    }
+    .nav-container {
+        height: 60px;
+        display: flex;
+        align-items: center;
+    }
+    .nav-logo {
+        color: var(--text-dark) !important;
+        font-size: 1rem !important;
+        font-weight: 700 !important;
+        gap: 6px !important;
+    }
+    .nav-logo i {
+        color: var(--mint) !important;
+        font-size: 1.1rem !important;
+    }
+    .nav-logo .logo-sub {
+        font-size: 0.72rem;
+        color: var(--text-gray);
+        font-weight: 400;
+        margin-left: 2px;
+    }
+    .nav-menu li a {
+        color: var(--text-gray) !important;
+        font-size: 0.9rem !important;
+    }
+    .nav-menu li a:hover { color: var(--mint) !important; }
+    /* 로그인/회원가입 버튼 새 스타일 */
+    #loginBtn {
+        background: #fff !important;
+        color: var(--text-dark) !important;
+        border: 1px solid #D1D5DB !important;
+        border-radius: 8px !important;
+        font-size: 0.875rem !important;
+        padding: 0.45rem 1rem !important;
+    }
+    .btn-signup-new {
+        background: var(--mint) !important;
+        color: #fff !important;
+        border: none !important;
+        border-radius: 8px !important;
+        font-size: 0.875rem !important;
+        padding: 0.45rem 1rem !important;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    .btn-signup-new:hover { background: var(--mint-dark) !important; }
+    /* 기존 applyBtn/expertApplyBtn 숨김 (nav에서) */
+    nav .btn-expert, nav .btn-primary { display: none !important; }
+
+    /* ── 히어로 새 스타일 ── */
+    .hero-new {
+        background: var(--bg-hero);
+        min-height: 480px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 80px 20px 80px;
+    }
+    .hero-new h1 {
+        font-size: clamp(2.2rem, 5vw, 3.5rem);
+        font-weight: 800;
+        color: var(--text-dark);
+        line-height: 1.2;
+        margin-bottom: 1rem;
+    }
+    .hero-new h1 .accent { color: var(--mint); }
+    .hero-new p.subtitle {
+        font-size: 1rem;
+        color: var(--text-gray);
+        line-height: 1.7;
+        margin-bottom: 2rem;
+    }
+    .hero-btn-wrap {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    .btn-mint {
+        background: var(--mint);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 0.85rem 2rem;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background .2s;
+    }
+    .btn-mint:hover { background: var(--mint-dark); }
+    .btn-outline-gray {
+        background: #fff;
+        color: var(--text-dark);
+        border: 1.5px solid #D1D5DB;
+        border-radius: 10px;
+        padding: 0.85rem 2rem;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: border-color .2s;
+    }
+    .btn-outline-gray:hover { border-color: var(--mint); color: var(--mint); }
+
+    /* ── WHY 섹션 탭 ── */
+    .why-section {
+        background: #fff;
+        padding: 72px 20px;
+    }
+    .why-section h2 {
+        text-align: center;
+        font-size: clamp(1.5rem, 3vw, 2rem);
+        font-weight: 800;
+        color: var(--text-dark);
+        margin-bottom: 2rem;
+    }
+    .why-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        margin-bottom: 3rem;
+    }
+    .why-tab {
+        padding: 0.5rem 1.25rem;
+        border-radius: 999px;
+        border: 1.5px solid #E5E7EB;
+        background: #fff;
+        color: var(--text-gray);
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all .2s;
+    }
+    .why-tab.active {
+        background: var(--mint);
+        border-color: var(--mint);
+        color: #fff;
+        font-weight: 700;
+    }
+    .why-tab:hover:not(.active) { border-color: var(--mint); color: var(--mint); }
+    .why-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.25rem;
+        max-width: 960px;
+        margin: 0 auto;
+    }
+    .why-card {
+        background: #F9FAFB;
+        border-radius: 16px;
+        padding: 1.75rem;
+        border: 1.5px solid #F3F4F6;
+        transition: border-color .2s, box-shadow .2s;
+    }
+    .why-card:hover { border-color: var(--mint); box-shadow: 0 4px 20px rgba(45,212,191,.12); }
+    .why-card-icon {
+        font-size: 2rem;
+        margin-bottom: 0.75rem;
+    }
+    .why-card h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 0.4rem;
+    }
+    .why-card p {
+        font-size: 0.875rem;
+        color: var(--text-gray);
+        line-height: 1.6;
+    }
+
+    /* ── 이용 방법 ── */
+    .how-section {
+        background: #F9FAFB;
+        padding: 72px 20px;
+    }
+    .how-section h2 {
+        text-align: center;
+        font-size: clamp(1.5rem, 3vw, 2rem);
+        font-weight: 800;
+        color: var(--text-dark);
+        margin-bottom: 0.5rem;
+    }
+    .how-section .sub { text-align:center; color:var(--text-gray); margin-bottom:2.5rem; font-size:.95rem; }
+    .how-steps {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1.5rem;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    .how-step { text-align: center; padding: 1.5rem 1rem; }
+    .how-num {
+        width: 52px; height: 52px;
+        background: var(--mint);
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 1rem;
+        color: #fff; font-weight: 800; font-size: 1.2rem;
+    }
+    .how-num.done { background: #10B981; }
+    .how-step h4 { font-weight: 700; color: var(--text-dark); margin-bottom: .4rem; font-size:.95rem; }
+    .how-step p { font-size: .83rem; color: var(--text-gray); line-height: 1.6; }
+
+    /* 가격 카드 민트 오버라이드 */
+    .recommended-pricing { border-color: var(--mint) !important; }
+    .pricing-badge { background: var(--mint) !important; }
+
+    /* CTA 민트 오버라이드 */
+    .cta-section { background: linear-gradient(135deg, #0D9488, #2DD4BF) !important; }
+    </style>
 </head>
 <body>
     <!-- Navigation -->
@@ -19,29 +250,31 @@
             <div class="nav-logo">
                 <i class="fas fa-comment-dots"></i>
                 <span>대리입찰 톡</span>
+                <span class="logo-sub">by 대명TV</span>
             </div>
             <ul class="nav-menu" id="navMenu">
-                <li><a href="#service">서비스 소개</a></li>
-                <li><a href="safety.html" style="color:#FFD700; font-weight:700;"><i class="fas fa-shield-alt" style="margin-right:4px;"></i>안전장치</a></li>
+                <li><a href="#why">서비스 소개</a></li>
+                <li><a href="safety.html"><i class="fas fa-shield-alt" style="margin-right:4px; color:var(--mint);"></i>안전장치</a></li>
                 <li><a href="#support">고객지원</a></li>
             </ul>
             <div class="nav-actions">
                 <!-- 비로그인 시 -->
                 <div id="loginActions" style="display: flex; align-items: center; gap: 0.5rem;">
                     <button class="btn btn-outline" onclick="window.location.href='login.html'" id="loginBtn">로그인</button>
-                    <button class="btn btn-outline" onclick="window.location.href='signup.html'" style="border-color:#10B981; color:#10B981;">회원가입</button>
+                    <button class="btn-signup-new" onclick="window.location.href='signup.html'">회원가입</button>
                 </div>
                 
                 <!-- 로그인 시 -->
-                <div id="userInfo" style="display: none; align-items: center; gap: 1rem;">
-                    <span id="userTypeLabel" style="padding: 0.3rem 0.8rem; background: #f0f0f0; border-radius: 20px; font-size: 0.85rem; font-weight: 600;"></span>
-                    <span id="userName" style="font-weight: 600;"></span>
-                    <button class="btn btn-outline" onclick="goToMypage()">마이페이지</button>
-                    <button class="btn btn-outline" onclick="handleLogout()">로그아웃</button>
+                <div id="userInfo" style="display: none; align-items: center; gap: 0.75rem;">
+                    <span id="userTypeLabel" style="padding: 0.25rem 0.7rem; background: var(--mint-light); color: var(--mint-dark); border-radius: 20px; font-size: 0.8rem; font-weight: 700;"></span>
+                    <span id="userName" style="font-weight: 600; font-size:.9rem;"></span>
+                    <button class="btn btn-outline" onclick="goToMypage()" style="font-size:.85rem; padding:.4rem .9rem;">마이페이지</button>
+                    <button class="btn btn-outline" onclick="handleLogout()" style="font-size:.85rem; padding:.4rem .9rem;">로그아웃</button>
                 </div>
-                
-                <button class="btn btn-expert" id="expertApplyBtn">전문가 신청</button>
-                <button class="btn btn-primary" id="applyBtn">대리입찰 신청</button>
+
+                <!-- JS 연동용 숨김 버튼 -->
+                <button class="btn btn-expert" id="expertApplyBtn" style="display:none;">전문가 신청</button>
+                <button class="btn btn-primary" id="applyBtn" style="display:none;">대리입찰 신청</button>
             </div>
             <button class="nav-toggle" id="navToggle">
                 <span></span>
@@ -53,104 +286,90 @@
 
     <!-- Main Page -->
     <div id="mainPage" class="page active">
-        <!-- Hero Section -->
-        <section class="hero">
-            <div class="container">
-                <div class="hero-badge">
-                    <i class="fas fa-check-circle"></i>
-                    <span>매수신청대리인 직접 입찰</span>
-                </div>
-                <h1 class="hero-title">경매 입찰일,<br>직접 가지 않아도<br>됩니다</h1>
-                <p class="hero-subtitle">법무사·매수신청대리인이 대신 입찰해 드립니다.<br>보증금은 배상책임보험으로 100% 보호됩니다.</p>
-                <div class="hero-buttons">
-                    <button class="btn btn-hero-primary" id="heroApplyBtn" onclick="location.href='apply.html'">지금 바로 신청하기</button>
-                    <a href="safety.html" class="btn btn-hero-secondary" style="display:inline-flex; align-items:center; gap:6px; padding:0.85rem 1.8rem; background:rgba(255,255,255,0.15); color:#fff; border:2px solid rgba(255,255,255,0.5); border-radius:50px; font-weight:600; text-decoration:none; font-size:1rem; transition:all 0.2s;">
-                        <i class="fas fa-shield-alt"></i> 안전장치 보기
-                    </a>
-                </div>
-                <div class="hero-features">
-                    <div class="hero-feature">
-                        <i class="fas fa-search"></i>
-                        <span>실시간 사건 조회</span>
-                    </div>
-                    <div class="hero-feature">
-                        <i class="fas fa-handshake"></i>
-                        <span>전국 전문가 매칭</span>
-                    </div>
-                    <div class="hero-feature">
-                        <i class="fas fa-shield-alt"></i>
-                        <span>보증금 최대 5억 보험</span>
-                    </div>
+        <!-- Hero Section (새 디자인) -->
+        <section class="hero-new">
+            <div>
+                <h1>법원 갈 시간에<br><span class="accent">가족과 함께</span></h1>
+                <p class="subtitle">지방 법원, 바쁜 출근길<br>이제 대리입찰 톡에 맡기세요</p>
+                <div class="hero-btn-wrap">
+                    <button class="btn-mint" id="heroApplyBtn" onclick="location.href='apply.html'">지금 신청하기</button>
+                    <button class="btn-outline-gray" onclick="document.getElementById('expertApplyBtn').click()">전문가 신청</button>
                 </div>
             </div>
         </section>
 
-        <!-- Service Section -->
-        <section id="service" class="section service-section">
+        <!-- WHY 섹션 (탭 카드) -->
+        <section class="why-section" id="why">
             <div class="container">
-                <h2 class="section-title">왜 대리입찰 톡인가요?</h2>
-                <p class="section-subtitle" style="text-align:center; margin-bottom:2.5rem; color:#555;">복잡한 절차 없이, 온라인으로 3분 만에 신청 완료</p>
-                <div class="service-grid">
-                    <div class="service-card">
-                        <div class="service-icon">🗺️</div>
+                <h2>왜 대리입찰 톡일까요?</h2>
+                <div class="why-tabs">
+                    <button class="why-tab active" data-tab="price">정찰제 가격</button>
+                    <button class="why-tab" data-tab="time">시간을 돌려드려요</button>
+                    <button class="why-tab" data-tab="distance">거리는 상관없어요</button>
+                    <button class="why-tab" data-tab="worker">직장인 친화적</button>
+                    <button class="why-tab" data-tab="safe">안심 보증금</button>
+                </div>
+                <div class="why-cards" id="whyCards">
+                    <!-- JS로 탭 전환 -->
+                    <div class="why-card">
+                        <div class="why-card-icon">💰</div>
+                        <h3>99,000원 정찰제</h3>
+                        <p>법무사 대리입찰 전국 동일 가격.<br>숨겨진 추가 비용 없습니다.</p>
+                    </div>
+                    <div class="why-card">
+                        <div class="why-card-icon">⏰</div>
+                        <h3>입찰 당일 자유롭게</h3>
+                        <p>법원 대기 시간 없이<br>결과만 문자로 받으세요.</p>
+                    </div>
+                    <div class="why-card">
+                        <div class="why-card-icon">🗺️</div>
                         <h3>전국 어디서나</h3>
-                        <p>서울에서 부산 물건 입찰?<br>이제 직접 가지 않아도 됩니다.</p>
+                        <p>서울에서 제주 물건도 OK.<br>지역 제한 없이 입찰 가능.</p>
                     </div>
-                    <div class="service-card">
-                        <div class="service-icon">⏰</div>
-                        <h3>직장인도 OK</h3>
-                        <p>연차 없이 경매 참여.<br>낙찰·패찰 결과만 문자로 받으세요.</p>
-                    </div>
-                    <div class="service-card">
-                        <div class="service-icon">📝</div>
-                        <h3>3분 온라인 신청</h3>
-                        <p>인감증명서·주민센터 방문 불필요.<br>전자서명으로 3분 완료.</p>
-                    </div>
-                    <div class="service-card" style="cursor:pointer;" onclick="location.href='safety.html'">
-                        <div class="service-icon">🛡️</div>
+                    <div class="why-card" style="cursor:pointer;" onclick="location.href='safety.html'">
+                        <div class="why-card-icon">🛡️</div>
                         <h3>보증금 100% 보호</h3>
-                        <p>배상책임보험 최대 5억 가입.<br>보증금은 절대 안전합니다.</p>
-                        <p style="margin-top:.75rem; font-size:.82rem; color:#1550E8; font-weight:700;">🛡️ 안전장치 자세히 보기 →</p>
+                        <p>배상책임보험 최대 5억.<br>보증금은 절대 안전합니다.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- How It Works Section -->
-        <section class="section" style="background:#f8f9ff;">
+        <!-- 이용 방법 -->
+        <section class="how-section" id="service">
             <div class="container">
-                <h2 class="section-title">이용 방법</h2>
-                <p class="section-subtitle" style="text-align:center; margin-bottom:2.5rem; color:#555;">딱 4단계로 완료됩니다</p>
-                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1.5rem; max-width:900px; margin:0 auto;">
-                    <div style="text-align:center; padding:2rem 1rem;">
-                        <div style="width:56px; height:56px; background:linear-gradient(135deg,#1550E8,#0f1340); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1rem; color:#fff; font-weight:700; font-size:1.3rem;">1</div>
-                        <h4 style="margin-bottom:.5rem; color:#0f1340;">사건번호 입력</h4>
-                        <p style="color:#666; font-size:.9rem;">대법원 경매 사건번호를 입력하면 자동으로 정보를 불러옵니다</p>
+                <h2>이용 방법</h2>
+                <p class="sub">딱 4단계로 완료됩니다</p>
+                <div class="how-steps">
+                    <div class="how-step">
+                        <div class="how-num">1</div>
+                        <h4>사건번호 입력</h4>
+                        <p>대법원 경매 사건번호를 입력하면 자동으로 정보를 불러옵니다</p>
                     </div>
-                    <div style="text-align:center; padding:2rem 1rem;">
-                        <div style="width:56px; height:56px; background:linear-gradient(135deg,#1550E8,#0f1340); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1rem; color:#fff; font-weight:700; font-size:1.3rem;">2</div>
-                        <h4 style="margin-bottom:.5rem; color:#0f1340;">입찰가 결정</h4>
-                        <p style="color:#666; font-size:.9rem;">원하는 입찰 금액과 보증금 납부 방법을 선택합니다</p>
+                    <div class="how-step">
+                        <div class="how-num">2</div>
+                        <h4>입찰가 결정</h4>
+                        <p>원하는 입찰 금액과 보증금 납부 방법을 선택합니다</p>
                     </div>
-                    <div style="text-align:center; padding:2rem 1rem;">
-                        <div style="width:56px; height:56px; background:linear-gradient(135deg,#1550E8,#0f1340); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1rem; color:#fff; font-weight:700; font-size:1.3rem;">3</div>
-                        <h4 style="margin-bottom:.5rem; color:#0f1340;">전자서명</h4>
-                        <p style="color:#666; font-size:.9rem;">온라인 전자서명으로 위임장 작성. 인감증명서 불필요</p>
+                    <div class="how-step">
+                        <div class="how-num">3</div>
+                        <h4>전자서명</h4>
+                        <p>온라인 전자서명으로 위임장 작성. 인감증명서 불필요</p>
                     </div>
-                    <div style="text-align:center; padding:2rem 1rem;">
-                        <div style="width:56px; height:56px; background:linear-gradient(135deg,#10B981,#059669); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1rem; color:#fff; font-weight:700; font-size:1.3rem;">✓</div>
-                        <h4 style="margin-bottom:.5rem; color:#0f1340;">결과 수령</h4>
-                        <p style="color:#666; font-size:.9rem;">입찰 당일 문자로 낙찰/패찰 결과를 즉시 안내받습니다</p>
+                    <div class="how-step">
+                        <div class="how-num done">✓</div>
+                        <h4>결과 수령</h4>
+                        <p>입찰 당일 문자로 낙찰/패찰 결과를 즉시 안내받습니다</p>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- Experts Section -->
-        <section id="experts" class="section experts-section">
+        <section id="experts" class="section experts-section" style="background:#fff;">
             <div class="container">
-                <h2 class="section-title">활동 중인 전문가</h2>
-                <p class="section-subtitle">검증된 자격증 보유 전문가가 직접 입찰합니다</p>
+                <h2 class="section-title" style="color:var(--text-dark);">활동 중인 전문가</h2>
+                <p class="section-subtitle" style="color:var(--text-gray);">검증된 자격증 보유 전문가가 직접 입찰합니다</p>
                 
                 <div class="experts-grid" id="expertsGrid">
                     <!-- Experts will be loaded dynamically -->
@@ -213,10 +432,10 @@
                 </div>
 
                 <!-- 전문가 신청 배너 -->
-                <div style="margin-top:3rem; padding:2rem; background:linear-gradient(135deg,#0f1340,#1550E8); border-radius:16px; text-align:center; color:#fff;">
+                <div style="margin-top:3rem; padding:2rem; background:linear-gradient(135deg,var(--mint-dark),var(--mint)); border-radius:16px; text-align:center; color:#fff;">
                     <p style="font-size:1rem; margin-bottom:.5rem; opacity:.9;">매수신청대리인 또는 법무사이신가요?</p>
                     <h3 style="font-size:1.3rem; margin-bottom:1.25rem; font-weight:700;">대리입찰 톡 전문가로 활동하세요</h3>
-                    <button class="btn btn-expert" id="expertApplyBanner" style="background:#fff; color:#0f1340; border:none; padding:.75rem 2rem; border-radius:50px; font-weight:700; font-size:1rem; cursor:pointer;" onclick="document.getElementById('expertApplyBtn').click()">전문가 신청하기</button>
+                    <button id="expertApplyBanner" style="background:#fff; color:var(--mint-dark); border:none; padding:.75rem 2rem; border-radius:50px; font-weight:700; font-size:1rem; cursor:pointer;" onclick="document.getElementById('expertApplyBtn').click()">전문가 신청하기</button>
                 </div>
             </div>
         </section>
@@ -352,11 +571,11 @@
         </section>
 
         <!-- CTA Section -->
-        <section class="section cta-section">
+        <section class="section cta-section" id="support">
             <div class="container">
                 <h2>지금 바로 대리입찰을 신청하세요</h2>
                 <p>3분이면 충분합니다</p>
-                <button class="btn btn-hero-primary" id="ctaApplyBtn" onclick="location.href='apply.html'">대리입찰 신청하기</button>
+                <button class="btn-mint" id="ctaApplyBtn" onclick="location.href='apply.html'" style="font-size:1.1rem; padding:1rem 2.5rem;">대리입찰 신청하기</button>
             </div>
         </section>
     </div>
@@ -1354,9 +1573,62 @@
         document.getElementById('simCountVal').textContent = count + '건';
         document.getElementById('simTotal').textContent = total.toLocaleString('ko-KR') + '원';
     }
-    // 페이지 로드 시 초기값 반영
+
+    // ── WHY 탭 전환 ─────────────────────────────────────────
+    const WHY_DATA = {
+        price: [
+            { icon: '💰', title: '99,000원 정찰제', desc: '법무사 대리입찰 전국 동일 가격.<br>숨겨진 추가 비용 없습니다.' },
+            { icon: '🧾', title: '온라인 전자서명', desc: '인감증명서·주민센터 방문 불필요.<br>전자서명으로 3분 완료.' },
+            { icon: '🔁', title: '패찰 시 전액 환불', desc: '매각기일 전날까지 취소 시<br>수수료 전액 환불.' }
+        ],
+        time: [
+            { icon: '⏰', title: '연차 없이 경매 참여', desc: '아침부터 법원 대기 없이<br>결과만 문자로 받으세요.' },
+            { icon: '📲', title: '3분 신청 완료', desc: '사건번호 입력 → 전자서명 →<br>완료. 총 3분이면 충분합니다.' },
+            { icon: '📩', title: '당일 즉시 결과 통보', desc: '낙찰·패찰 즉시 문자 발송.<br>기다릴 필요가 없습니다.' }
+        ],
+        distance: [
+            { icon: '🗺️', title: '전국 모든 법원', desc: '서울에서 제주 물건까지<br>지역 제한 없이 입찰 가능.' },
+            { icon: '🤝', title: '전국 전문가 네트워크', desc: '각 지역 법원 경험 풍부한<br>전문가가 직접 입찰합니다.' },
+            { icon: '🏠', title: '집에서 편하게', desc: '이동 시간, 교통비 낭비 없이<br>온라인으로만 진행.' }
+        ],
+        worker: [
+            { icon: '💼', title: '직장인 최적화', desc: '연차 소진 없이 경매 참여.<br>점심시간에 신청하세요.' },
+            { icon: '📋', title: '간단한 서류', desc: '신분증 사진 1장이면 OK.<br>복잡한 서류 준비 불필요.' },
+            { icon: '🔔', title: '카카오 결과 알림', desc: '입찰 결과를 카카오톡으로<br>즉시 받아볼 수 있습니다.' }
+        ],
+        safe: [
+            { icon: '🛡️', title: '보증금 100% 보호', desc: '배상책임보험 최대 5억 가입.<br>보증금은 절대 안전합니다.' },
+            { icon: '⚖️', title: '법무사·매수신청대리인', desc: '국가 공인 자격증 보유자만<br>플랫폼에 등록됩니다.' },
+            { icon: '✅', title: '보험 증서 확인 가능', desc: '전문가 보험 증서를 직접<br>확인하고 신청할 수 있습니다.' }
+        ]
+    };
+
+    function renderWhyCards(tab) {
+        const cards = WHY_DATA[tab] || WHY_DATA.price;
+        const container = document.getElementById('whyCards');
+        if (!container) return;
+        container.innerHTML = cards.map(c =>
+            `<div class="why-card">
+                <div class="why-card-icon">${c.icon}</div>
+                <h3>${c.title}</h3>
+                <p>${c.desc}</p>
+            </div>`
+        ).join('');
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         updateSimulator();
+
+        // WHY 탭 이벤트
+        document.querySelectorAll('.why-tab').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.why-tab').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                renderWhyCards(this.dataset.tab);
+            });
+        });
+        // 초기 카드 렌더
+        renderWhyCards('price');
     });
     </script>
 </body>
