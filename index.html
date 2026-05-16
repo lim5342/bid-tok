@@ -134,72 +134,249 @@
     }
     .btn-outline-gray:hover { border-color: var(--mint); color: var(--mint); }
 
-    /* ── WHY 섹션 탭 ── */
+    /* ── WHY 섹션 (바토너 스타일 대형 2-컬럼) ── */
     .why-section {
-        background: #fff;
-        padding: 72px 20px;
+        background: #F8FAFC;
+        padding: 100px 20px;
     }
-    .why-section h2 {
+    .why-section-header {
         text-align: center;
-        font-size: clamp(1.5rem, 3vw, 2rem);
-        font-weight: 800;
-        color: var(--text-dark);
-        margin-bottom: 2rem;
+        margin-bottom: 64px;
     }
+    .why-section-header .eyebrow {
+        display: inline-block;
+        background: rgba(45,212,191,.12);
+        color: var(--mint);
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 0.35rem 1rem;
+        border-radius: 999px;
+        margin-bottom: 1rem;
+    }
+    .why-section-header h2 {
+        font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+        font-weight: 900;
+        color: var(--text-dark);
+        line-height: 1.25;
+        margin-bottom: 0.75rem;
+    }
+    .why-section-header p {
+        font-size: 1rem;
+        color: var(--text-gray);
+    }
+    /* 탭 메뉴 */
     .why-tabs {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 8px;
         justify-content: center;
-        margin-bottom: 3rem;
+        margin-bottom: 48px;
     }
     .why-tab {
-        padding: 0.5rem 1.25rem;
+        padding: 0.6rem 1.4rem;
         border-radius: 999px;
-        border: 1.5px solid #E5E7EB;
+        border: 2px solid #E5E7EB;
         background: #fff;
         color: var(--text-gray);
         font-size: 0.9rem;
-        font-weight: 500;
+        font-weight: 600;
         cursor: pointer;
-        transition: all .2s;
+        transition: all .22s;
     }
     .why-tab.active {
-        background: var(--mint);
-        border-color: var(--mint);
+        background: var(--text-dark);
+        border-color: var(--text-dark);
         color: #fff;
         font-weight: 700;
+        box-shadow: 0 4px 14px rgba(15,23,42,.18);
     }
-    .why-tab:hover:not(.active) { border-color: var(--mint); color: var(--mint); }
-    .why-cards {
+    .why-tab:hover:not(.active) {
+        border-color: var(--mint);
+        color: var(--mint);
+        background: rgba(45,212,191,.06);
+    }
+    /* 2-컬럼 콘텐츠 영역 */
+    .why-content {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 1.25rem;
-        max-width: 960px;
+        grid-template-columns: 1fr 1fr;
+        gap: 56px;
+        align-items: center;
+        max-width: 1080px;
         margin: 0 auto;
+        opacity: 1;
+        transition: opacity .3s ease, transform .3s ease;
     }
-    .why-card {
-        background: #F9FAFB;
-        border-radius: 16px;
-        padding: 1.75rem;
-        border: 1.5px solid #F3F4F6;
-        transition: border-color .2s, box-shadow .2s;
+    .why-content.fade-out {
+        opacity: 0;
+        transform: translateY(10px);
     }
-    .why-card:hover { border-color: var(--mint); box-shadow: 0 4px 20px rgba(45,212,191,.12); }
-    .why-card-icon {
-        font-size: 2rem;
-        margin-bottom: 0.75rem;
+    /* 좌측 텍스트 */
+    .why-text-col {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
     }
-    .why-card h3 {
-        font-size: 1rem;
+    .why-text-col .why-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(45,212,191,.1);
+        border: 1.5px solid rgba(45,212,191,.25);
+        border-radius: 999px;
+        padding: 0.45rem 1rem;
+        font-size: 0.85rem;
         font-weight: 700;
-        color: var(--text-dark);
-        margin-bottom: 0.4rem;
+        color: #0D9488;
+        width: fit-content;
     }
-    .why-card p {
-        font-size: 0.875rem;
-        color: var(--text-gray);
-        line-height: 1.6;
+    .why-text-col .why-badge .badge-icon {
+        font-size: 1.1rem;
+    }
+    .why-text-col h3 {
+        font-size: clamp(1.6rem, 3vw, 2.2rem);
+        font-weight: 900;
+        color: var(--text-dark);
+        line-height: 1.25;
+        margin: 0;
+    }
+    .why-text-col h3 em {
+        font-style: normal;
+        color: var(--mint);
+    }
+    .why-text-col .why-desc {
+        font-size: 1.05rem;
+        color: #4B5563;
+        line-height: 1.8;
+        margin: 0;
+    }
+    .why-text-col .why-points {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+    .why-text-col .why-points li {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        font-size: 0.95rem;
+        color: var(--text-dark);
+        font-weight: 500;
+    }
+    .why-text-col .why-points li .chk {
+        flex-shrink: 0;
+        width: 22px; height: 22px;
+        background: var(--mint);
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        color: #fff;
+        font-size: 0.75rem;
+        font-weight: 800;
+        margin-top: 1px;
+    }
+    /* 우측 비주얼 카드 */
+    .why-visual-col {
+        position: relative;
+    }
+    .why-visual-card {
+        background: #fff;
+        border-radius: 24px;
+        padding: 40px;
+        box-shadow: 0 8px 48px rgba(15,23,42,.10), 0 2px 8px rgba(15,23,42,.06);
+        position: relative;
+        overflow: hidden;
+    }
+    .why-visual-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #2DD4BF, #0D9488);
+        border-radius: 24px 24px 0 0;
+    }
+    .why-visual-card .vc-icon {
+        font-size: 3.5rem;
+        margin-bottom: 20px;
+        display: block;
+    }
+    .why-visual-card .vc-title {
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: var(--text-dark);
+        margin-bottom: 12px;
+    }
+    .why-visual-card .vc-body {
+        font-size: 0.95rem;
+        color: #4B5563;
+        line-height: 1.75;
+        margin-bottom: 28px;
+    }
+    .why-visual-card .vc-stat {
+        display: flex;
+        gap: 24px;
+        flex-wrap: wrap;
+    }
+    .why-visual-card .vc-stat-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .why-visual-card .vc-stat-item .stat-num {
+        font-size: 1.8rem;
+        font-weight: 900;
+        color: var(--mint);
+        line-height: 1;
+    }
+    .why-visual-card .vc-stat-item .stat-label {
+        font-size: 0.78rem;
+        color: #9CA3AF;
+        font-weight: 500;
+    }
+    /* 우측 장식 블롭 */
+    .why-visual-blob {
+        position: absolute;
+        width: 200px; height: 200px;
+        background: radial-gradient(circle, rgba(45,212,191,.18) 0%, transparent 70%);
+        border-radius: 50%;
+        top: -40px; right: -40px;
+        pointer-events: none;
+    }
+    /* 진행 바 */
+    .why-progress-bar {
+        width: 100%;
+        height: 3px;
+        background: #E5E7EB;
+        border-radius: 999px;
+        margin-top: 36px;
+        overflow: hidden;
+    }
+    .why-progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #2DD4BF, #0D9488);
+        border-radius: 999px;
+        width: 0%;
+        transition: width 0.1s linear;
+    }
+    /* 모바일: 세로 스택 */
+    @media (max-width: 768px) {
+        .why-section { padding: 64px 16px; }
+        .why-section-header { margin-bottom: 40px; }
+        .why-content {
+            grid-template-columns: 1fr;
+            gap: 32px;
+        }
+        .why-visual-col { order: 2; }
+        .why-text-col  { order: 1; }
+        .why-visual-card { padding: 28px 24px; }
+        .why-visual-card .vc-icon { font-size: 2.8rem; }
+        .why-visual-card .vc-stat-item .stat-num { font-size: 1.5rem; }
+        .why-text-col h3 { font-size: 1.5rem; }
+        .why-tabs { gap: 6px; }
+        .why-tab { padding: 0.5rem 1rem; font-size: 0.82rem; }
     }
 
     /* ── 이용 방법 ── */
@@ -298,39 +475,40 @@
             </div>
         </section>
 
-        <!-- WHY 섹션 (탭 카드) -->
+        <!-- WHY 섹션 (바토너 스타일 대형 2-컬럼) -->
         <section class="why-section" id="why">
             <div class="container">
-                <h2>왜 대리입찰 톡일까요?</h2>
-                <div class="why-tabs">
-                    <button class="why-tab active" data-tab="price">정찰제 가격</button>
-                    <button class="why-tab" data-tab="time">대신 입찰</button>
-                    <button class="why-tab" data-tab="distance">모든법원 가능</button>
-                    <button class="why-tab" data-tab="worker">3분 완성</button>
-                    <button class="why-tab" data-tab="safe">안심 보증금</button>
+                <!-- 상단 헤더 -->
+                <div class="why-section-header">
+                    <span class="eyebrow">WHY 대리입찰 톡</span>
+                    <h2>왜 대리입찰 톡을<br>선택해야 할까요?</h2>
+                    <p>경매 전문 법무사가 직접 뛰는 유일한 정찰제 서비스</p>
                 </div>
-                <div class="why-cards" id="whyCards">
-                    <!-- JS로 탭 전환 -->
-                    <div class="why-card">
-                        <div class="why-card-icon">💰</div>
-                        <h3>99,000원 정찰제</h3>
-                        <p>법무사 대리입찰 전국 동일 가격.<br>숨겨진 추가 비용 없습니다.</p>
+                <!-- 탭 메뉴 -->
+                <div class="why-tabs">
+                    <button class="why-tab active" data-tab="price">💰 정찰제 가격</button>
+                    <button class="why-tab" data-tab="time">⏰ 대신 입찰</button>
+                    <button class="why-tab" data-tab="distance">🗺️ 모든법원</button>
+                    <button class="why-tab" data-tab="worker">⚡ 3분 완성</button>
+                    <button class="why-tab" data-tab="safe">🛡️ 안심 보증금</button>
+                </div>
+                <!-- 2-컬럼 콘텐츠 -->
+                <div class="why-content" id="whyContent">
+                    <!-- 좌측 텍스트 -->
+                    <div class="why-text-col" id="whyTextCol">
+                        <!-- JS로 렌더 -->
                     </div>
-                    <div class="why-card">
-                        <div class="why-card-icon">⏰</div>
-                        <h3>입찰 당일 자유롭게</h3>
-                        <p>법원 대기 시간 없이<br>결과만 문자로 받으세요.</p>
+                    <!-- 우측 비주얼 -->
+                    <div class="why-visual-col">
+                        <div class="why-visual-blob"></div>
+                        <div class="why-visual-card" id="whyVisualCard">
+                            <!-- JS로 렌더 -->
+                        </div>
                     </div>
-                    <div class="why-card">
-                        <div class="why-card-icon">🗺️</div>
-                        <h3>전국 어디서나</h3>
-                        <p>서울에서 제주 물건도 OK.<br>지역 제한 없이 입찰 가능.</p>
-                    </div>
-                    <div class="why-card" style="cursor:pointer;" onclick="location.href='safety.html'">
-                        <div class="why-card-icon">🛡️</div>
-                        <h3>보증금 100% 보호</h3>
-                        <p>배상책임보험 최대 5억.<br>보증금은 절대 안전합니다.</p>
-                    </div>
+                </div>
+                <!-- 진행 바 -->
+                <div class="why-progress-bar">
+                    <div class="why-progress-fill" id="whyProgressFill"></div>
                 </div>
             </div>
         </section>
@@ -1572,36 +1750,125 @@
         document.getElementById('simTotal').textContent = total.toLocaleString('ko-KR') + '원';
     }
 
-    // ── WHY 탭 전환 ─────────────────────────────────────────
+    // ── WHY 탭 전환 (바토너 스타일 2-컬럼) ─────────────────────────────────────────
     const WHY_DATA = {
-        price:    { icon: '💰', title: '99,000원 정찰제', desc: '연차 없이 경매 참여<br>법무사 대리입찰 전국 동일 가격. 숨겨진 추가 비용 없습니다.' },
-        time:     { icon: '⏰', title: '대신 입찰',        desc: '연차 없이 경매 참여<br>아침부터 법원에 가지 않아도 됩니다. 결과만 문자로 받으세요.' },
-        distance: { icon: '🗺️', title: '모든법원 가능',   desc: '전국 모든 법원<br>서울에서 제주 물건까지 지역 제한 없이 입찰 가능합니다.' },
-        worker:   { icon: '💼', title: '3분 완성',         desc: '직장인 최적화<br>사건번호 입력 → 전자서명 → 완료. 총 3분이면 충분합니다.' },
-        safe:     { icon: '🛡️', title: '안심 보증금',      desc: '보증금 100% 보호<br>배상책임보험 최대 5억 가입. 보증금은 절대 안전합니다.' }
+        price: {
+            badge: '💰 정찰제 가격',
+            heading: '전국 어디서나<br><em>99,000원</em> 단일가',
+            desc: '법무사 대리입찰 서비스 중 유일한 정찰제.\n숨겨진 수수료, 지역별 차등 없이 전국 동일합니다.',
+            points: ['추가 비용 일절 없음', '법무사 공식 서비스 보장', '결제 즉시 매칭 시작'],
+            vcIcon: '💰',
+            vcTitle: '투명한 단일 가격',
+            vcBody: '서울·경기부터 제주까지 동일한 99,000원.\n경쟁사 대비 최대 50% 저렴한 법무사 공식 서비스.',
+            stats: [{num:'99,000', label:'원 정찰제'}, {num:'0', label:'숨겨진 비용'}, {num:'100%', label:'법무사 직접 진행'}]
+        },
+        time: {
+            badge: '⏰ 대신 입찰',
+            heading: '법원에 가지 않아도<br><em>낙찰</em>받을 수 있습니다',
+            desc: '연차 쓰고 아침 일찍 법원에 갈 필요 없습니다.\n전문 법무사가 대신 입찰하고, 결과는 문자로 받으세요.',
+            points: ['입찰 당일 내 업무 그대로', '카카오톡으로 즉시 결과 통보', '전국 당일 배정 시스템'],
+            vcIcon: '⏰',
+            vcTitle: '시간을 돌려드립니다',
+            vcBody: '평균 법원 대기 시간 3~4시간.\n그 시간을 고객님께 돌려드립니다.',
+            stats: [{num:'3~4h', label:'절약되는 대기시간'}, {num:'당일', label:'결과 문자 통보'}, {num:'24/7', label:'온라인 신청'} ]
+        },
+        distance: {
+            badge: '🗺️ 모든법원',
+            heading: '전국 <em>모든 법원</em>에서\n입찰 가능합니다',
+            desc: '서울에 살아도 제주 물건 입찰 OK.\n지역 법무사 네트워크로 어디든 당일 커버합니다.',
+            points: ['전국 법원 커버율 100%', '지역 법무사 파트너 네트워크', '도서산간도 가능'],
+            vcIcon: '🗺️',
+            vcTitle: '지역 제한 없음',
+            vcBody: '전국 60개 지원 법원 모두 커버.\n한 번의 신청으로 원하는 법원 어디든 입찰합니다.',
+            stats: [{num:'60+', label:'커버 법원'}, {num:'전국', label:'동일 서비스'}, {num:'100%', label:'당일 배정'}]
+        },
+        worker: {
+            badge: '⚡ 3분 완성',
+            heading: '신청부터 완료까지\n<em>단 3분</em>이면 충분합니다',
+            desc: '사건번호 입력 → 입찰가 설정 → 전자서명.\n인감증명서도 불필요합니다.',
+            points: ['사건번호 자동 정보 조회', '온라인 전자서명 (인감 불필요)', '즉시 전문가 매칭'],
+            vcIcon: '⚡',
+            vcTitle: '초간단 3단계',
+            vcBody: '① 사건번호 입력  ② 입찰가 결정  ③ 전자서명\n이게 전부입니다. 복잡한 서류 작업은 저희가 합니다.',
+            stats: [{num:'3분', label:'평균 신청 시간'}, {num:'0장', label:'필요 서류'}, {num:'즉시', label:'전문가 배정'}]
+        },
+        safe: {
+            badge: '🛡️ 안심 보증금',
+            heading: '보증금은\n<em>100% 안전</em>하게 보호됩니다',
+            desc: '배상책임보험 최대 5억 가입 완료.\n만에 하나의 사고도 고객님 손실은 없습니다.',
+            points: ['배상책임보험 최대 5억', '법무사 공제회 소속 전문가', '사고 발생 시 전액 보상'],
+            vcIcon: '🛡️',
+            vcTitle: '5억 한도 보험 가입',
+            vcBody: '전국 법무사 공제회 소속 파트너가 직접 진행.\n보증금 분실·오입력 사고 시 보험으로 전액 보상.',
+            stats: [{num:'5억', label:'배상책임보험 한도'}, {num:'100%', label:'보증금 보호'}, {num:'공제회', label:'소속 전문가'}]
+        }
     };
 
     const WHY_ORDER = ['price', 'time', 'distance', 'worker', 'safe'];
+    const WHY_INTERVAL = 4500; // ms
     let whyAutoTimer = null;
     let whyPaused = false;
+    let whyProgressTimer = null;
+    let whyProgressStart = null;
 
-    function renderWhyCards(tab) {
-        const data = WHY_DATA[tab] || WHY_DATA.price;
-        const container = document.getElementById('whyCards');
-        if (!container) return;
-        container.innerHTML =
-            `<div class="why-card" style="max-width:480px; margin:0 auto;">
-                <div class="why-card-icon">${data.icon}</div>
-                <h3>${data.title}</h3>
-                <p>${data.desc}</p>
-            </div>`;
+    function renderWhyContent(tab) {
+        const d = WHY_DATA[tab] || WHY_DATA.price;
+        const textCol = document.getElementById('whyTextCol');
+        const visualCard = document.getElementById('whyVisualCard');
+        if (!textCol || !visualCard) return;
+
+        // 좌측 텍스트
+        textCol.innerHTML = `
+            <div class="why-badge"><span class="badge-icon">${d.badge.split(' ')[0]}</span>${d.badge.slice(d.badge.indexOf(' ')+1)}</div>
+            <h3>${d.heading}</h3>
+            <p class="why-desc">${d.desc.replace(/\n/g,'<br>')}</p>
+            <ul class="why-points">
+                ${d.points.map(p=>`<li><span class="chk">✓</span><span>${p}</span></li>`).join('')}
+            </ul>
+        `;
+
+        // 우측 비주얼 카드
+        visualCard.innerHTML = `
+            <span class="vc-icon">${d.vcIcon}</span>
+            <div class="vc-title">${d.vcTitle}</div>
+            <div class="vc-body">${d.vcBody.replace(/\n/g,'<br>')}</div>
+            <div class="vc-stat">
+                ${d.stats.map(s=>`<div class="vc-stat-item"><span class="stat-num">${s.num}</span><span class="stat-label">${s.label}</span></div>`).join('')}
+            </div>
+        `;
     }
 
     function activateTab(tab) {
+        const content = document.getElementById('whyContent');
         document.querySelectorAll('.why-tab').forEach(b => {
             b.classList.toggle('active', b.dataset.tab === tab);
         });
-        renderWhyCards(tab);
+        if (content) {
+            content.classList.add('fade-out');
+            setTimeout(function() {
+                renderWhyContent(tab);
+                content.classList.remove('fade-out');
+            }, 200);
+        } else {
+            renderWhyContent(tab);
+        }
+        resetWhyProgress();
+    }
+
+    function resetWhyProgress() {
+        const fill = document.getElementById('whyProgressFill');
+        if (!fill) return;
+        fill.style.transition = 'none';
+        fill.style.width = '0%';
+        clearInterval(whyProgressTimer);
+        if (whyPaused) return;
+        whyProgressStart = Date.now();
+        whyProgressTimer = setInterval(function() {
+            const elapsed = Date.now() - whyProgressStart;
+            const pct = Math.min((elapsed / WHY_INTERVAL) * 100, 100);
+            fill.style.transition = 'width 0.1s linear';
+            fill.style.width = pct + '%';
+        }, 80);
     }
 
     function startWhyRolling() {
@@ -1612,23 +1879,29 @@
             const idx = WHY_ORDER.indexOf(currentTab);
             const next = WHY_ORDER[(idx + 1) % WHY_ORDER.length];
             activateTab(next);
-        }, 3000);
+        }, WHY_INTERVAL);
     }
 
     document.addEventListener('DOMContentLoaded', function() {
         updateSimulator();
 
-        // WHY 탭 클릭 이벤트 (클릭 시 3초 일시정지 후 재개)
+        // WHY 탭 클릭 이벤트
         document.querySelectorAll('.why-tab').forEach(btn => {
             btn.addEventListener('click', function() {
                 whyPaused = true;
+                clearInterval(whyProgressTimer);
+                const fill = document.getElementById('whyProgressFill');
+                if (fill) { fill.style.transition='none'; fill.style.width='0%'; }
                 activateTab(this.dataset.tab);
                 clearTimeout(window._whyResumeTimer);
-                window._whyResumeTimer = setTimeout(function() { whyPaused = false; }, 5000);
+                window._whyResumeTimer = setTimeout(function() {
+                    whyPaused = false;
+                    resetWhyProgress();
+                }, 6000);
             });
         });
 
-        // 초기 카드 렌더 후 자동 롤링 시작
+        // 초기 렌더 및 자동 롤링
         activateTab('price');
         startWhyRolling();
     });
