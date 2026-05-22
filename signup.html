@@ -750,34 +750,61 @@
             formatPhoneNumber(this);
         });
 
+        // 뿌리오 문자 발송 Worker URL
+        const SMS_WORKER_URL = 'https://sms-api.qkqk5342.workers.dev';
+
         // 인증번호 발송
-        function sendVerifyCode(type) {
+        async function sendVerifyCode(type) {
             const phoneInput = document.getElementById(`${type}Phone`);
             const phone = phoneInput.value.replace(/[^0-9]/g, '');
-            
+            const sendBtn = document.getElementById(`${type}SendVerify`);
+
             if (phone.length !== 11) {
                 alert('올바른 휴대폰 번호를 입력해주세요.');
                 phoneInput.focus();
                 return;
             }
-            
-            // TODO: Aligo SMS API 연동 예정 (사업자 인증 승인 대기 중)
+
+            // 버튼 로딩 상태
+            sendBtn.disabled = true;
+            sendBtn.textContent = '발송 중...';
+
+            // 6자리 인증번호 생성
             const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
-            
-            // 인증번호 저장 (실제로는 서버에서 처리)
-            sessionStorage.setItem(`verifyCode_${type}`, verifyCode);
-            
-            // UI 업데이트
-            document.getElementById(`${type}VerifyCodeGroup`).style.display = 'block';
-            document.getElementById(`${type}SendVerify`).disabled = true;
-            document.getElementById(`${type}SendVerify`).textContent = '발송완료';
-            phoneInput.disabled = true;
-            
-            // 타이머 시작 (3분)
-            startVerifyTimer(type, 180);
-            
-            // ⚠️ 임시: SMS 발송 전까지 alert으로 인증번호 직접 안내
-            alert(`📱 인증번호: ${verifyCode}\n\n아래 인증번호 입력란에 위 번호를 입력해주세요.\n(SMS 발송은 곧 연동될 예정입니다.)`)
+
+            try {
+                const res = await fetch(SMS_WORKER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone, code: verifyCode })
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    // 인증번호 세션에 저장
+                    sessionStorage.setItem(`verifyCode_${type}`, verifyCode);
+
+                    // UI 업데이트
+                    document.getElementById(`${type}VerifyCodeGroup`).style.display = 'block';
+                    sendBtn.textContent = '발송완료';
+                    phoneInput.disabled = true;
+
+                    // 타이머 시작 (5분)
+                    startVerifyTimer(type, 300);
+
+                    alert('📱 인증번호가 발송되었습니다.\n휴대폰 문자를 확인해주세요.');
+                } else {
+                    alert('문자 발송에 실패했습니다. 잠시 후 다시 시도해주세요.\n' + (data.error || ''));
+                    sendBtn.disabled = false;
+                    sendBtn.textContent = '인증번호 발송';
+                }
+            } catch (e) {
+                console.error('SMS 발송 오류:', e);
+                alert('네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+                sendBtn.disabled = false;
+                sendBtn.textContent = '인증번호 발송';
+            }
         }
 
         // 인증 타이머
