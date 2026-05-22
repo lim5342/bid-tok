@@ -508,11 +508,11 @@
             }
         }
 
-        // 카카오 로그인 버튼 클릭 (전화번호 필수 동의 포함)
+        // 카카오 로그인 버튼 클릭
         function kakaoLogin() {
             Kakao.Auth.authorize({
-                redirectUri: 'https://lim5342.github.io/bid-tok/login.html',
-                scope: 'profile_nickname,phone_number'
+                redirectUri: 'https://bid-tok.kr/login.html',
+                scope: 'profile_nickname'
             });
         }
         
