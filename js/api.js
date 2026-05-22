@@ -142,6 +142,19 @@ const API = {
             return user !== null;
         },
 
+        // setupToken으로 법무사 계정 조회
+        async findBySetupToken(token) {
+            const db = getDB();
+            if (!db) throw new Error('DB 연결 실패');
+            const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 10000));
+            const snap = await Promise.race([
+                db.collection('users').where('setupToken', '==', token).limit(1).get(),
+                timeout
+            ]);
+            if (snap.empty) return null;
+            return docToObj(snap.docs[0]);
+        },
+
         // 회원가입 (신규 생성)
         async create(userData) {
             const db = getDB();
@@ -149,7 +162,8 @@ const API = {
             const data = {
                 ...userData,
                 createdAt: new Date().toISOString(),
-                status: userData.userType === 'expert' ? 'pending' : 'active'
+                // userData.status가 명시적으로 전달된 경우 그것을 사용 (관리자 직접 등록 등)
+                status: userData.status || (userData.userType === 'expert' ? 'pending' : 'active')
             };
             // 10초 타임아웃
             const timeout = new Promise((_, reject) =>
@@ -178,7 +192,9 @@ const API = {
                 if (user.userType !== userType) return { success: false, message: '회원 유형이 일치하지 않습니다.' };
                 if (user.password !== password) return { success: false, message: '비밀번호가 올바르지 않습니다.' };
                 if (user.status === 'pending') return { success: false, message: '관리자 승인 대기 중입니다.' };
+                if (user.status === 'setup_pending') return { success: false, message: '계정 설정이 완료되지 않았습니다. 관리자가 최종 활성화를 진행 중입니다. 잠시 기다려주세요.' };
                 if (user.status === 'blocked') return { success: false, message: '이용이 제한된 계정입니다.' };
+                if (user.status === 'withdrawn') return { success: false, message: '탈퇴한 계정입니다.' };
                 return { success: true, user };
             } catch (err) {
                 console.error('인증 오류:', err);

@@ -534,17 +534,29 @@
                                 <span class="value">${formatPrice(app.appraisal_price || app.appraisalPrice)}원</span>
                             </div>
                             <div>
-                                <span class="label">입찰가</span>
+                                <span class="label">낙찰가(신청가)</span>
                                 <span class="value highlight">${formatPrice(app.bid_amount || app.bidPrice)}원</span>
                             </div>
                         </div>
                         ${app.expert_name || app.expertName
                             ? `<p class="expert-info"><i class="fas fa-user-tie"></i> 담당 법무사: ${app.expert_name || app.expertName}</p>`
                             : ''}
+                        ${(app.status === '낙찰' || app.result === 'success')
+                            ? `<div style="margin-top:0.75rem;padding:0.75rem 1rem;background:#f0fdf4;border-radius:8px;border-left:3px solid #10b981;">
+                                <p style="color:#065f46;font-weight:700;font-size:0.88rem;margin:0;"><i class="fas fa-trophy"></i> 🎉 낙찰 확정! 담당 법무사에게 문의하여 잔금 납부 일정을 협의하세요.</p></div>`
+                            : ''}
+                        ${(app.status === '유찰' || app.result === 'fail')
+                            ? `<div style="margin-top:0.75rem;padding:0.75rem 1rem;background:#f9fafb;border-radius:8px;border-left:3px solid #9ca3af;">
+                                <p style="color:#374151;font-weight:600;font-size:0.88rem;margin:0;"><i class="fas fa-redo"></i> 패찰되었습니다. 다음 구매에 도전해주세요! 보증금은 당일 현장에서 반환됩니다.</p></div>`
+                            : ''}
+                        ${app.payment_cancel_requested
+                            ? `<div style="margin-top:0.75rem;padding:0.65rem 0.9rem;background:#fffbeb;border-radius:8px;border-left:3px solid #f59e0b;font-size:0.82rem;color:#78350f;">
+                                <i class="fas fa-clock"></i> 결제 취소 신청 중 - 관리자 처리 대기 (3~5 영업일)</div>`
+                            : ''}
                     </div>
                     <div class="card-footer">
                         <button class="btn btn-sm btn-outline" onclick="viewDetail('${app.id}')">상세보기</button>
-                        ${canCancel ? `<button class="btn btn-sm btn-danger" onclick="cancelApplication('${app.id}')">취소하기</button>` : ''}
+                        ${canCancel ? `<button class="btn btn-sm btn-danger" onclick="requestPaymentCancel('${app.id}')"><i class="fas fa-credit-card"></i> 결제취소 신청</button>` : ''}
                     </div>
                 </div>`;
             }).join('');
@@ -640,21 +652,44 @@
             document.getElementById('detailModal').style.display = 'none';
         }
 
-        // ── 취소하기 ───────────────────────────────────────────
-        async function cancelApplication(id) {
-            if (!confirm('신청을 취소하시겠습니까?\n입찰일 2영업일 전까지만 취소 가능합니다.')) return;
+        // ── 결제취소 신청 ────────────────────────────────────
+        async function requestPaymentCancel(id) {
+            const app = allApplications.find(a => a.id === id);
+            const isPaid = app && (app.payment_status === '결제완료' || app.paymentStatus === '결제완료');
+
+            let confirmMsg = '신청을 취소하시겠습니까?\n입찰일 2영업일 전까지만 취소 가능합니다.';
+            if (isPaid) {
+                confirmMsg += '\n\n결제 취소 신청 시 관리자 검토 후 3~5 영업일 내 환불 처리됩니다.\n(취소 시점에 따라 수수료가 발생할 수 있습니다)';
+            }
+            if (!confirm(confirmMsg)) return;
 
             try {
-                await API.applications.updateStatus(id, '취소', {
+                const updateData = {
                     cancelledAt: new Date().toISOString(),
-                    cancelledBy: user.userId || user.id
-                });
-                alert('취소가 완료되었습니다.');
+                    cancelledBy: user.userId || user.id,
+                    cancelType: '고객취소'
+                };
+                if (isPaid) {
+                    updateData.payment_cancel_requested = true;
+                    updateData.payment_cancel_requested_at = new Date().toISOString();
+                    updateData.payment_status = '취소신청';
+                }
+                await API.applications.updateStatus(id, '취소', updateData);
+
+                if (isPaid) {
+                    alert('✅ 결제 취소 신청이 접수되었습니다.\n관리자 검토 후 3~5 영업일 내 카드 취소 처리됩니다.');
+                } else {
+                    alert('취소가 완료되었습니다.');
+                }
                 loadApplications();
             } catch (err) {
+                console.error(err);
                 alert('취소 처리 중 오류가 발생했습니다.');
             }
         }
+
+        // 하위호환 (cancelApplication 기존 이름 유지)
+        async function cancelApplication(id) { return requestPaymentCancel(id); }
 
         // ── 회원정보 저장 ──────────────────────────────────────
         document.getElementById('profileForm').addEventListener('submit', async function(e) {

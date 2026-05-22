@@ -210,6 +210,9 @@
         .badge-pending                  { background: #fff7ed; color: #f97316; }
         .badge-active                   { background: #f0fdf4; color: #22c55e; }
         .badge-rejected                 { background: #fef2f2; color: #ef4444; }
+        .badge-setup_pending            { background: #fef3c7; color: #92400e; }
+        .badge-blocked                  { background: #fee2e2; color: #dc2626; }
+        .badge-withdrawn                { background: #f3f4f6; color: #9ca3af; }
         .badge-정산대기                 { background: #fef9c3; color: #ca8a04; }
         .badge-정산완료                 { background: #f0fdf4; color: #22c55e; }
 
@@ -441,7 +444,7 @@
 <body>
 
 <!-- 모바일 토글 -->
-<button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">
+<button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" style="display:none;">
     <i class="fas fa-bars"></i>
 </button>
 
@@ -458,17 +461,17 @@
         <form id="loginForm">
             <div class="login-field">
                 <label>관리자 아이디</label>
-                <input type="text" id="adminId" placeholder="bootv1, bootv2, bootv3, bootv4" autocomplete="username">
+                <input type="text" id="adminId" placeholder="아이디 입력" autocomplete="off">
             </div>
             <div class="login-field">
                 <label>비밀번호</label>
-                <input type="password" id="adminPw" placeholder="비밀번호 입력" autocomplete="current-password">
+                <input type="password" id="adminPw" placeholder="비밀번호 입력" autocomplete="off">
             </div>
             <button type="submit" class="login-btn">
                 <i class="fas fa-sign-in-alt"></i> 로그인
             </button>
         </form>
-        <p class="login-hint">bootv1: 대표(마스터) | bootv2~4: 팀장</p>
+        <p class="login-hint" style="color:#bbb;">관리자 전용 페이지입니다.</p>
     </div>
 </div>
 
@@ -497,6 +500,9 @@
             </button>
             <button class="nav-item" onclick="goto('users',this)">
                 <i class="fas fa-users"></i> 회원 관리
+            </button>
+            <button class="nav-item" onclick="goto('myinfo',this)">
+                <i class="fas fa-key"></i> 내 정보
             </button>
             <button class="nav-item" onclick="goto('settlements',this)">
                 <i class="fas fa-won-sign"></i> 정산 관리
@@ -567,6 +573,38 @@
                     </div>
                 </div>
 
+                <!-- 추가 통계 카드 (회원 현황) -->
+                <div class="stats-row" id="statsRow2" style="margin-bottom:1.5rem;">
+                    <div class="stat-box">
+                        <div class="stat-icon blue"><i class="fas fa-users"></i></div>
+                        <div class="stat-body">
+                            <div class="stat-num" id="st-clients">-</div>
+                            <div class="stat-lbl">전체 신청자</div>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon red"><i class="fas fa-ban"></i></div>
+                        <div class="stat-body">
+                            <div class="stat-num" id="st-blocked">-</div>
+                            <div class="stat-lbl">정지 회원</div>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon orange"><i class="fas fa-user-clock"></i></div>
+                        <div class="stat-body">
+                            <div class="stat-num" id="st-pending-experts">-</div>
+                            <div class="stat-lbl">법무사 승인 대기</div>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+                        <div class="stat-body">
+                            <div class="stat-num" id="st-completed">-</div>
+                            <div class="stat-lbl">완료 신청</div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- 2열: 최근신청 + 지역별 현황 -->
                 <div class="grid-2">
                     <div class="panel">
@@ -628,6 +666,7 @@
                     <button class="ftab"         data-status="매칭완료" onclick="setAppFilter('매칭완료',this)">매칭완료 <span class="cnt" id="cnt-매칭완료">0</span></button>
                     <button class="ftab"         data-status="완료"   onclick="setAppFilter('완료',this)">완료 <span class="cnt" id="cnt-완료">0</span></button>
                     <button class="ftab"         data-status="취소"   onclick="setAppFilter('취소',this)">취소 <span class="cnt" id="cnt-취소">0</span></button>
+                    <button class="ftab"         data-status="결제취소신청" onclick="setAppFilter('결제취소신청',this)" style="border-left:2px solid #ef4444;">결제취소신청 <span class="cnt" id="cnt-결제취소신청" style="background:#ef4444;color:#fff;">0</span></button>
                 </div>
 
                 <!-- 검색 -->
@@ -647,11 +686,17 @@
 
             <!-- ════ 전문가 승인 ════ -->
             <div class="section" id="sec-experts">
-                <div class="section-title"><i class="fas fa-user-tie"></i> 전문가 승인</div>
+                <div class="section-title" style="justify-content:space-between; flex-wrap:wrap; gap:0.5rem;">
+                    <span><i class="fas fa-user-tie"></i> 전문가 관리</span>
+                    <button class="btn-sm btn-blue" onclick="openExpertRegister()" style="font-size:0.88rem;padding:0.5rem 1.2rem;">
+                        <i class="fas fa-user-plus"></i> 법무사 직접 등록
+                    </button>
+                </div>
 
                 <div class="filter-bar">
                     <button class="ftab active" onclick="setExpertFilter('pending',this)">승인 대기</button>
                     <button class="ftab" onclick="setExpertFilter('active',this)">승인 완료</button>
+                    <button class="ftab" onclick="setExpertFilter('setup_pending',this)">설정 대기 <span class="cnt" id="cnt-setup-pending" style="background:#f59e0b;color:#fff;">0</span></button>
                     <button class="ftab" onclick="setExpertFilter('rejected',this)">거부</button>
                 </div>
 
@@ -662,19 +707,63 @@
 
             <!-- ════ 회원 관리 ════ -->
             <div class="section" id="sec-users">
-                <div class="section-title"><i class="fas fa-users"></i> 회원 관리</div>
+                <div class="section-title" style="justify-content:space-between; flex-wrap:wrap; gap:0.5rem;">
+                    <span><i class="fas fa-users"></i> 회원 관리</span>
+                    <button class="btn-excel" onclick="exportUserCSV()">
+                        <i class="fas fa-file-csv"></i> 회원 CSV
+                    </button>
+                </div>
+
+                <!-- 회원 통계 요약 -->
+                <div class="stats-row" style="margin-bottom:1.2rem;" id="userStatsRow">
+                    <div class="stat-box">
+                        <div class="stat-icon blue"><i class="fas fa-users"></i></div>
+                        <div class="stat-body">
+                            <div class="stat-num" id="ust-total">-</div>
+                            <div class="stat-lbl">전체 회원</div>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon green"><i class="fas fa-user"></i></div>
+                        <div class="stat-body">
+                            <div class="stat-num" id="ust-clients">-</div>
+                            <div class="stat-lbl">신청자</div>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon purple"><i class="fas fa-user-tie"></i></div>
+                        <div class="stat-body">
+                            <div class="stat-num" id="ust-experts">-</div>
+                            <div class="stat-lbl">법무사</div>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon red"><i class="fas fa-ban"></i></div>
+                        <div class="stat-body">
+                            <div class="stat-num" id="ust-blocked">-</div>
+                            <div class="stat-lbl">정지/탈퇴</div>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="filter-bar">
-                    <button class="ftab active" onclick="setUserFilter('all',this)">전체</button>
-                    <button class="ftab" onclick="setUserFilter('client',this)">신청자</button>
-                    <button class="ftab" onclick="setUserFilter('expert',this)">법무사</button>
+                    <button class="ftab active" onclick="setUserFilter('all',this)">전체 <span class="cnt" id="ucnt-all">0</span></button>
+                    <button class="ftab" onclick="setUserFilter('client',this)">신청자 <span class="cnt" id="ucnt-client">0</span></button>
+                    <button class="ftab" onclick="setUserFilter('expert',this)">법무사 <span class="cnt" id="ucnt-expert">0</span></button>
+                    <button class="ftab" onclick="setUserFilter('blocked',this)">정지 <span class="cnt" id="ucnt-blocked">0</span></button>
+                    <button class="ftab" onclick="setUserFilter('withdrawn',this)">탈퇴 <span class="cnt" id="ucnt-withdrawn">0</span></button>
                 </div>
 
                 <div class="toolbar">
                     <div class="search-box">
                         <i class="fas fa-search"></i>
-                        <input type="text" id="userSearch" placeholder="이름, 이메일, 전화번호 검색..." oninput="filterUserTable()">
+                        <input type="text" id="userSearch" placeholder="이름, 이메일, 전화번호, 아이디 검색..." oninput="filterUserTable()">
                     </div>
+                    <select id="userSortSelect" onchange="filterUserTable()" style="padding:0.65rem 1rem; border:2px solid #e0e0e0; border-radius:10px; font-size:0.88rem; font-family:inherit;">
+                        <option value="newest">최근 가입순</option>
+                        <option value="oldest">오래된 순</option>
+                        <option value="name">이름순</option>
+                    </select>
                 </div>
 
                 <div class="panel" style="padding:0; overflow:hidden;">
@@ -709,6 +798,41 @@
                     <div class="overflow-wrap" id="settleTableWrap">
                         <div style="text-align:center;padding:3rem;color:#ccc;"><i class="fas fa-spinner fa-spin fa-2x"></i></div>
                     </div>
+                </div>
+            </div>
+
+            <!-- ════ 내 정보 / 비밀번호 변경 ════ -->
+            <div class="section" id="sec-myinfo">
+                <div class="section-title"><i class="fas fa-key"></i> 내 정보 / 비밀번호 변경</div>
+
+                <div class="panel" style="max-width:480px;">
+                    <div id="myInfoBody">
+                        <div style="text-align:center;padding:2rem;color:#ccc;"><i class="fas fa-spinner fa-spin fa-2x"></i></div>
+                    </div>
+                </div>
+
+                <div class="panel" style="max-width:480px; margin-top:0;">
+                    <div class="panel-header" style="margin-bottom:1.2rem;">
+                        <span class="panel-title"><i class="fas fa-lock" style="color:#667eea;margin-right:0.4rem;"></i> 비밀번호 변경</span>
+                    </div>
+                    <div class="form-row" style="margin-bottom:1rem;">
+                        <label style="display:block;font-weight:600;color:#444;font-size:0.9rem;margin-bottom:0.4rem;">현재 비밀번호</label>
+                        <input type="password" id="pwCurrent" placeholder="현재 비밀번호 입력"
+                            style="width:100%;padding:0.85rem 1rem;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;font-family:inherit;transition:border-color 0.2s;box-sizing:border-box;">
+                    </div>
+                    <div class="form-row" style="margin-bottom:1rem;">
+                        <label style="display:block;font-weight:600;color:#444;font-size:0.9rem;margin-bottom:0.4rem;">새 비밀번호</label>
+                        <input type="password" id="pwNew" placeholder="새 비밀번호 (8자 이상)"
+                            style="width:100%;padding:0.85rem 1rem;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;font-family:inherit;transition:border-color 0.2s;box-sizing:border-box;">
+                    </div>
+                    <div class="form-row" style="margin-bottom:1.5rem;">
+                        <label style="display:block;font-weight:600;color:#444;font-size:0.9rem;margin-bottom:0.4rem;">새 비밀번호 확인</label>
+                        <input type="password" id="pwNewConfirm" placeholder="새 비밀번호 재입력"
+                            style="width:100%;padding:0.85rem 1rem;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;font-family:inherit;transition:border-color 0.2s;box-sizing:border-box;">
+                    </div>
+                    <button onclick="changeAdminPassword()" style="width:100%;padding:1rem;border:none;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);color:white;font-size:1rem;font-weight:700;cursor:pointer;font-family:inherit;">
+                        <i class="fas fa-save"></i> 비밀번호 변경
+                    </button>
                 </div>
             </div>
 
@@ -758,7 +882,7 @@
             <button class="modal-close" onclick="closeModal('modalUser')">&times;</button>
         </div>
         <div class="modal-body" id="modalUserBody"></div>
-        <div class="modal-foot">
+        <div class="modal-foot" id="modalUserFoot">
             <button class="btn-full" onclick="closeModal('modalUser')" style="background:#f0f2f5;color:#666;">닫기</button>
         </div>
     </div>
@@ -775,15 +899,34 @@
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
 <script>
+// ── Firestore admins 컬렉션 초기 세팅 (DB에 없을 경우 1회 자동 생성) ──────
+// 최초 배포 시 bootv1 계정이 없으면 자동 생성 (초기 비밀번호: Admin@2026!)
+// 이후 반드시 '내 정보' 메뉴에서 비밀번호를 변경하세요.
+async function ensureAdminExists() {
+    try {
+        const db  = getDB();
+        if (!db) return;
+        const doc = await db.collection('admins').doc('bootv1').get();
+        if (!doc.exists) {
+            await db.collection('admins').doc('bootv1').set({
+                name: '대표 (마스터)',
+                role: 'master',
+                pw:   'Admin@2026!',
+                createdAt: new Date().toISOString()
+            });
+            console.log('[Admin Init] bootv1 계정 생성 완료. 초기 비밀번호: Admin@2026!');
+        }
+    } catch(e) {
+        // 조용히 실패 (DB 연결 실패 등)
+    }
+}
+// DOMContentLoaded 후 실행
+document.addEventListener('DOMContentLoaded', ensureAdminExists);
 // ═══════════════════════════════════════════════════════
 // 상수 & 전역 상태
 // ═══════════════════════════════════════════════════════
-const ADMINS = {
-    bootv1: { name: '대표 (마스터)', role: 'master', pw: '1234' },
-    bootv2: { name: '팀장 2',        role: 'team',   pw: '1234' },
-    bootv3: { name: '팀장 3',        role: 'team',   pw: '1234' },
-    bootv4: { name: '팀장 4',        role: 'team',   pw: '1234' },
-};
+// ⚠️ 하드코딩 관리자 정보 제거 → Firestore 'admins' 컬렉션에서 검증
+// Firestore admins 컬렉션 구조: { id: "bootv1", name: "대표(마스터)", role: "master", pw: "해시or평문" }
 
 let currentAdmin   = null;
 let currentSection = 'dashboard';
@@ -796,6 +939,55 @@ let assignTargetId = null;
 let selectedExpertId   = null;
 let selectedExpertName = null;
 let detailAppId    = null;  // 상세 모달에서 열린 신청 id
+
+// ── 세션 키 (sessionStorage → 탭 닫으면 만료) ──────────────
+const ADMIN_SESSION_KEY = '_adm_sess';
+
+function saveAdminSession(admin) {
+    sessionStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify({
+        id:   admin.id,
+        name: admin.name,
+        role: admin.role,
+        ts:   Date.now()
+    }));
+}
+
+function getAdminSession() {
+    try {
+        const raw = sessionStorage.getItem(ADMIN_SESSION_KEY);
+        if (!raw) return null;
+        const s = JSON.parse(raw);
+        // 8시간 후 자동 만료
+        if (Date.now() - s.ts > 8 * 60 * 60 * 1000) {
+            sessionStorage.removeItem(ADMIN_SESSION_KEY);
+            return null;
+        }
+        return s;
+    } catch { return null; }
+}
+
+function clearAdminSession() {
+    sessionStorage.removeItem(ADMIN_SESSION_KEY);
+}
+
+// ── 페이지 로드 시 세션 확인 → 로그인 안 했으면 로그인 화면만 표시 ──
+(function initAdminPage() {
+    const sess = getAdminSession();
+    if (sess) {
+        // 세션 있으면 바로 대시보드
+        currentAdmin = sess;
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('adminWrap').style.display   = 'flex';
+        document.getElementById('sidebarToggle').style.display = 'flex';
+        document.getElementById('sidebarName').textContent = sess.name;
+        document.getElementById('sidebarId').textContent   = sess.id;
+        loadDashboard();
+    } else {
+        // 세션 없으면 대시보드 완전 숨김 (기본값이 display:none 이므로 OK)
+        document.getElementById('adminWrap').style.display = 'none';
+        document.getElementById('sidebarToggle').style.display = 'none';
+    }
+})();
 
 // ═══════════════════════════════════════════════════════
 // 유틸
@@ -812,8 +1004,17 @@ function fmtDateTime(d) {
     return String(d).slice(0, 16).replace('T', ' ');
 }
 function badge(status) {
+    const labelMap = {
+        'pending':       '승인 대기',
+        'active':        '활성',
+        'rejected':      '거부',
+        'setup_pending': '설정 대기',
+        'blocked':       '정지',
+        'withdrawn':     '탈퇴',
+    };
+    const label = labelMap[status] || status || '-';
     const cls = 'badge badge-' + (status || '').replace(/\s/g, '');
-    return `<span class="${cls}">${status || '-'}</span>`;
+    return `<span class="${cls}">${label}</span>`;
 }
 
 function showToast(msg, type = 'success') {
@@ -852,28 +1053,68 @@ updateClock();
 // ═══════════════════════════════════════════════════════
 // 로그인 / 로그아웃
 // ═══════════════════════════════════════════════════════
-document.getElementById('loginForm').addEventListener('submit', function(e) {
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
     e.preventDefault();
-    const id = document.getElementById('adminId').value.trim();
-    const pw = document.getElementById('adminPw').value;
-    const found = ADMINS[id];
-    if (!found || found.pw !== pw) {
-        showToast('아이디 또는 비밀번호가 올바르지 않습니다.', 'error');
-        document.getElementById('adminPw').value = '';
+    const id  = document.getElementById('adminId').value.trim();
+    const pw  = document.getElementById('adminPw').value;
+    const btn = this.querySelector('button[type="submit"]');
+
+    if (!id || !pw) {
+        showToast('아이디와 비밀번호를 입력해주세요.', 'error');
         return;
     }
-    currentAdmin = { id, ...found };
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('adminWrap').style.display   = 'flex';
-    document.getElementById('sidebarName').textContent   = found.name;
-    document.getElementById('sidebarId').textContent     = id;
-    loadDashboard();
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 확인 중...';
+
+    try {
+        // Firestore 'admins' 컬렉션에서 검증
+        const db   = getDB();
+        const doc  = await db.collection('admins').doc(id).get();
+
+        if (!doc.exists) {
+            showToast('아이디 또는 비밀번호가 올바르지 않습니다.', 'error');
+            document.getElementById('adminPw').value = '';
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> 로그인';
+            return;
+        }
+
+        const data = doc.data();
+        if (data.pw !== pw) {
+            showToast('아이디 또는 비밀번호가 올바르지 않습니다.', 'error');
+            document.getElementById('adminPw').value = '';
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> 로그인';
+            return;
+        }
+
+        // 로그인 성공
+        currentAdmin = { id, name: data.name || id, role: data.role || 'team' };
+        saveAdminSession(currentAdmin);
+
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('adminWrap').style.display   = 'flex';
+        document.getElementById('sidebarToggle').style.display = 'flex';
+        document.getElementById('sidebarName').textContent   = currentAdmin.name;
+        document.getElementById('sidebarId').textContent     = id;
+        document.getElementById('loginForm').reset();
+        loadDashboard();
+
+    } catch(err) {
+        console.error('관리자 로그인 오류:', err);
+        showToast('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.', 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> 로그인';
+    }
 });
 
 function doLogout() {
     if (!confirm('로그아웃 하시겠습니까?')) return;
     currentAdmin = null;
+    clearAdminSession();
     document.getElementById('adminWrap').style.display   = 'none';
+    document.getElementById('sidebarToggle').style.display = 'none';
     document.getElementById('loginScreen').style.display = 'flex';
     document.getElementById('loginForm').reset();
 }
@@ -883,7 +1124,8 @@ function doLogout() {
 // ═══════════════════════════════════════════════════════
 const SECTION_TITLES = {
     dashboard: '대시보드', applications: '신청 관리',
-    experts: '전문가 승인', users: '회원 관리', settlements: '정산 관리'
+    experts: '전문가 승인', users: '회원 관리', settlements: '정산 관리',
+    myinfo: '내 정보 / 비밀번호 변경'
 };
 
 function goto(sec, el) {
@@ -910,9 +1152,10 @@ function goto(sec, el) {
     // 각 섹션 데이터 로드
     if (sec === 'dashboard')    loadDashboard();
     if (sec === 'applications') loadApplications();
-    if (sec === 'experts')      loadExperts();
+    if (sec === 'experts')      { loadExperts(); loadSetupPendingCount(); }
     if (sec === 'users')        loadUsers();
     if (sec === 'settlements')  loadSettlements();
+    if (sec === 'myinfo')        loadMyInfo();
 }
 
 function refreshCurrent() { goto(currentSection, null); }
@@ -964,6 +1207,22 @@ async function loadDashboard() {
         // 뱃지 업데이트
         updateNavBadge('navBadgeApp', waiting.length);
         updateNavBadge('navBadgeExp', pending.length);
+
+        // ── 추가 통계 (회원 현황) ──
+        const userRes2    = await API.users.getAll('limit=1000');
+        const allUsers2   = (userRes2?.data) || [];
+        const clientCount = allUsers2.filter(u => u.userType === 'client').length;
+        const blockedCount= allUsers2.filter(u => u.status === 'blocked' || u.status === 'withdrawn').length;
+        const completedCnt= apps.filter(a => a.status === '완료').length;
+
+        const el_clients  = document.getElementById('st-clients');
+        const el_blocked  = document.getElementById('st-blocked');
+        const el_pendingE = document.getElementById('st-pending-experts');
+        const el_completed= document.getElementById('st-completed');
+        if (el_clients)  el_clients.textContent  = fmtNum(clientCount);
+        if (el_blocked)  el_blocked.textContent  = fmtNum(blockedCount);
+        if (el_pendingE) el_pendingE.textContent = fmtNum(pending.length);
+        if (el_completed)el_completed.textContent= fmtNum(completedCnt);
 
         // ── 최근 신청 10건 ─────────────────────────
         const recent10 = apps.slice(0, 10);
@@ -1073,6 +1332,11 @@ async function loadApplications() {
             const el = document.getElementById('cnt-' + s);
             if (el) el.textContent = allApps.filter(a => a.status === s).length;
         });
+        const cancelReqEl2 = document.getElementById('cnt-결제취소신청');
+        if (cancelReqEl2) cancelReqEl2.textContent = allApps.filter(a => a.payment_cancel_requested && a.payment_status === '취소신청').length;
+        // 결제취소신청 카운트
+        const cancelReqEl = document.getElementById('cnt-결제취소신청');
+        if (cancelReqEl) cancelReqEl.textContent = allApps.filter(a => a.payment_cancel_requested && a.payment_status === '취소신청').length;
 
         renderAppTable(allApps);
     } catch(err) {
@@ -1094,8 +1358,12 @@ function renderAppTable(apps) {
             <th>입찰일</th><th>법무사</th><th>결제</th><th>상태</th><th style="text-align:center;">관리</th>
         </tr></thead>
         <tbody>
-        ${apps.map(a => `<tr data-id="${a.id}" data-status="${a.status || ''}">
-            <td><strong style="color:#667eea;">${a.case_number || '-'}</strong></td>
+        ${apps.map(a => {
+            const isCancelReq = a.payment_cancel_requested && a.payment_status === '취소신청';
+            const rowStyle = isCancelReq ? 'background:#fff5f5;border-left:3px solid #ef4444;' : '';
+            return `<tr data-id="${a.id}" data-status="${a.status || ''}" style="${rowStyle}">
+            <td><strong style="color:#667eea;">${a.case_number || '-'}</strong>
+                ${isCancelReq ? '<br><span style="display:inline-block;margin-top:3px;padding:1px 6px;background:#fee2e2;color:#ef4444;border-radius:4px;font-size:0.72rem;font-weight:700;">⚠ 결제취소신청</span>' : ''}</td>
             <td style="font-size:0.82rem;">${a.region || ''}${a.court ? '<br><span style="color:#999;">'+a.court+'</span>' : ''}</td>
             <td>${a.applicant_name || '-'}</td>
             <td style="font-size:0.82rem;">${a.phone || '-'}</td>
@@ -1103,7 +1371,8 @@ function renderAppTable(apps) {
             <td>${a.expert_name
                 ? `<span style="color:#22c55e;font-weight:600;font-size:0.85rem;">${a.expert_name}</span>`
                 : '<span style="color:#ccc;font-size:0.82rem;">미배정</span>'}</td>
-            <td>${badge(a.payment_status || '결제대기')}</td>
+            <td>${badge(a.payment_status || '결제대기')}
+                ${isCancelReq ? '<br><button onclick="processCardCancel(''+a.id+'')" style="margin-top:4px;font-size:0.72rem;padding:2px 8px;background:#ef4444;color:#fff;border:none;border-radius:4px;cursor:pointer;font-weight:700;"><i class=\"fas fa-credit-card\"></i> 카드취소</button>' : ''}</td>
             <td>
                 <select class="status-select" onchange="changeStatus('${a.id}', this.value, this)">
                     ${['접수','결제대기','결제완료','매칭중','매칭완료','진행중','완료','낙찰','유찰','취소']
@@ -1116,7 +1385,7 @@ function renderAppTable(apps) {
                     ? `<button class="btn-sm btn-green" onclick="openAssign('${a.id}')">배정</button>`
                     : ''}
             </td>
-        </tr>`).join('')}
+        </tr>`;}).join('')}
         </tbody>
     </table>`;
 }
@@ -1131,7 +1400,9 @@ function setAppFilter(status, el) {
 function filterAppTable() {
     const q   = (document.getElementById('appSearch')?.value || '').toLowerCase();
     const filtered = allApps.filter(a => {
-        const matchStatus = appFilter === 'all' || (a.status || '') === appFilter;
+        const isCancelReq = a.payment_cancel_requested && a.payment_status === '취소신청';
+        const matchStatus = appFilter === 'all'
+            || (appFilter === '결제취소신청' ? isCancelReq : (a.status || '') === appFilter);
         const matchSearch = !q ||
             (a.case_number || '').toLowerCase().includes(q) ||
             (a.applicant_name || '').toLowerCase().includes(q) ||
@@ -1156,6 +1427,11 @@ async function changeStatus(id, newStatus, sel) {
             const el = document.getElementById('cnt-' + s);
             if (el) el.textContent = allApps.filter(a => a.status === s).length;
         });
+        const cancelReqEl2 = document.getElementById('cnt-결제취소신청');
+        if (cancelReqEl2) cancelReqEl2.textContent = allApps.filter(a => a.payment_cancel_requested && a.payment_status === '취소신청').length;
+        // 결제취소신청 카운트
+        const cancelReqEl = document.getElementById('cnt-결제취소신청');
+        if (cancelReqEl) cancelReqEl.textContent = allApps.filter(a => a.payment_cancel_requested && a.payment_status === '취소신청').length;
     } catch(err) {
         showToast('상태 변경 실패', 'error');
         sel.value = old; // 롤백
@@ -1331,7 +1607,7 @@ function downloadCSV(rows, filename) {
 // ═══════════════════════════════════════════════════════
 async function loadExperts() {
     setLoading('expertListWrap');
-    const statusMap = { pending: 'pending', active: 'active', rejected: 'rejected' };
+    const statusMap = { pending: 'pending', active: 'active', rejected: 'rejected', setup_pending: 'setup_pending' };
     const statusParam = statusMap[expertFilter] || 'pending';
     try {
         const res     = await API.users.getAll(`userType=expert&status=${statusParam}&limit=200&sort=-createdAt`);
@@ -1346,7 +1622,7 @@ async function loadExperts() {
 function renderExpertList(experts) {
     const wrap = document.getElementById('expertListWrap');
     if (experts.length === 0) {
-        const msg = { pending:'승인 대기 중인 법무사가 없습니다.', active:'활성 법무사가 없습니다.', rejected:'거부된 법무사가 없습니다.' };
+        const msg = { pending:'승인 대기 중인 법무사가 없습니다.', active:'활성 법무사가 없습니다.', rejected:'거부된 법무사가 없습니다.', setup_pending:'설정 대기 중인 법무사가 없습니다.' };
         wrap.innerHTML = `<div class="empty-box"><i class="fas fa-inbox"></i><p>${msg[expertFilter]||'없습니다.'}</p></div>`;
         return;
     }
@@ -1358,6 +1634,7 @@ function renderExpertList(experts) {
                 <div>
                     <strong style="font-size:1rem;">${ex.name||'-'}</strong>
                     ${badge(ex.status)}
+                    ${ex.registeredByAdmin ? '<span style="font-size:0.72rem;background:#fef3c7;color:#92400e;padding:2px 6px;border-radius:10px;margin-left:4px;">관리자 등록</span>' : ''}
                 </div>
             </div>
             <span style="font-size:0.8rem;color:#888;">신청: ${fmtDate(ex.createdAt)}</span>
@@ -1373,9 +1650,17 @@ function renderExpertList(experts) {
                     <div class="val">${Array.isArray(ex.serviceRegions) ? ex.serviceRegions.join(', ') : (ex.serviceRegions||'-')}</div>
                 </div>
             </div>
-            <div style="background:#f8f9fa;border-radius:8px;padding:0.75rem;font-size:0.82rem;color:#666;">
-                📎 첨부서류: ${ex.licenseFileName||'자격증'} / ${ex.insuranceFileName||'보험증권'}
+            ${expertFilter === 'setup_pending' ? `
+            <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:0.75rem;font-size:0.82rem;color:#92400e;margin-top:0.5rem;">
+                ⏳ 법무사가 초대 링크에서 비밀번호/프로필 설정 완료 시 이 목록에 나타납니다.<br>
+                설정 완료 확인 후 <strong>최종 활성화</strong> 버튼을 눌러주세요.
+                ${ex.setupToken ? `<br><br>📎 초대 링크: <span style="font-family:monospace;font-size:0.78rem;word-break:break-all;">${location.origin}/expert-setup.html?token=${ex.setupToken}</span>
+                <button onclick="navigator.clipboard.writeText('${location.origin}/expert-setup.html?token=${ex.setupToken}');showToast('링크 복사 완료','success');" style="margin-left:6px;background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:2px 8px;cursor:pointer;font-size:0.75rem;">복사</button>` : ''}
+            </div>` : ''}
+            <div style="background:#f8f9fa;border-radius:8px;padding:0.75rem;font-size:0.82rem;color:#666;margin-top:0.5rem;">
+                📎 첨부서류: ${ex.licenseFileName||'자격증'} / ${ex.insuranceFileName||'보험증권'} / ${ex.bizRegFileName||'사업자등록증'}
             </div>
+            ${ex.adminMemo ? `<div style="margin-top:0.5rem;background:#fefce8;border-radius:8px;padding:0.75rem;font-size:0.82rem;color:#854d0e;">📝 메모: ${ex.adminMemo}</div>` : ''}
             ${ex.rejectReason ? `<div style="margin-top:0.5rem;background:#fef2f2;border-radius:8px;padding:0.75rem;font-size:0.82rem;color:#ef4444;">거부 사유: ${ex.rejectReason}</div>` : ''}
         </div>
         <div class="expert-card-foot">
@@ -1385,6 +1670,10 @@ function renderExpertList(experts) {
             ` : ''}
             ${expertFilter === 'active' ? `
                 <button class="btn-sm btn-red" onclick="blockExpert('${ex.id}')"><i class="fas fa-ban"></i> 정지</button>
+            ` : ''}
+            ${expertFilter === 'setup_pending' ? `
+                <button class="btn-sm btn-green" onclick="activateSetupExpert('${ex.id}')"><i class="fas fa-check-double"></i> 최종 활성화</button>
+                <button class="btn-sm btn-red" onclick="rejectExpert('${ex.id}')"><i class="fas fa-times"></i> 거부</button>
             ` : ''}
             ${expertFilter === 'rejected' ? `
                 <button class="btn-sm btn-blue" onclick="reApproveExpert('${ex.id}')"><i class="fas fa-redo"></i> 재승인</button>
@@ -1447,6 +1736,122 @@ async function reApproveExpert(id) {
     } catch(e) { showToast('처리 실패', 'error'); }
 }
 
+/* ══════ 법무사 직접 등록 (setupToken 기반) ══════ */
+function openExpertRegister() {
+    // 폼 초기화
+    ['regName','regEmail','regPhone','regRegion','regLicense','regMemo'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+    document.getElementById('expertRegForm').style.display = 'block';
+    document.getElementById('expertRegResult').style.display = 'none';
+    document.getElementById('regSubmitBtn').disabled = true;
+    document.getElementById('regSubmitBtn').style.opacity = '0.5';
+    const modal = document.getElementById('modalExpertReg');
+    modal.style.display = 'flex';
+}
+
+function closeExpertRegister() {
+    document.getElementById('modalExpertReg').style.display = 'none';
+}
+
+function checkRegForm() {
+    const name  = (document.getElementById('regName')?.value || '').trim();
+    const email = (document.getElementById('regEmail')?.value || '').trim();
+    const phone = (document.getElementById('regPhone')?.value || '').trim();
+    const btn   = document.getElementById('regSubmitBtn');
+    const valid = name && email && phone && /\S+@\S+\.\S+/.test(email);
+    btn.disabled     = !valid;
+    btn.style.opacity = valid ? '1' : '0.5';
+}
+
+async function submitExpertRegister() {
+    const name    = document.getElementById('regName').value.trim();
+    const email   = document.getElementById('regEmail').value.trim();
+    const phone   = document.getElementById('regPhone').value.trim();
+    const region  = document.getElementById('regRegion').value.trim();
+    const license = document.getElementById('regLicense').value.trim();
+    const memo    = document.getElementById('regMemo').value.trim();
+
+    if (!name || !email || !phone) { showToast('이름, 이메일, 전화번호는 필수입니다.', 'error'); return; }
+
+    const btn = document.getElementById('regSubmitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 처리 중...';
+
+    try {
+        // setupToken 생성 (32자 랜덤 hex)
+        const token = Array.from(crypto.getRandomValues(new Uint8Array(16)))
+            .map(b => b.toString(16).padStart(2, '0')).join('');
+
+        const expireAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(); // 7일 후
+
+        // Firestore에 법무사 계정 생성
+        const userData = {
+            name,
+            email,
+            phone,
+            userType: 'expert',
+            status: 'setup_pending',
+            setupToken: token,
+            setupTokenExpireAt: expireAt,
+            serviceRegions: region ? region.split(/[,，、]/).map(s => s.trim()).filter(Boolean) : [],
+            licenseNumber: license || '',
+            adminMemo: memo || '',
+            registeredByAdmin: true,
+            createdAt: new Date().toISOString(),
+        };
+
+        const res = await API.users.create(userData);
+        if (!res?.id) throw new Error('계정 생성 실패');
+
+        // 초대 링크 생성
+        const setupUrl = `${location.origin}/expert-setup.html?token=${token}`;
+        document.getElementById('setupLinkInput').value = setupUrl;
+
+        // UI 전환
+        document.getElementById('expertRegForm').style.display = 'none';
+        document.getElementById('expertRegResult').style.display = 'block';
+
+        showToast('✅ 법무사 계정 생성 완료!', 'success');
+
+        // 설정 대기 카운트 업데이트
+        loadSetupPendingCount();
+    } catch(err) {
+        console.error(err);
+        showToast('계정 생성 중 오류가 발생했습니다: ' + (err.message || ''), 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-user-plus"></i> 계정 생성 및 초대 링크 발급';
+        btn.style.opacity = '1';
+    }
+}
+
+function copySetupLink() {
+    const input = document.getElementById('setupLinkInput');
+    input.select();
+    document.execCommand('copy');
+    showToast('✅ 링크가 클립보드에 복사되었습니다.', 'success');
+}
+
+async function loadSetupPendingCount() {
+    try {
+        const res = await API.users.getAll('userType=expert&status=setup_pending&limit=200');
+        const cnt = (res?.data || []).length;
+        const el = document.getElementById('cnt-setup-pending');
+        if (el) el.textContent = cnt;
+    } catch(e) {}
+}
+
+async function activateSetupExpert(id) {
+    if (!confirm('이 법무사를 최종 활성화하시겠습니까?\n비밀번호/프로필 설정이 완료된 상태인지 확인해주세요.')) return;
+    try {
+        await API.users.update(id, { status: 'active', approvedAt: new Date().toISOString(), setupToken: null, setupTokenExpireAt: null });
+        showToast('✅ 법무사 최종 활성화 완료!', 'success');
+        fadeRemoveCard('ec_' + id, loadExperts);
+        loadSetupPendingCount();
+    } catch(e) { showToast('처리 실패', 'error'); }
+}
+
 function fadeRemoveCard(id, cb) {
     const card = document.getElementById(id);
     if (card) {
@@ -1464,11 +1869,36 @@ async function loadUsers() {
     try {
         const res  = await API.users.getAll('limit=500&sort=-createdAt');
         allUsers   = (res?.data) || [];
+        updateUserStats(allUsers);
         renderUserTable(allUsers);
     } catch(e) {
         document.getElementById('userTableWrap').innerHTML =
             `<div class="empty-box"><i class="fas fa-exclamation-circle"></i><p>데이터를 불러올 수 없습니다.</p></div>`;
     }
+}
+
+function updateUserStats(users) {
+    const total    = users.length;
+    const clients  = users.filter(u => u.userType === 'client').length;
+    const experts  = users.filter(u => u.userType === 'expert').length;
+    const blocked  = users.filter(u => u.status === 'blocked' || u.status === 'withdrawn').length;
+
+    const el_t = document.getElementById('ust-total');
+    const el_c = document.getElementById('ust-clients');
+    const el_e = document.getElementById('ust-experts');
+    const el_b = document.getElementById('ust-blocked');
+    if (el_t) el_t.textContent = fmtNum(total);
+    if (el_c) el_c.textContent = fmtNum(clients);
+    if (el_e) el_e.textContent = fmtNum(experts);
+    if (el_b) el_b.textContent = fmtNum(blocked);
+
+    // 필터 탭 카운트
+    const setC = (id, v) => { const e = document.getElementById(id); if(e) e.textContent = v; };
+    setC('ucnt-all',       total);
+    setC('ucnt-client',    clients);
+    setC('ucnt-expert',    experts);
+    setC('ucnt-blocked',   users.filter(u => u.status === 'blocked').length);
+    setC('ucnt-withdrawn', users.filter(u => u.status === 'withdrawn').length);
 }
 
 function renderUserTable(users) {
@@ -1481,26 +1911,42 @@ function renderUserTable(users) {
     <table class="data-table">
         <thead><tr>
             <th>이름</th><th>아이디</th><th>이메일</th><th>연락처</th>
-            <th>유형</th><th>상태</th><th>가입일</th><th style="text-align:center;">관리</th>
+            <th>유형</th><th>로그인</th><th>상태</th><th>가입일</th><th style="text-align:center;">관리</th>
         </tr></thead>
         <tbody>
-        ${users.map(u => `<tr>
+        ${users.map(u => {
+            const statusLabel = u.status === 'active' ? '활성'
+                              : u.status === 'pending' ? '대기'
+                              : u.status === 'blocked' ? '정지'
+                              : u.status === 'withdrawn' ? '탈퇴'
+                              : (u.status || '-');
+            const typeLabel = u.userType === 'client' ? '신청자'
+                            : u.userType === 'expert' ? '법무사'
+                            : u.userType;
+            const loginType = u.loginType === 'kakao' ? '<span style="background:#FEE500;color:#333;border-radius:4px;padding:0.1rem 0.4rem;font-size:0.75rem;">카카오</span>'
+                            : u.loginType === 'naver' ? '<span style="background:#03C75A;color:white;border-radius:4px;padding:0.1rem 0.4rem;font-size:0.75rem;">네이버</span>'
+                            : '<span style="background:#e0e0e0;color:#555;border-radius:4px;padding:0.1rem 0.4rem;font-size:0.75rem;">일반</span>';
+            return `<tr>
             <td><strong>${u.name||'-'}</strong></td>
             <td style="color:#888;font-size:0.85rem;">${u.userId||'-'}</td>
             <td style="font-size:0.82rem;">${u.email||'-'}</td>
             <td style="font-size:0.82rem;">${u.phone||'-'}</td>
-            <td>${badge(u.userType === 'client' ? '신청자' : u.userType === 'expert' ? '법무사' : u.userType)}</td>
-            <td>${badge(u.status === 'active' ? '활성' : u.status === 'pending' ? '대기' : u.status === 'blocked' ? '정지' : (u.status||'-'))}</td>
+            <td>${badge(typeLabel)}</td>
+            <td>${loginType}</td>
+            <td>${badge(statusLabel)}</td>
             <td style="color:#888;font-size:0.82rem;">${fmtDate(u.createdAt)}</td>
-            <td style="text-align:center;">
-                <button class="btn-sm btn-blue" onclick="openUserDetail('${u.id}')">상세</button>
-                ${u.status === 'active'
-                    ? `<button class="btn-sm btn-red" onclick="blockUser('${u.id}','${(u.name||'').replace(/'/g,'')}')">정지</button>`
+            <td style="text-align:center;white-space:nowrap;">
+                <button class="btn-sm btn-blue" onclick="openUserDetail('${u.id}')"><i class="fas fa-eye"></i> 상세</button>
+                ${u.status === 'active' || u.status === 'pending'
+                    ? `<button class="btn-sm btn-red" onclick="blockUser('${u.id}','${(u.name||'').replace(/'/g,'')}')" title="계정 정지"><i class="fas fa-ban"></i> 정지</button>`
                     : u.status === 'blocked'
-                    ? `<button class="btn-sm btn-green" onclick="unblockUser('${u.id}','${(u.name||'').replace(/'/g,'')}')">해제</button>`
+                    ? `<button class="btn-sm btn-green" onclick="unblockUser('${u.id}','${(u.name||'').replace(/'/g,'')}')" title="정지 해제"><i class="fas fa-check"></i> 해제</button>`
+                    : ''}
+                ${u.status !== 'withdrawn'
+                    ? `<button class="btn-sm" style="background:#fef2f2;color:#b91c1c;" onclick="withdrawUser('${u.id}','${(u.name||'').replace(/'/g,'')}')" title="강제 탈퇴"><i class="fas fa-user-times"></i> 탈퇴</button>`
                     : ''}
             </td>
-        </tr>`).join('')}
+        </tr>`;}).join('')}
         </tbody>
     </table>`;
 }
@@ -1513,9 +1959,14 @@ function setUserFilter(type, el) {
 }
 
 function filterUserTable() {
-    const q = (document.getElementById('userSearch')?.value || '').toLowerCase();
-    const filtered = allUsers.filter(u => {
-        const matchType = userFilter === 'all' || u.userType === userFilter;
+    const q    = (document.getElementById('userSearch')?.value || '').toLowerCase();
+    const sort = document.getElementById('userSortSelect')?.value || 'newest';
+    let filtered = allUsers.filter(u => {
+        let matchType = true;
+        if (userFilter === 'client')    matchType = u.userType === 'client';
+        else if (userFilter === 'expert') matchType = u.userType === 'expert';
+        else if (userFilter === 'blocked')   matchType = u.status === 'blocked';
+        else if (userFilter === 'withdrawn') matchType = u.status === 'withdrawn';
         const matchQ = !q ||
             (u.name||'').toLowerCase().includes(q) ||
             (u.email||'').toLowerCase().includes(q) ||
@@ -1523,45 +1974,188 @@ function filterUserTable() {
             (u.userId||'').toLowerCase().includes(q);
         return matchType && matchQ;
     });
+
+    // 정렬
+    if (sort === 'oldest') {
+        filtered.sort((a, b) => (a.createdAt||'').localeCompare(b.createdAt||''));
+    } else if (sort === 'name') {
+        filtered.sort((a, b) => (a.name||'').localeCompare(b.name||'', 'ko'));
+    } else {
+        filtered.sort((a, b) => (b.createdAt||'').localeCompare(a.createdAt||''));
+    }
     renderUserTable(filtered);
 }
 
 async function openUserDetail(id) {
     document.getElementById('modalUserBody').innerHTML =
         `<div style="text-align:center;padding:2rem;"><i class="fas fa-spinner fa-spin fa-2x" style="color:#ccc;"></i></div>`;
+    document.getElementById('modalUserFoot').innerHTML =
+        `<button class="btn-full" onclick="closeModal('modalUser')" style="background:#f0f2f5;color:#666;">닫기</button>`;
     openModal('modalUser');
     try {
         const u = allUsers.find(a => a.id === id) || await API.users.getById(id);
         if (!u) throw new Error();
-        document.getElementById('modalUserBody').innerHTML = `
-        <table class="detail-table">
-            <tr><td>이름</td><td><strong>${u.name||'-'}</strong></td></tr>
-            <tr><td>아이디</td><td>${u.userId||'-'}</td></tr>
-            <tr><td>이메일</td><td>${u.email||'-'}</td></tr>
-            <tr><td>전화번호</td><td>${u.phone||'-'}</td></tr>
-            <tr><td>회원 유형</td><td>${badge(u.userType==='client'?'신청자':'법무사')}</td></tr>
-            <tr><td>상태</td><td>${badge(u.status==='active'?'활성':u.status==='pending'?'대기':(u.status||'-'))}</td></tr>
-            ${u.userType === 'expert' ? `
-            <tr><td>등록번호</td><td>${u.licenseNumber||'-'}</td></tr>
-            <tr><td>사무소</td><td>${u.officeAddress||'-'}</td></tr>
-            <tr><td>서비스 지역</td><td>${Array.isArray(u.serviceRegions)?u.serviceRegions.join(', '):(u.serviceRegions||'-')}</td></tr>
-            ` : ''}
-            <tr><td>가입일</td><td style="color:#888;">${fmtDate(u.createdAt)}</td></tr>
-            ${u.loginType ? `<tr><td>로그인 방식</td><td>${u.loginType}</td></tr>` : ''}
-        </table>`;
+
+        const statusLabel = u.status === 'active' ? '활성'
+                          : u.status === 'pending' ? '대기'
+                          : u.status === 'blocked' ? '정지'
+                          : u.status === 'withdrawn' ? '탈퇴'
+                          : (u.status || '-');
+
+        // ── 신청/수임 내역 조회 ──
+        let appRows = '';
+        let cancelPendingRows = '';
+        try {
+            const db = getDB();
+            let appsSnap;
+            if (u.userType === 'client') {
+                appsSnap = await db.collection('applications').where('userId','==', u.userId || u.id).get();
+            } else {
+                appsSnap = await db.collection('applications').where('assigned_expert_id','==', u.userId || u.id).get();
+            }
+            const apps = [];
+            appsSnap.forEach(d => apps.push({id:d.id,...d.data()}));
+            apps.sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
+
+            const cancelReqs = apps.filter(a => a.payment_cancel_requested && a.payment_status === '취소신청');
+            if (cancelReqs.length > 0) {
+                cancelPendingRows = '<tr><td colspan="2" style="background:#fff8e1;font-weight:700;color:#92400e;padding:0.6rem 0.75rem;">⚠️ 결제취소 신청 대기 (' + cancelReqs.length + '건)</td></tr>'
+                + cancelReqs.map(app => '<tr style="background:#fffbeb;"><td style="font-size:0.8rem;">' + (app.case_number||'-') + ' · ' + fmtDate(app.payment_cancel_requested_at) + '</td><td><button onclick="processCardCancel('' + app.id + '')" style="font-size:0.78rem;padding:0.3rem 0.75rem;background:#ef4444;color:white;border:none;border-radius:6px;cursor:pointer;font-weight:700;"><i class="fas fa-credit-card"></i> 카드취소 처리</button></td></tr>').join('');
+            }
+
+            if (apps.length > 0) {
+                const label = u.userType === 'client' ? '신청 내역' : '수임 내역';
+                appRows = '<tr><td colspan="2" style="background:#f8f9fa;font-weight:700;color:#444;padding:0.6rem 0.75rem;">📋 ' + label + ' (' + apps.length + '건)</td></tr>'
+                + apps.slice(0,8).map(app => {
+                    const statusTxt = (app.status==='낙찰'||app.result==='success') ? '<span style="color:#10b981;font-weight:700;">🎉낙찰</span>'
+                        : (app.status==='유찰'||app.result==='fail') ? '<span style="color:#9ca3af;">패찰</span>'
+                        : '<span style="color:#667eea;">' + (app.status||'-') + '</span>';
+                    const cBtn = (app.payment_cancel_requested && app.payment_status === '취소신청')
+                        ? '<button onclick="processCardCancel('' + app.id + '')" style="font-size:0.7rem;padding:0.2rem 0.5rem;background:#fee2e2;color:#ef4444;border:none;border-radius:4px;cursor:pointer;margin-left:4px;">카드취소</button>' : '';
+                    return '<tr><td style="font-size:0.8rem;color:#666;">' + (app.case_number||'-') + ' · ' + (app.bid_date||'-').slice(0,10) + '</td><td style="font-size:0.8rem;">' + statusTxt + cBtn + '</td></tr>';
+                }).join('')
+                + (apps.length > 8 ? '<tr><td colspan="2" style="font-size:0.78rem;color:#aaa;text-align:center;">... 외 ' + (apps.length-8) + '건</td></tr>' : '');
+            }
+        } catch(appErr) { console.warn('내역 조회 실패:', appErr); }
+
+        // ── 비밀번호 표시 (신청자 + 일반로그인만) ──
+        const isNormalLogin = !u.loginType || u.loginType === '일반';
+        const pwContent = (u.userType === 'client' && isNormalLogin && u.password)
+            ? '<span id="pwDisplay_' + u.id + '" style="letter-spacing:0.1em;color:#667eea;font-weight:700;font-family:monospace;">••••••••</span>'
+              + '<button onclick="togglePwDisplay('' + u.id + '','' + (u.password||'').replace(/'/g, '\\'+''') + '')" style="margin-left:8px;font-size:0.72rem;padding:0.2rem 0.5rem;background:#f0f4ff;color:#667eea;border:1px solid #c7d2fe;border-radius:4px;cursor:pointer;"><i class="fas fa-eye"></i> 보기</button>'
+            : (u.userType === 'client' && isNormalLogin ? '-' : '<span style="color:#aaa;font-size:0.82rem;">소셜로그인 (없음)</span>');
+
+        document.getElementById('modalUserBody').innerHTML = '<table class="detail-table">'
+            + '<tr><td>이름</td><td><strong>' + (u.name||'-') + '</strong></td></tr>'
+            + '<tr><td>아이디</td><td><span style="font-family:monospace;font-weight:700;color:#1550E8;">' + (u.userId||'-') + '</span></td></tr>'
+            + '<tr><td>비밀번호</td><td>' + pwContent + '</td></tr>'
+            + '<tr><td>이메일</td><td>' + (u.email||'-') + '</td></tr>'
+            + '<tr><td>전화번호</td><td>' + (u.phone||'-') + '</td></tr>'
+            + '<tr><td>회원 유형</td><td>' + badge(u.userType==='client'?'신청자':'법무사') + '</td></tr>'
+            + '<tr><td>로그인 방식</td><td>' + (u.loginType || '일반') + '</td></tr>'
+            + '<tr><td>상태</td><td>' + badge(statusLabel) + '</td></tr>'
+            + (u.userType === 'expert' ? (
+                '<tr><td>등록번호</td><td>' + (u.licenseNumber||'-') + '</td></tr>'
+                + '<tr><td>사무소</td><td>' + (u.officeAddress||'-') + '</td></tr>'
+                + '<tr><td>서비스지역</td><td>' + (Array.isArray(u.serviceRegions)?u.serviceRegions.join(', '):(u.serviceRegions||'-')) + '</td></tr>'
+                + '<tr><td>첨부서류</td><td style="font-size:0.82rem;color:#666;">' + (u.licenseFileName||'-') + ' / ' + (u.insuranceFileName||'-') + ' / ' + (u.bizRegFileName||'-') + '</td></tr>'
+                + '<tr><td>취소 횟수</td><td>' + (u.cancelCount||0) + '/3 ' + ((u.cancelCount||0)>=3?'<span style="color:#ef4444;font-weight:700;">⛔ 초과</span>':'') + '</td></tr>'
+            ) : '')
+            + '<tr><td>가입일</td><td style="color:#888;">' + fmtDate(u.createdAt) + '</td></tr>'
+            + (u.blockedAt ? '<tr><td>정지일</td><td style="color:#ef4444;">' + fmtDate(u.blockedAt) + '</td></tr>' : '')
+            + (u.blockedReason ? '<tr><td>정지사유</td><td style="color:#ef4444;font-size:0.82rem;">' + u.blockedReason + '</td></tr>' : '')
+            + (u.withdrawnAt ? '<tr><td>탈퇴일</td><td style="color:#ef4444;">' + fmtDate(u.withdrawnAt) + '</td></tr>' : '')
+            + (u.memo ? '<tr><td>메모</td><td>' + u.memo + '</td></tr>' : '')
+            + cancelPendingRows
+            + appRows
+            + '</table>';
+
+        // ── 하단 버튼 ──
+        let footBtns = '<button class="btn-full" onclick="closeModal('modalUser')" style="background:#f0f2f5;color:#666;">닫기</button>';
+        if (u.status === 'blocked') {
+            footBtns += '<button class="btn-full" onclick="closeModal('modalUser');unblockUser('' + u.id + '','' + (u.name||'').replace(/'/g,'') + '')" style="background:#22c55e;color:white;">✅ 정지 해제</button>';
+        } else if (u.status !== 'withdrawn') {
+            footBtns += '<button class="btn-full" onclick="closeModal('modalUser');blockUser('' + u.id + '','' + (u.name||'').replace(/'/g,'') + '')" style="background:#f97316;color:white;"><i class="fas fa-ban"></i> 정지</button>';
+        }
+        if (u.status !== 'withdrawn') {
+            footBtns += '<button class="btn-full" onclick="closeModal('modalUser');withdrawUser('' + u.id + '','' + (u.name||'').replace(/'/g,'') + '')" style="background:#ef4444;color:white;"><i class="fas fa-user-times"></i> 강제 탈퇴</button>';
+        }
+        if (u.userType === 'expert' && (u.cancelCount||0) > 0) {
+            footBtns += '<button class="btn-full" onclick="closeModal('modalUser');resetCancelCount('' + u.id + '','' + (u.name||'').replace(/'/g,'') + '')" style="background:#3b82f6;color:white;"><i class="fas fa-redo"></i> 취소횟수 초기화</button>';
+        }
+        document.getElementById('modalUserFoot').innerHTML = footBtns;
+
     } catch(e) {
+        console.error(e);
         document.getElementById('modalUserBody').innerHTML =
             `<div class="empty-box"><i class="fas fa-exclamation-circle"></i><p>정보를 불러올 수 없습니다.</p></div>`;
     }
 }
 
-async function blockUser(id, name) {
-    if (!confirm(`${name} 회원을 정지하시겠습니까?`)) return;
+// ── 비밀번호 보기/숨김 토글 ──
+function togglePwDisplay(userId, pw) {
+    const el = document.getElementById('pwDisplay_' + userId);
+    if (!el) return;
+    const isHidden = el.textContent.trim().startsWith('•');
+    el.textContent = isHidden ? pw : '••••••••';
+}
+
+// ── 관리자: 카드 취소 처리 ──
+async function processCardCancel(appId) {
+    if (!confirm('카드 결제 취소 처리를 진행하시겠습니까?\n\n처리 후 고객 카드사에 환불이 요청됩니다.\n실제 환불은 카드사 규정에 따라 3~5 영업일 소요됩니다.')) return;
+    const note = prompt('취소 처리 메모 (선택 입력):') ?? '';
     try {
-        await API.users.update(id, { status: 'blocked' });
+        const db = getDB();
+        await db.collection('applications').doc(appId).update({
+            payment_status: '취소완료',
+            payment_cancelled: true,
+            payment_cancel_completed_at: new Date().toISOString(),
+            payment_cancel_note: note.trim() || '관리자 카드 취소 처리',
+            updatedAt: new Date().toISOString()
+        });
+        showToast('✅ 카드 취소 처리 완료! 고객에게 환불이 진행됩니다.', 'success');
+        closeModal('modalUser');
+    } catch(e) {
+        console.error(e);
+        showToast('취소 처리 실패: ' + e.message, 'error');
+    }
+}
+
+// ── 법무사 취소 횟수 초기화 ──
+async function resetCancelCount(id, name) {
+    if (!confirm(name + ' 법무사의 취소 횟수를 초기화하시겠습니까?\n\n고객 사정으로 인한 취소 등 특별한 사유가 있을 경우에만 초기화하세요.')) return;
+    try {
+        const updateData = {
+            cancelCount: 0,
+            cancelCountResetAt: new Date().toISOString(),
+            cancelCountResetBy: 'admin'
+        };
+        // 취소 사유로 정지된 경우 자동 해제
+        const u = allUsers.find(a => a.id === id);
+        if (u && u.status === 'blocked' && u.blockedReason && u.blockedReason.includes('취소')) {
+            updateData.status = 'active';
+            updateData.blockedAt = null;
+        }
+        await API.users.update(id, updateData);
+        if (u) {
+            u.cancelCount = 0;
+            if (updateData.status) u.status = updateData.status;
+        }
+        showToast(name + ' 법무사 취소 횟수가 초기화되었습니다.', 'success');
+        updateUserStats(allUsers);
+        filterUserTable();
+    } catch(e) { showToast('초기화 실패', 'error'); }
+}
+
+
+async function blockUser(id, name) {
+    if (!confirm(`${name} 회원을 정지하시겠습니까?\n\n정지된 회원은 로그인이 불가능합니다.`)) return;
+    try {
+        await API.users.update(id, { status: 'blocked', blockedAt: new Date().toISOString() });
         const u = allUsers.find(a => a.id === id);
         if (u) u.status = 'blocked';
         showToast(`${name} 회원이 정지되었습니다.`, 'info');
+        updateUserStats(allUsers);
         filterUserTable();
     } catch(e) { showToast('처리 실패', 'error'); }
 }
@@ -1569,12 +2163,49 @@ async function blockUser(id, name) {
 async function unblockUser(id, name) {
     if (!confirm(`${name} 회원의 정지를 해제하시겠습니까?`)) return;
     try {
-        await API.users.update(id, { status: 'active' });
+        await API.users.update(id, { status: 'active', blockedAt: null });
         const u = allUsers.find(a => a.id === id);
         if (u) u.status = 'active';
         showToast(`${name} 회원 정지가 해제되었습니다.`, 'success');
+        updateUserStats(allUsers);
         filterUserTable();
     } catch(e) { showToast('처리 실패', 'error'); }
+}
+
+async function withdrawUser(id, name) {
+    if (!confirm(`⚠️ ${name} 회원을 강제 탈퇴 처리하시겠습니까?\n\n탈퇴 처리된 회원은 더 이상 로그인할 수 없습니다.\n이 작업은 되돌릴 수 없습니다.`)) return;
+    const reason = prompt('탈퇴 사유를 입력해주세요 (선택):') ?? '';
+    try {
+        await API.users.update(id, {
+            status: 'withdrawn',
+            withdrawnAt: new Date().toISOString(),
+            withdrawReason: reason.trim() || '관리자 강제 탈퇴'
+        });
+        const u = allUsers.find(a => a.id === id);
+        if (u) { u.status = 'withdrawn'; u.withdrawnAt = new Date().toISOString(); }
+        showToast(`${name} 회원이 탈퇴 처리되었습니다.`, 'info');
+        updateUserStats(allUsers);
+        filterUserTable();
+    } catch(e) { showToast('처리 실패', 'error'); }
+}
+
+// 회원 CSV 내보내기
+async function exportUserCSV() {
+    try {
+        const data = allUsers.length > 0 ? allUsers
+            : (await API.users.getAll('limit=1000'))?.data || [];
+        if (data.length === 0) { showToast('다운로드할 데이터가 없습니다.', 'info'); return; }
+        const header = ['이름','아이디','이메일','연락처','유형','로그인방식','상태','가입일'];
+        const rows   = data.map(u => [
+            u.name||'', u.userId||'', u.email||'', u.phone||'',
+            u.userType==='client'?'신청자':'법무사',
+            u.loginType||'일반',
+            u.status||'',
+            fmtDate(u.createdAt)
+        ]);
+        downloadCSV([header, ...rows], `회원목록_${new Date().toISOString().slice(0,10)}`);
+        showToast('회원 CSV 다운로드 완료!', 'success');
+    } catch(e) { showToast('다운로드 실패', 'error'); }
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1672,6 +2303,78 @@ async function exportSettleCSV() {
     downloadCSV([header, ...rows], `정산내역_${new Date().toISOString().slice(0,10)}`);
     showToast('정산 CSV 다운로드 완료!', 'success');
 }
+
+// ═══════════════════════════════════════════════════════
+// 내 정보 / 비밀번호 변경
+// ═══════════════════════════════════════════════════════
+function loadMyInfo() {
+    const sess = currentAdmin || getAdminSession();
+    if (!sess) return;
+
+    const roleLabel = sess.role === 'master' ? '🔑 대표 (마스터)' : '👤 팀장';
+    document.getElementById('myInfoBody').innerHTML = `
+    <table class="detail-table">
+        <tr><td>관리자 아이디</td><td><strong>${sess.id}</strong></td></tr>
+        <tr><td>이름</td><td>${sess.name || '-'}</td></tr>
+        <tr><td>권한</td><td>${roleLabel}</td></tr>
+    </table>`;
+
+    // 입력 필드 초기화
+    ['pwCurrent','pwNew','pwNewConfirm'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+}
+
+async function changeAdminPassword() {
+    const sess = currentAdmin || getAdminSession();
+    if (!sess) { showToast('로그인이 필요합니다.', 'error'); return; }
+
+    const pwCurrent    = document.getElementById('pwCurrent').value;
+    const pwNew        = document.getElementById('pwNew').value;
+    const pwNewConfirm = document.getElementById('pwNewConfirm').value;
+
+    if (!pwCurrent) { showToast('현재 비밀번호를 입력해주세요.', 'error'); return; }
+    if (!pwNew)     { showToast('새 비밀번호를 입력해주세요.', 'error'); return; }
+    if (pwNew.length < 8) { showToast('새 비밀번호는 8자 이상이어야 합니다.', 'error'); return; }
+    if (pwNew !== pwNewConfirm) { showToast('새 비밀번호가 일치하지 않습니다.', 'error'); return; }
+    if (pwCurrent === pwNew) { showToast('현재 비밀번호와 동일합니다.', 'error'); return; }
+
+    try {
+        const db  = getDB();
+        const doc = await db.collection('admins').doc(sess.id).get();
+        if (!doc.exists) { showToast('관리자 정보를 찾을 수 없습니다.', 'error'); return; }
+
+        const data = doc.data();
+        if (data.pw !== pwCurrent) {
+            showToast('현재 비밀번호가 올바르지 않습니다.', 'error');
+            document.getElementById('pwCurrent').value = '';
+            return;
+        }
+
+        // 비밀번호 업데이트
+        await db.collection('admins').doc(sess.id).update({
+            pw: pwNew,
+            pwChangedAt: new Date().toISOString()
+        });
+
+        showToast('✅ 비밀번호가 변경되었습니다. 다시 로그인해주세요.', 'success');
+
+        // 3초 후 로그아웃
+        setTimeout(() => {
+            currentAdmin = null;
+            clearAdminSession();
+            document.getElementById('adminWrap').style.display   = 'none';
+            document.getElementById('sidebarToggle').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('loginForm').reset();
+        }, 2500);
+
+    } catch(err) {
+        console.error('비밀번호 변경 오류:', err);
+        showToast('비밀번호 변경 중 오류가 발생했습니다.', 'error');
+    }
+}
 </script>
 
 <!-- 회사 푸터 -->
@@ -1685,6 +2388,90 @@ async function exportSettleCSV() {
         <div style="font-size:0.78rem;color:#555;">&copy; 2026 대리입찰 톡. All rights reserved.</div>
     </div>
 </footer>
+
+<!-- ══════════ 법무사 직접 등록 모달 ══════════ -->
+<div id="modalExpertReg" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:16px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;margin:1rem;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+        <!-- 헤더 -->
+        <div style="padding:1.5rem 1.5rem 1rem;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center;">
+            <div>
+                <h3 style="font-size:1.1rem;font-weight:700;color:#1a1a2e;margin:0;">법무사 직접 등록</h3>
+                <p style="font-size:0.82rem;color:#888;margin:4px 0 0;">관리자가 법무사 계정을 직접 생성하고 초대 링크를 발급합니다.</p>
+            </div>
+            <button onclick="closeExpertRegister()" style="background:none;border:none;cursor:pointer;font-size:1.3rem;color:#999;padding:4px;">&times;</button>
+        </div>
+
+        <!-- 플로우 안내 -->
+        <div style="margin:1rem 1.5rem;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:1rem;font-size:0.82rem;color:#166534;">
+            <strong>등록 플로우</strong><br>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;align-items:center;line-height:1.8;">
+                <span style="background:#16a34a;color:#fff;padding:2px 8px;border-radius:20px;">① 정보 입력</span>
+                <span style="color:#999;">→</span>
+                <span style="background:#0d9488;color:#fff;padding:2px 8px;border-radius:20px;">② 초대 링크 발급</span>
+                <span style="color:#999;">→</span>
+                <span style="background:#6366f1;color:#fff;padding:2px 8px;border-radius:20px;">③ 법무사 비밀번호 설정</span>
+                <span style="color:#999;">→</span>
+                <span style="background:#667eea;color:#fff;padding:2px 8px;border-radius:20px;">④ 운영자 최종 활성화</span>
+            </div>
+        </div>
+
+        <!-- 입력 폼 -->
+        <div id="expertRegForm" style="padding:0 1.5rem 1.5rem;">
+            <div style="display:grid;gap:1rem;">
+                <div>
+                    <label style="font-size:0.82rem;font-weight:600;color:#555;display:block;margin-bottom:4px;">이름 <span style="color:#ef4444;">*</span></label>
+                    <input id="regName" type="text" placeholder="홍길동" style="width:100%;padding:0.65rem 0.9rem;border:2px solid #e0e0e0;border-radius:8px;font-size:0.92rem;font-family:inherit;box-sizing:border-box;" oninput="checkRegForm()">
+                </div>
+                <div>
+                    <label style="font-size:0.82rem;font-weight:600;color:#555;display:block;margin-bottom:4px;">이메일 <span style="color:#ef4444;">*</span></label>
+                    <input id="regEmail" type="email" placeholder="example@email.com" style="width:100%;padding:0.65rem 0.9rem;border:2px solid #e0e0e0;border-radius:8px;font-size:0.92rem;font-family:inherit;box-sizing:border-box;" oninput="checkRegForm()">
+                </div>
+                <div>
+                    <label style="font-size:0.82rem;font-weight:600;color:#555;display:block;margin-bottom:4px;">전화번호 <span style="color:#ef4444;">*</span></label>
+                    <input id="regPhone" type="tel" placeholder="010-1234-5678" style="width:100%;padding:0.65rem 0.9rem;border:2px solid #e0e0e0;border-radius:8px;font-size:0.92rem;font-family:inherit;box-sizing:border-box;" oninput="checkRegForm()">
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+                    <div>
+                        <label style="font-size:0.82rem;font-weight:600;color:#555;display:block;margin-bottom:4px;">활동 지역</label>
+                        <input id="regRegion" type="text" placeholder="서울, 수원 등" style="width:100%;padding:0.65rem 0.9rem;border:2px solid #e0e0e0;border-radius:8px;font-size:0.92rem;font-family:inherit;box-sizing:border-box;">
+                    </div>
+                    <div>
+                        <label style="font-size:0.82rem;font-weight:600;color:#555;display:block;margin-bottom:4px;">등록번호</label>
+                        <input id="regLicense" type="text" placeholder="자격증 번호" style="width:100%;padding:0.65rem 0.9rem;border:2px solid #e0e0e0;border-radius:8px;font-size:0.92rem;font-family:inherit;box-sizing:border-box;">
+                    </div>
+                </div>
+                <div>
+                    <label style="font-size:0.82rem;font-weight:600;color:#555;display:block;margin-bottom:4px;">메모 (내부용)</label>
+                    <textarea id="regMemo" rows="2" placeholder="서류 검토 완료, 협회 조회 확인 등..." style="width:100%;padding:0.65rem 0.9rem;border:2px solid #e0e0e0;border-radius:8px;font-size:0.88rem;font-family:inherit;box-sizing:border-box;resize:vertical;"></textarea>
+                </div>
+            </div>
+            <button id="regSubmitBtn" onclick="submitExpertRegister()" disabled style="width:100%;margin-top:1.2rem;padding:0.85rem;background:#667eea;color:#fff;border:none;border-radius:10px;font-size:0.95rem;font-weight:700;cursor:pointer;opacity:0.5;transition:opacity 0.2s;">
+                <i class="fas fa-user-plus"></i> 계정 생성 및 초대 링크 발급
+            </button>
+        </div>
+
+        <!-- 링크 발급 결과 (초기 숨김) -->
+        <div id="expertRegResult" style="display:none;padding:0 1.5rem 1.5rem;">
+            <div style="background:#f0fdf4;border:2px solid #16a34a;border-radius:12px;padding:1.2rem;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:0.8rem;">
+                    <span style="font-size:1.3rem;">✅</span>
+                    <strong style="color:#166534;">계정 생성 완료!</strong>
+                </div>
+                <p style="font-size:0.85rem;color:#555;margin:0 0 1rem;">아래 링크를 법무사에게 전달해 주세요. 링크는 <strong>7일간 유효</strong>하며, 한 번만 사용 가능합니다.</p>
+                <div style="background:#fff;border:1px solid #d1fae5;border-radius:8px;padding:0.75rem;display:flex;align-items:center;gap:0.5rem;">
+                    <input id="setupLinkInput" type="text" readonly style="flex:1;border:none;outline:none;font-size:0.82rem;color:#1a1a2e;background:transparent;font-family:monospace;">
+                    <button onclick="copySetupLink()" style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:0.4rem 0.75rem;cursor:pointer;font-size:0.82rem;white-space:nowrap;">
+                        <i class="fas fa-copy"></i> 복사
+                    </button>
+                </div>
+                <p style="font-size:0.78rem;color:#888;margin:0.75rem 0 0;">💡 이 링크를 카카오톡, 이메일 등으로 법무사에게 직접 전달하세요. 법무사가 링크에서 비밀번호를 설정하면 <strong>설정 대기</strong> 상태로 전환됩니다. 이후 내용을 확인하고 최종 활성화해 주세요.</p>
+            </div>
+            <button onclick="closeExpertRegister()" style="width:100%;margin-top:1rem;padding:0.75rem;background:#f0f2f5;color:#666;border:none;border-radius:10px;font-size:0.92rem;font-weight:600;cursor:pointer;">
+                닫기
+            </button>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>
