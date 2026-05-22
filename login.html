@@ -451,61 +451,51 @@
 
         async function handleKakaoCallback(code) {
             try {
-                // 인가코드 → 액세스 토큰 교환 (Kakao JS SDK)
-                const tokenRes = await fetch('https://kauth.kakao.com/oauth/token', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({
-                        grant_type:   'authorization_code',
-                        client_id:    '81232cef4de694fd84c42551857c0951',
-                        redirect_uri: 'https://bid-tok.kr/login.html',
-                        code:         code
-                    })
-                });
-                const tokenData = await tokenRes.json();
-
-                if (!tokenData.access_token) {
-                    console.error('토큰 오류:', tokenData);
-                    alert('로그인 처리 중 오류가 발생했습니다.');
-                    return;
-                }
-
-                // 액세스 토큰으로 사용자 정보 요청
-                Kakao.Auth.setAccessToken(tokenData.access_token);
-                Kakao.API.request({
-                    url: '/v2/user/me',
-                    success: function(res) {
-                        const kakaoAccount = res.kakao_account || {};
-                        const profile = kakaoAccount.profile || {};
-                        const loginUser = {
-                            id: 'kakao_' + res.id,
-                            userId: 'kakao_' + res.id,
-                            name: profile.nickname || '카카오 사용자',
-                            email: kakaoAccount.email || '',
-                            phone: '',
-                            userType: 'client',
-                            loginType: 'kakao',
-                            status: 'active',
-                            createdAt: new Date().toISOString()
-                        };
-                        Auth.setCurrentUser(loginUser);
-                        window.location.href = 'mypage.html';
+                // Kakao JS SDK - popup 방식으로 액세스 토큰 직접 획득
+                // authorize redirect 방식은 CORS로 토큰 교환 불가
+                // → SDK의 login() 팝업 방식 사용
+                Kakao.Auth.login({
+                    success: function(authObj) {
+                        Kakao.API.request({
+                            url: '/v2/user/me',
+                            success: function(res) {
+                                const kakaoAccount = res.kakao_account || {};
+                                const profile = kakaoAccount.profile || {};
+                                const loginUser = {
+                                    id: 'kakao_' + res.id,
+                                    userId: 'kakao_' + res.id,
+                                    name: profile.nickname || '카카오 사용자',
+                                    email: kakaoAccount.email || '',
+                                    phone: '',
+                                    userType: 'client',
+                                    loginType: 'kakao',
+                                    status: 'active',
+                                    createdAt: new Date().toISOString()
+                                };
+                                Auth.setCurrentUser(loginUser);
+                                window.location.href = 'mypage.html';
+                            },
+                            fail: function(err) {
+                                console.error('사용자 정보 오류:', err);
+                                const loginUser = {
+                                    id: 'kakao_' + Date.now(),
+                                    userId: 'kakao_user',
+                                    name: '카카오 사용자',
+                                    email: '',
+                                    phone: '',
+                                    userType: 'client',
+                                    loginType: 'kakao',
+                                    status: 'active',
+                                    createdAt: new Date().toISOString()
+                                };
+                                Auth.setCurrentUser(loginUser);
+                                window.location.href = 'mypage.html';
+                            }
+                        });
                     },
                     fail: function(err) {
-                        console.error('카카오 사용자 정보 오류:', err);
-                        const loginUser = {
-                            id: 'kakao_' + Date.now(),
-                            userId: 'kakao_user',
-                            name: '카카오 사용자',
-                            email: '',
-                            phone: '',
-                            userType: 'client',
-                            loginType: 'kakao',
-                            status: 'active',
-                            createdAt: new Date().toISOString()
-                        };
-                        Auth.setCurrentUser(loginUser);
-                        window.location.href = 'mypage.html';
+                        console.error('카카오 로그인 실패:', err);
+                        alert('카카오 로그인에 실패했습니다.');
                     }
                 });
             } catch (e) {
@@ -514,11 +504,40 @@
             }
         }
 
-        // 카카오 로그인 버튼 클릭
+        // 카카오 로그인 버튼 클릭 - 팝업 방식
         function kakaoLogin() {
-            Kakao.Auth.authorize({
-                redirectUri: 'https://bid-tok.kr/login.html',
-                scope: 'profile_nickname'
+            Kakao.Auth.login({
+                scope: 'profile_nickname',
+                success: function(authObj) {
+                    Kakao.API.request({
+                        url: '/v2/user/me',
+                        success: function(res) {
+                            const kakaoAccount = res.kakao_account || {};
+                            const profile = kakaoAccount.profile || {};
+                            const loginUser = {
+                                id: 'kakao_' + res.id,
+                                userId: 'kakao_' + res.id,
+                                name: profile.nickname || '카카오 사용자',
+                                email: kakaoAccount.email || '',
+                                phone: '',
+                                userType: 'client',
+                                loginType: 'kakao',
+                                status: 'active',
+                                createdAt: new Date().toISOString()
+                            };
+                            Auth.setCurrentUser(loginUser);
+                            window.location.href = 'mypage.html';
+                        },
+                        fail: function(err) {
+                            console.error('사용자 정보 오류:', err);
+                            alert('로그인 처리 중 오류가 발생했습니다.');
+                        }
+                    });
+                },
+                fail: function(err) {
+                    console.error('카카오 로그인 실패:', err);
+                    alert('카카오 로그인에 실패했습니다.');
+                }
             });
         }
         
