@@ -451,41 +451,48 @@
 
         async function handleKakaoCallback(code) {
             try {
-                // 인가코드로 액세스 토큰 요청 (Kakao JS SDK)
-                Kakao.Auth.setAccessToken(code);
+                // 인가코드 → 액세스 토큰 교환 (Kakao JS SDK)
+                const tokenRes = await fetch('https://kauth.kakao.com/oauth/token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({
+                        grant_type:   'authorization_code',
+                        client_id:    '81232cef4de694fd84c42551857c0951',
+                        redirect_uri: 'https://bid-tok.kr/login.html',
+                        code:         code
+                    })
+                });
+                const tokenData = await tokenRes.json();
 
-                // 카카오 사용자 정보 요청
+                if (!tokenData.access_token) {
+                    console.error('토큰 오류:', tokenData);
+                    alert('로그인 처리 중 오류가 발생했습니다.');
+                    return;
+                }
+
+                // 액세스 토큰으로 사용자 정보 요청
+                Kakao.Auth.setAccessToken(tokenData.access_token);
                 Kakao.API.request({
                     url: '/v2/user/me',
                     success: function(res) {
                         const kakaoAccount = res.kakao_account || {};
                         const profile = kakaoAccount.profile || {};
-                        const phone = kakaoAccount.phone_number || '';
-                        // 카카오 전화번호 형식: +82 10-xxxx-xxxx → 010-xxxx-xxxx 변환
-                        const phoneKR = phone.replace('+82 ', '0').replace(/[^0-9-]/g, '');
-
                         const loginUser = {
                             id: 'kakao_' + res.id,
                             userId: 'kakao_' + res.id,
                             name: profile.nickname || '카카오 사용자',
                             email: kakaoAccount.email || '',
-                            phone: phoneKR,
+                            phone: '',
                             userType: 'client',
                             loginType: 'kakao',
                             status: 'active',
                             createdAt: new Date().toISOString()
                         };
                         Auth.setCurrentUser(loginUser);
-
-                        // 전화번호 없으면 입력 요청
-                        if (!phoneKR) {
-                            alert('카카오 로그인 성공!\n마이페이지에서 전화번호를 입력해주세요.');
-                        }
                         window.location.href = 'mypage.html';
                     },
                     fail: function(err) {
                         console.error('카카오 사용자 정보 오류:', err);
-                        // 사용자 정보 실패해도 기본 로그인 처리
                         const loginUser = {
                             id: 'kakao_' + Date.now(),
                             userId: 'kakao_user',
@@ -498,7 +505,6 @@
                             createdAt: new Date().toISOString()
                         };
                         Auth.setCurrentUser(loginUser);
-                        alert('카카오 로그인 성공!\n마이페이지에서 전화번호를 입력해주세요.');
                         window.location.href = 'mypage.html';
                     }
                 });
