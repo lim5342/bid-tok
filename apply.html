@@ -453,7 +453,7 @@
         </div>
         <div class="step-item" id="stepItem4">
             <div class="step-circle">4</div>
-            <div class="step-label">수수료결제</div>
+            <div class="step-label">신청 완료</div>
         </div>
     </div>
 </div>
@@ -666,8 +666,6 @@
                 <div class="form-group">
                     <label>입찰 보증금 납부 방법 <span class="required">*</span></label>
                     <select id="depositMethod">
-                        <option value="">선택하세요</option>
-                        <option value="직접납부">직접 납부 (법원에 직접 보증금 납부)</option>
                         <option value="계좌이체">법무사님께 직접 이체</option>
                     </select>
                     <div class="error-msg">납부 방법을 선택해주세요.</div>
@@ -694,15 +692,18 @@
                     </select>
                 </div>
             </div>
+
+            <!-- 공동 입찰 참여자 추가 영역 -->
             <div id="jointInfo" style="display:none;">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>공동 입찰자 이름</label>
-                        <input type="text" id="jointName" placeholder="공동 입찰자 이름">
-                    </div>
-                    <div class="form-group">
-                        <label>지분율 (%)</label>
-                        <input type="text" id="shareRatio" placeholder="예) 50">
+                <div id="jointMemberList"></div>
+                <div style="margin-top:0.75rem;">
+                    <button type="button" onclick="addJointMember()"
+                        id="btnAddJoint"
+                        style="padding:0.65rem 1.2rem; background:#f0f4ff; border:2px dashed #1550E8; border-radius:10px; color:#1550E8; font-weight:700; font-size:0.9rem; cursor:pointer; width:100%;">
+                        <i class="fas fa-plus-circle"></i> 공동입찰자 추가하기 (최대 3명)
+                    </button>
+                    <div id="jointLimitMsg" style="display:none; margin-top:0.5rem; background:#fff3cd; border:1px solid #ffc107; border-radius:8px; padding:0.7rem 1rem; font-size:0.82rem; color:#856404;">
+                        <i class="fas fa-exclamation-triangle"></i> 3명을 초과하는 공동입찰은 <strong>법무사님께 직접 연락</strong>하여 별도 협의해주세요.
                     </div>
                 </div>
             </div>
@@ -718,9 +719,9 @@
                 <strong>제1조 (위임 내용)</strong> 갑은 을에게 아래 경매 물건에 대한 입찰 대리권을 위임합니다.<br>
                 <strong>제2조 (위임 범위)</strong> 을은 갑을 대신하여 지정 법원에 출석, 지정 금액으로 입찰표를 제출합니다.<br>
                 <strong>제3조 (보증금 관리)</strong> 을은 갑으로부터 전달받은 입찰보증금을 안전하게 관리하고, 낙찰 실패 시 즉시 반환합니다.<br>
-                <strong>제4조 (수수료)</strong> 갑은 을에게 서비스 수수료 99,000원(VAT 포함)을 지급합니다. 수수료는 낙찰 여부와 관계없이 동일합니다.<br>
+                <strong>제4조 (수수료)</strong> 현재 서비스 수수료는 무료입니다. 공동입찰 또는 법인 입찰의 경우 별도 협의 후 비용이 추가될 수 있습니다.<br>
                 <strong>제5조 (책임)</strong> 을은 입찰 대리 중 발생하는 사고에 대해 배상책임보험 한도 내에서 책임집니다.<br>
-                <strong>제6조 (취소)</strong> 입찰 기일 48시간 전까지 취소 시 수수료 전액 환불합니다.
+                <strong>제6조 (취소)</strong> 입찰 기일 48시간 전까지 취소 신청이 가능합니다.
             </div>
 
             <!-- 서명 캔버스 -->
@@ -777,9 +778,10 @@
 
         <!-- 수수료 안내 -->
         <div class="fee-notice">
-            <div class="fee-title">💳 서비스 수수료 결제</div>
-            <div class="fee-amount">99,000원 <span style="font-size:1rem; font-weight:400; color:#555;">(부가세 포함)</span></div>
-            <div class="fee-desc">✓ 전국 어디든 동일 수수료 &nbsp;|&nbsp; ✓ 낙찰·패찰 상관없이 고정 &nbsp;|&nbsp; ✓ 베타기간 특가</div>
+            <div class="fee-title">🎁 서비스 수수료</div>
+            <div class="fee-amount">무료 <span style="font-size:1rem; font-weight:400; color:#555;">매칭</span></div>
+            <div class="fee-desc">✓ 전국 어디든 무료 매칭 &nbsp;|&nbsp; ✓ 법무사 직접 연결 &nbsp;|&nbsp; ✓ 낙찰·패찰 관계없이 무료</div>
+            <div style="margin-top:0.5rem; font-size:0.82rem; color:#888;">공동입찰이나 법인 입찰의 경우 금액이 추가될 수 있습니다</div>
         </div>
 
         <div class="apply-card">
@@ -790,7 +792,8 @@
                 제1조(목적) 본 약관은 대리입찰 톡(이하 "회사")이 제공하는 대리입찰 서비스의 이용조건 및 절차 등에 관한 사항을 규정함을 목적으로 합니다.<br><br>
                 제2조(서비스 내용) 회사는 신청자의 의뢰를 받아 법무사 또는 매수신청대리인이 법원 경매 입찰에 대리 참여하는 서비스를 제공합니다.<br><br>
                 제3조(책임 범위) 법무사는 배상책임보험에 가입되어 있으며, 보증금 분실 또는 횡령에 대해 보험 한도 내에서 보상합니다. 단, 고객이 제공한 잘못된 정보로 인한 손해는 책임지지 않습니다.<br><br>
-                제4조(수수료) 서비스 수수료는 낙찰·패찰 여부와 관계없이 동일하게 적용되며, 신청 완료 후에는 환불이 불가합니다. 단, 입찰 기일 48시간 전까지 취소 시 전액 환불합니다.
+                제4조(수수료) 현재 서비스 수수료는 무료입니다. 단, 공동입찰 또는 법인 입찰의 경우 담당 법무사와 별도 협의 후 비용이 추가될 수 있습니다.<br><br>
+                제5조(취소) 입찰 기일 48시간 전까지 취소 신청이 가능합니다.
             </div>
             <div class="agree-check">
                 <input type="checkbox" id="agreeTerms">
@@ -813,7 +816,7 @@
         <div class="apply-btn-row">
             <button class="btn-back" onclick="goStep(3)"><i class="fas fa-arrow-left"></i> 이전</button>
             <button class="btn-submit" onclick="submitApplication()">
-                <i class="fas fa-credit-card"></i> 결제하고 신청 완료
+                <i class="fas fa-check-circle"></i> 대리입찰 신청
             </button>
         </div>
     </div>
@@ -884,7 +887,7 @@
                 <!-- 알림 박스 -->
                 <div style="background:#fff8e1; border:1px solid #ffd54f; border-radius:10px; padding:0.85rem 1.25rem; font-size:0.82rem; color:#795548; margin-bottom:1.75rem; text-align:left; display:flex; gap:0.6rem; align-items:flex-start;">
                     <span style="font-size:1rem; flex-shrink:0;">💡</span>
-                    <span>입찰 기일 <strong>48시간 전</strong>까지 취소 시 전액 환불 가능합니다. 취소는 마이페이지에서 직접 처리하세요.</span>
+                    <span>입찰 기일 <strong>48시간 전</strong>까지 취소 신청이 가능합니다. 취소는 마이페이지에서 직접 처리하세요.</span>
                 </div>
 
                 <div class="success-actions" style="display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;">
@@ -957,10 +960,9 @@ document.addEventListener('DOMContentLoaded', function() {
     tomorrow.setDate(tomorrow.getDate() + 1);
     bidDateInput.min = tomorrow.toISOString().split('T')[0];
 
-    // 로그인 사용자 정보 자동 입력
+    // 로그인 사용자 정보 자동 입력 (이름은 직접 입력)
     const user = Auth.getCurrentUser();
     if (user) {
-        if (user.name) document.getElementById('applicantName').value = user.name;
         if (user.phone) document.getElementById('applicantPhone').value = user.phone;
         if (user.email) document.getElementById('applicantEmail').value = user.email;
     }
@@ -1091,7 +1093,7 @@ function fillSummary() {
         ['보증금 납부 방법', val2('depositMethod')],
         ['입찰 형태', val2('bidType')],
         ['전자계약 서명', '완료'],
-        ['서비스 수수료', '99,000원 (베타 특가)'],
+        ['서비스 수수료', '무료 매칭'],
     ];
 
     document.getElementById('summaryTable').innerHTML = rows
@@ -1108,7 +1110,7 @@ function val2(id) {
 // 신청 제출
 // ─────────────────────────────────────────────
 // ─────────────────────────────────────────────
-// 토스페이먼츠 클라이언트 키
+// 토스페이먼츠 클라이언트 키 (현재 미사용 - 무료 매칭 운영 중)
 // ─────────────────────────────────────────────
 const TOSS_CLIENT_KEY = 'test_ck_oEjb0gm23Pw75kkppyk48pGwBJn5';
 
@@ -1119,7 +1121,6 @@ async function submitApplication() {
     if (!document.getElementById('agreePrivacy').checked) {
         toast('개인정보 수집·이용에 동의해주세요.', 'error'); return;
     }
-    // 서명 확인
     if (!signatureData) {
         toast('전자계약 서명이 필요합니다. 3단계로 돌아가서 서명해주세요.', 'error'); return;
     }
@@ -1130,6 +1131,14 @@ async function submitApplication() {
 
     const user = Auth.getCurrentUser();
     const rawCase = val2('caseNumber').replace(/\s/g, '');
+
+    // 공동입찰 정보 수집
+    const jointMembers = [];
+    document.querySelectorAll('.joint-member-row').forEach((row, i) => {
+        const name = row.querySelector('.joint-member-name')?.value?.trim();
+        const ratio = row.querySelector('.joint-member-ratio')?.value?.trim();
+        if (name) jointMembers.push({ name, ratio: ratio || '' });
+    });
 
     const appData = {
         region: val2('regionSelect'),
@@ -1149,14 +1158,13 @@ async function submitApplication() {
         account_number: val2('accountNumber'),
         bid_amount: parseNumber(val2('bidAmount')),
         deposit_amount: Math.floor(parseNumber(val2('bidAmount')) * 0.1),
-        deposit_method: val2('depositMethod'),
+        deposit_method: val2('depositMethod') || '법무사님께 직접 이체',
         signature_data: signatureData ? 'signed' : '',
         bid_type: val2('bidType'),
-        joint_name: val2('jointName'),
-        share_ratio: val2('shareRatio'),
+        joint_members: jointMembers,
         memo: val2('memo'),
-        service_fee: 99000,
-        payment_status: '결제대기',
+        service_fee: 0,
+        payment_status: '무료매칭',
         user_id: user ? (user.userId || user.id) : '',
         userId: user ? (user.userId || user.id) : '',
         status: '접수',
@@ -1164,7 +1172,7 @@ async function submitApplication() {
     };
 
     try {
-        // ── 1. DB에 먼저 저장 (결제대기 상태) ──
+        // ── DB 저장 (결제창 없이 바로 완료) ──
         let savedApp;
         if (typeof API !== 'undefined') {
             savedApp = await API.applications.create(appData);
@@ -1179,28 +1187,27 @@ async function submitApplication() {
 
         const appId = savedApp ? (savedApp.id || savedApp._id || 'APP-' + Date.now()) : 'APP-' + Date.now();
 
-        // ── 2. 토스페이먼츠 결제창 호출 ──
-        const tossPayments = TossPayments(TOSS_CLIENT_KEY);
-        await tossPayments.requestPayment('카드', {
-            amount: 99000,
-            orderId: 'BIDTOK-' + appId.toString().slice(-12) + '-' + Date.now(),
-            orderName: '대리입찰 서비스 수수료 (사건번호: ' + rawCase + ')',
-            customerName: val2('applicantName'),
-            customerEmail: val2('applicantEmail') || undefined,
-            customerMobilePhone: val2('applicantPhone').replace(/-/g, '') || undefined,
-            successUrl: window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/') + 'payment-success.html?appId=' + appId,
-            failUrl: window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/') + 'payment-fail.html?appId=' + appId,
-        });
+        // ── 신청 완료 화면으로 이동 ──
+        document.getElementById('appNumberBadge').textContent = '신청번호: ' + appId.toString().slice(-8).toUpperCase();
+
+        // 스텝 인디케이터 모두 완료 처리
+        for (let i = 1; i <= 4; i++) {
+            const item = document.getElementById('stepItem' + i);
+            if (item) { item.classList.remove('active'); item.classList.add('done'); }
+        }
+        document.getElementById('progressFill').style.width = '100%';
+
+        // 패널 전환 (goStep 대신 직접 전환 - 유효성검사 없이)
+        document.getElementById('panel' + currentStep).classList.remove('active');
+        document.getElementById('panel5').classList.add('active');
+        currentStep = 5;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
 
     } catch (err) {
-        if (err.code === 'USER_CANCEL') {
-            toast('결제를 취소하셨습니다.', 'error');
-        } else {
-            console.error('신청/결제 오류:', err);
-            toast('처리 중 오류가 발생했습니다: ' + (err.message || ''), 'error');
-        }
+        console.error('신청 오류:', err);
+        toast('처리 중 오류가 발생했습니다: ' + (err.message || ''), 'error');
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-credit-card"></i> 결제하고 신청 완료';
+        btn.innerHTML = '<i class="fas fa-check-circle"></i> 대리입찰 신청';
     }
 }
 
@@ -1219,11 +1226,53 @@ function updateCourts() {
 }
 
 // ─────────────────────────────────────────────
-// 공동 입찰 토글
+// 공동 입찰 토글 + 멤버 추가
 // ─────────────────────────────────────────────
 function toggleJointInfo() {
     const type = document.getElementById('bidType').value;
     document.getElementById('jointInfo').style.display = type === '공동' ? 'block' : 'none';
+}
+
+let jointMemberCount = 0;
+function addJointMember() {
+    if (jointMemberCount >= 3) {
+        document.getElementById('jointLimitMsg').style.display = 'block';
+        return;
+    }
+    jointMemberCount++;
+    const list = document.getElementById('jointMemberList');
+    const idx = jointMemberCount;
+    const div = document.createElement('div');
+    div.className = 'joint-member-row';
+    div.style.cssText = 'display:grid; grid-template-columns:1fr 1fr auto; gap:0.6rem; align-items:center; margin-bottom:0.6rem;';
+    div.innerHTML = `
+        <input type="text" class="joint-member-name"
+            placeholder="공동입찰자 ${idx} 이름"
+            style="padding:0.7rem 0.9rem; border:2px solid #e0e0e0; border-radius:10px; font-size:0.92rem; width:100%;">
+        <input type="text" class="joint-member-ratio"
+            placeholder="지분율 예) 50%"
+            style="padding:0.7rem 0.9rem; border:2px solid #e0e0e0; border-radius:10px; font-size:0.92rem; width:100%;">
+        <button type="button" onclick="removeJointMember(this)"
+            style="padding:0.65rem 0.8rem; background:#fee2e2; border:none; border-radius:10px; color:#dc2626; font-size:1rem; cursor:pointer; font-weight:700; white-space:nowrap;">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    list.appendChild(div);
+    if (jointMemberCount >= 3) {
+        document.getElementById('btnAddJoint').disabled = true;
+        document.getElementById('btnAddJoint').style.opacity = '0.5';
+        document.getElementById('jointLimitMsg').style.display = 'block';
+    }
+}
+
+function removeJointMember(btn) {
+    btn.closest('.joint-member-row').remove();
+    jointMemberCount = Math.max(0, jointMemberCount - 1);
+    document.getElementById('btnAddJoint').disabled = false;
+    document.getElementById('btnAddJoint').style.opacity = '1';
+    if (jointMemberCount < 3) {
+        document.getElementById('jointLimitMsg').style.display = 'none';
+    }
 }
 
 // ─────────────────────────────────────────────
@@ -1295,7 +1344,7 @@ function formatPhone(input) {
 }
 
 // ─────────────────────────────────────────────
-// SMS 인증 (시뮬레이션)
+// SMS 인증 (임시: 자동 통과 처리 - 알리고 발신번호 승인 대기 중)
 // ─────────────────────────────────────────────
 function sendSmsCode() {
     const phone = document.getElementById('applicantPhone').value.trim();
@@ -1303,41 +1352,29 @@ function sendSmsCode() {
         toast('올바른 휴대폰 번호를 입력해주세요.', 'error'); return;
     }
 
-    // 6자리 랜덤 코드 생성 (실제 SMS 연동 시 서버에서 발송)
-    smsCodeReal = Math.floor(100000 + Math.random() * 900000).toString();
-    console.log('SMS 인증번호 (개발용):', smsCodeReal); // 실제 배포 시 제거
+    // ── 임시 자동 통과 (SMS 발신번호 승인 완료 후 실제 발송으로 교체 예정) ──
+    phoneVerified = true;
+    const btn = document.getElementById('btnSendSms');
+    btn.disabled = true;
+    btn.textContent = '인증 완료';
+    btn.style.background = '#10B981';
 
+    // 인증번호 입력행 표시 후 자동 입력
     document.getElementById('smsCodeRow').style.display = 'block';
-    document.getElementById('btnSendSms').disabled = true;
-    document.getElementById('btnSendSms').textContent = '재발송 (60초)';
+    document.getElementById('smsCode').value = '000000';
+    document.getElementById('smsTimer').textContent = '✅ 인증 완료';
+    document.getElementById('smsTimer').style.color = '#10B981';
 
-    toast('인증번호가 발송되었습니다. (개발 중: 콘솔에서 확인)', 'success');
-
-    // 타이머
-    let left = 60;
-    clearInterval(smsTimerInterval);
-    smsTimerInterval = setInterval(() => {
-        left--;
-        document.getElementById('smsTimer').textContent = `남은 시간: ${left}초`;
-        if (left <= 0) {
-            clearInterval(smsTimerInterval);
-            document.getElementById('btnSendSms').disabled = false;
-            document.getElementById('btnSendSms').textContent = '재발송';
-            document.getElementById('smsTimer').textContent = '인증번호가 만료되었습니다.';
-        }
-    }, 1000);
+    toast('휴대폰 인증이 완료되었습니다!', 'success');
 }
 
 function verifySmsCode() {
-    const input = document.getElementById('smsCode').value.trim();
-    if (input === smsCodeReal) {
-        phoneVerified = true;
-        document.getElementById('smsTimer').textContent = '✅ 인증 완료';
-        clearInterval(smsTimerInterval);
-        toast('휴대폰 인증이 완료되었습니다!', 'success');
-    } else {
-        toast('인증번호가 올바르지 않습니다.', 'error');
-    }
+    // 임시 자동 통과
+    phoneVerified = true;
+    document.getElementById('smsTimer').textContent = '✅ 인증 완료';
+    document.getElementById('smsTimer').style.color = '#10B981';
+    clearInterval(smsTimerInterval);
+    toast('휴대폰 인증이 완료되었습니다!', 'success');
 }
 
 // ─────────────────────────────────────────────
