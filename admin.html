@@ -1372,7 +1372,7 @@ function renderAppTable(apps) {
                 ? `<span style="color:#22c55e;font-weight:600;font-size:0.85rem;">${a.expert_name}</span>`
                 : '<span style="color:#ccc;font-size:0.82rem;">미배정</span>'}</td>
             <td>${badge(a.payment_status || '결제대기')}
-                ${isCancelReq ? '<br><button onclick="processCardCancel(''+a.id+'')" style="margin-top:4px;font-size:0.72rem;padding:2px 8px;background:#ef4444;color:#fff;border:none;border-radius:4px;cursor:pointer;font-weight:700;"><i class=\"fas fa-credit-card\"></i> 카드취소</button>' : ''}</td>
+                ${isCancelReq ? `<br><button onclick="processCardCancel('${a.id}')" style="margin-top:4px;font-size:0.72rem;padding:2px 8px;background:#ef4444;color:#fff;border:none;border-radius:4px;cursor:pointer;font-weight:700;"><i class="fas fa-credit-card"></i> 카드취소</button>` : ''}</td>
             <td>
                 <select class="status-select" onchange="changeStatus('${a.id}', this.value, this)">
                     ${['접수','결제대기','결제완료','매칭중','매칭완료','진행중','완료','낙찰','유찰','취소']
@@ -2020,7 +2020,7 @@ async function openUserDetail(id) {
             const cancelReqs = apps.filter(a => a.payment_cancel_requested && a.payment_status === '취소신청');
             if (cancelReqs.length > 0) {
                 cancelPendingRows = '<tr><td colspan="2" style="background:#fff8e1;font-weight:700;color:#92400e;padding:0.6rem 0.75rem;">⚠️ 결제취소 신청 대기 (' + cancelReqs.length + '건)</td></tr>'
-                + cancelReqs.map(app => '<tr style="background:#fffbeb;"><td style="font-size:0.8rem;">' + (app.case_number||'-') + ' · ' + fmtDate(app.payment_cancel_requested_at) + '</td><td><button onclick="processCardCancel('' + app.id + '')" style="font-size:0.78rem;padding:0.3rem 0.75rem;background:#ef4444;color:white;border:none;border-radius:6px;cursor:pointer;font-weight:700;"><i class="fas fa-credit-card"></i> 카드취소 처리</button></td></tr>').join('');
+                + cancelReqs.map(app => `<tr style="background:#fffbeb;"><td style="font-size:0.8rem;">${app.case_number||'-'} · ${fmtDate(app.payment_cancel_requested_at)}</td><td><button onclick="processCardCancel('${app.id}')" style="font-size:0.78rem;padding:0.3rem 0.75rem;background:#ef4444;color:white;border:none;border-radius:6px;cursor:pointer;font-weight:700;"><i class="fas fa-credit-card"></i> 카드취소 처리</button></td></tr>`).join('');
             }
 
             if (apps.length > 0) {
@@ -2031,7 +2031,7 @@ async function openUserDetail(id) {
                         : (app.status==='유찰'||app.result==='fail') ? '<span style="color:#9ca3af;">패찰</span>'
                         : '<span style="color:#667eea;">' + (app.status||'-') + '</span>';
                     const cBtn = (app.payment_cancel_requested && app.payment_status === '취소신청')
-                        ? '<button onclick="processCardCancel('' + app.id + '')" style="font-size:0.7rem;padding:0.2rem 0.5rem;background:#fee2e2;color:#ef4444;border:none;border-radius:4px;cursor:pointer;margin-left:4px;">카드취소</button>' : '';
+                        ? `<button onclick="processCardCancel('${app.id}')" style="font-size:0.7rem;padding:0.2rem 0.5rem;background:#fee2e2;color:#ef4444;border:none;border-radius:4px;cursor:pointer;margin-left:4px;">카드취소</button>` : '';
                     return '<tr><td style="font-size:0.8rem;color:#666;">' + (app.case_number||'-') + ' · ' + (app.bid_date||'-').slice(0,10) + '</td><td style="font-size:0.8rem;">' + statusTxt + cBtn + '</td></tr>';
                 }).join('')
                 + (apps.length > 8 ? '<tr><td colspan="2" style="font-size:0.78rem;color:#aaa;text-align:center;">... 외 ' + (apps.length-8) + '건</td></tr>' : '');
@@ -2042,7 +2042,7 @@ async function openUserDetail(id) {
         const isNormalLogin = !u.loginType || u.loginType === '일반';
         const pwContent = (u.userType === 'client' && isNormalLogin && u.password)
             ? '<span id="pwDisplay_' + u.id + '" style="letter-spacing:0.1em;color:#667eea;font-weight:700;font-family:monospace;">••••••••</span>'
-              + '<button onclick="togglePwDisplay('' + u.id + '','' + (u.password||'').replace(/'/g, '\\'+''') + '')" style="margin-left:8px;font-size:0.72rem;padding:0.2rem 0.5rem;background:#f0f4ff;color:#667eea;border:1px solid #c7d2fe;border-radius:4px;cursor:pointer;"><i class="fas fa-eye"></i> 보기</button>'
+              + `<button onclick="togglePwDisplay('${u.id}', '${(u.password||'').replace(/'/g, "\\'")}')" style="margin-left:8px;font-size:0.72rem;padding:0.2rem 0.5rem;background:#f0f4ff;color:#667eea;border:1px solid #c7d2fe;border-radius:4px;cursor:pointer;"><i class="fas fa-eye"></i> 보기</button>`
             : (u.userType === 'client' && isNormalLogin ? '-' : '<span style="color:#aaa;font-size:0.82rem;">소셜로그인 (없음)</span>');
 
         document.getElementById('modalUserBody').innerHTML = '<table class="detail-table">'
@@ -2071,17 +2071,19 @@ async function openUserDetail(id) {
             + '</table>';
 
         // ── 하단 버튼 ──
-        let footBtns = '<button class="btn-full" onclick="closeModal('modalUser')" style="background:#f0f2f5;color:#666;">닫기</button>';
+        const uId = u.id;
+        const uName = (u.name||'').replace(/'/g,'');
+        let footBtns = `<button class="btn-full" onclick="closeModal('modalUser')" style="background:#f0f2f5;color:#666;">닫기</button>`;
         if (u.status === 'blocked') {
-            footBtns += '<button class="btn-full" onclick="closeModal('modalUser');unblockUser('' + u.id + '','' + (u.name||'').replace(/'/g,'') + '')" style="background:#22c55e;color:white;">✅ 정지 해제</button>';
+            footBtns += `<button class="btn-full" onclick="closeModal('modalUser');unblockUser('${uId}','${uName}')" style="background:#22c55e;color:white;">✅ 정지 해제</button>`;
         } else if (u.status !== 'withdrawn') {
-            footBtns += '<button class="btn-full" onclick="closeModal('modalUser');blockUser('' + u.id + '','' + (u.name||'').replace(/'/g,'') + '')" style="background:#f97316;color:white;"><i class="fas fa-ban"></i> 정지</button>';
+            footBtns += `<button class="btn-full" onclick="closeModal('modalUser');blockUser('${uId}','${uName}')" style="background:#f97316;color:white;"><i class="fas fa-ban"></i> 정지</button>`;
         }
         if (u.status !== 'withdrawn') {
-            footBtns += '<button class="btn-full" onclick="closeModal('modalUser');withdrawUser('' + u.id + '','' + (u.name||'').replace(/'/g,'') + '')" style="background:#ef4444;color:white;"><i class="fas fa-user-times"></i> 강제 탈퇴</button>';
+            footBtns += `<button class="btn-full" onclick="closeModal('modalUser');withdrawUser('${uId}','${uName}')" style="background:#ef4444;color:white;"><i class="fas fa-user-times"></i> 강제 탈퇴</button>`;
         }
         if (u.userType === 'expert' && (u.cancelCount||0) > 0) {
-            footBtns += '<button class="btn-full" onclick="closeModal('modalUser');resetCancelCount('' + u.id + '','' + (u.name||'').replace(/'/g,'') + '')" style="background:#3b82f6;color:white;"><i class="fas fa-redo"></i> 취소횟수 초기화</button>';
+            footBtns += `<button class="btn-full" onclick="closeModal('modalUser');resetCancelCount('${uId}','${uName}')" style="background:#3b82f6;color:white;"><i class="fas fa-redo"></i> 취소횟수 초기화</button>`;
         }
         document.getElementById('modalUserFoot').innerHTML = footBtns;
 
