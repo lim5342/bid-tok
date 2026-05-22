@@ -196,8 +196,29 @@ const Auth = {
         const user = this.getCurrentUser();
         if (!user) return { success: false, message: '로그인이 필요합니다.' };
         try {
-            if (typeof API !== 'undefined' && user.id && !user.id.startsWith('dev_') && !user.id.startsWith('temp_')) {
-                await API.users.update(user.id, updates);
+            const isDevOrTemp = user.id && (user.id.startsWith('dev_') || user.id.startsWith('temp_'));
+            const isSocialUser = user.loginType === 'kakao' || user.loginType === 'naver';
+
+            if (typeof API !== 'undefined' && user.id && !isDevOrTemp) {
+                if (isSocialUser) {
+                    // 소셜 로그인 사용자: DB에 없을 수 있으므로 upsert 방식 처리
+                    try {
+                        // 기존 유저 조회
+                        const res = await API.users.getAll(`userId=${user.userId}&limit=1`);
+                        const existing = res?.data?.length > 0 ? res.data[0] : null;
+                        if (existing) {
+                            await API.users.update(existing.id, updates);
+                        } else {
+                            // DB에 없으면 신규 생성
+                            const newUser = { ...user, ...updates };
+                            await API.users.create(newUser);
+                        }
+                    } catch (e) {
+                        console.warn('소셜 사용자 DB 저장 시도 실패 (로컬 저장으로 대체):', e);
+                    }
+                } else {
+                    await API.users.update(user.id, updates);
+                }
             }
             this.updateUserInfo(updates);
             return { success: true };
