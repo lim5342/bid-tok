@@ -449,63 +449,15 @@
             }
         }
 
+        // 카카오 redirect 콜백 처리 (code 파라미터가 있는 경우 - 미사용)
         async function handleKakaoCallback(code) {
-            try {
-                // Kakao JS SDK - popup 방식으로 액세스 토큰 직접 획득
-                // authorize redirect 방식은 CORS로 토큰 교환 불가
-                // → SDK의 login() 팝업 방식 사용
-                Kakao.Auth.login({
-                    success: function(authObj) {
-                        Kakao.API.request({
-                            url: '/v2/user/me',
-                            success: function(res) {
-                                const kakaoAccount = res.kakao_account || {};
-                                const profile = kakaoAccount.profile || {};
-                                const loginUser = {
-                                    id: 'kakao_' + res.id,
-                                    userId: 'kakao_' + res.id,
-                                    name: profile.nickname || '카카오 사용자',
-                                    email: kakaoAccount.email || '',
-                                    phone: '',
-                                    userType: 'client',
-                                    loginType: 'kakao',
-                                    status: 'active',
-                                    createdAt: new Date().toISOString()
-                                };
-                                Auth.setCurrentUser(loginUser);
-                                window.location.href = 'mypage.html';
-                            },
-                            fail: function(err) {
-                                console.error('사용자 정보 오류:', err);
-                                const loginUser = {
-                                    id: 'kakao_' + Date.now(),
-                                    userId: 'kakao_user',
-                                    name: '카카오 사용자',
-                                    email: '',
-                                    phone: '',
-                                    userType: 'client',
-                                    loginType: 'kakao',
-                                    status: 'active',
-                                    createdAt: new Date().toISOString()
-                                };
-                                Auth.setCurrentUser(loginUser);
-                                window.location.href = 'mypage.html';
-                            }
-                        });
-                    },
-                    fail: function(err) {
-                        console.error('카카오 로그인 실패:', err);
-                        alert('카카오 로그인에 실패했습니다.');
-                    }
-                });
-            } catch (e) {
-                console.error('카카오 콜백 처리 오류:', e);
-                alert('로그인 처리 중 오류가 발생했습니다.');
-            }
+            // authorize redirect 방식은 사용 안 함 - kakaoLogin() 팝업 방식 사용
+            console.log('카카오 콜백 무시 (code:', code, ')');
         }
 
         // 카카오 로그인 버튼 클릭 - 팝업 방식
         function kakaoLogin() {
+            console.log('카카오 로그인 시작, SDK 초기화 여부:', Kakao.isInitialized());
             Kakao.Auth.login({
                 scope: 'profile_nickname',
                 success: function(authObj) {
