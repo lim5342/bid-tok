@@ -148,7 +148,7 @@
                         </div>
                         <div class="form-group">
                             <label>이메일</label>
-                            <input type="email" id="profileEmailInput" disabled>
+                            <input type="email" id="profileEmailInput" placeholder="이메일 주소">
                         </div>
                         <div class="form-group">
                             <label>이름</label>
@@ -674,6 +674,7 @@
 
             const updates = {
                 name: document.getElementById('profileNameInput').value,
+                email: document.getElementById('profileEmailInput').value,
                 phone: document.getElementById('profilePhone').value
             };
             if (newPassword) updates.password = newPassword;
