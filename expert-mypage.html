@@ -270,7 +270,26 @@
                     return;
                 }
 
-                listContainer.innerHTML = data.map(req => {
+                // 법무사 취소 횟수 경고 메시지 표시
+                const cancelCount = user.cancelCount || 0;
+                const pendingContainer = document.getElementById('requestsList');
+                let warningHtml = '';
+                if (cancelCount > 0) {
+                    const remaining = 3 - cancelCount;
+                    warningHtml = `
+                    <div style="background:#fffbeb;border:1.5px solid #f59e0b;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1rem;display:flex;align-items:flex-start;gap:0.75rem;">
+                        <i class="fas fa-exclamation-triangle" style="color:#f59e0b;margin-top:2px;"></i>
+                        <div>
+                            <p style="font-weight:700;color:#92400e;margin:0 0 0.25rem;">⚠️ 승인 후 취소 경고 (${cancelCount}/3회)</p>
+                            <p style="font-size:0.83rem;color:#78350f;margin:0;line-height:1.6;">
+                                승인 후 취소 시 낙찰가(개인정보)가 이미 공개된 상태입니다. 개인정보 보호 정책에 따라 <strong>3회 이상 승인 취소 시 계정이 자동 정지</strong>됩니다.
+                                ${remaining > 0 ? `앞으로 <strong>${remaining}회</strong> 더 취소 시 계정이 정지됩니다.` : ''}
+                            </p>
+                        </div>
+                    </div>`;
+                }
+
+                listContainer.innerHTML = warningHtml + data.map(req => {
                     const bidDateMs = req.bid_date ? new Date(req.bid_date).getTime() - Date.now() : 0;
                     const remainSec = Math.floor(bidDateMs / 1000);
                     const isUrgent = remainSec > 0 && remainSec < 900;
@@ -288,17 +307,23 @@
                             <span class="bid-date">입찰일: ${req.bid_date || '-'}</span>
                         </div>
                         <div class="card-body">
-                            <p class="address"><i class="fas fa-map-marker-alt"></i> ${req.address || req.court || '-'}</p>
+                            <p class="address"><i class="fas fa-map-marker-alt"></i> ${req.address || '-'}</p>
+                            <p><i class="fas fa-university" style="color:#667eea;margin-right:4px;"></i><strong>법원:</strong> ${req.court || '-'}</p>
                             <p class="client-info"><i class="fas fa-user"></i> 신청자: ${req.applicant_name || '-'}</p>
-                            <div class="price-info">
+                            <div class="price-info" style="margin-top:0.75rem;">
                                 <div>
                                     <span class="label">감정가</span>
                                     <span class="value">${formatPrice(req.appraisal_price)}원</span>
                                 </div>
                                 <div>
-                                    <span class="label">입찰가</span>
-                                    <span class="value highlight">${formatPrice(req.bid_amount)}원</span>
+                                    <span class="label">낙찰가</span>
+                                    <span class="value" style="color:#999;font-style:italic;">
+                                        <i class="fas fa-lock" style="font-size:0.75rem;"></i> 승인 후 공개
+                                    </span>
                                 </div>
+                            </div>
+                            <div style="margin-top:0.75rem;padding:0.65rem 0.9rem;background:#fff8e1;border-radius:8px;border-left:3px solid #f59e0b;font-size:0.82rem;color:#78350f;">
+                                <i class="fas fa-info-circle"></i> 낙찰가는 <strong>승인 버튼을 누른 후</strong> 공개됩니다. 승인 후 취소 3회 시 계정이 정지됩니다.
                             </div>
                             <p style="color:#666;font-size:0.88rem;margin-top:0.5rem;">
                                 <i class="fas fa-clock"></i> 요청: ${req.assigned_at ? req.assigned_at.slice(0,16).replace('T',' ') : '-'}
@@ -306,7 +331,7 @@
                         </div>
                         <div class="card-footer">
                             <button class="btn btn-success" onclick="acceptRequest('${req.id}')">
-                                <i class="fas fa-check"></i> 수락하기
+                                <i class="fas fa-check"></i> 승인 (낙찰가 공개)
                             </button>
                             <button class="btn btn-outline" onclick="rejectRequest('${req.id}')">
                                 <i class="fas fa-times"></i> 거부하기
@@ -333,6 +358,9 @@
                     return;
                 }
 
+                const cancelCount = user.cancelCount || 0;
+                const remainCancels = Math.max(0, 3 - cancelCount);
+
                 listContainer.innerHTML = data.map(item => `
                     <div class="application-card">
                         <div class="card-header">
@@ -344,6 +372,7 @@
                         </div>
                         <div class="card-body">
                             <p class="address"><i class="fas fa-map-marker-alt"></i> ${item.address || item.court || '-'}</p>
+                            <p><i class="fas fa-university" style="color:#667eea;margin-right:4px;"></i><strong>법원:</strong> ${item.court || '-'}</p>
                             <p class="client-info"><i class="fas fa-user"></i> 신청자: ${item.applicant_name || '-'}</p>
                             <div class="price-info">
                                 <div>
@@ -351,7 +380,7 @@
                                     <span class="value">${formatPrice(item.appraisal_price)}원</span>
                                 </div>
                                 <div>
-                                    <span class="label">입찰가</span>
+                                    <span class="label">낙찰가 (공개됨)</span>
                                     <span class="value highlight">${formatPrice(item.bid_amount)}원</span>
                                 </div>
                             </div>
@@ -359,6 +388,9 @@
                         <div class="card-footer">
                             <button class="btn btn-outline" onclick="viewDetail('${item.id}')">상세보기</button>
                             <button class="btn btn-primary" onclick="updateStatus('${item.id}')">결과 입력</button>
+                            <button class="btn btn-danger" onclick="cancelAfterAccept('${item.id}')" title="취소 ${cancelCount}/3회 (${remainCancels}회 남음)" style="font-size:0.82rem;">
+                                <i class="fas fa-ban"></i> 취소 (${cancelCount}/3)
+                            </button>
                         </div>
                     </div>`).join('');
             } catch (err) {
@@ -469,18 +501,31 @@
             }
         }
 
-        // ── 수락 / 거부 (실제 API) ─────────────────────────────
+        // ── 수락(승인) / 거부 (실제 API) ─────────────────────────────
         async function acceptRequest(id) {
-            if (!confirm('이 요청을 수락하시겠습니까?')) return;
+            // 낙찰가 공개 안내
+            if (!confirm('승인하시면 낙찰가(개인정보)가 공개됩니다.\n승인 후 취소 3회 시 계정이 자동 정지됩니다.\n\n이 요청을 승인하시겠습니까?')) return;
             try {
+                // 낙찰가 공개 처리 → status 진행중으로 변경
+                const db = getDB ? getDB() : firebase.firestore();
+                const appDoc = await db.collection('applications').doc(id).get();
+                const appData = appDoc.data();
+                const bidAmountRevealed = appData ? appData.bid_amount : null;
+
                 await API.applications.updateStatus(id, '진행중', {
                     acceptedAt: new Date().toISOString(),
                     expertId: user.userId || user.id,
-                    expertName: user.name
+                    expertName: user.name,
+                    bid_amount_revealed: true  // 낙찰가 공개 플래그
                 });
-                alert('수락되었습니다. 신청자에게 알림이 발송됩니다.');
+
+                // 낙찰가 공개 알림
+                const bidStr = bidAmountRevealed ? `\n낙찰가: ${formatPrice(bidAmountRevealed)}원` : '';
+                alert(`✅ 승인 완료! 신청자에게 담당 법무사 배정 알림이 발송됩니다.${bidStr}`);
                 loadRequests();
+                loadOngoing();
             } catch (err) {
+                console.error(err);
                 alert('처리 중 오류가 발생했습니다.');
             }
         }
@@ -490,11 +535,59 @@
             try {
                 await API.applications.updateStatus(id, '매칭중', {
                     rejectedExpert: user.userId || user.id,
-                    rejectedAt: new Date().toISOString()
+                    rejectedAt: new Date().toISOString(),
+                    assigned_expert_id: null
                 });
                 alert('거부되었습니다.');
                 loadRequests();
             } catch (err) {
+                alert('처리 중 오류가 발생했습니다.');
+            }
+        }
+
+        // ── 승인 후 취소 (진행중 → 취소, 3회 초과 시 계정정지) ──────
+        async function cancelAfterAccept(id) {
+            const cancelCount = (user.cancelCount || 0) + 1;
+            let warningMsg = `정말 취소하시겠습니까?\n\n⚠️ 낙찰가가 이미 공개된 상태입니다.\n개인정보 보호 정책에 따라 승인 후 취소 ${cancelCount}회 기록됩니다.`;
+            if (cancelCount >= 3) {
+                warningMsg += '\n\n🚫 3회 이상 취소 시 계정이 즉시 정지됩니다!';
+            }
+            if (!confirm(warningMsg)) return;
+
+            try {
+                const db = getDB ? getDB() : firebase.firestore();
+
+                // cancelCount 증가
+                await db.collection('users').doc(user.id).update({
+                    cancelCount: cancelCount,
+                    lastCancelAt: new Date().toISOString()
+                });
+
+                // 신청 취소
+                await API.applications.updateStatus(id, '취소', {
+                    cancelledBy: user.userId || user.id,
+                    cancelledAt: new Date().toISOString(),
+                    cancelReason: '법무사 승인 후 취소'
+                });
+
+                // 3회 이상 → 계정 정지
+                if (cancelCount >= 3) {
+                    await db.collection('users').doc(user.id).update({
+                        status: 'blocked',
+                        blockedAt: new Date().toISOString(),
+                        blockedReason: '법무사 승인 후 3회 이상 취소 - 낙찰가(개인정보) 무단 열람 방지를 위한 자동 계정 정지 조치'
+                    });
+                    alert('🚫 계정 정지 안내\n\n낙찰가는 신청자의 소중한 개인재산 정보입니다.\n승인 후 3회 이상 취소로 인해 계정이 정지되었습니다.\n\n사유: 개인정보 보호 정책 위반 (낙찰가 무단 열람 방지)\n\n계정 복구를 원하시면 관리자에게 문의해 주세요.\n고객센터: 02-853-5875');
+                    Auth.logout();
+                    return;
+                }
+
+                alert(`취소 완료 (${cancelCount}/3회)\n${3-cancelCount}회 더 취소 시 계정이 정지됩니다.`);
+                // 로컬 사용자 정보 업데이트
+                user.cancelCount = cancelCount;
+                loadOngoing();
+            } catch (err) {
+                console.error(err);
                 alert('처리 중 오류가 발생했습니다.');
             }
         }

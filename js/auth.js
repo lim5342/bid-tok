@@ -43,6 +43,12 @@ const Auth = {
                     return { success: false, message: result.message };
                 }
                 const user = result.user;
+
+                // 탈퇴 회원 로그인 차단
+                if (user.status === 'withdrawn') {
+                    return { success: false, message: '탈퇴 처리된 계정입니다. 고객센터에 문의하세요.' };
+                }
+
                 // 비밀번호는 세션에 저장하지 않음
                 const sessionUser = {
                     id: user.id,

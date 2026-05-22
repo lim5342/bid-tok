@@ -431,6 +431,7 @@
             </div>
             <ul class="nav-menu" id="navMenu">
                 <li><a href="#why">서비스 소개</a></li>
+                <li><a href="guide.html"><i class="fas fa-book-open" style="margin-right:4px; color:var(--mint);"></i>이용가이드</a></li>
                 <li><a href="safety.html"><i class="fas fa-shield-alt" style="margin-right:4px; color:var(--mint);"></i>안전장치</a></li>
                 <li><a href="#support">고객지원</a></li>
             </ul>
@@ -450,7 +451,7 @@
                 </div>
 
                 <!-- JS 연동용 숨김 버튼 -->
-                <button class="btn btn-expert" id="expertApplyBtn" style="display:none;">전문가 신청</button>
+                <button class="btn btn-expert" id="expertApplyBtn" style="display:none;" onclick="location.href='partner.html'">전문가 신청</button>
                 <button class="btn btn-primary" id="applyBtn" style="display:none;">대리입찰 신청</button>
             </div>
             <button class="nav-toggle" id="navToggle">
@@ -461,6 +462,27 @@
         </div>
     </nav>
 
+    <!-- ── 베타 서비스 안내 배너 ── -->
+    <div id="betaBanner" style="
+        position:fixed; top:60px; left:0; right:0; z-index:90;
+        background:linear-gradient(90deg,#0D9488,#2DD4BF);
+        color:#fff; text-align:center;
+        padding:9px 48px 9px 24px;
+        font-size:0.82rem; font-weight:600;
+        line-height:1.5;
+        box-shadow:0 2px 8px rgba(13,148,136,0.3);
+    ">
+        <i class="fas fa-bolt" style="margin-right:6px;"></i>
+        <strong>베타 서비스 운영 중</strong> — 현재 <strong>무료로</strong> 법무사 매칭 서비스를 이용하실 수 있습니다.
+        결제 없이 신청만 하면 법무사가 배정됩니다.
+        <button onclick="document.getElementById('betaBanner').style.display='none';document.getElementById('betaBannerSpacer').style.display='none';" style="
+            position:absolute; right:12px; top:50%; transform:translateY(-50%);
+            background:none; border:none; color:rgba(255,255,255,0.7);
+            font-size:1rem; cursor:pointer; padding:4px;
+        " title="닫기">✕</button>
+    </div>
+    <div id="betaBannerSpacer" style="height:38px;"></div>
+
     <!-- Main Page -->
     <div id="mainPage" class="page active">
         <!-- Hero Section (새 디자인) -->
@@ -470,7 +492,7 @@
                 <p class="subtitle">지방 법원, 바쁜 출근길<br>이제 대리입찰 톡에 맡기세요</p>
                 <div class="hero-btn-wrap">
                     <button class="btn-mint" id="heroApplyBtn" onclick="location.href='apply.html'">지금 신청하기</button>
-                    <button class="btn-outline-gray" onclick="document.getElementById('expertApplyBtn').click()">전문가 신청</button>
+                    <button class="btn-outline-gray" onclick="location.href='partner.html'">대리인 신청</button>
                 </div>
             </div>
         </section>
@@ -609,7 +631,7 @@
                 <div style="margin-top:3rem; padding:2rem; background:linear-gradient(135deg,var(--mint-dark),var(--mint)); border-radius:16px; text-align:center; color:#fff;">
                     <p style="font-size:1rem; margin-bottom:.5rem; opacity:.9;">매수신청대리인 또는 법무사이신가요?</p>
                     <h3 style="font-size:1.3rem; margin-bottom:1.25rem; font-weight:700;">대리입찰 톡 전문가로 활동하세요</h3>
-                    <button id="expertApplyBanner" style="background:#fff; color:var(--mint-dark); border:none; padding:.75rem 2rem; border-radius:50px; font-weight:700; font-size:1rem; cursor:pointer;" onclick="document.getElementById('expertApplyBtn').click()">전문가 신청하기</button>
+                    <a href="partner.html" style="display:inline-block;background:#fff; color:var(--mint-dark); padding:.75rem 2rem; border-radius:50px; font-weight:700; font-size:1rem; text-decoration:none;">대리인 신청하기 →</a>
                 </div>
             </div>
         </section>

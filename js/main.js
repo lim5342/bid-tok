@@ -196,16 +196,7 @@ function setupEventListeners() {
     document.getElementById('submitExpertApplication')?.addEventListener('click', handleExpertSubmit);
     document.getElementById('betaExpertApply')?.addEventListener('click', () => switchToExpertPage());
     
-    // Admin page (secret: click logo 5 times)
-    let logoClickCount = 0;
-    document.querySelector('.nav-logo')?.addEventListener('click', function() {
-        logoClickCount++;
-        if (logoClickCount === 5) {
-            switchToAdminPage();
-            logoClickCount = 0;
-        }
-        setTimeout(() => { logoClickCount = 0; }, 3000);
-    });
+    // 어드민 페이지는 /admin.html 직접 접근만 허용 (로고 클릭 단축키 제거)
     document.getElementById('backToMainFromAdmin')?.addEventListener('click', () => switchToMainPage());
     
     // Admin tabs
@@ -325,21 +316,7 @@ function switchToExpertPage() {
     AppState.currentPage = 'expert';
 }
 
-function switchToAdminPage() {
-    document.getElementById('mainPage').classList.remove('active');
-    document.getElementById('applicationPage').classList.remove('active');
-    document.getElementById('expertPage')?.classList.remove('active');
-    document.getElementById('adminPage').classList.add('active');
-    document.getElementById('navbar').style.display = 'none';
-    document.querySelector('.footer').style.display = 'none';
-    window.scrollTo(0, 0);
-    AppState.currentPage = 'admin';
-    
-    // Initialize admin page when accessed
-    if (typeof initAdminPage === 'function') {
-        initAdminPage();
-    }
-}
+// switchToAdminPage 제거됨: admin.html 직접 URL 접근으로만 진입 가능
 
 function switchToMainPage() {
     document.getElementById('mainPage').classList.add('active');
