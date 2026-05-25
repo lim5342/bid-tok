@@ -1344,81 +1344,38 @@ function formatPhone(input) {
 }
 
 // ─────────────────────────────────────────────
-// SMS 인증 (솔라피 연동 - Cloudflare Worker 중계)
+// SMS 인증 (임시 자동 통과 - 명의도용방지 해지 대기 중)
+// 화요일 해지 완료 후 실제 발송으로 복구 예정
 // ─────────────────────────────────────────────
 const SMS_WORKER_URL = 'https://bidtok-sms-proxy.qkqk5342.workers.dev';
 
-async function sendSmsCode() {
+function sendSmsCode() {
     const phone = document.getElementById('applicantPhone').value.trim();
     if (!phone || phone.replace(/[^0-9]/g,'').length < 10) {
         toast('올바른 휴대폰 번호를 입력해주세요.', 'error'); return;
     }
 
+    // ── 임시 자동 통과 ──
+    phoneVerified = true;
     const btn = document.getElementById('btnSendSms');
     btn.disabled = true;
-    btn.textContent = '발송 중...';
+    btn.textContent = '인증완료';
+    btn.style.background = '#10B981';
 
-    // 6자리 인증번호 생성
-    smsCodeReal = Math.floor(100000 + Math.random() * 900000).toString();
+    document.getElementById('smsCodeRow').style.display = 'block';
+    document.getElementById('smsCode').value = '000000';
+    document.getElementById('smsTimer').textContent = '✅ 인증 완료';
+    document.getElementById('smsTimer').style.color = '#10B981';
 
-    try {
-        const res = await fetch(SMS_WORKER_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ to: phone, code: smsCodeReal })
-        });
-        const data = await res.json();
-
-        if (!res.ok || !data.success) {
-            throw new Error(data.error || 'SMS 발송 실패');
-        }
-
-        // 발송 성공
-        document.getElementById('smsCodeRow').style.display = 'block';
-        document.getElementById('smsCode').value = '';
-        document.getElementById('smsTimer').style.color = '#1550E8';
-        btn.textContent = '재발송 (60초)';
-        toast('인증번호가 발송되었습니다!', 'success');
-
-        // 60초 타이머
-        let left = 60;
-        clearInterval(smsTimerInterval);
-        smsTimerInterval = setInterval(() => {
-            left--;
-            document.getElementById('smsTimer').textContent = `남은 시간: ${left}초`;
-            if (left <= 0) {
-                clearInterval(smsTimerInterval);
-                btn.disabled = false;
-                btn.textContent = '재발송';
-                document.getElementById('smsTimer').textContent = '인증번호가 만료되었습니다.';
-                smsCodeReal = '';
-            }
-        }, 1000);
-
-    } catch (err) {
-        console.error('SMS 발송 오류:', err);
-        toast('SMS 발송에 실패했습니다. 잠시 후 다시 시도해주세요.', 'error');
-        btn.disabled = false;
-        btn.textContent = '인증번호 발송';
-    }
+    toast('휴대폰 인증이 완료되었습니다!', 'success');
 }
 
 function verifySmsCode() {
-    const input = document.getElementById('smsCode').value.trim();
-    if (!smsCodeReal) {
-        toast('인증번호를 먼저 발송해주세요.', 'error'); return;
-    }
-    if (input === smsCodeReal) {
-        phoneVerified = true;
-        clearInterval(smsTimerInterval);
-        document.getElementById('smsTimer').textContent = '✅ 인증 완료';
-        document.getElementById('smsTimer').style.color = '#10B981';
-        document.getElementById('btnSendSms').textContent = '인증완료';
-        document.getElementById('btnSendSms').style.background = '#10B981';
-        toast('휴대폰 인증이 완료되었습니다!', 'success');
-    } else {
-        toast('인증번호가 올바르지 않습니다.', 'error');
-    }
+    phoneVerified = true;
+    document.getElementById('smsTimer').textContent = '✅ 인증 완료';
+    document.getElementById('smsTimer').style.color = '#10B981';
+    clearInterval(smsTimerInterval);
+    toast('휴대폰 인증이 완료되었습니다!', 'success');
 }
 
 // ─────────────────────────────────────────────
