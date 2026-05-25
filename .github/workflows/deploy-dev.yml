@@ -1,0 +1,36 @@
+name: DEV 자동 배포 (dev.bid-tok.kr)
+
+on:
+  push:
+    branches:
+      - dev
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy-dev:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 코드 체크아웃
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+
+      - name: 🔧 DEV 환경 표시 배너 삽입
+        run: |
+          # 모든 HTML에 DEV 배너 추가
+          for f in *.html; do
+            if grep -q '<body' "$f"; then
+              sed -i 's|<body\([^>]*\)>|<body\1><div style="position:fixed;top:0;left:0;right:0;z-index:99999;background:#f59e0b;color:#000;text-align:center;font-size:12px;font-weight:700;padding:4px 0;letter-spacing:0.5px;">🚧 DEV 테스트 환경 — bid-tok.kr 과 동일한 DB 사용중</div>|' "$f"
+            fi
+          done
+
+      - name: 🚀 dev 브랜치를 gh-pages-dev 브랜치로 배포
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages-dev
+          publish_dir: .
+          cname: dev.bid-tok.kr
