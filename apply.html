@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>대리입찰 신청 - 대리입찰 톡</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <!-- 다음 우편번호 API -->
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <style>
+        /* ── 전체 레이아웃 ── */
+        body { background: #f8f9fa; }
+
+        .apply-header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .apply-header-inner {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .apply-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1550E8;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .apply-logo i { font-size: 1.4rem; }
+
+        /* ── 진행 단계 바 ── */
+        .progress-wrap {
+            background: white;
+            padding: 1.5rem 0 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .progress-steps {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: flex-start;
+            justify-content: space-between;
+            position: relative;
+        }
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: calc(1.5rem + 40px);
+            right: calc(1.5rem + 40px);
+            height: 2px;
+            background: #e0e0e0;
+            z-index: 0;
+        }
+        .progress-line-fill {
+            position: absolute;
+            top: 20px;
+            left: calc(1.5rem + 40px);
+            height: 2px;
+            background: #1550E8;
+            z-index: 1;
+            transition: width 0.4s ease;
+            width: 0%;
+        }
+        .step-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 2;
+            flex: 1;
+        }
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+            background: #e0e0e0;
+            color: #999;
+            transition: all 0.3s;
+        }
+        .step-item.active .step-circle {
+            background: #1550E8;
+            color: white;
+            box-shadow: 0 4px 12px rgba(21,80,232,0.3);
+        }
+        .step-item.done .step-circle {
+            background: #10B981;
+            color: white;
+        }
+        .step-item.done .step-circle::after {
+            content: '✓';
+        }
+        .step-label {
+            font-size: 0.78rem;
+            color: #999;
+            font-weight: 500;
+            text-align: center;
+            padding-bottom: 1rem;
+            white-space: nowrap;
+        }
+        .step-item.active .step-label { color: #1550E8; font-weight: 700; }
+        .step-item.done .step-label { color: #10B981; }
+
+        /* ── 컨텐츠 영역 ── */
+        .apply-body {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1.5rem 4rem;
+        }
+
+        .step-panel { display: none; }
+        .step-panel.active { display: block; }
+
+        /* ── 카드 ── */
+        .apply-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            margin-bottom: 1.5rem;
+        }
+        .apply-card h3 {
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .apply-card h3 i { color: #1550E8; }
+
+        /* ── 폼 요소 ── */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+        }
+        .form-row.full { grid-template-columns: 1fr; }
+        .form-row.three { grid-template-columns: 1fr 1fr 1fr; }
+
+        .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+        .form-group label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #444;
+        }
+        .form-group label .required {
+            color: #EF4444;
+            margin-left: 2px;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 0.8rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-family: 'Noto Sans KR', sans-serif;
+            transition: border-color 0.2s;
+            background: white;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #1550E8;
+        }
+        .form-group input.error { border-color: #EF4444; }
+        .form-group .hint {
+            font-size: 0.8rem;
+            color: #999;
+        }
+        .form-group .error-msg {
+            font-size: 0.8rem;
+            color: #EF4444;
+            display: none;
+        }
+        .form-group.has-error .error-msg { display: block; }
+        .form-group.has-error input { border-color: #EF4444; }
+
+        /* ── 입찰가 입력 ── */
+        .bid-amount-wrap { position: relative; }
+        .bid-amount-wrap input { padding-right: 2.5rem; }
+        .bid-amount-wrap .unit {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-weight: 600;
+            pointer-events: none;
+        }
+        .bid-amount-preview {
+            margin-top: 0.4rem;
+            font-size: 0.85rem;
+            color: #1550E8;
+            font-weight: 600;
+            min-height: 1.2rem;
+        }
+
+        /* ── 인증 버튼 ── */
+        .input-btn-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .input-btn-group input { flex: 1; }
+        .btn-verify {
+            padding: 0.8rem 1rem;
+            background: #1550E8;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 0.88rem;
+            transition: background 0.2s;
+        }
+        .btn-verify:hover { background: #0d3ba8; }
+        .btn-verify:disabled { background: #999; cursor: not-allowed; }
+
+        /* ── 법원 검색 ── */
+        .court-search-wrap { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
+        .court-search-wrap input { flex: 1; }
+
+        /* ── 수수료 안내 ── */
+        .fee-notice {
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 100%);
+            border: 1.5px solid #c7d7fd;
+            border-radius: 12px;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .fee-notice .fee-title {
+            font-weight: 700;
+            color: #1550E8;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+        .fee-notice .fee-amount {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #1550E8;
+        }
+        .fee-notice .fee-desc {
+            font-size: 0.82rem;
+            color: #666;
+            margin-top: 0.3rem;
+        }
+
+        /* ── 확인 요약 ── */
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .summary-table tr { border-bottom: 1px solid #f0f0f0; }
+        .summary-table tr:last-child { border-bottom: none; }
+        .summary-table td {
+            padding: 0.7rem 0.5rem;
+            font-size: 0.92rem;
+        }
+        .summary-table td:first-child {
+            color: #888;
+            width: 35%;
+            font-weight: 500;
+        }
+        .summary-table td:last-child {
+            color: #222;
+            font-weight: 600;
+        }
+
+        /* ── 버튼 ── */
+        .apply-btn-row {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: space-between;
+        }
+        .btn-back {
+            padding: 0.9rem 2rem;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #666;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+        .btn-back:hover { border-color: #999; color: #333; }
+        .btn-next {
+            flex: 1;
+            padding: 1rem 2rem;
+            background: #1550E8;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-next:hover { background: #0d3ba8; transform: translateY(-1px); }
+        .btn-submit {
+            flex: 1;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #1550E8 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(21,80,232,0.3); }
+
+        /* ── 완료 화면 ── */
+        .success-wrap {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+        .success-icon {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, #10B981, #059669);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2.5rem;
+        }
+        .success-wrap h2 {
+            font-size: 1.8rem;
+            color: #222;
+            margin-bottom: 0.7rem;
+        }
+        .success-wrap p {
+            color: #666;
+            font-size: 1rem;
+            margin-bottom: 0.4rem;
+            line-height: 1.7;
+        }
+        .app-number-badge {
+            display: inline-block;
+            background: #f0f4ff;
+            border: 2px solid #c7d7fd;
+            color: #1550E8;
+            font-size: 1.1rem;
+            font-weight: 800;
+            padding: 0.5rem 1.5rem;
+            border-radius: 30px;
+            margin: 1rem 0;
+        }
+        .success-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        /* ── 약관 동의 ── */
+        .agree-box {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 1rem;
+            max-height: 120px;
+            overflow-y: auto;
+            font-size: 0.82rem;
+            color: #666;
+            line-height: 1.7;
+            margin-bottom: 0.8rem;
+        }
+        .agree-check {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.7rem;
+        }
+        .agree-check input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+        .agree-check label { font-size: 0.9rem; color: #333; cursor: pointer; font-weight: 500; }
+
+        /* ── 모바일 ── */
+        @media (max-width: 600px) {
+            .form-row { grid-template-columns: 1fr; }
+            .form-row.three { grid-template-columns: 1fr; }
+            .progress-steps::before { display: none; }
+            .progress-line-fill { display: none; }
+            .apply-card { padding: 1.2rem; }
+            .step-label { font-size: 0.7rem; }
+            .step-circle { width: 34px; height: 34px; font-size: 0.88rem; }
+        }
+    </style>
+    <!-- 토스페이먼츠 SDK -->
+    <script src="https://js.tosspayments.com/v1/payment"></script>
+</head>
+<body><div style="position:fixed;top:0;left:0;right:0;z-index:99999;background:#f59e0b;color:#000;text-align:center;font-size:12px;font-weight:700;padding:4px 0;letter-spacing:0.5px;">🚧 DEV 테스트 환경 — bid-tok.kr 과 동일한 DB 사용중</div>
+
+<!-- 헤더 -->
+<header class="apply-header">
+    <div class="apply-header-inner">
+        <a class="apply-logo" href="index.html">
+            <i class="fas fa-comment-dots"></i>
+            <span>대리입찰 톡</span>
+        </a>
+        <div style="font-size:0.88rem; color:#666;">
+            <i class="fas fa-lock" style="color:#10B981;"></i> 안전한 신청
+        </div>
+    </div>
+</header>
+
+<!-- 진행 단계 -->
+<div class="progress-wrap">
+    <div class="progress-steps">
+        <div class="progress-line-fill" id="progressFill"></div>
+        <div class="step-item active" id="stepItem1">
+            <div class="step-circle">1</div>
+            <div class="step-label">사건 조회</div>
+        </div>
+        <div class="step-item" id="stepItem2">
+            <div class="step-circle">2</div>
+            <div class="step-label">입찰정보작성</div>
+        </div>
+        <div class="step-item" id="stepItem3">
+            <div class="step-circle">3</div>
+            <div class="step-label">전자계약</div>
+        </div>
+        <div class="step-item" id="stepItem4">
+            <div class="step-circle">4</div>
+            <div class="step-label">신청 완료</div>
+        </div>
+    </div>
+</div>
+
+<!-- 컨텐츠 -->
+<div class="apply-body">
+
+    <!-- ══ STEP 1: 사건 조회 ══ -->
+    <div class="step-panel active" id="panel1">
+        <div class="apply-card">
+            <h3><i class="fas fa-search"></i> 사건 조회 및 정보 입력</h3>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>지역 선택 <span class="required">*</span></label>
+                    <select id="regionSelect" onchange="updateCourts()">
+                        <option value="">지역을 선택하세요</option>
+                        <option>서울</option><option>인천</option><option>경기</option>
+                        <option>부산</option><option>대구</option><option>광주</option>
+                        <option>대전</option><option>울산</option><option>강원</option>
+                        <option>충북</option><option>충남</option><option>전북</option>
+                        <option>전남</option><option>경북</option><option>경남</option><option>제주</option>
+                    </select>
+                    <div class="error-msg">지역을 선택해주세요.</div>
+                </div>
+                <div class="form-group">
+                    <label>법원 선택 <span class="required">*</span></label>
+                    <select id="courtSelect">
+                        <option value="">지역 선택 후 법원 선택</option>
+                    </select>
+                    <div class="error-msg">법원을 선택해주세요.</div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>사건번호 <span class="required">*</span></label>
+                    <input type="text" id="caseNumber" placeholder="예) 2024타경12345">
+                    <div class="hint">법원 경매 사건번호를 입력하세요</div>
+                    <div class="error-msg">사건번호를 입력해주세요.</div>
+                </div>
+                <div class="form-group">
+                    <label>입찰 기일 <span class="required">*</span></label>
+                    <input type="date" id="bidDate" min="">
+                    <div class="error-msg">입찰 기일을 선택해주세요.</div>
+                </div>
+            </div>
+
+            <div class="form-row full">
+                <div class="form-group">
+                    <label>물건 주소 <span class="required">*</span></label>
+                    <div class="input-btn-group">
+                        <input type="text" id="propertyAddress" placeholder="주소 검색 버튼을 눌러 입력하세요" readonly style="cursor:pointer; background:#fff;" onclick="searchAddress()">
+                        <button class="btn-verify" type="button" onclick="searchAddress()">
+                            <i class="fas fa-search"></i> 주소 검색
+                        </button>
+                    </div>
+                    <input type="text" id="propertyAddressDetail" placeholder="상세 주소 입력 (동/호수 등)" style="margin-top:0.5rem; padding:0.8rem 1rem; border:2px solid #e0e0e0; border-radius:10px; width:100%; font-size:0.95rem;">
+                    <div class="error-msg">물건 주소를 입력해주세요.</div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>감정가 (원)</label>
+                    <input type="text" id="appraisalPrice" placeholder="예) 350,000,000" oninput="formatInputNumber(this); showKorean('appraisalPrice','appraisalPriceKor')">
+                    <div id="appraisalPriceKor" style="font-size:0.82rem; color:#1550E8; font-weight:600; min-height:1.1rem; margin-top:0.25rem;"></div>
+                </div>
+                <div class="form-group">
+                    <label>최저입찰가 (원)</label>
+                    <input type="text" id="minBidPrice" placeholder="예) 245,000,000" oninput="formatInputNumber(this); showKorean('minBidPrice','minBidPriceKor')">
+                    <div id="minBidPriceKor" style="font-size:0.82rem; color:#1550E8; font-weight:600; min-height:1.1rem; margin-top:0.25rem;"></div>
+                </div>
+            </div>
+
+            <div class="form-row full">
+                <div class="form-group">
+                    <label>물건 종류</label>
+                    <select id="propertyType">
+                        <option value="">선택 (선택사항)</option>
+                        <option>아파트</option><option>빌라/연립</option><option>단독/다가구</option>
+                        <option>오피스텔</option><option>상가</option><option>토지</option><option>기타</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="apply-btn-row">
+            <button class="btn-back" onclick="window.location.href='index.html'"><i class="fas fa-arrow-left"></i> 홈으로</button>
+            <button class="btn-next" onclick="goStep(2)">다음 단계 &nbsp;<i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <!-- ══ STEP 2: 입찰정보작성 ══ -->
+    <div class="step-panel" id="panel2">
+        <div class="apply-card">
+            <h3><i class="fas fa-user"></i> 신청자 정보</h3>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>이름 <span class="required">*</span></label>
+                    <input type="text" id="applicantName" placeholder="실명을 입력하세요">
+                    <div class="error-msg">이름을 입력해주세요.</div>
+                </div>
+                <div class="form-group">
+                    <label>생년월일 <span class="required">*</span></label>
+                    <input type="text" id="applicantBirth" placeholder="예) 19850315" maxlength="8">
+                    <div class="hint">8자리 숫자로 입력 (YYYYMMDD)</div>
+                    <div class="error-msg">생년월일을 입력해주세요.</div>
+                </div>
+            </div>
+
+            <div class="form-row full">
+                <div class="form-group">
+                    <label>휴대폰 번호 <span class="required">*</span></label>
+                    <div class="input-btn-group">
+                        <input type="tel" id="applicantPhone" placeholder="010-0000-0000" oninput="formatPhone(this)">
+                        <button class="btn-verify" onclick="sendSmsCode()" id="btnSendSms">인증번호 발송</button>
+                    </div>
+                    <div class="error-msg" id="phoneErrorMsg">휴대폰 번호를 입력해주세요.</div>
+                </div>
+            </div>
+
+            <div class="form-row full" id="smsCodeRow" style="display:none;">
+                <div class="form-group">
+                    <label>인증번호 <span class="required">*</span></label>
+                    <div class="input-btn-group">
+                        <input type="text" id="smsCode" placeholder="6자리 인증번호" maxlength="6">
+                        <button class="btn-verify" onclick="verifySmsCode()">확인</button>
+                    </div>
+                    <div class="hint" id="smsTimer" style="color:#1550E8;"></div>
+                </div>
+            </div>
+
+            <div class="form-row full">
+                <div class="form-group">
+                    <label>이메일 주소</label>
+                    <input type="email" id="applicantEmail" placeholder="example@email.com">
+                    <div class="hint">결과 안내 메일을 받으실 주소 (선택사항)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="apply-card">
+            <h3><i class="fas fa-university"></i> 계좌 정보 (보증금 환급용)</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>은행명 <span class="required">*</span></label>
+                    <select id="bankName">
+                        <option value="">은행 선택</option>
+                        <option>국민은행</option><option>신한은행</option><option>우리은행</option>
+                        <option>하나은행</option><option>농협은행</option><option>기업은행</option>
+                        <option>SC제일은행</option><option>씨티은행</option><option>카카오뱅크</option>
+                        <option>케이뱅크</option><option>토스뱅크</option><option>새마을금고</option>
+                        <option>수협은행</option><option>우체국</option><option>기타</option>
+                    </select>
+                    <div class="error-msg">은행을 선택해주세요.</div>
+                </div>
+                <div class="form-group">
+                    <label>예금주명 <span class="required">*</span></label>
+                    <input type="text" id="accountHolder" placeholder="예금주 이름">
+                    <div class="error-msg">예금주명을 입력해주세요.</div>
+                </div>
+            </div>
+            <div class="form-row full">
+                <div class="form-group">
+                    <label>계좌번호 <span class="required">*</span></label>
+                    <input type="text" id="accountNumber" placeholder="- 없이 숫자만 입력">
+                    <div class="error-msg">계좌번호를 입력해주세요.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="apply-btn-row">
+            <button class="btn-back" onclick="goStep(1)"><i class="fas fa-arrow-left"></i> 이전</button>
+            <button class="btn-next" onclick="goStep(3)">다음 단계 &nbsp;<i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <!-- ══ STEP 3: 전자계약 (입찰 정보 + 계약서 서명) ══ -->
+    <div class="step-panel" id="panel3">
+
+        <div class="apply-card">
+            <h3><i class="fas fa-money-bill-wave"></i> 입찰 금액 설정</h3>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>희망 입찰가 (원) <span class="required">*</span></label>
+                    <div class="bid-amount-wrap">
+                        <input type="text" id="bidAmount" placeholder="입찰 금액을 입력하세요"
+                               oninput="formatInputNumber(this); updateBidPreview(); updateDepositAmount();">
+                        <span class="unit">원</span>
+                    </div>
+                    <div class="bid-amount-preview" id="bidAmountPreview" style="font-size:0.85rem; color:#1550E8; font-weight:700; min-height:1.2rem; margin-top:0.25rem;"></div>
+                    <div class="error-msg" id="bidAmountError">입찰가를 입력해주세요.</div>
+                </div>
+                <div class="form-group">
+                    <label>입찰 보증금 (자동계산 10%)</label>
+                    <div style="position:relative;">
+                        <input type="text" id="depositAmount" placeholder="희망 입찰가 입력 시 자동 계산" readonly
+                               style="background:#f0f4ff; border:2px solid #c7d7fd; color:#1550E8; font-weight:700; cursor:default; padding:0.8rem 3.5rem 0.8rem 1rem; border-radius:10px; width:100%; font-size:0.95rem;">
+                        <span style="position:absolute; right:0.75rem; top:50%; transform:translateY(-50%); font-size:0.75rem; color:#1550E8; font-weight:700; white-space:nowrap;">원</span>
+                    </div>
+                    <div id="depositAmountKor" style="font-size:0.82rem; color:#1550E8; font-weight:600; min-height:1.1rem; margin-top:0.25rem;"></div>
+                    <div class="hint" style="color:#1550E8;">희망 입찰가의 10% 자동 계산</div>
+                </div>
+            </div>
+
+            <div class="form-row full">
+                <div class="form-group">
+                    <label>입찰 보증금 납부 방법 <span class="required">*</span></label>
+                    <select id="depositMethod">
+                        <option value="계좌이체">법무사님께 직접 이체</option>
+                    </select>
+                    <div class="error-msg">납부 방법을 선택해주세요.</div>
+                    <!-- 안내 박스 -->
+                    <div style="margin-top:0.75rem; background:#f0f7ff; border:1.5px solid #c7d7fd; border-radius:10px; padding:0.9rem 1.1rem; font-size:0.82rem; color:#444; line-height:1.8;">
+                        <div style="font-weight:700; color:#1550E8; margin-bottom:0.35rem;"><i class="fas fa-shield-alt" style="margin-right:0.4rem;"></i>안전한 보증금 관리 안내</div>
+                        <div>✅ 보증금은 담당 법무사님께 <strong>직접 이체</strong>하시면 됩니다.</div>
+                        <div>✅ 담당 법무사는 <strong>5억 원 배상책임보험</strong>에 가입되어 있어 안전합니다.</div>
+                        <div>✅ 낙찰 실패(패찰) 시 보증금은 <strong>즉시 전액 반환</strong>됩니다.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="apply-card">
+            <h3><i class="fas fa-users"></i> 입찰 형태</h3>
+            <div class="form-row full">
+                <div class="form-group">
+                    <label>입찰 형태 <span class="required">*</span></label>
+                    <select id="bidType" onchange="toggleJointInfo()">
+                        <option value="단독">단독 입찰</option>
+                        <option value="공동">공동 입찰</option>
+                        <option value="법인">법인 입찰</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 공동 입찰 참여자 추가 영역 -->
+            <div id="jointInfo" style="display:none;">
+                <div id="jointMemberList"></div>
+                <div style="margin-top:0.75rem;">
+                    <button type="button" onclick="addJointMember()"
+                        id="btnAddJoint"
+                        style="padding:0.65rem 1.2rem; background:#f0f4ff; border:2px dashed #1550E8; border-radius:10px; color:#1550E8; font-weight:700; font-size:0.9rem; cursor:pointer; width:100%;">
+                        <i class="fas fa-plus-circle"></i> 공동입찰자 추가하기 (최대 3명)
+                    </button>
+                    <div id="jointLimitMsg" style="display:none; margin-top:0.5rem; background:#fff3cd; border:1px solid #ffc107; border-radius:8px; padding:0.7rem 1rem; font-size:0.82rem; color:#856404;">
+                        <i class="fas fa-exclamation-triangle"></i> 3명을 초과하는 공동입찰은 <strong>법무사님께 직접 연락</strong>하여 별도 협의해주세요.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 전자계약서 + 서명 -->
+        <div class="apply-card">
+            <h3><i class="fas fa-file-signature"></i> 전자계약 및 서명</h3>
+
+            <div style="background:#f8f9fa; border:1px solid #e0e0e0; border-radius:10px; padding:1.25rem 1.5rem; margin-bottom:1.25rem; max-height:200px; overflow-y:auto; font-size:0.82rem; color:#555; line-height:1.9;">
+                <strong style="color:#333; font-size:0.9rem; display:block; margin-bottom:0.75rem;">📋 대리입찰 위임 계약서</strong>
+                <strong>위임인(이하 "갑"):</strong> 신청자 &nbsp;&nbsp; <strong>수임인(이하 "을"):</strong> 담당 법무사<br><br>
+                <strong>제1조 (위임 내용)</strong> 갑은 을에게 아래 경매 물건에 대한 입찰 대리권을 위임합니다.<br>
+                <strong>제2조 (위임 범위)</strong> 을은 갑을 대신하여 지정 법원에 출석, 지정 금액으로 입찰표를 제출합니다.<br>
+                <strong>제3조 (보증금 관리)</strong> 을은 갑으로부터 전달받은 입찰보증금을 안전하게 관리하고, 낙찰 실패 시 즉시 반환합니다.<br>
+                <strong>제4조 (수수료)</strong> 현재 서비스 수수료는 무료입니다. 공동입찰 또는 법인 입찰의 경우 별도 협의 후 비용이 추가될 수 있습니다.<br>
+                <strong>제5조 (책임)</strong> 을은 입찰 대리 중 발생하는 사고에 대해 배상책임보험 한도 내에서 책임집니다.<br>
+                <strong>제6조 (취소)</strong> 입찰 기일 48시간 전까지 취소 신청이 가능합니다.
+            </div>
+
+            <!-- 서명 캔버스 -->
+            <div style="margin-bottom:1rem;">
+                <label style="font-size:0.9rem; font-weight:600; color:#444; margin-bottom:0.5rem; display:block;">
+                    전자서명 <span style="color:#EF4444;">*</span>
+                    <span style="font-size:0.78rem; color:#999; font-weight:400; margin-left:0.5rem;">아래 박스에 마우스 또는 손가락으로 서명해주세요</span>
+                </label>
+                <div style="border:2px solid #e0e0e0; border-radius:10px; background:white; overflow:hidden; position:relative;" id="signaturePadWrap">
+                    <canvas id="signatureCanvas" width="700" height="150"
+                        style="width:100%; height:150px; display:block; cursor:crosshair; touch-action:none;"></canvas>
+                    <div id="signaturePlaceholder" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; color:#ccc; font-size:0.92rem; gap:0.4rem;">
+                        <i class="fas fa-pen-nib"></i> 여기에 서명하세요
+                    </div>
+                </div>
+                <div style="display:flex; gap:0.5rem; margin-top:0.4rem; justify-content:flex-end;">
+                    <button type="button" onclick="clearSignature()" style="padding:0.35rem 0.9rem; background:#f3f4f6; border:1px solid #d1d5db; border-radius:7px; font-size:0.82rem; cursor:pointer; color:#666; font-weight:600;"><i class="fas fa-undo"></i> 서명 지우기</button>
+                </div>
+                <div id="signatureError" style="font-size:0.8rem; color:#EF4444; display:none; margin-top:0.3rem;">서명이 필요합니다.</div>
+            </div>
+
+            <div class="agree-check">
+                <input type="checkbox" id="agreeContract">
+                <label for="agreeContract" style="font-size:0.9rem; color:#333; cursor:pointer; font-weight:500;">위 계약 내용을 확인하였으며 전자서명으로 계약에 동의합니다 <span style="color:#EF4444;">(필수)</span></label>
+            </div>
+        </div>
+
+        <div class="apply-card">
+            <h3><i class="fas fa-comment-alt"></i> 추가 요청사항</h3>
+            <div class="form-row full">
+                <div class="form-group">
+                    <label>메모 (선택사항)</label>
+                    <textarea id="memo" rows="3" placeholder="법무사에게 전달할 특이사항이 있으면 입력하세요."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="apply-btn-row">
+            <button class="btn-back" onclick="goStep(2)"><i class="fas fa-arrow-left"></i> 이전</button>
+            <button class="btn-next" onclick="goStep(4)">다음 단계 &nbsp;<i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <!-- ══ STEP 4: 수수료결제 ══ -->
+    <div class="step-panel" id="panel4">
+
+        <!-- 신청 내용 요약 -->
+        <div class="apply-card">
+            <h3><i class="fas fa-clipboard-check"></i> 신청 내용 최종 확인</h3>
+            <table class="summary-table" id="summaryTable">
+                <!-- JS로 채워짐 -->
+            </table>
+        </div>
+
+        <!-- 수수료 안내 -->
+        <div class="fee-notice">
+            <div class="fee-title">🎁 서비스 수수료</div>
+            <div class="fee-amount">무료 <span style="font-size:1rem; font-weight:400; color:#555;">매칭</span></div>
+            <div class="fee-desc">✓ 전국 어디든 무료 매칭 &nbsp;|&nbsp; ✓ 법무사 직접 연결 &nbsp;|&nbsp; ✓ 낙찰·패찰 관계없이 무료</div>
+            <div style="margin-top:0.5rem; font-size:0.82rem; color:#888;">공동입찰이나 법인 입찰의 경우 금액이 추가될 수 있습니다</div>
+        </div>
+
+        <div class="apply-card">
+            <h3><i class="fas fa-shield-alt"></i> 약관 동의</h3>
+
+            <div class="agree-box">
+                <strong>[대리입찰 서비스 이용약관]</strong><br><br>
+                제1조(목적) 본 약관은 대리입찰 톡(이하 "회사")이 제공하는 대리입찰 서비스의 이용조건 및 절차 등에 관한 사항을 규정함을 목적으로 합니다.<br><br>
+                제2조(서비스 내용) 회사는 신청자의 의뢰를 받아 법무사 또는 매수신청대리인이 법원 경매 입찰에 대리 참여하는 서비스를 제공합니다.<br><br>
+                제3조(책임 범위) 법무사는 배상책임보험에 가입되어 있으며, 보증금 분실 또는 횡령에 대해 보험 한도 내에서 보상합니다. 단, 고객이 제공한 잘못된 정보로 인한 손해는 책임지지 않습니다.<br><br>
+                제4조(수수료) 현재 서비스 수수료는 무료입니다. 단, 공동입찰 또는 법인 입찰의 경우 담당 법무사와 별도 협의 후 비용이 추가될 수 있습니다.<br><br>
+                제5조(취소) 입찰 기일 48시간 전까지 취소 신청이 가능합니다.
+            </div>
+            <div class="agree-check">
+                <input type="checkbox" id="agreeTerms">
+                <label for="agreeTerms">서비스 이용약관에 동의합니다 <span class="required" style="color:#EF4444;">(필수)</span></label>
+            </div>
+
+            <div class="agree-box">
+                <strong>[개인정보 수집·이용 동의]</strong><br><br>
+                수집 항목: 이름, 생년월일, 휴대폰 번호, 이메일, 계좌정보, 입찰 관련 정보<br>
+                수집 목적: 대리입찰 서비스 제공, 법원 제출 서류 작성, 결과 통보<br>
+                보유 기간: 서비스 완료 후 5년 (관련 법령에 따름)<br>
+                위 사항에 동의하지 않을 경우 서비스 이용이 제한될 수 있습니다.
+            </div>
+            <div class="agree-check">
+                <input type="checkbox" id="agreePrivacy">
+                <label for="agreePrivacy">개인정보 수집·이용에 동의합니다 <span class="required" style="color:#EF4444;">(필수)</span></label>
+            </div>
+        </div>
+
+        <div class="apply-btn-row">
+            <button class="btn-back" onclick="goStep(3)"><i class="fas fa-arrow-left"></i> 이전</button>
+            <button class="btn-submit" onclick="submitApplication()">
+                <i class="fas fa-check-circle"></i> 대리입찰 신청
+            </button>
+        </div>
+    </div>
+
+    <!-- ══ STEP 5: 완료 ══ -->
+    <div class="step-panel" id="panel5">
+        <div class="apply-card" style="max-width:620px; margin:0 auto;">
+            <div class="success-wrap">
+                <div class="success-icon" style="font-size:3.5rem; margin-bottom:1rem;">🎉</div>
+                <h2 style="font-size:1.6rem; color:#1a1a2e; margin-bottom:0.75rem;">신청이 완료되었습니다!</h2>
+                <p style="color:#666; font-size:0.95rem; line-height:1.7; margin-bottom:1.25rem;">
+                    대리입찰 신청이 정상적으로 접수되었습니다.<br>
+                    담당 법무사 배정 후 문자(SMS)로 안내드립니다.
+                </p>
+
+                <!-- 신청번호 배지 -->
+                <div class="app-number-badge" id="appNumberBadge"
+                    style="background:#f0f4ff; border:1.5px solid #c7d4f8; color:#1550E8; border-radius:10px; padding:0.75rem 1.5rem; font-size:0.95rem; font-weight:700; display:inline-block; margin-bottom:1.75rem;">
+                    신청번호: -
+                </div>
+
+                <!-- 진행 안내 타임라인 -->
+                <div style="background:#f8f9fa; border-radius:14px; padding:1.5rem; margin-bottom:1.75rem; text-align:left;">
+                    <p style="font-size:0.78rem; font-weight:700; color:#999; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:1rem;">앞으로의 진행 절차</p>
+                    <div style="display:flex; flex-direction:column; gap:0;">
+                        <div style="display:flex; gap:1rem; align-items:flex-start;">
+                            <div style="display:flex; flex-direction:column; align-items:center; flex-shrink:0;">
+                                <div style="width:32px; height:32px; background:#1550E8; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-weight:700; font-size:0.8rem;">1</div>
+                                <div style="width:2px; height:28px; background:#e0e0e0;"></div>
+                            </div>
+                            <div style="padding-top:0.35rem; padding-bottom:1rem;">
+                                <strong style="font-size:0.9rem; color:#333;">법무사 매칭 중</strong>
+                                <p style="font-size:0.82rem; color:#888; margin:0.2rem 0 0;">신청 접수 후 <strong style="color:#1550E8;">2~4시간 내</strong> 담당 법무사 배정</p>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:1rem; align-items:flex-start;">
+                            <div style="display:flex; flex-direction:column; align-items:center; flex-shrink:0;">
+                                <div style="width:32px; height:32px; background:#e0e0e0; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#666; font-weight:700; font-size:0.8rem;">2</div>
+                                <div style="width:2px; height:28px; background:#e0e0e0;"></div>
+                            </div>
+                            <div style="padding-top:0.35rem; padding-bottom:1rem;">
+                                <strong style="font-size:0.9rem; color:#333;">배정 완료 안내</strong>
+                                <p style="font-size:0.82rem; color:#888; margin:0.2rem 0 0;">담당 법무사 정보를 SMS 및 마이페이지에서 확인</p>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:1rem; align-items:flex-start;">
+                            <div style="display:flex; flex-direction:column; align-items:center; flex-shrink:0;">
+                                <div style="width:32px; height:32px; background:#e0e0e0; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#666; font-weight:700; font-size:0.8rem;">3</div>
+                                <div style="width:2px; height:28px; background:#e0e0e0;"></div>
+                            </div>
+                            <div style="padding-top:0.35rem; padding-bottom:1rem;">
+                                <strong style="font-size:0.9rem; color:#333;">입찰일 당일 진행</strong>
+                                <p style="font-size:0.82rem; color:#888; margin:0.2rem 0 0;">법무사가 직접 법원에 출석하여 대리입찰 진행</p>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:1rem; align-items:flex-start;">
+                            <div style="display:flex; flex-direction:column; align-items:center; flex-shrink:0;">
+                                <div style="width:32px; height:32px; background:#e0e0e0; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#666; font-weight:700; font-size:0.8rem;">4</div>
+                            </div>
+                            <div style="padding-top:0.35rem;">
+                                <strong style="font-size:0.9rem; color:#333;">결과 통보</strong>
+                                <p style="font-size:0.82rem; color:#888; margin:0.2rem 0 0;">입찰 결과(낙찰/패찰) SMS 즉시 통보 및 마이페이지 업데이트</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 알림 박스 -->
+                <div style="background:#fff8e1; border:1px solid #ffd54f; border-radius:10px; padding:0.85rem 1.25rem; font-size:0.82rem; color:#795548; margin-bottom:1.75rem; text-align:left; display:flex; gap:0.6rem; align-items:flex-start;">
+                    <span style="font-size:1rem; flex-shrink:0;">💡</span>
+                    <span>입찰 기일 <strong>48시간 전</strong>까지 취소 신청이 가능합니다. 취소는 마이페이지에서 직접 처리하세요.</span>
+                </div>
+
+                <div class="success-actions" style="display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;">
+                    <button class="btn btn-outline" onclick="window.location.href='mypage.html'"
+                        style="flex:1; min-width:160px; padding:0.9rem 1.5rem; font-weight:700;">
+                        <i class="fas fa-list"></i> 신청 내역 확인
+                    </button>
+                    <button class="btn btn-primary" onclick="window.location.href='index.html'"
+                        style="flex:1; min-width:160px; padding:0.9rem 1.5rem; font-weight:700;">
+                        <i class="fas fa-home"></i> 홈으로 이동
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div><!-- /apply-body -->
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script>
+// ─────────────────────────────────────────────
+// 상수
+// ─────────────────────────────────────────────
+const COURT_DATA = {
+    '서울': ['서울중앙지방법원','서울동부지방법원','서울남부지방법원','서울북부지방법원','서울서부지방법원'],
+    '인천': ['인천지방법원','인천지방법원 부천지원'],
+    '경기': ['수원지방법원','수원지방법원 성남지원','수원지방법원 안산지원','수원지방법원 안양지원','수원지방법원 여주지원','수원지방법원 평택지원','의정부지방법원','의정부지방법원 고양지원','의정부지방법원 남양주지원'],
+    '부산': ['부산지방법원','부산지방법원 동부지원','부산지방법원 서부지원'],
+    '대구': ['대구지방법원','대구지방법원 서부지원','대구지방법원 안동지원','대구지방법원 경주지원','대구지방법원 김천지원','대구지방법원 상주지원','대구지방법원 의성지원','대구지방법원 영덕지원','대구지방법원 포항지원'],
+    '광주': ['광주지방법원','광주지방법원 목포지원','광주지방법원 순천지원','광주지방법원 해남지원'],
+    '대전': ['대전지방법원','대전지방법원 홍성지원','대전지방법원 논산지원','대전지방법원 서산지원','대전지방법원 천안지원','대전지방법원 공주지원'],
+    '울산': ['울산지방법원'],
+    '강원': ['춘천지방법원','춘천지방법원 강릉지원','춘천지방법원 속초지원','춘천지방법원 원주지원','춘천지방법원 영월지원'],
+    '충북': ['청주지방법원','청주지방법원 충주지원','청주지방법원 제천지원','청주지방법원 영동지원'],
+    '충남': ['대전지방법원 천안지원','대전지방법원 공주지원'],
+    '전북': ['전주지방법원','전주지방법원 군산지원','전주지방법원 정읍지원','전주지방법원 남원지원'],
+    '전남': ['광주지방법원 장흥지원','광주지방법원 강진지원'],
+    '경북': ['대구지방법원 영주지원','대구지방법원 울진지원'],
+    '경남': ['창원지방법원','창원지방법원 마산지원','창원지방법원 진주지원','창원지방법원 통영지원','창원지방법원 밀양지원','창원지방법원 거창지원'],
+    '제주': ['제주지방법원']
+};
+
+let currentStep = 1;
+let phoneVerified = false;
+let smsTimerInterval = null;
+let smsCodeReal = '';
+
+// ─────────────────────────────────────────────
+// 초기화
+// ─────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+    // 로그인 체크
+    if (!Auth.isLoggedIn()) {
+        alert('로그인이 필요한 서비스입니다.');
+        window.location.href = 'login.html';
+        return;
+    }
+    if (Auth.getUserType() !== 'client') {
+        alert('신청자 계정으로 로그인해주세요.');
+        window.location.href = 'login.html';
+        return;
+    }
+
+    // 오늘 이후 날짜만 선택 가능
+    const bidDateInput = document.getElementById('bidDate');
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    bidDateInput.min = tomorrow.toISOString().split('T')[0];
+
+    // 로그인 사용자 정보 자동 입력 (이름은 직접 입력)
+    const user = Auth.getCurrentUser();
+    if (user) {
+        if (user.phone) document.getElementById('applicantPhone').value = user.phone;
+        if (user.email) document.getElementById('applicantEmail').value = user.email;
+    }
+});
+
+// ─────────────────────────────────────────────
+// 단계 이동
+// ─────────────────────────────────────────────
+function goStep(step) {
+    // 유효성 검사
+    if (step > currentStep) {
+        if (!validateStep(currentStep)) return;
+    }
+
+    // 패널 전환
+    document.getElementById('panel' + currentStep).classList.remove('active');
+    document.getElementById('panel' + step).classList.add('active');
+
+    // 스텝 인디케이터 업데이트
+    for (let i = 1; i <= 4; i++) {
+        const item = document.getElementById('stepItem' + i);
+        item.classList.remove('active', 'done');
+        if (i < step) item.classList.add('done');
+        else if (i === step) item.classList.add('active');
+    }
+
+    // 진행 바
+    const fills = { 1: '0%', 2: '33%', 3: '66%', 4: '100%' };
+    document.getElementById('progressFill').style.width = fills[step] || '0%';
+
+    // step4면 요약 채우기
+    if (step === 4) fillSummary();
+
+    currentStep = step;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─────────────────────────────────────────────
+// 유효성 검사
+// ─────────────────────────────────────────────
+function validateStep(step) {
+    clearErrors();
+
+    if (step === 1) {
+        let ok = true;
+        if (!val('regionSelect')) { showError('regionSelect'); ok = false; }
+        if (!val('courtSelect'))  { showError('courtSelect');  ok = false; }
+        if (!val('caseNumber'))   { showError('caseNumber');   ok = false; }
+        if (!val('bidDate'))      { showError('bidDate');      ok = false; }
+        if (!val('propertyAddress')) { showError('propertyAddress'); ok = false; }
+        if (!ok) { toast('필수 항목을 모두 입력해주세요.', 'error'); }
+        return ok;
+    }
+
+    if (step === 2) {
+        let ok = true;
+        if (!val('applicantName'))   { showError('applicantName');   ok = false; }
+        if (!val('applicantBirth'))  { showError('applicantBirth');  ok = false; }
+        if (!val('applicantPhone'))  { showError('applicantPhone', '휴대폰 번호를 입력해주세요.'); ok = false; }
+        if (!val('bankName'))        { showError('bankName');        ok = false; }
+        if (!val('accountHolder'))   { showError('accountHolder');   ok = false; }
+        if (!val('accountNumber'))   { showError('accountNumber');   ok = false; }
+        // 전화번호 인증은 선택적으로 (SMS 기능 미구현 시 스킵)
+        if (!ok) { toast('필수 항목을 모두 입력해주세요.', 'error'); }
+        return ok;
+    }
+
+    if (step === 3) {
+        let ok = true;
+        if (!val('bidAmount'))     { showError('bidAmount');     ok = false; }
+        if (!val('depositMethod')) { showError('depositMethod'); ok = false; }
+        if (!document.getElementById('agreeContract') || !document.getElementById('agreeContract').checked) {
+            toast('전자계약 동의(서명)가 필요합니다.', 'error');
+            ok = false;
+        }
+        if (!signatureData) {
+            const errEl = document.getElementById('signatureError');
+            if (errEl) errEl.style.display = 'block';
+            toast('서명이 필요합니다.', 'error');
+            ok = false;
+        }
+        if (!ok) { toast('필수 항목을 모두 입력해주세요.', 'error'); }
+        return ok;
+    }
+
+    return true;
+}
+
+function val(id) {
+    const el = document.getElementById(id);
+    return el && el.value.trim() !== '';
+}
+function showError(id, msg) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const group = el.closest('.form-group');
+    if (group) {
+        group.classList.add('has-error');
+        el.classList.add('error');
+        if (msg) {
+            const errEl = group.querySelector('.error-msg');
+            if (errEl) errEl.textContent = msg;
+        }
+    }
+}
+function clearErrors() {
+    document.querySelectorAll('.form-group.has-error').forEach(g => g.classList.remove('has-error'));
+    document.querySelectorAll('input.error, select.error').forEach(el => el.classList.remove('error'));
+}
+
+// ─────────────────────────────────────────────
+// 요약 채우기
+// ─────────────────────────────────────────────
+function fillSummary() {
+    const bidAmt = val2('bidAmount');
+    const deposit = bidAmt ? (Math.floor(parseNumber(bidAmt) * 0.1)).toLocaleString('ko-KR') + '원' : '-';
+    const rows = [
+        ['법원', val2('courtSelect')],
+        ['사건번호', val2('caseNumber')],
+        ['입찰 기일', val2('bidDate')],
+        ['물건 주소', (val2('propertyAddress') + ' ' + val2('propertyAddressDetail')).trim()],
+        ['물건 종류', val2('propertyType') || '-'],
+        ['신청자 이름', val2('applicantName')],
+        ['휴대폰 번호', val2('applicantPhone')],
+        ['환급 계좌', val2('bankName') + ' ' + val2('accountNumber')],
+        ['희망 입찰가', bidAmt + '원'],
+        ['입찰 보증금 (10%)', deposit],
+        ['보증금 납부 방법', val2('depositMethod')],
+        ['입찰 형태', val2('bidType')],
+        ['전자계약 서명', '완료'],
+        ['서비스 수수료', '무료 매칭'],
+    ];
+
+    document.getElementById('summaryTable').innerHTML = rows
+        .filter(([_, v]) => v && v.trim() !== '' && v.trim() !== '원')
+        .map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`)
+        .join('');
+}
+function val2(id) {
+    const el = document.getElementById(id);
+    return el ? el.value.trim() : '';
+}
+
+// ─────────────────────────────────────────────
+// 신청 제출
+// ─────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// 토스페이먼츠 클라이언트 키 (현재 미사용 - 무료 매칭 운영 중)
+// ─────────────────────────────────────────────
+const TOSS_CLIENT_KEY = 'test_ck_oEjb0gm23Pw75kkppyk48pGwBJn5';
+
+async function submitApplication() {
+    if (!document.getElementById('agreeTerms').checked) {
+        toast('서비스 이용약관에 동의해주세요.', 'error'); return;
+    }
+    if (!document.getElementById('agreePrivacy').checked) {
+        toast('개인정보 수집·이용에 동의해주세요.', 'error'); return;
+    }
+    if (!signatureData) {
+        toast('전자계약 서명이 필요합니다. 3단계로 돌아가서 서명해주세요.', 'error'); return;
+    }
+
+    const btn = document.querySelector('.btn-submit');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 처리 중...';
+
+    const user = Auth.getCurrentUser();
+    const rawCase = val2('caseNumber').replace(/\s/g, '');
+
+    // 공동입찰 정보 수집
+    const jointMembers = [];
+    document.querySelectorAll('.joint-member-row').forEach((row, i) => {
+        const name = row.querySelector('.joint-member-name')?.value?.trim();
+        const ratio = row.querySelector('.joint-member-ratio')?.value?.trim();
+        if (name) jointMembers.push({ name, ratio: ratio || '' });
+    });
+
+    const appData = {
+        region: val2('regionSelect'),
+        court: val2('courtSelect'),
+        case_number: rawCase,
+        bid_date: val2('bidDate'),
+        address: (val2('propertyAddress') + ' ' + val2('propertyAddressDetail')).trim(),
+        appraisal_price: parseNumber(val2('appraisalPrice')),
+        min_bid_price: parseNumber(val2('minBidPrice')),
+        property_type: val2('propertyType'),
+        applicant_name: val2('applicantName'),
+        applicant_birth: val2('applicantBirth'),
+        phone: val2('applicantPhone'),
+        email: val2('applicantEmail'),
+        bank_name: val2('bankName'),
+        account_holder: val2('accountHolder'),
+        account_number: val2('accountNumber'),
+        bid_amount: parseNumber(val2('bidAmount')),
+        deposit_amount: Math.floor(parseNumber(val2('bidAmount')) * 0.1),
+        deposit_method: val2('depositMethod') || '법무사님께 직접 이체',
+        signature_data: signatureData ? 'signed' : '',
+        bid_type: val2('bidType'),
+        joint_members: jointMembers,
+        memo: val2('memo'),
+        service_fee: 0,
+        payment_status: '무료매칭',
+        user_id: user ? (user.userId || user.id) : '',
+        userId: user ? (user.userId || user.id) : '',
+        status: '접수',
+        created_at: new Date().toISOString()
+    };
+
+    try {
+        // ── DB 저장 (결제창 없이 바로 완료) ──
+        let savedApp;
+        if (typeof API !== 'undefined') {
+            savedApp = await API.applications.create(appData);
+        } else {
+            const localKey = 'myApplications_' + (user ? (user.userId || user.id) : 'guest');
+            const existing = JSON.parse(localStorage.getItem(localKey) || '[]');
+            const newApp = { ...appData, id: 'local_' + Date.now() };
+            existing.unshift(newApp);
+            localStorage.setItem(localKey, JSON.stringify(existing));
+            savedApp = newApp;
+        }
+
+        const appId = savedApp ? (savedApp.id || savedApp._id || 'APP-' + Date.now()) : 'APP-' + Date.now();
+
+        // ── 카카오 알림톡 발송 (신청완료) ──
+        try {
+            await sendKakaoNotification('apply_complete', appData.phone, {
+                appId:      appId.toString().slice(-8).toUpperCase(),
+                name:       appData.applicant_name,
+                court:      appData.court,
+                caseNumber: appData.case_number,
+                bidDate:    appData.bid_date,
+                address:    appData.address,
+            });
+        } catch (kErr) {
+            console.warn('알림톡 발송 실패 (무시):', kErr);
+        }
+
+        // ── 신청 완료 화면으로 이동 ──
+        document.getElementById('appNumberBadge').textContent = '신청번호: ' + appId.toString().slice(-8).toUpperCase();
+
+        // 스텝 인디케이터 모두 완료 처리
+        for (let i = 1; i <= 4; i++) {
+            const item = document.getElementById('stepItem' + i);
+            if (item) { item.classList.remove('active'); item.classList.add('done'); }
+        }
+        document.getElementById('progressFill').style.width = '100%';
+
+        // 패널 전환 (goStep 대신 직접 전환 - 유효성검사 없이)
+        document.getElementById('panel' + currentStep).classList.remove('active');
+        document.getElementById('panel5').classList.add('active');
+        currentStep = 5;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    } catch (err) {
+        console.error('신청 오류:', err);
+        toast('처리 중 오류가 발생했습니다: ' + (err.message || ''), 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check-circle"></i> 대리입찰 신청';
+    }
+}
+
+// ─────────────────────────────────────────────
+// 법원 목록 업데이트
+// ─────────────────────────────────────────────
+function updateCourts() {
+    const region = document.getElementById('regionSelect').value;
+    const courtSel = document.getElementById('courtSelect');
+    courtSel.innerHTML = '<option value="">법원을 선택하세요</option>';
+    if (region && COURT_DATA[region]) {
+        COURT_DATA[region].forEach(c => {
+            courtSel.innerHTML += `<option value="${c}">${c}</option>`;
+        });
+    }
+}
+
+// ─────────────────────────────────────────────
+// 공동 입찰 토글 + 멤버 추가
+// ─────────────────────────────────────────────
+function toggleJointInfo() {
+    const type = document.getElementById('bidType').value;
+    document.getElementById('jointInfo').style.display = type === '공동' ? 'block' : 'none';
+}
+
+let jointMemberCount = 0;
+function addJointMember() {
+    if (jointMemberCount >= 3) {
+        document.getElementById('jointLimitMsg').style.display = 'block';
+        return;
+    }
+    jointMemberCount++;
+    const list = document.getElementById('jointMemberList');
+    const idx = jointMemberCount;
+    const div = document.createElement('div');
+    div.className = 'joint-member-row';
+    div.style.cssText = 'display:grid; grid-template-columns:1fr 1fr auto; gap:0.6rem; align-items:center; margin-bottom:0.6rem;';
+    div.innerHTML = `
+        <input type="text" class="joint-member-name"
+            placeholder="공동입찰자 ${idx} 이름"
+            style="padding:0.7rem 0.9rem; border:2px solid #e0e0e0; border-radius:10px; font-size:0.92rem; width:100%;">
+        <input type="text" class="joint-member-ratio"
+            placeholder="지분율 예) 50%"
+            style="padding:0.7rem 0.9rem; border:2px solid #e0e0e0; border-radius:10px; font-size:0.92rem; width:100%;">
+        <button type="button" onclick="removeJointMember(this)"
+            style="padding:0.65rem 0.8rem; background:#fee2e2; border:none; border-radius:10px; color:#dc2626; font-size:1rem; cursor:pointer; font-weight:700; white-space:nowrap;">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    list.appendChild(div);
+    if (jointMemberCount >= 3) {
+        document.getElementById('btnAddJoint').disabled = true;
+        document.getElementById('btnAddJoint').style.opacity = '0.5';
+        document.getElementById('jointLimitMsg').style.display = 'block';
+    }
+}
+
+function removeJointMember(btn) {
+    btn.closest('.joint-member-row').remove();
+    jointMemberCount = Math.max(0, jointMemberCount - 1);
+    document.getElementById('btnAddJoint').disabled = false;
+    document.getElementById('btnAddJoint').style.opacity = '1';
+    if (jointMemberCount < 3) {
+        document.getElementById('jointLimitMsg').style.display = 'none';
+    }
+}
+
+// ─────────────────────────────────────────────
+// 보증금 10% 자동 계산
+// ─────────────────────────────────────────────
+function updateDepositAmount() {
+    const raw = document.getElementById('bidAmount').value.replace(/[^0-9]/g, '');
+    const depositEl  = document.getElementById('depositAmount');
+    const depositKor = document.getElementById('depositAmountKor');
+    if (!depositEl) return;
+    if (!raw) {
+        depositEl.value = '';
+        if (depositKor) depositKor.textContent = '';
+        return;
+    }
+    const deposit = Math.floor(Number(raw) * 0.1);
+    depositEl.value = deposit.toLocaleString('ko-KR');
+    if (depositKor) depositKor.textContent = '= ' + toKoreanAmount(deposit);
+}
+
+// ─────────────────────────────────────────────
+// 숫자 포맷
+// ─────────────────────────────────────────────
+function formatInputNumber(input) {
+    const raw = input.value.replace(/[^0-9]/g, '');
+    input.value = raw ? Number(raw).toLocaleString('ko-KR') : '';
+}
+function parseNumber(str) {
+    return parseInt((str || '0').replace(/[^0-9]/g, ''), 10) || 0;
+}
+
+// 숫자 → 한글 금액 변환 (억/천만/백만/만 단위)
+function toKoreanAmount(num) {
+    if (!num || num === 0) return '';
+    const eok   = Math.floor(num / 100000000);
+    const man   = Math.floor((num % 100000000) / 10000);
+    const under = num % 10000;
+    let text = '';
+    if (eok  > 0) text += eok + '억 ';
+    if (man  > 0) text += man.toLocaleString('ko-KR') + '만 ';
+    if (under > 0) text += under.toLocaleString('ko-KR');
+    return text.trim() + '원';
+}
+
+// 입력 필드 하단에 한글 금액 표시
+function showKorean(inputId, outId) {
+    const raw = document.getElementById(inputId).value.replace(/[^0-9]/g, '');
+    const el  = document.getElementById(outId);
+    if (!el) return;
+    el.textContent = raw ? '= ' + toKoreanAmount(Number(raw)) : '';
+}
+
+function updateBidPreview() {
+    updateDepositAmount();
+    const raw = document.getElementById('bidAmount').value.replace(/[^0-9]/g, '');
+    const preview = document.getElementById('bidAmountPreview');
+    if (!raw) { preview.textContent = ''; return; }
+    preview.textContent = '= ' + toKoreanAmount(Number(raw));
+}
+
+// ─────────────────────────────────────────────
+// 전화번호 포맷
+// ─────────────────────────────────────────────
+function formatPhone(input) {
+    let v = input.value.replace(/[^0-9]/g, '');
+    if (v.length <= 3) input.value = v;
+    else if (v.length <= 7) input.value = v.slice(0,3) + '-' + v.slice(3);
+    else input.value = v.slice(0,3) + '-' + v.slice(3,7) + '-' + v.slice(7,11);
+}
+
+// ─────────────────────────────────────────────
+// SMS 인증 (실제 발송 - DEV 환경)
+// ─────────────────────────────────────────────
+const SMS_WORKER_URL    = 'https://bidtok-sms-proxy.qkqk5342.workers.dev';
+const KAKAO_WORKER_URL  = 'https://bidtok-kakao-proxy.qkqk5342.workers.dev';
+
+async function sendSmsCode() {
+    const phone = document.getElementById('applicantPhone').value.trim();
+    if (!phone || phone.replace(/[^0-9]/g,'').length < 10) {
+        toast('올바른 휴대폰 번호를 입력해주세요.', 'error'); return;
+    }
+
+    const btn = document.getElementById('btnSendSms');
+    btn.disabled = true;
+    btn.textContent = '발송 중...';
+
+    // 6자리 인증번호 생성
+    smsCodeReal = Math.floor(100000 + Math.random() * 900000).toString();
+
+    try {
+        const res = await fetch(SMS_WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ to: phone, code: smsCodeReal })
+        });
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+            throw new Error(data.error || 'SMS 발송 실패');
+        }
+
+        // 발송 성공
+        document.getElementById('smsCodeRow').style.display = 'block';
+        document.getElementById('smsCode').value = '';
+        document.getElementById('smsTimer').style.color = '#1550E8';
+        btn.textContent = '재발송 (60초)';
+        toast('인증번호가 발송되었습니다!', 'success');
+
+        // 60초 타이머
+        let left = 60;
+        clearInterval(smsTimerInterval);
+        smsTimerInterval = setInterval(() => {
+            left--;
+            const timerEl = document.getElementById('smsTimer');
+            if (timerEl) timerEl.textContent = `⏱ ${left}초 후 재발송 가능`;
+            if (left <= 0) {
+                clearInterval(smsTimerInterval);
+                btn.disabled = false;
+                btn.textContent = '재발송';
+                if (timerEl) timerEl.textContent = '인증번호가 만료되었습니다. 재발송해주세요.';
+            }
+        }, 1000);
+
+    } catch (err) {
+        toast('SMS 발송 실패: ' + (err.message || '잠시 후 다시 시도해주세요.'), 'error');
+        btn.disabled = false;
+        btn.textContent = '인증번호 발송';
+    }
+}
+
+function verifySmsCode() {
+    const input = document.getElementById('smsCode').value.trim();
+    if (!input) { toast('인증번호를 입력해주세요.', 'error'); return; }
+    if (input !== smsCodeReal) { toast('인증번호가 올바르지 않습니다.', 'error'); return; }
+
+    phoneVerified = true;
+    document.getElementById('smsTimer').textContent = '✅ 인증 완료';
+    document.getElementById('smsTimer').style.color = '#10B981';
+    clearInterval(smsTimerInterval);
+    toast('휴대폰 인증이 완료되었습니다!', 'success');
+}
+
+// ─────────────────────────────────────────────
+// 카카오 알림톡 공통 발송 함수
+// ─────────────────────────────────────────────
+async function sendKakaoNotification(type, to, data) {
+    if (!to) return;
+    const res = await fetch(KAKAO_WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type, to, data })
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || '알림 발송 실패');
+    return result;
+}
+
+// ─────────────────────────────────────────────
+// 토스트 알림
+// ─────────────────────────────────────────────
+function toast(msg, type = 'info') {
+    const existing = document.querySelector('.toast-msg');
+    if (existing) existing.remove();
+
+    const t = document.createElement('div');
+    t.className = 'toast-msg';
+    t.textContent = msg;
+    t.style.cssText = `
+        position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
+        padding: 0.9rem 1.8rem; border-radius: 30px; font-weight: 600;
+        font-size: 0.92rem; z-index: 9999; box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        animation: fadeInUp 0.3s ease;
+        background: ${type === 'error' ? '#EF4444' : type === 'success' ? '#10B981' : '#333'};
+        color: white;
+    `;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 3000);
+}
+
+// CSS 애니메이션
+const style = document.createElement('style');
+style.textContent = `@keyframes fadeInUp { from { opacity:0; transform: translate(-50%,20px); } to { opacity:1; transform: translate(-50%,0); } }`;
+document.head.appendChild(style);
+
+// ─────────────────────────────────────────────
+// 전자서명 패드
+// ─────────────────────────────────────────────
+let signatureData = null;
+
+(function initSignaturePad() {
+    const canvas = document.getElementById('signatureCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let drawing = false;
+    let hasMark = false;
+
+    function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        if (e.touches) {
+            return {
+                x: (e.touches[0].clientX - rect.left) * scaleX,
+                y: (e.touches[0].clientY - rect.top) * scaleY
+            };
+        }
+        return {
+            x: (e.clientX - rect.left) * scaleX,
+            y: (e.clientY - rect.top) * scaleY
+        };
+    }
+
+    ctx.strokeStyle = '#1550E8';
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    function startDraw(e) {
+        e.preventDefault();
+        drawing = true;
+        const p = getPos(e);
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+    }
+    function moveDraw(e) {
+        e.preventDefault();
+        if (!drawing) return;
+        const p = getPos(e);
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+        hasMark = true;
+        const ph = document.getElementById('signaturePlaceholder');
+        if (ph) ph.style.display = 'none';
+        const errEl = document.getElementById('signatureError');
+        if (errEl) errEl.style.display = 'none';
+    }
+    function endDraw(e) {
+        e.preventDefault();
+        if (drawing && hasMark) {
+            signatureData = canvas.toDataURL('image/png');
+        }
+        drawing = false;
+    }
+
+    canvas.addEventListener('mousedown', startDraw);
+    canvas.addEventListener('mousemove', moveDraw);
+    canvas.addEventListener('mouseup', endDraw);
+    canvas.addEventListener('mouseleave', endDraw);
+    canvas.addEventListener('touchstart', startDraw, { passive: false });
+    canvas.addEventListener('touchmove', moveDraw, { passive: false });
+    canvas.addEventListener('touchend', endDraw, { passive: false });
+})();
+
+function clearSignature() {
+    const canvas = document.getElementById('signatureCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    signatureData = null;
+    const ph = document.getElementById('signaturePlaceholder');
+    if (ph) ph.style.display = 'flex';
+}
+
+// ─────────────────────────────────────────────
+// 다음 주소 검색 API
+// ─────────────────────────────────────────────
+function searchAddress() {
+    // 다음 우편번호 API 로드 확인
+    if (typeof daum === 'undefined' || !daum.Postcode) {
+        // API 로드 실패 시 직접 입력으로 전환
+        const input = document.getElementById('propertyAddress');
+        input.readOnly = false;
+        input.placeholder = '주소를 직접 입력해주세요';
+        input.focus();
+        toast('주소 검색 서비스에 연결할 수 없습니다. 직접 입력해주세요.', 'info');
+        return;
+    }
+
+    new daum.Postcode({
+        oncomplete: function(data) {
+            // 도로명 주소 우선, 없으면 지번 주소
+            const address = data.roadAddress || data.jibunAddress;
+            document.getElementById('propertyAddress').value = address;
+            document.getElementById('propertyAddressDetail').focus();
+            toast('주소가 입력되었습니다. 상세 주소를 입력해주세요.', 'success');
+        },
+        onclose: function() {
+            // 팝업 닫힐 때 아무것도 안 함
+        }
+    }).open();
+}
+</script>
+
+
+    <!-- Footer -->
+    <footer style="background:#1a1a2e; color:#aaa; padding:2rem 0; margin-top:3rem;">
+        <div style="max-width:1200px; margin:0 auto; padding:0 1.5rem;">
+            <div style="display:flex; flex-wrap:wrap; gap:1.5rem; justify-content:space-between; align-items:flex-start; margin-bottom:1.5rem;">
+                <div>
+                    <div style="font-size:1.1rem; font-weight:700; color:white; margin-bottom:0.5rem;">
+                        <i class="fas fa-comment-dots" style="color:#667eea;"></i> 대리입찰 톡
+                    </div>
+                    <p style="margin:0.25rem 0; font-size:0.85rem;">상호명: (주)원스타프로비</p>
+                    <p style="margin:0.25rem 0; font-size:0.85rem;">주소: 서울특별시 금천구 가산디지털1로 75-24 90호</p>
+                    <p style="margin:0.25rem 0; font-size:0.85rem;">대표전화: <a href="tel:02-853-5875" style="color:#667eea;">02-853-5875</a> &nbsp;|&nbsp; 평일 09:00~18:00</p>
+                </div>
+                <div style="font-size:0.85rem; line-height:1.8;">
+                    <a href="terms.html" style="color:#aaa; text-decoration:none; margin-right:1rem;">이용약관</a>
+                    <a href="privacy.html" style="color:#aaa; text-decoration:none;">개인정보처리방침</a>
+                </div>
+            </div>
+            <div style="border-top:1px solid #333; padding-top:1rem; font-size:0.8rem; color:#666; text-align:center;">
+                &copy; 2026 (주)원스타프로비 대리입찰 톡. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

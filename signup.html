@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입 - 대리입찰 톡</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/additional.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: block;
+            padding: 2rem;
+        }
+
+        .signup-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 4rem);
+        }
+
+        .signup-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 600px;
+            overflow: hidden;
+        }
+
+        .signup-header {
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .signup-header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        .signup-tabs {
+            display: flex;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .signup-tab {
+            flex: 1;
+            padding: 1.2rem;
+            text-align: center;
+            cursor: pointer;
+            background: #f5f5f5;
+            border: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .signup-tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .signup-tab:hover {
+            background: #fff;
+        }
+
+        .signup-content {
+            padding: 2rem;
+        }
+
+        .signup-form {
+            display: none;
+        }
+
+        .signup-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 0.3rem;
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        .region-checkboxes {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .region-checkbox {
+            display: flex;
+            align-items: center;
+        }
+
+        .region-checkbox input {
+            width: auto;
+            margin-right: 0.5rem;
+        }
+
+        .region-checkbox label {
+            margin: 0;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .file-upload-group {
+            margin-bottom: 1rem;
+        }
+
+        .file-upload-group label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .file-upload-group input[type="file"] {
+            width: 100%;
+            padding: 0.5rem;
+            border: 2px dashed #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .terms-group {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .terms-checkbox {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .terms-checkbox input {
+            width: auto;
+            margin-right: 0.8rem;
+        }
+
+        .terms-checkbox label {
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .terms-checkbox.all-terms {
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 1rem;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .phone-verify-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: flex-start;
+        }
+
+        .phone-verify-group input {
+            flex: 1;
+        }
+
+        .verify-btn {
+            padding: 0.8rem 1.2rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.3s;
+        }
+
+        .verify-btn:hover {
+            background: #5568d3;
+        }
+
+        .verify-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .verify-success {
+            color: #28a745;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        .verify-timer {
+            color: #dc3545;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .signup-footer {
+            text-align: center;
+            padding: 1.5rem;
+            background: #f8f9fa;
+        }
+
+        .signup-footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .region-checkboxes {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body><div style="position:fixed;top:0;left:0;right:0;z-index:99999;background:#f59e0b;color:#000;text-align:center;font-size:12px;font-weight:700;padding:4px 0;letter-spacing:0.5px;">🚧 DEV 테스트 환경 — bid-tok.kr 과 동일한 DB 사용중</div>
+    <div class="signup-wrapper">
+    <div class="signup-container">
+        <div class="signup-header">
+            <h1>🎯 회원가입</h1>
+        </div>
+
+        <!-- 법무사 탭 제거됨: 법무사는 관리자가 직접 등록 (partner.html 통해 신청) -->
+
+        <div class="signup-content">
+            <!-- 신청자 회원가입 폼 -->
+            <form id="clientSignupForm" class="signup-form active">
+                <div class="form-group">
+                    <label for="clientUserId">아이디 *</label>
+                    <div class="phone-verify-group">
+                        <input type="text" id="clientUserId" name="userId" required placeholder="영문, 숫자 4~20자" minlength="4" maxlength="20">
+                        <button type="button" class="verify-btn" onclick="checkUserIdDuplicate('client')">중복확인</button>
+                    </div>
+                    <small>영문 소문자, 숫자 사용 가능 (4~20자)</small>
+                    <div id="clientUserIdSuccess" class="verify-success" style="display: none;">✓ 사용 가능한 아이디입니다</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="clientEmail">이메일 *</label>
+                    <div class="phone-verify-group">
+                        <input type="email" id="clientEmail" name="email" required placeholder="example@email.com">
+                        <button type="button" class="verify-btn" onclick="checkEmailDuplicate('client')">중복확인</button>
+                    </div>
+                    <div id="clientEmailSuccess" class="verify-success" style="display: none;">✓ 사용 가능한 이메일입니다</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="clientPassword">비밀번호 *</label>
+                    <div style="position: relative;">
+                        <input type="password" id="clientPassword" name="password" required placeholder="8자 이상 입력">
+                        <button type="button" onclick="togglePassword('clientPassword', 'clientPasswordToggle')" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); border: none; background: none; cursor: pointer; font-size: 1.2rem; color: #999;">
+                            <i id="clientPasswordToggle" class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <small>영문, 숫자 포함 8자 이상</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="clientPasswordConfirm">비밀번호 확인 *</label>
+                    <div style="position: relative;">
+                        <input type="password" id="clientPasswordConfirm" name="passwordConfirm" required placeholder="비밀번호 재입력">
+                        <button type="button" onclick="togglePassword('clientPasswordConfirm', 'clientPasswordConfirmToggle')" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); border: none; background: none; cursor: pointer; font-size: 1.2rem; color: #999;">
+                            <i id="clientPasswordConfirmToggle" class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="clientName">이름 *</label>
+                    <input type="text" id="clientName" name="name" required placeholder="홍길동" autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label for="clientPhone">휴대폰 번호 *</label>
+                    <div class="phone-verify-group">
+                        <input type="tel" id="clientPhone" name="phone" required placeholder="010-1234-5678" maxlength="13">
+                        <button type="button" class="verify-btn" id="clientSendVerify" onclick="sendVerifyCode('client')">인증번호 발송</button>
+                    </div>
+                </div>
+
+                <div class="form-group" id="clientVerifyCodeGroup" style="display: none;">
+                    <label for="clientVerifyCode">인증번호 입력 *</label>
+                    <div class="phone-verify-group">
+                        <input type="text" id="clientVerifyCode" name="verifyCode" placeholder="인증번호 6자리" maxlength="6">
+                        <button type="button" class="verify-btn" id="clientConfirmVerify" onclick="confirmVerifyCode('client')">인증 확인</button>
+                    </div>
+                    <small id="clientVerifyTimer" class="verify-timer"></small>
+                    <div id="clientVerifySuccess" class="verify-success" style="display: none;">✓ 인증이 완료되었습니다</div>
+                </div>
+
+                <div class="terms-group">
+                    <div class="terms-checkbox all-terms">
+                        <input type="checkbox" id="clientAllTerms" onclick="toggleAllTerms('client')">
+                        <label for="clientAllTerms">전체 동의</label>
+                    </div>
+                    <div class="terms-checkbox">
+                        <input type="checkbox" id="clientTerms1" name="terms1" required>
+                        <label for="clientTerms1">[필수] 이용약관 동의</label>
+                        <a href="terms.html" target="_blank" style="margin-left: 0.5rem; color: #667eea; text-decoration: none; font-size: 0.9rem;">내용보기</a>
+                    </div>
+                    <div class="terms-checkbox">
+                        <input type="checkbox" id="clientTerms2" name="terms2" required>
+                        <label for="clientTerms2">[필수] 개인정보 수집 및 이용 동의</label>
+                        <a href="privacy.html" target="_blank" style="margin-left: 0.5rem; color: #667eea; text-decoration: none; font-size: 0.9rem;">내용보기</a>
+                    </div>
+                    <div class="terms-checkbox">
+                        <input type="checkbox" id="clientTerms3" name="terms3">
+                        <label for="clientTerms3">[선택] 마케팅 정보 수신 동의</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">회원가입</button>
+            </form>
+
+            <!-- 법무사 직접 신청: 관리자가 등록 → expert-setup.html로 비밀번호 설정 -->
+            <div id="expertSignupForm" class="signup-form" style="display:none;">
+                <div style="text-align:center;padding:40px 24px;">
+                    <div style="font-size:3rem;margin-bottom:16px;">🔒</div>
+                    <h3 style="font-size:1.2rem;font-weight:800;color:#111827;margin-bottom:12px;">법무사 회원가입 안내</h3>
+                    <p style="color:#6B7280;font-size:0.9rem;line-height:1.7;margin-bottom:24px;">
+                        법무사 계정은 <strong>직접 신청이 불가</strong>합니다.<br>
+                        아래 대리인 신청 페이지에서 서류를 제출하시면<br>
+                        운영자 심사 후 개별 연락을 통해 계정을 발급해 드립니다.
+                    </p>
+                    <a href="partner.html" style="display:inline-block;background:#0D9488;color:#fff;padding:12px 28px;border-radius:10px;font-weight:700;text-decoration:none;font-size:0.95rem;">
+                        <i class="fas fa-arrow-right" style="margin-right:6px;"></i>대리인 신청하기
+                    </a>
+                </div>
+            </div>
+
+            <!-- 법무사 가입 완료 화면 -->
+            <div id="expertSignupSuccess" style="display:none; text-align:center; padding: 1rem 0;">
+                <div style="font-size:4rem; margin-bottom:1rem;">✅</div>
+                <h2 style="color:#333; margin-bottom:0.5rem;">가입 신청 완료!</h2>
+                <p style="color:#666; font-size:1rem; margin-bottom:2rem;">법무사 가입 신청이 성공적으로 접수되었습니다.</p>
+
+                <div style="background:#f0f4ff; border:2px solid #667eea; border-radius:12px; padding:1.5rem; text-align:left; margin-bottom:1.5rem;">
+                    <h3 style="color:#667eea; margin:0 0 1rem; font-size:1rem;">📋 승인 절차 안내</h3>
+                    <ol style="margin:0; padding-left:1.2rem; color:#555; line-height:2;">
+                        <li>제출하신 서류를 검토합니다</li>
+                        <li>법무사 등록번호 및 자격 확인</li>
+                        <li>승인 완료 후 이메일/SMS로 안내</li>
+                        <li>로그인 후 서비스 이용 가능</li>
+                    </ol>
+                </div>
+
+                <div style="background:#fff8e1; border:1px solid #ffd54f; border-radius:10px; padding:1rem 1.5rem; text-align:left; margin-bottom:1.5rem;">
+                    <p style="margin:0; color:#666; font-size:0.9rem;">⏱️ <strong>평균 승인 소요 시간: 1~2 영업일</strong><br>
+                    문의: <strong>qkqk5342@naver.com</strong> 또는 서비스 내 문의하기</p>
+                </div>
+
+                <a href="login.html" class="submit-btn" style="display:block; text-decoration:none; text-align:center; padding:1rem;">로그인 페이지로 이동</a>
+            </div>
+
+        </div>
+
+        <div class="signup-footer">
+            이미 계정이 있으신가요? <a href="login.html">로그인하기</a>
+        </div>
+    </div>
+    </div><!-- /signup-wrapper -->
+
+    <script>
+        // ── 페이지 로드 후 이름 필드 강제 초기화 (브라우저 자동완성 차단) ──
+        window.addEventListener('load', function() {
+            const nameFields = ['clientName', 'expertName'];
+            nameFields.forEach(function(id) {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.value = '';
+                    el.setAttribute('autocomplete', 'new-password');
+                }
+            });
+        });
+
+        function switchTab(type) {
+            // 탭 전환
+            const tabs = document.querySelectorAll('.signup-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // 폼 전환
+            const forms = document.querySelectorAll('.signup-form');
+            forms.forEach(form => form.classList.remove('active'));
+            
+            if (type === 'client') {
+                document.getElementById('clientSignupForm').classList.add('active');
+            } else {
+                document.getElementById('expertSignupForm').classList.add('active');
+            }
+        }
+
+        function toggleAllTerms(type) {
+            const allCheckbox = document.getElementById(`${type}AllTerms`);
+            const checkboxes = document.querySelectorAll(`#${type}SignupForm .terms-checkbox:not(.all-terms) input[type="checkbox"]`);
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = allCheckbox.checked;
+            });
+        }
+
+        // 전역 변수
+        let verifyTimers = {};
+        let verifiedPhones = {};
+        let checkedUserIds = {};
+        let checkedEmails = {};
+
+        // 비밀번호 표시/숨김 토글
+        function togglePassword(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // 아이디 중복 체크
+        async function checkUserIdDuplicate(type) {
+            const userIdInput = document.getElementById(`${type}UserId`);
+            const userId = userIdInput.value.trim();
+            
+            if (userId.length < 4 || userId.length > 20) {
+                alert('아이디는 4~20자로 입력해주세요.');
+                userIdInput.focus();
+                return;
+            }
+            
+            const regex = /^[a-z0-9]+$/;
+            if (!regex.test(userId)) {
+                alert('아이디는 영문 소문자와 숫자만 사용 가능합니다.');
+                userIdInput.focus();
+                return;
+            }
+            
+            try {
+                const result = await Auth.checkUserIdDuplicate(userId);
+                if (!result.available) {
+                    alert('이미 사용 중인 아이디입니다.');
+                    checkedUserIds[type] = false;
+                } else {
+                    checkedUserIds[type] = true;
+                    document.getElementById(`${type}UserIdSuccess`).style.display = 'block';
+                    userIdInput.disabled = true;
+                }
+            } catch (err) {
+                alert('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+            }
+        }
+
+        // 이메일 중복 체크
+        async function checkEmailDuplicate(type) {
+            const emailInput = document.getElementById(`${type}Email`);
+            const email = emailInput.value.trim();
+            
+            if (!email) {
+                alert('이메일을 입력해주세요.');
+                emailInput.focus();
+                return;
+            }
+            
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!regex.test(email)) {
+                alert('올바른 이메일 형식이 아닙니다.');
+                emailInput.focus();
+                return;
+            }
+            
+            try {
+                const result = await Auth.checkEmailDuplicate(email);
+                if (!result.available) {
+                    alert('이미 사용 중인 이메일입니다.');
+                    checkedEmails[type] = false;
+                } else {
+                    checkedEmails[type] = true;
+                    document.getElementById(`${type}EmailSuccess`).style.display = 'block';
+                    emailInput.disabled = true;
+                }
+            } catch (err) {
+                alert('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+            }
+        }
+
+        // 휴대폰 번호 포맷팅
+        function formatPhoneNumber(input) {
+            const value = input.value.replace(/[^0-9]/g, '');
+            let formatted = '';
+            
+            if (value.length <= 3) {
+                formatted = value;
+            } else if (value.length <= 7) {
+                formatted = value.slice(0, 3) + '-' + value.slice(3);
+            } else {
+                formatted = value.slice(0, 3) + '-' + value.slice(3, 7) + '-' + value.slice(7, 11);
+            }
+            
+            input.value = formatted;
+        }
+
+        // 휴대폰 입력 필드에 포맷팅 추가
+        document.getElementById('clientPhone').addEventListener('input', function() {
+            formatPhoneNumber(this);
+        });
+        
+        document.getElementById('expertPhone').addEventListener('input', function() {
+            formatPhoneNumber(this);
+        });
+
+        // 뿌리오 문자 발송 Worker URL
+        const SMS_WORKER_URL = 'https://sms-api.qkqk5342.workers.dev';
+
+        // 인증번호 발송
+        async function sendVerifyCode(type) {
+            const phoneInput = document.getElementById(`${type}Phone`);
+            const phone = phoneInput.value.replace(/[^0-9]/g, '');
+            const sendBtn = document.getElementById(`${type}SendVerify`);
+
+            if (phone.length !== 11) {
+                alert('올바른 휴대폰 번호를 입력해주세요.');
+                phoneInput.focus();
+                return;
+            }
+
+            // 버튼 로딩 상태
+            sendBtn.disabled = true;
+            sendBtn.textContent = '발송 중...';
+
+            // 6자리 인증번호 생성
+            const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+            try {
+                const res = await fetch(SMS_WORKER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone, code: verifyCode })
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    // 인증번호 세션에 저장
+                    sessionStorage.setItem(`verifyCode_${type}`, verifyCode);
+
+                    // UI 업데이트
+                    document.getElementById(`${type}VerifyCodeGroup`).style.display = 'block';
+                    sendBtn.textContent = '발송완료';
+                    phoneInput.disabled = true;
+
+                    // 타이머 시작 (5분)
+                    startVerifyTimer(type, 300);
+
+                    alert('📱 인증번호가 발송되었습니다.\n휴대폰 문자를 확인해주세요.');
+                } else {
+                    alert('문자 발송에 실패했습니다. 잠시 후 다시 시도해주세요.\n' + (data.error || ''));
+                    sendBtn.disabled = false;
+                    sendBtn.textContent = '인증번호 발송';
+                }
+            } catch (e) {
+                console.error('SMS 발송 오류:', e);
+                alert('네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+                sendBtn.disabled = false;
+                sendBtn.textContent = '인증번호 발송';
+            }
+        }
+
+        // 인증 타이머
+        function startVerifyTimer(type, seconds) {
+            const timerElement = document.getElementById(`${type}VerifyTimer`);
+            let remaining = seconds;
+            
+            if (verifyTimers[type]) {
+                clearInterval(verifyTimers[type]);
+            }
+            
+            verifyTimers[type] = setInterval(() => {
+                remaining--;
+                const minutes = Math.floor(remaining / 60);
+                const secs = remaining % 60;
+                timerElement.textContent = `${minutes}:${secs.toString().padStart(2, '0')}`;
+                
+                if (remaining <= 0) {
+                    clearInterval(verifyTimers[type]);
+                    timerElement.textContent = '인증시간 만료';
+                    document.getElementById(`${type}ConfirmVerify`).disabled = true;
+                }
+            }, 1000);
+        }
+
+        // 인증번호 확인
+        function confirmVerifyCode(type) {
+            const inputCode = document.getElementById(`${type}VerifyCode`).value;
+            const savedCode = sessionStorage.getItem(`verifyCode_${type}`);
+            
+            if (!inputCode) {
+                alert('인증번호를 입력해주세요.');
+                return;
+            }
+            
+            if (inputCode === savedCode) {
+                // 인증 성공
+                verifiedPhones[type] = true;
+                clearInterval(verifyTimers[type]);
+                
+                document.getElementById(`${type}VerifySuccess`).style.display = 'block';
+                document.getElementById(`${type}VerifyCodeGroup`).querySelectorAll('input, button').forEach(el => el.disabled = true);
+                document.getElementById(`${type}VerifyTimer`).style.display = 'none';
+                
+                alert('인증이 완료되었습니다!');
+            } else {
+                alert('인증번호가 일치하지 않습니다.');
+            }
+        }
+
+        // 신청자 회원가입 제출
+        document.getElementById('clientSignupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // 아이디 중복 확인
+            if (!checkedUserIds['client']) {
+                alert('아이디 중복 확인을 해주세요.');
+                return;
+            }
+            
+            // 이메일 중복 확인
+            if (!checkedEmails['client']) {
+                alert('이메일 중복 확인을 해주세요.');
+                return;
+            }
+            
+            // 휴대폰 인증 확인
+            if (!verifiedPhones['client']) {
+                alert('휴대폰 인증을 완료해주세요.');
+                return;
+            }
+            
+            const password = document.getElementById('clientPassword').value;
+            const passwordConfirm = document.getElementById('clientPasswordConfirm').value;
+            
+            if (password !== passwordConfirm) {
+                alert('비밀번호가 일치하지 않습니다.');
+                return;
+            }
+            
+            if (password.length < 8) {
+                alert('비밀번호는 8자 이상이어야 합니다.');
+                return;
+            }
+            
+            const terms1 = document.getElementById('clientTerms1').checked;
+            const terms2 = document.getElementById('clientTerms2').checked;
+            
+            if (!terms1 || !terms2) {
+                alert('필수 약관에 동의해주세요.');
+                return;
+            }
+            
+            const formData = {
+                userId: document.getElementById('clientUserId').value,
+                email: document.getElementById('clientEmail').value,
+                password: password,
+                name: document.getElementById('clientName').value,
+                phone: document.getElementById('clientPhone').value,
+                userType: 'client',
+                marketingConsent: document.getElementById('clientTerms3').checked,
+                createdAt: new Date().toISOString()
+            };
+            
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '가입 처리 중...';
+            
+            try {
+                const result = await Auth.signup(formData);
+                if (result.success) {
+                    alert('회원가입이 완료되었습니다!\n로그인 페이지로 이동합니다.');
+                    window.location.href = 'login.html';
+                } else {
+                    alert(result.message || '회원가입에 실패했습니다.');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '회원가입';
+                }
+            } catch (error) {
+                alert('회원가입 중 오류가 발생했습니다.\n\n' + (error.message || '다시 시도해주세요.'));
+                console.error(error);
+                submitBtn.disabled = false;
+                submitBtn.textContent = '회원가입';
+            }
+        });
+
+        // 법무사 회원가입 제출
+        document.getElementById('expertSignupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // 아이디 중복 확인
+            if (!checkedUserIds['expert']) {
+                alert('아이디 중복 확인을 해주세요.');
+                return;
+            }
+            
+            // 이메일 중복 확인
+            if (!checkedEmails['expert']) {
+                alert('이메일 중복 확인을 해주세요.');
+                return;
+            }
+            
+            // 휴대폰 인증 확인
+            if (!verifiedPhones['expert']) {
+                alert('휴대폰 인증을 완료해주세요.');
+                return;
+            }
+            
+            const password = document.getElementById('expertPassword').value;
+            const passwordConfirm = document.getElementById('expertPasswordConfirm').value;
+            
+            if (password !== passwordConfirm) {
+                alert('비밀번호가 일치하지 않습니다.');
+                return;
+            }
+            
+            if (password.length < 8) {
+                alert('비밀번호는 8자 이상이어야 합니다.');
+                return;
+            }
+            
+            // 지역 체크
+            const regions = Array.from(document.querySelectorAll('input[name="regions"]:checked')).map(cb => cb.value);
+            if (regions.length === 0) {
+                alert('서비스 가능 지역을 최소 1개 이상 선택해주세요.');
+                return;
+            }
+            
+            const terms1 = document.getElementById('expertTerms1').checked;
+            const terms2 = document.getElementById('expertTerms2').checked;
+            const terms3 = document.getElementById('expertTerms3').checked;
+            
+            if (!terms1 || !terms2 || !terms3) {
+                alert('필수 약관에 동의해주세요.');
+                return;
+            }
+            
+            // 파일 체크
+            const licenseFile = document.getElementById('licenseFile').files[0];
+            const insuranceFile = document.getElementById('insuranceFile').files[0];
+            const bizRegFile = document.getElementById('bizRegFile').files[0];
+            
+            if (!licenseFile || !insuranceFile) {
+                alert('자격증과 보험증권을 모두 업로드해주세요.');
+                return;
+            }
+            if (!bizRegFile) {
+                alert('사업자등록증을 업로드해주세요.');
+                return;
+            }
+            
+            const formData = {
+                userId: document.getElementById('expertUserId').value,
+                email: document.getElementById('expertEmail').value,
+                password: password,
+                name: document.getElementById('expertName').value,
+                licenseNumber: document.getElementById('expertLicense').value,
+                phone: document.getElementById('expertPhone').value,
+                officeAddress: document.getElementById('expertOffice').value,
+                serviceRegions: regions,
+                userType: 'expert',
+                approved: false,
+                marketingConsent: document.getElementById('expertTerms4').checked,
+                createdAt: new Date().toISOString()
+            };
+            
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '정보 확인 중...';
+            
+            try {
+                // 파일명만 저장 (실제 파일 업로드는 추후 스토리지 연동)
+                formData.licenseFileName = licenseFile.name;
+                formData.insuranceFileName = insuranceFile.name;
+                formData.bizRegFileName = bizRegFile.name;
+                
+                submitBtn.textContent = '가입 처리 중...';
+                const result = await Auth.signup(formData);
+                if (result.success) {
+                    showExpertSignupSuccess();
+                    return;
+                } else {
+                    alert(result.message || '가입 신청에 실패했습니다.');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '법무사 가입 신청';
+                }
+            } catch (error) {
+                alert('회원가입 중 오류가 발생했습니다.\n\n' + (error.message || '다시 시도해주세요.'));
+                console.error(error);
+                submitBtn.disabled = false;
+                submitBtn.textContent = '법무사 가입 신청';
+            }
+        });
+
+        // 법무사 가입 완료 화면 표시
+        function showExpertSignupSuccess() {
+            // 폼 숨기기
+            document.getElementById('expertSignupForm').style.display = 'none';
+            // 탭 숨기기 (완료 화면에서는 탭 불필요)
+            document.querySelector('.signup-tabs').style.display = 'none';
+            // 완료 화면 표시
+            document.getElementById('expertSignupSuccess').style.display = 'block';
+            // 페이지 상단으로 스크롤
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+
+    <!-- Footer -->
+    <footer style="background:#1a1a2e; color:#aaa; padding:2rem 0; margin-top:3rem;">
+        <div style="max-width:1200px; margin:0 auto; padding:0 1.5rem;">
+            <div style="display:flex; flex-wrap:wrap; gap:1.5rem; justify-content:space-between; align-items:flex-start; margin-bottom:1.5rem;">
+                <div>
+                    <div style="font-size:1.1rem; font-weight:700; color:white; margin-bottom:0.5rem;">
+                        <i class="fas fa-comment-dots" style="color:#667eea;"></i> 대리입찰 톡
+                    </div>
+                    <p style="margin:0.25rem 0; font-size:0.85rem;">상호명: (주)원스타프로비</p>
+                    <p style="margin:0.25rem 0; font-size:0.85rem;">주소: 서울특별시 금천구 가산디지털1로 75-24 90호</p>
+                    <p style="margin:0.25rem 0; font-size:0.85rem;">대표전화: <a href="tel:02-853-5875" style="color:#667eea;">02-853-5875</a> &nbsp;|&nbsp; 평일 09:00~18:00</p>
+                </div>
+                <div style="font-size:0.85rem; line-height:1.8;">
+                    <a href="terms.html" style="color:#aaa; text-decoration:none; margin-right:1rem;">이용약관</a>
+                    <a href="privacy.html" style="color:#aaa; text-decoration:none;">개인정보처리방침</a>
+                </div>
+            </div>
+            <div style="border-top:1px solid #333; padding-top:1rem; font-size:0.8rem; color:#666; text-align:center;">
+                &copy; 2026 (주)원스타프로비 대리입찰 톡. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

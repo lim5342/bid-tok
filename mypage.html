@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마이페이지 - 대리입찰 톡</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/mypage.css">
+</head>
+<body><div style="position:fixed;top:0;left:0;right:0;z-index:99999;background:#f59e0b;color:#000;text-align:center;font-size:12px;font-weight:700;padding:4px 0;letter-spacing:0.5px;">🚧 DEV 테스트 환경 — bid-tok.kr 과 동일한 DB 사용중</div>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="nav-logo" onclick="window.location.href='index.html'" style="cursor: pointer;">
+                <i class="fas fa-comment-dots"></i>
+                <span>대리입찰 톡</span>
+            </div>
+            <div class="nav-actions">
+                <span id="userName" style="font-weight: 600; margin-right: 1rem;"></span>
+                <button class="btn btn-outline" onclick="handleLogout()">로그아웃</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="mypage-container">
+        <aside class="mypage-sidebar">
+            <div class="sidebar-profile">
+                <div class="profile-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <h3 id="profileName">사용자</h3>
+                <p id="profileEmail">user@example.com</p>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <a href="#applications" class="menu-item active" onclick="window._showSection('applications', this); return false;">
+                    <i class="fas fa-file-alt"></i> 신청 내역
+                </a>
+                <a href="#payments" class="menu-item" onclick="window._showSection('payments', this); return false;">
+                    <i class="fas fa-credit-card"></i> 결제 내역
+                </a>
+                <a href="#profile" class="menu-item" onclick="window._showSection('profile', this); return false;">
+                    <i class="fas fa-user-edit"></i> 회원정보 수정
+                </a>
+                <a href="#withdraw" class="menu-item" onclick="window._showSection('withdraw', this); return false;" style="color:#e53e3e;">
+                    <i class="fas fa-user-minus"></i> 회원 탈퇴
+                </a>
+            </nav>
+        </aside>
+
+        <main class="mypage-content">
+            <!-- 신청 내역 섹션 -->
+            <section id="applicationsSection" class="content-section active">
+                <div class="section-header">
+                    <h2><i class="fas fa-file-alt"></i> 신청 내역</h2>
+                    <button class="btn btn-primary" onclick="window.location.href='apply.html'">
+                        <i class="fas fa-plus"></i> 새 신청
+                    </button>
+                </div>
+
+                <div class="filter-tabs">
+                    <button class="filter-tab active" onclick="filterApplications('all', this)">전체</button>
+                    <button class="filter-tab" onclick="filterApplications('접수', this)">접수</button>
+                    <button class="filter-tab" onclick="filterApplications('매칭중', this)">매칭중</button>
+                    <button class="filter-tab" onclick="filterApplications('매칭완료', this)">확정</button>
+                    <button class="filter-tab" onclick="filterApplications('완료', this)">완료</button>
+                </div>
+
+                <div id="applicationsList" class="applications-list">
+                    <div class="empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>불러오는 중...</p>
+                    </div>
+                </div>
+
+                <!-- 진행상태 가이드 -->
+                <div class="status-guide" id="statusGuide" style="display:none; margin-top:2rem; background:#f8f9fa; border-radius:12px; padding:1.25rem 1.5rem;">
+                    <p style="font-size:0.8rem; font-weight:700; color:#888; margin-bottom:0.75rem; text-transform:uppercase; letter-spacing:0.05em;">진행 단계 안내</p>
+                    <div style="display:flex; flex-wrap:wrap; gap:0.5rem 1rem; font-size:0.8rem; color:#666;">
+                        <span><span class="status-badge status-matching">접수</span> 신청 접수 완료</span>
+                        <span style="color:#ccc;">→</span>
+                        <span><span class="status-badge status-matching">매칭중</span> 법무사 배정 중</span>
+                        <span style="color:#ccc;">→</span>
+                        <span><span class="status-badge status-confirmed">전문가 확정</span> 담당자 확정</span>
+                        <span style="color:#ccc;">→</span>
+                        <span><span class="status-badge status-confirmed">진행중</span> 입찰 진행</span>
+                        <span style="color:#ccc;">→</span>
+                        <span><span class="status-badge status-completed">완료</span> 입찰 완료</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 결제 내역 섹션 -->
+            <section id="paymentsSection" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-credit-card"></i> 결제 내역</h2>
+                </div>
+                <div class="table-wrap" id="paymentsList">
+                    <div class="empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>불러오는 중...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 회원 탈퇴 섹션 -->
+            <section id="withdrawSection" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-user-minus" style="color:#e53e3e;"></i> 회원 탈퇴</h2>
+                </div>
+                <div class="profile-form-container">
+                    <div style="background:#fff5f5; border:1.5px solid #fed7d7; border-radius:14px; padding:1.5rem 2rem; margin-bottom:1.5rem;">
+                        <h3 style="color:#e53e3e; font-size:1rem; margin-bottom:0.75rem; display:flex; align-items:center; gap:0.5rem;">
+                            <i class="fas fa-exclamation-triangle"></i> 탈퇴 전 확인사항
+                        </h3>
+                        <ul style="color:#666; font-size:0.88rem; line-height:2; padding-left:1.2rem; margin:0;">
+                            <li>탈퇴 시 모든 <strong>신청 내역</strong> 및 <strong>결제 내역</strong>이 삭제됩니다.</li>
+                            <li>삭제된 데이터는 <strong>복구가 불가능</strong>합니다.</li>
+                            <li>진행 중인 신청 건이 있는 경우, 탈퇴 전 취소 처리해주세요.</li>
+                            <li>동일 아이디로 재가입이 제한될 수 있습니다.</li>
+                        </ul>
+                    </div>
+                    <p style="color:#888; font-size:0.9rem; margin-bottom:1.5rem;">
+                        위 내용을 모두 확인하셨다면 아래 버튼을 눌러 탈퇴를 진행하세요.
+                    </p>
+                    <button type="button" onclick="handleWithdraw()"
+                        style="padding:0.8rem 2rem; background:white; color:#e53e3e; border:2px solid #e53e3e; border-radius:10px; font-size:0.95rem; font-weight:700; cursor:pointer; transition:all 0.2s;"
+                        onmouseover="this.style.background='#e53e3e'; this.style.color='white';"
+                        onmouseout="this.style.background='white'; this.style.color='#e53e3e';">
+                        <i class="fas fa-user-minus"></i> 회원 탈퇴 진행하기
+                    </button>
+                </div>
+            </section>
+
+            <!-- 회원정보 수정 섹션 -->
+            <section id="profileSection" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-user-edit"></i> 회원정보 수정</h2>
+                </div>
+
+                <div class="profile-form-container">
+                    <form id="profileForm">
+                        <div class="form-group">
+                            <label>아이디</label>
+                            <input type="text" id="profileUserId" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label>이메일</label>
+                            <input type="email" id="profileEmailInput" placeholder="이메일 주소">
+                        </div>
+                        <div class="form-group">
+                            <label>이름</label>
+                            <input type="text" id="profileNameInput" required>
+                        </div>
+                        <div class="form-group">
+                            <label>휴대폰 번호</label>
+                            <input type="tel" id="profilePhone" required placeholder="010-1234-5678">
+                        </div>
+                        <div class="form-group">
+                            <label>새 비밀번호 <span style="color:#999; font-weight:400;">(변경 시에만 입력)</span></label>
+                            <input type="password" id="newPassword" placeholder="8자 이상">
+                        </div>
+                        <div class="form-group">
+                            <label>새 비밀번호 확인</label>
+                            <input type="password" id="newPasswordConfirm" placeholder="비밀번호 재입력">
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="profileSaveBtn">저장하기</button>
+                    </form>
+
+                    <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #eee; text-align:right;">
+                        <a href="#withdraw" onclick="window._showSection('withdraw', document.querySelector('.menu-item:last-child')); return false;"
+                            style="font-size:0.82rem; color:#e53e3e; text-decoration:underline; cursor:pointer;">회원 탈퇴</a>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+
+    <!-- 신청 상세보기 모달 -->
+    <div id="detailModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center; padding:1rem;">
+        <div style="background:white; border-radius:20px; width:100%; max-width:520px; max-height:85vh; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+            <div style="padding:1.5rem 2rem 1rem; border-bottom:1px solid #e0e0e0; display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0; font-size:1.1rem; color:#333;"><i class="fas fa-clipboard-list" style="color:#667eea; margin-right:0.5rem;"></i>신청 상세 정보</h3>
+                <button onclick="closeDetailModal()" style="background:none; border:none; font-size:1.5rem; cursor:pointer; color:#999; line-height:1;">&times;</button>
+            </div>
+            <div id="detailContent" style="overflow-y:auto; flex:1; padding:1.5rem 2rem;"></div>
+            <div style="padding:1rem 2rem 1.5rem; border-top:1px solid #e0e0e0;">
+                <button onclick="closeDetailModal()" style="width:100%; padding:0.9rem; background:#667eea; color:white; border:none; border-radius:10px; font-weight:700; cursor:pointer; font-size:0.95rem;">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* ── 상세 테이블 ── */
+        .detail-table { width:100%; border-collapse:collapse; }
+        .detail-table tr { border-bottom:1px solid #f0f0f0; }
+        .detail-table tr:last-child { border-bottom:none; }
+        .detail-table td { padding:0.65rem 0.5rem; font-size:0.92rem; }
+        .detail-table td:first-child { color:#888; width:38%; font-weight:500; }
+        .detail-table td:last-child { color:#222; font-weight:600; }
+
+        /* ── 신청 카드 개선 ── */
+        .application-card {
+            background: #fff;
+            border-radius: 14px;
+            border: 1px solid #e8eaf0;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1rem;
+            transition: box-shadow 0.2s, transform 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        .application-card::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 4px;
+            background: #667eea;
+            border-radius: 4px 0 0 4px;
+        }
+        .application-card[data-status="완료"]::before,
+        .application-card[data-status="낙찰"]::before { background: #10B981; }
+        .application-card[data-status="취소"]::before,
+        .application-card[data-status="유찰"]::before { background: #9ca3af; }
+        .application-card[data-status="매칭완료"]::before,
+        .application-card[data-status="진행중"]::before { background: #1550E8; }
+        .application-card:hover {
+            box-shadow: 0 6px 24px rgba(102,126,234,0.13);
+            transform: translateY(-2px);
+        }
+
+        /* 카드 헤더 */
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .case-number {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #1550E8;
+            background: #f0f4ff;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+            margin-right: 0.5rem;
+        }
+        .bid-date {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        /* 카드 본문 */
+        .card-body { margin-bottom: 0.85rem; }
+        .address {
+            font-size: 0.92rem;
+            color: #444;
+            margin-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .address i { color: #667eea; }
+        .price-info {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .price-info .label {
+            font-size: 0.75rem;
+            color: #999;
+            display: block;
+            margin-bottom: 0.2rem;
+        }
+        .price-info .value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #333;
+        }
+        .price-info .value.highlight { color: #1550E8; }
+        .expert-info {
+            font-size: 0.85rem;
+            color: #10B981;
+            margin-top: 0.5rem;
+            font-weight: 600;
+        }
+
+        /* 카드 푸터 */
+        .card-footer {
+            display: flex;
+            gap: 0.6rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #f0f0f0;
+        }
+        .btn-sm {
+            padding: 0.45rem 1rem;
+            font-size: 0.82rem;
+            border-radius: 7px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #667eea !important;
+            color: #667eea;
+        }
+        .btn-outline:hover { background: #f0f4ff; }
+        .btn-danger {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+        .btn-danger:hover { background: #fecaca; }
+
+        /* 상태 배지 */
+        .status-badge {
+            display: inline-block;
+            padding: 0.22rem 0.65rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+        .status-matching  { background:#fef3c7; color:#d97706; }
+        .status-confirmed { background:#dbeafe; color:#1d4ed8; }
+        .status-completed { background:#d1fae5; color:#065f46; }
+        .status-success   { background:#d1fae5; color:#065f46; }
+        .status-cancelled { background:#f3f4f6; color:#6b7280; }
+
+        /* 빈 상태 */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #aaa;
+        }
+        .empty-state i { font-size: 3rem; margin-bottom: 1rem; color: #d1d5db; }
+        .empty-state p { font-size: 0.95rem; line-height: 1.7; }
+        .empty-state a { color: #667eea; font-weight: 600; text-decoration: none; }
+        .empty-state a:hover { text-decoration: underline; }
+
+        /* 빈 상태 CTA 버튼 */
+        .empty-state-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.25rem;
+            padding: 0.75rem 1.75rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(102,126,234,0.3);
+        }
+        .empty-state-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102,126,234,0.4);
+            text-decoration: none;
+            color: white;
+        }
+
+        /* 필터 탭 */
+        .filter-tabs { display:flex; gap:0.5rem; margin-bottom:1.25rem; flex-wrap:wrap; }
+        .filter-tab {
+            padding: 0.4rem 0.9rem;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            background: #fff;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: #666;
+            transition: all 0.2s;
+        }
+        .filter-tab:hover { border-color: #667eea; color: #667eea; }
+        .filter-tab.active { background: #667eea; color: #fff; border-color: #667eea; }
+
+        /* 결제 테이블 */
+        .payments-table { width:100%; border-collapse:collapse; font-size:0.88rem; }
+        .payments-table th {
+            background:#f8f9fa;
+            padding:0.75rem 1rem;
+            text-align:left;
+            font-weight:700;
+            color:#555;
+            border-bottom:2px solid #e0e0e0;
+        }
+        .payments-table td {
+            padding:0.75rem 1rem;
+            border-bottom:1px solid #f0f0f0;
+            color:#444;
+        }
+        .payments-table tr:hover td { background:#fafafa; }
+
+        /* 섹션 헤더 */
+        .section-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; }
+        .section-header h2 { font-size:1.2rem; color:#333; margin:0; display:flex; align-items:center; gap:0.5rem; }
+        .section-header h2 i { color:#667eea; }
+
+        /* 모바일 */
+        @media (max-width:600px) {
+            .application-card { padding:1rem 1rem 1rem 1.2rem; }
+            .price-info { gap:1rem; }
+            .card-footer { flex-wrap:wrap; }
+            .section-header { flex-direction:column; align-items:flex-start; gap:0.75rem; }
+        }
+    </style>
+    <script>
+    (function() {
+        // ── 로그인 체크 ────────────────────────────────────────
+        if (!Auth.isLoggedIn() || Auth.getUserType() !== 'client') {
+            alert('로그인이 필요합니다.');
+            window.location.href = 'login.html';
+            return; // 이후 코드 실행 방지
+        }
+
+        // ── 사용자 정보 초기화 ─────────────────────────────────
+        const user = Auth.getCurrentUser();
+        document.getElementById('userName').textContent = user.name || user.userId;
+        document.getElementById('profileName').textContent = user.name;
+        document.getElementById('profileEmail').textContent = user.email;
+        document.getElementById('profileUserId').value = user.userId || user.email;
+        document.getElementById('profileEmailInput').value = user.email;
+        document.getElementById('profileNameInput').value = user.name;
+        document.getElementById('profilePhone').value = user.phone || '';
+
+        // ── 섹션 전환 ──────────────────────────────────────────
+        function showSection(section, el) {
+            const clickedItem = el ? (el.closest ? el.closest('.menu-item') : el) : null;
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+            if (clickedItem) clickedItem.classList.add('active');
+            document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
+
+            if (section === 'applications') {
+                document.getElementById('applicationsSection').classList.add('active');
+                loadApplications();
+            } else if (section === 'payments') {
+                document.getElementById('paymentsSection').classList.add('active');
+                loadPayments();
+            } else if (section === 'profile') {
+                document.getElementById('profileSection').classList.add('active');
+            } else if (section === 'withdraw') {
+                document.getElementById('withdrawSection').classList.add('active');
+            }
+        }
+        // 전역에 노출 (onclick 속성에서 접근 가능하도록)
+        window._showSection = showSection;
+
+        // ── 상태 텍스트/클래스 매핑 ────────────────────────────
+        const STATUS_MAP = {
+            '접수':     { cls: 'status-matching',   text: '접수' },
+            '매칭중':   { cls: 'status-matching',   text: '매칭중' },
+            '매칭완료': { cls: 'status-confirmed',  text: '전문가 확정' },
+            '진행중':   { cls: 'status-confirmed',  text: '진행중' },
+            '완료':     { cls: 'status-completed',  text: '완료' },
+            '낙찰':     { cls: 'status-success',    text: '낙찰 🎉' },
+            '유찰':     { cls: 'status-cancelled',  text: '유찰' },
+            '취소':     { cls: 'status-cancelled',  text: '취소' }
+        };
+
+        function getStatusInfo(status) {
+            return STATUS_MAP[status] || { cls: 'status-matching', text: status || '접수' };
+        }
+
+        function formatPrice(price) {
+            if (!price) return '0';
+            return Number(price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        // ── 신청 내역 로드 (실제 API) ──────────────────────────
+        let allApplications = [];
+
+        async function loadApplications() {
+            const listContainer = document.getElementById('applicationsList');
+            listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>불러오는 중...</p></div>';
+
+            try {
+                const data = await API.applications.getByUserId(user.userId || user.id);
+                allApplications = data;
+                renderApplications(allApplications);
+            } catch (err) {
+                console.error('신청 내역 로드 오류:', err);
+                // API 실패 시 로컬 스토리지 fallback
+                const saved = localStorage.getItem('myApplications_' + (user.userId || user.id));
+                if (saved) {
+                    allApplications = JSON.parse(saved);
+                    renderApplications(allApplications);
+                } else {
+                    listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>아직 신청 내역이 없습니다.<br>대리입찰 신청을 시작해보세요!</p><a href="apply.html" class="empty-state-btn"><i class="fas fa-plus"></i> 첫 번째 신청하기</a></div>';
+                }
+            }
+        }
+
+        function renderApplications(apps) {
+            const listContainer = document.getElementById('applicationsList');
+            if (!apps || apps.length === 0) {
+                listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>아직 신청 내역이 없습니다.<br>대리입찰 신청을 시작해보세요!</p><a href="apply.html" class="empty-state-btn"><i class="fas fa-plus"></i> 첫 번째 신청하기</a></div>';
+                return;
+            }
+
+            // 신청 건수가 있으면 가이드 표시
+            const guide = document.getElementById('statusGuide');
+            if (guide) guide.style.display = 'block';
+
+            listContainer.innerHTML = apps.map(app => {
+                const si = getStatusInfo(app.status);
+                const canCancel = ['접수', '매칭중'].includes(app.status);
+                return `
+                <div class="application-card" data-status="${app.status || '접수'}">
+                    <div class="card-header">
+                        <div>
+                            <span class="case-number">${app.case_number || app.caseNumber || '-'}</span>
+                            <span class="status-badge ${si.cls}">${si.text}</span>
+                        </div>
+                        <span class="bid-date">입찰일: ${app.bid_date || app.bidDate || '-'}</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="address"><i class="fas fa-map-marker-alt"></i> ${app.address || app.court || '-'}</p>
+                        <div class="price-info">
+                            <div>
+                                <span class="label">감정가</span>
+                                <span class="value">${formatPrice(app.appraisal_price || app.appraisalPrice)}원</span>
+                            </div>
+                            <div>
+                                <span class="label">낙찰가(신청가)</span>
+                                <span class="value highlight">${formatPrice(app.bid_amount || app.bidPrice)}원</span>
+                            </div>
+                        </div>
+                        ${app.expert_name || app.expertName
+                            ? `<p class="expert-info"><i class="fas fa-user-tie"></i> 담당 법무사: ${app.expert_name || app.expertName}</p>`
+                            : ''}
+                        ${(app.status === '낙찰' || app.result === 'success')
+                            ? `<div style="margin-top:0.75rem;padding:0.75rem 1rem;background:#f0fdf4;border-radius:8px;border-left:3px solid #10b981;">
+                                <p style="color:#065f46;font-weight:700;font-size:0.88rem;margin:0;"><i class="fas fa-trophy"></i> 🎉 낙찰 확정! 담당 법무사에게 문의하여 잔금 납부 일정을 협의하세요.</p></div>`
+                            : ''}
+                        ${(app.status === '유찰' || app.result === 'fail')
+                            ? `<div style="margin-top:0.75rem;padding:0.75rem 1rem;background:#f9fafb;border-radius:8px;border-left:3px solid #9ca3af;">
+                                <p style="color:#374151;font-weight:600;font-size:0.88rem;margin:0;"><i class="fas fa-redo"></i> 패찰되었습니다. 다음 구매에 도전해주세요! 보증금은 당일 현장에서 반환됩니다.</p></div>`
+                            : ''}
+                        ${app.payment_cancel_requested
+                            ? `<div style="margin-top:0.75rem;padding:0.65rem 0.9rem;background:#fffbeb;border-radius:8px;border-left:3px solid #f59e0b;font-size:0.82rem;color:#78350f;">
+                                <i class="fas fa-clock"></i> 결제 취소 신청 중 - 관리자 처리 대기 (3~5 영업일)</div>`
+                            : ''}
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-sm btn-outline" onclick="viewDetail('${app.id}')">상세보기</button>
+                        ${canCancel ? `<button class="btn btn-sm btn-danger" onclick="requestPaymentCancel('${app.id}')"><i class="fas fa-credit-card"></i> 결제취소 신청</button>` : ''}
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        // ── 결제 내역 로드 (실제 API) ──────────────────────────
+        async function loadPayments() {
+            const container = document.getElementById('paymentsList');
+            container.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>불러오는 중...</p></div>';
+
+            try {
+                // applications 에서 결제 완료 건만 표시
+                const data = await API.applications.getByUserId(user.userId || user.id);
+                const paid = data.filter(app => app.payment_status === '결제완료' || app.paymentStatus === '결제완료');
+
+                if (!paid.length) {
+                    container.innerHTML = '<div class="empty-state"><i class="fas fa-receipt"></i><p>결제 내역이 없습니다.</p></div>';
+                    return;
+                }
+
+                container.innerHTML = `
+                    <table class="payments-table">
+                        <thead>
+                            <tr>
+                                <th>결제일시</th>
+                                <th>사건번호</th>
+                                <th>금액</th>
+                                <th>결제수단</th>
+                                <th>상태</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${paid.map(app => `
+                                <tr>
+                                    <td>${app.paid_at || app.created_at || '-'}</td>
+                                    <td>${app.case_number || app.caseNumber || '-'}</td>
+                                    <td><strong>${formatPrice(app.service_fee || app.serviceFee || 99000)}원</strong></td>
+                                    <td>${app.payment_method || app.paymentMethod || '카드'}</td>
+                                    <td><span class="status-badge status-success">결제완료</span></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>`;
+            } catch (err) {
+                console.error('결제 내역 로드 오류:', err);
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-receipt"></i><p>결제 내역이 없습니다.</p></div>';
+            }
+        }
+
+        // ── 필터링 ─────────────────────────────────────────────
+        function filterApplications(status, el) {
+            document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
+            if (el) el.classList.add('active');
+
+            const cards = document.querySelectorAll('.application-card');
+            cards.forEach(card => {
+                card.style.display = (status === 'all' || card.dataset.status === status) ? '' : 'none';
+            });
+        }
+
+        // ── 상세보기 (모달) ────────────────────────────────────
+        async function viewDetail(id) {
+            try {
+                const app = await API.applications.getById(id);
+                if (!app) { alert('상세 정보를 불러올 수 없습니다.'); return; }
+                const si = getStatusInfo(app.status);
+
+                document.getElementById('detailModal').style.display = 'flex';
+                document.getElementById('detailContent').innerHTML = `
+                    <table class="detail-table">
+                        <tr><td>상태</td><td><span class="status-badge ${si.cls}">${si.text}</span></td></tr>
+                        <tr><td>사건번호</td><td><strong>${app.case_number || '-'}</strong></td></tr>
+                        <tr><td>법원</td><td>${app.court || '-'}</td></tr>
+                        <tr><td>물건 주소</td><td>${app.address || '-'}</td></tr>
+                        <tr><td>입찰 기일</td><td>${app.bid_date || '-'}</td></tr>
+                        <tr><td>감정가</td><td>${formatPrice(app.appraisal_price || 0)}원</td></tr>
+                        <tr><td>희망 입찰가</td><td><strong style="color:#1550E8;">${formatPrice(app.bid_amount || 0)}원</strong></td></tr>
+                        <tr><td>물건 종류</td><td>${app.property_type || '-'}</td></tr>
+                        <tr><td>입찰 형태</td><td>${app.bid_type || '-'}</td></tr>
+                        <tr><td>담당 법무사</td><td>${app.expert_name
+                            ? `<span style="color:#10B981;font-weight:600;">${app.expert_name}</span>`
+                            : '<span style="color:#999;">배정 대기 중</span>'}</td></tr>
+                        <tr><td>서비스 수수료</td><td>${formatPrice(app.service_fee || 99000)}원</td></tr>
+                        <tr><td>결제 상태</td><td>${app.payment_status || '결제대기'}</td></tr>
+                        <tr><td>신청일시</td><td>${app.created_at ? app.created_at.slice(0, 16).replace('T', ' ') : '-'}</td></tr>
+                    </table>`;
+            } catch (err) {
+                alert('상세 정보를 불러오는 중 오류가 발생했습니다.');
+            }
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detailModal').style.display = 'none';
+        }
+
+        // ── 결제취소 신청 ────────────────────────────────────
+        async function requestPaymentCancel(id) {
+            const app = allApplications.find(a => a.id === id);
+            const isPaid = app && (app.payment_status === '결제완료' || app.paymentStatus === '결제완료');
+
+            let confirmMsg = '신청을 취소하시겠습니까?\n입찰일 2영업일 전까지만 취소 가능합니다.';
+            if (isPaid) {
+                confirmMsg += '\n\n결제 취소 신청 시 관리자 검토 후 3~5 영업일 내 환불 처리됩니다.\n(취소 시점에 따라 수수료가 발생할 수 있습니다)';
+            }
+            if (!confirm(confirmMsg)) return;
+
+            try {
+                const updateData = {
+                    cancelledAt: new Date().toISOString(),
+                    cancelledBy: user.userId || user.id,
+                    cancelType: '고객취소'
+                };
+                if (isPaid) {
+                    updateData.payment_cancel_requested = true;
+                    updateData.payment_cancel_requested_at = new Date().toISOString();
+                    updateData.payment_status = '취소신청';
+                }
+                await API.applications.updateStatus(id, '취소', updateData);
+
+                if (isPaid) {
+                    alert('✅ 결제 취소 신청이 접수되었습니다.\n관리자 검토 후 3~5 영업일 내 카드 취소 처리됩니다.');
+                } else {
+                    alert('취소가 완료되었습니다.');
+                }
+                loadApplications();
+            } catch (err) {
+                console.error(err);
+                alert('취소 처리 중 오류가 발생했습니다.');
+            }
+        }
+
+        // 하위호환 (cancelApplication 기존 이름 유지)
+        async function cancelApplication(id) { return requestPaymentCancel(id); }
+
+        // ── 회원정보 저장 ──────────────────────────────────────
+        document.getElementById('profileForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const newPassword = document.getElementById('newPassword').value;
+            const newPasswordConfirm = document.getElementById('newPasswordConfirm').value;
+
+            if (newPassword && newPassword !== newPasswordConfirm) {
+                alert('비밀번호가 일치하지 않습니다.');
+                return;
+            }
+            if (newPassword && newPassword.length < 8) {
+                alert('비밀번호는 8자 이상이어야 합니다.');
+                return;
+            }
+
+            const updates = {
+                name: document.getElementById('profileNameInput').value,
+                email: document.getElementById('profileEmailInput').value,
+                phone: document.getElementById('profilePhone').value
+            };
+            if (newPassword) updates.password = newPassword;
+
+            const saveBtn = document.getElementById('profileSaveBtn');
+            saveBtn.disabled = true;
+            saveBtn.textContent = '저장 중...';
+
+            const result = await Auth.saveProfile(updates);
+            if (result.success) {
+                // 화면 업데이트
+                document.getElementById('userName').textContent = updates.name;
+                document.getElementById('profileName').textContent = updates.name;
+                document.getElementById('newPassword').value = '';
+                document.getElementById('newPasswordConfirm').value = '';
+                alert('회원정보가 저장되었습니다.');
+            } else {
+                alert(result.message || '저장 중 오류가 발생했습니다.');
+            }
+
+            saveBtn.disabled = false;
+            saveBtn.textContent = '저장하기';
+        });
+
+        // ── 초기 로드 ──────────────────────────────────────────
+        loadApplications();
+
+        // ── 회원 탈퇴 ──────────────────────────────────────────
+        async function handleWithdraw() {
+            const user = Auth.getCurrentUser();
+            const confirm1 = confirm('정말 탈퇴하시겠습니까?\n탈퇴 시 모든 신청 내역 및 개인정보가 삭제됩니다.');
+            if (!confirm1) return;
+            const confirm2 = confirm('마지막 확인입니다.\n탈퇴 후 복구가 불가능합니다. 계속하시겠습니까?');
+            if (!confirm2) return;
+
+            try {
+                // API 연동된 경우 서버에서 삭제
+                if (typeof API !== 'undefined' && user.id && !user.id.startsWith('kakao_') && !user.id.startsWith('dev_')) {
+                    await API.users.delete(user.id);
+                }
+                // 로컬 세션 삭제
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('autoLogin');
+                alert('회원 탈퇴가 완료되었습니다.\n그동안 이용해주셔서 감사합니다.');
+                window.location.href = 'index.html';
+            } catch (e) {
+                console.error('탈퇴 오류:', e);
+                alert('탈퇴 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+            }
+        }
+    })(); // IIFE 끝 – 비로그인 시 null 접근 방지
+    </script>
+
+    <!-- Footer -->
+    <footer style="background:#1a1a2e; color:#aaa; padding:2rem 0; margin-top:3rem;">
+        <div style="max-width:1200px; margin:0 auto; padding:0 1.5rem;">
+            <div style="display:flex; flex-wrap:wrap; gap:1.5rem; justify-content:space-between; align-items:flex-start; margin-bottom:1.5rem;">
+                <div>
+                    <div style="font-size:1.1rem; font-weight:700; color:white; margin-bottom:0.5rem;">
+                        <i class="fas fa-comment-dots" style="color:#667eea;"></i> 대리입찰 톡
+                    </div>
+                    <p style="margin:0.25rem 0; font-size:0.85rem;">상호명: (주)원스타프로비</p>
+                    <p style="margin:0.25rem 0; font-size:0.85rem;">주소: 서울특별시 금천구 가산디지털1로 75-24 90호</p>
+                    <p style="margin:0.25rem 0; font-size:0.85rem;">대표전화: <a href="tel:02-853-5875" style="color:#667eea;">02-853-5875</a> &nbsp;|&nbsp; 평일 09:00~18:00</p>
+                </div>
+                <div style="font-size:0.85rem; line-height:1.8;">
+                    <a href="terms.html" style="color:#aaa; text-decoration:none; margin-right:1rem;">이용약관</a>
+                    <a href="privacy.html" style="color:#aaa; text-decoration:none;">개인정보처리방침</a>
+                </div>
+            </div>
+            <div style="border-top:1px solid #333; padding-top:1rem; font-size:0.8rem; color:#666; text-align:center;">
+                &copy; 2026 (주)원스타프로비 대리입찰 톡. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

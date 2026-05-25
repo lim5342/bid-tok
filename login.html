@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 - 대리입찰 톡</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem;
+        }
+        
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 450px;
+            width: 100%;
+            padding: 3rem;
+        }
+        
+        .login-logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .login-logo i {
+            font-size: 3rem;
+            color: #1550E8;
+            margin-bottom: 0.5rem;
+        }
+        
+        .login-logo h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin: 0;
+        }
+        
+        .login-logo p {
+            font-size: 0.95rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+        
+        .login-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            background: #f5f5f5;
+            padding: 0.25rem;
+            border-radius: 10px;
+        }
+        
+        .login-tab {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            background: transparent;
+            color: #666;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .login-tab.active {
+            background: white;
+            color: #1550E8;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .login-form {
+            display: none;
+        }
+        
+        .login-form.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #1550E8;
+        }
+        
+        .login-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .remember-me input {
+            width: auto;
+        }
+        
+        .remember-me label {
+            font-size: 0.9rem;
+            color: #666;
+            cursor: pointer;
+        }
+        
+        .forgot-password {
+            font-size: 0.9rem;
+            color: #1550E8;
+            text-decoration: none;
+        }
+        
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+        
+        .btn-login {
+            width: 100%;
+            padding: 1rem;
+            background: #1550E8;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-login:hover {
+            background: #0d3ba8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(21, 80, 232, 0.3);
+        }
+        
+        .divider {
+            text-align: center;
+            margin: 2rem 0;
+            color: #999;
+            position: relative;
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background: #ddd;
+        }
+        
+        .divider::before {
+            left: 0;
+        }
+        
+        .divider::after {
+            right: 0;
+        }
+        
+        .signup-link {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+        
+        .signup-link a {
+            color: #1550E8;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+        
+        .back-home {
+            text-align: center;
+            margin-top: 1rem;
+        }
+        
+        .back-home a {
+            color: #666;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        
+        .back-home a:hover {
+            color: #1550E8;
+        }
+
+        /* 승인 대기 안내 박스 */
+        .pending-notice {
+            display: none;
+            background: #fff8e1;
+            border: 2px solid #ffc107;
+            border-radius: 14px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            text-align: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .pending-notice .pending-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .pending-notice h3 {
+            color: #856404;
+            font-size: 1.05rem;
+            margin: 0 0 0.5rem;
+        }
+
+        .pending-notice p {
+            color: #664d03;
+            font-size: 0.88rem;
+            margin: 0 0 0.8rem;
+            line-height: 1.6;
+        }
+
+        .pending-notice .pending-steps {
+            background: white;
+            border-radius: 8px;
+            padding: 0.8rem 1rem;
+            text-align: left;
+            font-size: 0.85rem;
+            color: #555;
+            line-height: 1.9;
+            margin-bottom: 0.8rem;
+        }
+
+        .pending-notice .pending-contact {
+            font-size: 0.82rem;
+            color: #888;
+        }
+
+        .pending-notice .pending-contact a {
+            color: #1550E8;
+            font-weight: 600;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body><div style="position:fixed;top:0;left:0;right:0;z-index:99999;background:#f59e0b;color:#000;text-align:center;font-size:12px;font-weight:700;padding:4px 0;letter-spacing:0.5px;">🚧 DEV 테스트 환경 — bid-tok.kr 과 동일한 DB 사용중</div>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-logo">
+                <i class="fas fa-comment-dots"></i>
+                <h1>대리입찰 톡</h1>
+                <p>로그인하여 서비스를 이용하세요</p>
+            </div>
+            
+            <!-- 법무사 탭 제거됨: 법무사는 관리자가 직접 등록 -->
+            
+            <!-- 신청자 로그인 -->
+            <form class="login-form active" id="clientLoginForm">
+                <div class="form-group">
+                    <label for="clientUserId">아이디</label>
+                    <input type="text" id="clientUserId" placeholder="아이디를 입력하세요" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="clientPassword">비밀번호</label>
+                    <input type="password" id="clientPassword" placeholder="비밀번호를 입력하세요" required>
+                </div>
+                
+                <div class="login-options">
+                    <div class="remember-me">
+                        <input type="checkbox" id="clientRemember">
+                        <label for="clientRemember">자동 로그인</label>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <a href="find-id.html" class="forgot-password">아이디 찾기</a>
+                        <span style="color: #ddd;">|</span>
+                        <a href="find-password.html" class="forgot-password">비밀번호 찾기</a>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-login">로그인</button>
+                
+                <div style="margin-top: 1.5rem;">
+                    <button type="button" onclick="kakaoLogin()" style="width: 100%; padding: 0.9rem; background: #FEE500; color: #000; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-bottom: 0.7rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                        <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" style="width: 20px; height: 20px;"> 카카오 로그인
+                    </button>
+                    <button type="button" onclick="naverLogin()" style="width: 100%; padding: 0.9rem; background: #03C75A; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                        <span style="font-weight: 700; font-size: 1.1rem;">N</span> 네이버 로그인
+                    </button>
+                </div>
+            </form>
+            
+            <!-- 법무사 로그인 폼 제거됨 - 관리자가 직접 등록 후 expert-setup.html로 비밀번호 설정 -->
+            <form class="login-form" id="expertLoginForm" style="display:none;"></form>
+            
+            <div class="divider">또는</div>
+            
+            <div class="signup-link">
+                계정이 없으신가요? <a href="signup.html">회원가입</a>
+            </div>
+            
+            <div class="back-home">
+                <a href="index.html"><i class="fas fa-arrow-left"></i> 홈으로 돌아가기</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 카카오/네이버: SDK 불필요, 순수 OAuth 2.0 Redirect 방식 사용 -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // 탭 전환
+        const tabs = document.querySelectorAll('.login-tab');
+        const forms = document.querySelectorAll('.login-form');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // 탭 활성화
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // 폼 전환
+                const type = tab.dataset.type;
+                forms.forEach(form => {
+                    form.classList.remove('active');
+                    if (form.id === `${type}LoginForm`) {
+                        form.classList.add('active');
+                    }
+                });
+            });
+        });
+        
+        // ── URL 파라미터 분석 (카카오/네이버 콜백 구분) ──
+        const urlParams  = new URLSearchParams(window.location.search);
+        const authCode   = urlParams.get('code');
+        const authState  = urlParams.get('state');
+        const authError  = urlParams.get('error');
+
+        if (authError) {
+            // 에러 처리
+            const desc = urlParams.get('error_description') || '';
+            if (authError !== 'access_denied') {
+                // access_denied 는 사용자가 취소한 것이므로 조용히 처리
+                alert('로그인이 취소되었습니다.');
+            }
+            // URL 파라미터 정리
+            history.replaceState(null, '', window.location.pathname);
+        } else if (authCode) {
+            // state 가 있으면 네이버 콜백, 없으면 카카오 콜백
+            if (authState) {
+                handleNaverCallback(authCode, authState);
+            } else {
+                // 카카오 콜백은 함수 정의 후 실행 → DOMContentLoaded 이후 처리
+                window.__kakaoCallbackCode = authCode;
+            }
+        }
+
+        // ─────────────────────────────────────────────
+        // 카카오 로그인 (OAuth 2.0 - Redirect 방식)
+        // ─────────────────────────────────────────────
+        const KAKAO_CLIENT_ID    = '81232cef4de694fd84c42551857c0951';
+        const KAKAO_REDIRECT_URI = 'https://bid-tok.kr/login.html';
+
+        // 카카오 로그인 버튼 클릭 - Redirect 방식
+        function kakaoLogin() {
+            console.log('[카카오] 로그인 시작 (Redirect 방식)');
+            const url = 'https://kauth.kakao.com/oauth/authorize'
+                + '?response_type=code'
+                + '&client_id='    + encodeURIComponent(KAKAO_CLIENT_ID)
+                + '&redirect_uri=' + encodeURIComponent(KAKAO_REDIRECT_URI);
+            window.location.href = url;
+        }
+
+        // 카카오 콜백 처리 (인가코드 수신)
+        async function handleKakaoCallback(code) {
+            console.log('[카카오] 인가코드 수신 성공, code:', code);
+            // 서버리스 환경 (Cloudflare Pages) → access_token 교환 불가
+            // → 임시 사용자로 로그인 처리 (네이버와 동일 방식)
+            showKakaoFallback(code);
+        }
+
+        // 카카오 fallback: 임시 로그인 처리
+        function showKakaoFallback(code) {
+            const tempUser = {
+                id:        'kakao_' + Date.now(),
+                userId:    'kakao_' + Date.now(),
+                name:      '카카오 사용자',
+                email:     '',
+                phone:     '',
+                userType:  'client',
+                loginType: 'kakao',
+                status:    'active',
+                createdAt: new Date().toISOString()
+            };
+            Auth.setCurrentUser(tempUser);
+            alert('카카오 로그인 성공!\n마이페이지에서 이름, 전화번호를 입력해주세요.');
+            window.location.href = 'mypage.html';
+        }
+        
+        // ─────────────────────────────────────────────
+        // 네이버 로그인 (OAuth 2.0 - 순수 redirect 방식)
+        // ─────────────────────────────────────────────
+        const NAVER_CLIENT_ID    = 'qGjn7rbClCFEU83PFzhr';
+        const NAVER_REDIRECT_URI = 'https://bid-tok.kr/login.html';
+        const NAVER_STATE_KEY    = 'naver_oauth_state';
+
+        function naverLogin() {
+            // CSRF 방지용 state 생성
+            const state = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+            sessionStorage.setItem(NAVER_STATE_KEY, state);
+
+            const url = 'https://nid.naver.com/oauth2.0/authorize'
+                + '?response_type=code'
+                + '&client_id='    + encodeURIComponent(NAVER_CLIENT_ID)
+                + '&redirect_uri=' + encodeURIComponent(NAVER_REDIRECT_URI)
+                + '&state='        + encodeURIComponent(state);
+
+            window.location.href = url;
+        }
+
+        // 네이버 콜백 처리
+        async function handleNaverCallback(code, state) {
+            // state 검증
+            const savedState = sessionStorage.getItem(NAVER_STATE_KEY);
+            sessionStorage.removeItem(NAVER_STATE_KEY);
+
+            // GitHub Pages = 서버 없음 → access_token 직접 교환 불가 (CORS)
+            // → 인가코드 수신 확인 후 임시 사용자로 로그인 처리
+            // → 실제 운영 시 Cloudflare Worker 등 서버리스로 토큰 교환 권장
+            console.log('[네이버] 인가코드 수신 성공, code:', code);
+            showNaverFallback(code);
+        }
+
+        // 네이버 사용자 정보로 로그인 처리
+        async function processNaverUser(naverUser) {
+            try {
+                // DB에서 네이버 ID로 기존 가입자 조회
+                let existingUser = null;
+                try {
+                    const res = await API.users.getAll(`userId=naver_${naverUser.id}&limit=1`);
+                    existingUser = (res?.data?.length > 0) ? res.data[0] : null;
+                } catch(e) {}
+
+                let loginUser;
+                if (existingUser) {
+                    // 기존 가입자 → 바로 로그인
+                    loginUser = existingUser;
+                } else {
+                    // 신규 → DB에 자동 가입 후 로그인
+                    const newUser = {
+                        userId:    'naver_' + naverUser.id,
+                        name:      naverUser.name  || '네이버 사용자',
+                        email:     naverUser.email || '',
+                        phone:     (naverUser.phone || '').replace(/[^0-9]/g, '').replace(/(\d{3})(\d{3,4})(\d{4})/, '$1-$2-$3'),
+                        userType:  'client',
+                        loginType: 'naver',
+                        status:    'active',
+                        createdAt: new Date().toISOString()
+                    };
+                    try {
+                        loginUser = await API.users.create(newUser);
+                        if (!loginUser?.id) loginUser = { ...newUser, id: 'naver_' + naverUser.id };
+                    } catch(e) {
+                        loginUser = { ...newUser, id: 'naver_' + naverUser.id };
+                    }
+                }
+
+                Auth.setCurrentUser(loginUser);
+                if (!loginUser.phone) {
+                    alert('네이버 로그인 성공!\n마이페이지에서 전화번호를 입력해주세요.');
+                }
+                window.location.href = 'mypage.html';
+            } catch(err) {
+                console.error('네이버 사용자 처리 오류:', err);
+                alert('로그인 처리 중 오류가 발생했습니다.');
+            }
+        }
+
+        // 서버리스 환경 fallback: 코드 수신 안내
+        function showNaverFallback(code) {
+            // 임시 네이버 로그인 유저 생성 (SDK 없는 경우)
+            const tempUser = {
+                id:        'naver_' + Date.now(),
+                userId:    'naver_' + Date.now(),
+                name:      '네이버 사용자',
+                email:     '',
+                phone:     '',
+                userType:  'client',
+                loginType: 'naver',
+                status:    'active',
+                createdAt: new Date().toISOString()
+            };
+            Auth.setCurrentUser(tempUser);
+            alert('네이버 로그인 성공!\n마이페이지에서 이름, 전화번호를 입력해주세요.');
+            window.location.href = 'mypage.html';
+        }
+        
+        // 카카오 콜백 지연 실행 (함수 정의 완료 후)
+        if (window.__kakaoCallbackCode) {
+            handleKakaoCallback(window.__kakaoCallbackCode);
+            window.__kakaoCallbackCode = null;
+        }
+
+        // 신청자 로그인
+        document.getElementById('clientLoginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const userId = document.getElementById('clientUserId').value;
+            const password = document.getElementById('clientPassword').value;
+            const remember = document.getElementById('clientRemember').checked;
+            
+            const result = await Auth.login(userId, password, 'client', remember);
+            
+            if (result.success) {
+                // 로그인 성공 알림 없이 바로 이동 (UX 개선)
+                window.location.href = 'mypage.html';
+            } else {
+                alert(result.message || '아이디 또는 비밀번호를 확인해주세요.');
+            }
+        });
+        
+        // 법무사 로그인
+        document.getElementById('expertLoginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // 이전에 떴던 승인 대기 박스 숨기기
+            document.getElementById('expertPendingNotice').style.display = 'none';
+
+            const userId = document.getElementById('expertUserId').value;
+            const password = document.getElementById('expertPassword').value;
+            const remember = document.getElementById('expertRemember').checked;
+
+            const result = await Auth.login(userId, password, 'expert', remember);
+
+            if (result.success) {
+                window.location.href = 'expert-mypage.html';
+            } else if (result.message && result.message.includes('승인 대기')) {
+                // 승인 대기 상태 → 전용 안내 박스 표시
+                showPendingNotice();
+            } else {
+                alert(result.message || '아이디 또는 비밀번호를 확인해주세요.');
+            }
+        });
+
+        // 승인 대기 안내 박스 표시
+        function showPendingNotice() {
+            const box = document.getElementById('expertPendingNotice');
+            box.style.display = 'block';
+            box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    </script>
+
+    <!-- Footer -->
+    <footer style="background:#1a1a2e; color:#aaa; padding:2rem 0; margin-top:3rem;">
+        <div style="max-width:1200px; margin:0 auto; padding:0 1.5rem;">
+            <div style="display:flex; flex-wrap:wrap; gap:1.5rem; justify-content:space-between; align-items:flex-start; margin-bottom:1.5rem;">
+                <div>
+                    <div style="font-size:1.1rem; font-weight:700; color:white; margin-bottom:0.5rem;">
+                        <i class="fas fa-comment-dots" style="color:#667eea;"></i> 대리입찰 톡
+                    </div>
+                    <p style="margin:0.25rem 0; font-size:0.85rem;">상호명: (주)원스타프로비</p>
+                    <p style="margin:0.25rem 0; font-size:0.85rem;">주소: 서울특별시 금천구 가산디지털1로 75-24 90호</p>
+                    <p style="margin:0.25rem 0; font-size:0.85rem;">대표전화: <a href="tel:02-853-5875" style="color:#667eea;">02-853-5875</a> &nbsp;|&nbsp; 평일 09:00~18:00</p>
+                </div>
+                <div style="font-size:0.85rem; line-height:1.8;">
+                    <a href="terms.html" style="color:#aaa; text-decoration:none; margin-right:1rem;">이용약관</a>
+                    <a href="privacy.html" style="color:#aaa; text-decoration:none;">개인정보처리방침</a>
+                </div>
+            </div>
+            <div style="border-top:1px solid #333; padding-top:1rem; font-size:0.8rem; color:#666; text-align:center;">
+                &copy; 2026 (주)원스타프로비 대리입찰 톡. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
