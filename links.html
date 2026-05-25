@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>비드톡 서비스 링크</title>
+<link rel="icon" href="/favicon.ico">
+<style>
+  :root {
+    --primary: #1550E8;
+    --primary-dark: #0f3bbf;
+    --success: #10B981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --purple: #7c3aed;
+    --bg: #f0f4ff;
+    --card: #ffffff;
+    --text: #1e293b;
+    --sub: #64748b;
+    --border: #e2e8f0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem 4rem;
+  }
+  .header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+  .header .logo {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: -0.5px;
+    margin-bottom: 0.4rem;
+  }
+  .header .logo span { color: #f59e0b; }
+  .header p {
+    color: var(--sub);
+    font-size: 0.9rem;
+  }
+  .section-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--sub);
+    margin: 2rem 0 0.75rem;
+    width: 100%;
+    max-width: 440px;
+    padding: 0 0.25rem;
+  }
+  .card {
+    width: 100%;
+    max-width: 440px;
+    background: var(--card);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    margin-bottom: 0.75rem;
+  }
+  .link-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    text-decoration: none;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+    cursor: pointer;
+  }
+  .link-item:last-child { border-bottom: none; }
+  .link-item:hover { background: #f8faff; }
+  .link-item:active { background: #eef2ff; }
+  .icon-wrap {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+  .ic-blue   { background: #eff6ff; }
+  .ic-green  { background: #f0fdf4; }
+  .ic-purple { background: #f5f3ff; }
+  .ic-orange { background: #fff7ed; }
+  .ic-red    { background: #fef2f2; }
+  .ic-gray   { background: #f8fafc; }
+  .link-info { flex: 1; }
+  .link-info strong {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.15rem;
+  }
+  .link-info span {
+    font-size: 0.78rem;
+    color: var(--sub);
+  }
+  .link-arrow {
+    color: #cbd5e1;
+    font-size: 1rem;
+  }
+  .badge-new {
+    font-size: 0.62rem;
+    font-weight: 700;
+    background: var(--danger);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 99px;
+    margin-left: 0.4rem;
+    vertical-align: middle;
+  }
+  .divider {
+    width: 100%;
+    max-width: 440px;
+    border: none;
+    border-top: 1px dashed var(--border);
+    margin: 0.5rem 0;
+  }
+  /* 개발 로드맵 섹션 */
+  .roadmap-card {
+    width: 100%;
+    max-width: 440px;
+    background: var(--card);
+    border-radius: 16px;
+    padding: 1.25rem 1.25rem 0.75rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    margin-bottom: 0.75rem;
+  }
+  .roadmap-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .roadmap-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.55rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .roadmap-item:last-child { border-bottom: none; }
+  .roadmap-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .rm-done  { background: #dcfce7; color: #16a34a; }
+  .rm-ing   { background: #fef9c3; color: #ca8a04; }
+  .rm-todo  { background: #f1f5f9; color: #94a3b8; }
+  .roadmap-item-text strong {
+    display: block;
+    font-size: 0.83rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.1rem;
+  }
+  .roadmap-item-text span {
+    font-size: 0.75rem;
+    color: var(--sub);
+  }
+  .status-dot-done  { color: #10B981; }
+  .status-dot-ing   { color: #f59e0b; }
+  .status-dot-todo  { color: #cbd5e1; }
+
+  .copy-toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 0.6rem 1.25rem;
+    border-radius: 99px;
+    font-size: 0.85rem;
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
+    pointer-events: none;
+    z-index: 999;
+    white-space: nowrap;
+  }
+  .copy-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  .footer-note {
+    font-size: 0.75rem;
+    color: #b0b8c9;
+    text-align: center;
+    margin-top: 1.5rem;
+    line-height: 1.8;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">비드<span>톡</span> 🏠</div>
+  <p>서비스 운영 링크 모음</p>
+</div>
+
+<!-- ── 고객 링크 ── -->
+<div class="section-title">👤 고객</div>
+<div class="card">
+  <a href="https://bid-tok.kr/" class="link-item">
+    <div class="icon-wrap ic-blue">🏠</div>
+    <div class="link-info">
+      <strong>메인 홈페이지</strong>
+      <span>bid-tok.kr</span>
+    </div>
+    <span class="link-arrow">›</span>
+  </a>
+  <a href="https://bid-tok.kr/apply.html" class="link-item">
+    <div class="icon-wrap ic-green">📝</div>
+    <div class="link-info">
+      <strong>대리입찰 신청</strong>
+      <span>신청서 작성 → 신청완료</span>
+    </div>
+    <span class="link-arrow">›</span>
+  </a>
+  <a href="https://bid-tok.kr/mypage.html" class="link-item">
+    <div class="icon-wrap ic-orange">📋</div>
+    <div class="link-info">
+      <strong>마이페이지</strong>
+      <span>신청내역·진행상태 확인</span>
+    </div>
+    <span class="link-arrow">›</span>
+  </a>
+  <a href="https://bid-tok.kr/login.html" class="link-item">
+    <div class="icon-wrap ic-gray">🔐</div>
+    <div class="link-info">
+      <strong>로그인</strong>
+      <span>회원 로그인 (SNS·일반)</span>
+    </div>
+    <span class="link-arrow">›</span>
+  </a>
+  <a href="https://bid-tok.kr/signup.html" class="link-item">
+    <div class="icon-wrap ic-gray">✍️</div>
+    <div class="link-info">
+      <strong>회원가입</strong>
+      <span>SMS 인증 가입</span>
+    </div>
+    <span class="link-arrow">›</span>
+  </a>
+</div>
+
+<!-- ── 관리자 링크 ── -->
+<div class="section-title">🛡️ 관리자</div>
+<div class="card">
+  <a href="https://bid-tok.kr/admin.html" class="link-item">
+    <div class="icon-wrap ic-purple">⚙️</div>
+    <div class="link-info">
+      <strong>관리자 페이지</strong>
+      <span>신청관리·법무사 배정·회원관리</span>
+    </div>
+    <span class="link-arrow">›</span>
+  </a>
+</div>
+
+<!-- ── 법무사 링크 ── -->
+<div class="section-title">⚖️ 법무사</div>
+<div class="card">
+  <a href="https://bid-tok.kr/expert-mypage.html" class="link-item">
+    <div class="icon-wrap ic-green">👨‍💼</div>
+    <div class="link-info">
+      <strong>법무사 마이페이지</strong>
+      <span>배정된 사건 확인·진행관리</span>
+    </div>
+    <span class="link-arrow">›</span>
+  </a>
+  <a href="https://bid-tok.kr/expert-setup.html" class="link-item">
+    <div class="icon-wrap ic-orange">🔧</div>
+    <div class="link-info">
+      <strong>법무사 초기 설정</strong>
+      <span>초대링크로 접속 → 프로필 설정</span>
+    </div>
+    <span class="link-arrow">›</span>
+  </a>
+  <a href="https://bid-tok.kr/partner.html" class="link-item">
+    <div class="icon-wrap ic-blue">🤝</div>
+    <div class="link-info">
+      <strong>법무사 파트너 소개</strong>
+      <span>파트너 신청 안내 페이지</span>
+    </div>
+    <span class="link-arrow">›</span>
+  </a>
+</div>
+
+<!-- ── 정보 페이지 ── -->
+<div class="section-title">📌 서비스 안내</div>
+<div class="card">
+  <a href="https://bid-tok.kr/guide.html" class="link-item">
+    <div class="icon-wrap ic-blue">📖</div>
+    <div class="link-info">
+      <strong>이용 가이드</strong>
+      <span>서비스 이용방법 안내</span>
+    </div>
+    <span class="link-arrow">›</span>
+  </a>
+  <a href="https://bid-tok.kr/experts.html" class="link-item">
+    <div class="icon-wrap ic-green">👥</div>
+    <div class="link-info">
+      <strong>법무사 소개</strong>
+      <span>등록 법무사 목록</span>
+    </div>
+    <span class="link-arrow">›</span>
+  </a>
+  <a href="https://bid-tok.kr/safety.html" class="link-item">
+    <div class="icon-wrap ic-orange">🛡️</div>
+    <div class="link-info">
+      <strong>안전 서비스</strong>
+      <span>안심 입찰 보호 안내</span>
+    </div>
+    <span class="link-arrow">›</span>
+  </a>
+</div>
+
+<!-- ── 빠른 복사 ── -->
+<div class="section-title">🔗 자주 공유하는 링크</div>
+<div class="card">
+  <div class="link-item" onclick="copyLink('https://bid-tok.kr/apply.html', '신청 링크')">
+    <div class="icon-wrap ic-blue">📋</div>
+    <div class="link-info">
+      <strong>신청 링크 복사</strong>
+      <span>bid-tok.kr/apply.html</span>
+    </div>
+    <span style="font-size:1.1rem;">⎘</span>
+  </div>
+  <div class="link-item" onclick="copyLink('https://bid-tok.kr/', '홈페이지 링크')">
+    <div class="icon-wrap ic-green">📋</div>
+    <div class="link-info">
+      <strong>홈페이지 링크 복사</strong>
+      <span>bid-tok.kr</span>
+    </div>
+    <span style="font-size:1.1rem;">⎘</span>
+  </div>
+  <div class="link-item" onclick="copyLink('https://bid-tok.kr/admin.html', '관리자 링크')">
+    <div class="icon-wrap ic-purple">📋</div>
+    <div class="link-info">
+      <strong>관리자 링크 복사</strong>
+      <span>bid-tok.kr/admin.html</span>
+    </div>
+    <span style="font-size:1.1rem;">⎘</span>
+  </div>
+  <div class="link-item" onclick="copyLink('https://bid-tok.kr/links.html', '링크 모음 복사')">
+    <div class="icon-wrap ic-gray">📋</div>
+    <div class="link-info">
+      <strong>이 페이지 링크 복사</strong>
+      <span>bid-tok.kr/links.html</span>
+    </div>
+    <span style="font-size:1.1rem;">⎘</span>
+  </div>
+</div>
+
+<!-- ── 개발 로드맵 ── -->
+<div class="section-title">🚧 개발 로드맵</div>
+<div class="roadmap-card">
+  <div class="roadmap-title">📅 현재 진행 현황</div>
+
+  <div class="roadmap-item">
+    <div class="roadmap-num rm-done">✓</div>
+    <div class="roadmap-item-text">
+      <strong>대리입찰 신청 시스템</strong>
+      <span class="status-dot-done">● 운영중</span> &nbsp;
+      <span>신청서·전자서명·신청완료</span>
+    </div>
+  </div>
+  <div class="roadmap-item">
+    <div class="roadmap-num rm-done">✓</div>
+    <div class="roadmap-item-text">
+      <strong>관리자 페이지·법무사 배정</strong>
+      <span class="status-dot-done">● 운영중</span>
+    </div>
+  </div>
+  <div class="roadmap-item">
+    <div class="roadmap-num rm-done">✓</div>
+    <div class="roadmap-item-text">
+      <strong>카카오 알림톡 연동</strong>
+      <span class="status-dot-done">● 완료</span> &nbsp;
+      <span>신청완료·배정완료·낙찰/유찰</span>
+    </div>
+  </div>
+  <div class="roadmap-item">
+    <div class="roadmap-num rm-ing">2</div>
+    <div class="roadmap-item-text">
+      <strong>수수료 결제 시스템</strong>
+      <span class="status-dot-ing">● 개발 예정</span>
+    </div>
+  </div>
+  <div class="roadmap-item">
+    <div class="roadmap-num rm-todo">3</div>
+    <div class="roadmap-item-text">
+      <strong>법무사 매칭 알람 (실시간 경쟁)</strong>
+      <span class="status-dot-todo">● 예정</span>
+    </div>
+  </div>
+  <div class="roadmap-item">
+    <div class="roadmap-num rm-todo">4</div>
+    <div class="roadmap-item-text">
+      <strong>취소 &amp; 수락 시스템</strong>
+      <span class="status-dot-todo">● 예정</span>
+    </div>
+  </div>
+  <div class="roadmap-item">
+    <div class="roadmap-num rm-todo">5</div>
+    <div class="roadmap-item-text">
+      <strong>낙찰·패찰 실시간 확인</strong>
+      <span class="status-dot-todo">● 예정</span>
+    </div>
+  </div>
+  <div class="roadmap-item">
+    <div class="roadmap-num rm-todo">6</div>
+    <div class="roadmap-item-text">
+      <strong>법무사 전용 관리자 페이지</strong>
+      <span class="status-dot-todo">● 예정</span>
+    </div>
+  </div>
+  <div class="roadmap-item">
+    <div class="roadmap-num rm-todo">7</div>
+    <div class="roadmap-item-text">
+      <strong>정산 시스템</strong>
+      <span class="status-dot-todo">● 예정</span>
+    </div>
+  </div>
+  <div class="roadmap-item">
+    <div class="roadmap-num rm-todo">8</div>
+    <div class="roadmap-item-text">
+      <strong>낙찰·패찰 통계 페이지</strong>
+      <span class="status-dot-todo">● 예정</span>
+    </div>
+  </div>
+  <div class="roadmap-item">
+    <div class="roadmap-num rm-todo">9</div>
+    <div class="roadmap-item-text">
+      <strong>법률 확인 추가 (CPA 광고 비항목 정산)</strong>
+      <span class="status-dot-todo">● 예정</span>
+    </div>
+  </div>
+</div>
+
+<p class="footer-note">
+  © 2026 비드톡 · 내부 운영용 링크 페이지<br>
+  마지막 업데이트: 2026-05-25
+</p>
+
+<!-- 복사 토스트 -->
+<div class="copy-toast" id="copyToast">링크 복사 완료!</div>
+
+<script>
+function copyLink(url, label) {
+  navigator.clipboard.writeText(url).then(() => {
+    const t = document.getElementById('copyToast');
+    t.textContent = `✅ ${label} 복사 완료!`;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+  }).catch(() => {
+    // 구형 브라우저 폴백
+    const ta = document.createElement('textarea');
+    ta.value = url;
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+    const t = document.getElementById('copyToast');
+    t.textContent = `✅ ${label} 복사 완료!`;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+  });
+}
+</script>
+</body>
+</html>
