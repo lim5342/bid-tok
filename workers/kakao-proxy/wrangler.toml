@@ -1,0 +1,12 @@
+name = "bidtok-kakao-proxy"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+# 환경변수 설정 (민감정보는 wrangler secret put으로 설정)
+# npx wrangler secret put SOLAPI_KEY
+# npx wrangler secret put SOLAPI_SECRET
+# npx wrangler secret put SENDER          (기본값: 01083445342)
+# npx wrangler secret put KAKAO_CHANNEL_ID (솔라피 카카오 채널 pfId - 없으면 SMS 폴백)
+
+[vars]
+SENDER = "01083445342"

@@ -1187,6 +1187,20 @@ async function submitApplication() {
 
         const appId = savedApp ? (savedApp.id || savedApp._id || 'APP-' + Date.now()) : 'APP-' + Date.now();
 
+        // ── 카카오 알림톡 발송 (신청완료) ──
+        try {
+            await sendKakaoNotification('apply_complete', appData.phone, {
+                appId:      appId.toString().slice(-8).toUpperCase(),
+                name:       appData.applicant_name,
+                court:      appData.court,
+                caseNumber: appData.case_number,
+                bidDate:    appData.bid_date,
+                address:    appData.address,
+            });
+        } catch (kErr) {
+            console.warn('알림톡 발송 실패 (무시):', kErr);
+        }
+
         // ── 신청 완료 화면으로 이동 ──
         document.getElementById('appNumberBadge').textContent = '신청번호: ' + appId.toString().slice(-8).toUpperCase();
 
@@ -1347,7 +1361,8 @@ function formatPhone(input) {
 // SMS 인증 (임시 자동 통과 - 명의도용방지 해지 대기 중)
 // 화요일 해지 완료 후 실제 발송으로 복구 예정
 // ─────────────────────────────────────────────
-const SMS_WORKER_URL = 'https://bidtok-sms-proxy.qkqk5342.workers.dev';
+const SMS_WORKER_URL    = 'https://bidtok-sms-proxy.qkqk5342.workers.dev';
+const KAKAO_WORKER_URL  = 'https://bidtok-kakao-proxy.qkqk5342.workers.dev';
 
 function sendSmsCode() {
     const phone = document.getElementById('applicantPhone').value.trim();
@@ -1376,6 +1391,21 @@ function verifySmsCode() {
     document.getElementById('smsTimer').style.color = '#10B981';
     clearInterval(smsTimerInterval);
     toast('휴대폰 인증이 완료되었습니다!', 'success');
+}
+
+// ─────────────────────────────────────────────
+// 카카오 알림톡 공통 발송 함수
+// ─────────────────────────────────────────────
+async function sendKakaoNotification(type, to, data) {
+    if (!to) return;
+    const res = await fetch(KAKAO_WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type, to, data })
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || '알림 발송 실패');
+    return result;
 }
 
 // ─────────────────────────────────────────────

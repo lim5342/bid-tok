@@ -928,6 +928,8 @@ document.addEventListener('DOMContentLoaded', ensureAdminExists);
 // ⚠️ 하드코딩 관리자 정보 제거 → Firestore 'admins' 컬렉션에서 검증
 // Firestore admins 컬렉션 구조: { id: "bootv1", name: "대표(마스터)", role: "master", pw: "해시or평문" }
 
+const KAKAO_WORKER_URL = 'https://bidtok-kakao-proxy.qkqk5342.workers.dev';
+
 let currentAdmin   = null;
 let currentSection = 'dashboard';
 let allApps        = [];   // 신청 전체 캐시
@@ -1015,6 +1017,27 @@ function badge(status) {
     const label = labelMap[status] || status || '-';
     const cls = 'badge badge-' + (status || '').replace(/\s/g, '');
     return `<span class="${cls}">${label}</span>`;
+}
+
+// ─────────────────────────────────────────────
+// 카카오 알림톡 공통 발송 함수 (admin)
+// ─────────────────────────────────────────────
+async function sendKakaoNotif(type, to, data) {
+    if (!to) return;
+    try {
+        const res = await fetch(KAKAO_WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type, to, data })
+        });
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.error || '알림 발송 실패');
+        console.log(`✅ 알림톡 발송 [${type}] → ${to}`);
+        return result;
+    } catch(e) {
+        console.warn(`⚠️ 알림톡 실패 [${type}]:`, e.message);
+        throw e;
+    }
 }
 
 function showToast(msg, type = 'success') {
@@ -1420,6 +1443,33 @@ async function changeStatus(id, newStatus, sel) {
         const app = allApps.find(a => a.id === id);
         if (app) app.status = newStatus;
         showToast(`✅ 상태 변경: ${old} → ${newStatus}`, 'success');
+
+        // ── 카카오 알림톡 (상태별 발송) ─────────────────────────
+        if (app && app.phone) {
+            const notifData = {
+                appId:      id.toString().slice(-8).toUpperCase(),
+                name:       app.applicant_name || '',
+                court:      app.court          || '',
+                caseNumber: app.case_number    || '',
+                bidDate:    app.bid_date       || '',
+                address:    app.address        || '',
+                bidAmount:  app.bid_amount     || 0,
+                expertName: app.expert_name    || '',
+                expertPhone: (allUsers.find(u => u.name === app.expert_name))?.phone || '',
+            };
+            if (newStatus === '진행중') {
+                sendKakaoNotif('bid_proceeding', app.phone, notifData)
+                    .catch(e => console.warn('알림톡 실패:', e));
+            } else if (newStatus === '낙찰') {
+                sendKakaoNotif('bid_won', app.phone, { ...notifData, result: '낙찰' })
+                    .catch(e => console.warn('알림톡 실패:', e));
+            } else if (newStatus === '유찰' || newStatus === '취소') {
+                sendKakaoNotif('bid_lost', app.phone, { ...notifData, result: newStatus })
+                    .catch(e => console.warn('알림톡 실패:', e));
+            }
+        }
+        // ─────────────────────────────────────────────────────────
+
         // 탭 카운트 재계산
         const statuses = ['결제대기','접수','매칭중','매칭완료','완료','취소'];
         document.getElementById('cnt-all').textContent = allApps.length;
@@ -1571,6 +1621,37 @@ async function confirmAssign() {
         closeModal('modalAssign');
         showToast(`✅ ${selectedExpertName} 법무사에게 배정 완료!`, 'success');
         filterAppTable();
+
+        // ── 카카오 알림톡 발송 (비동기, 실패해도 무시) ──────────
+        if (app) {
+            const notifData = {
+                appId:      assignTargetId.toString().slice(-8).toUpperCase(),
+                name:       app.applicant_name  || '',
+                court:      app.court           || '',
+                caseNumber: app.case_number     || '',
+                bidDate:    app.bid_date        || '',
+                address:    app.address         || '',
+                bidAmount:  app.bid_amount      || 0,
+                expertName: selectedExpertName  || '',
+                expertPhone: '',  // 아래에서 조회
+            };
+            // 법무사 전화번호 조회 (allUsers 캐시 활용)
+            const expert = allUsers.find(u => u.id === selectedExpertId);
+            if (expert) notifData.expertPhone = expert.phone || '';
+
+            // 고객에게 배정완료 알림
+            if (app.phone) {
+                sendKakaoNotif('expert_assigned', app.phone, notifData)
+                    .catch(e => console.warn('고객 알림톡 실패:', e));
+            }
+            // 법무사에게 새 사건 알림
+            if (notifData.expertPhone) {
+                sendKakaoNotif('expert_notify', notifData.expertPhone, { ...notifData, expertNm: selectedExpertName })
+                    .catch(e => console.warn('법무사 알림톡 실패:', e));
+            }
+        }
+        // ─────────────────────────────────────────────────────────
+
     } catch(e) {
         showToast('배정 중 오류가 발생했습니다.', 'error');
         btn.disabled = false; btn.textContent = '배정 확정';
