@@ -507,6 +507,9 @@
             <button class="nav-item" onclick="goto('settlements',this)">
                 <i class="fas fa-won-sign"></i> 정산 관리
             </button>
+            <button class="nav-item" onclick="goto('contents',this)">
+                <i class="fas fa-edit"></i> 콘텐츠 관리
+            </button>
         </nav>
         <div class="sidebar-footer">
             <div class="admin-info">
@@ -804,7 +807,6 @@
             <!-- ════ 내 정보 / 비밀번호 변경 ════ -->
             <div class="section" id="sec-myinfo">
                 <div class="section-title"><i class="fas fa-key"></i> 내 정보 / 비밀번호 변경</div>
-
                 <div class="panel" style="max-width:480px;">
                     <div id="myInfoBody">
                         <div style="text-align:center;padding:2rem;color:#ccc;"><i class="fas fa-spinner fa-spin fa-2x"></i></div>
@@ -835,6 +837,199 @@
                     </button>
                 </div>
             </div>
+
+            <!-- ══ 콘텐츠 관리 섹션 ══ -->
+            <div class="section" id="sec-contents">
+                <div class="section-title"><i class="fas fa-edit"></i> 콘텐츠 관리 — 홈페이지 텍스트 직접 수정</div>
+                <p style="color:#888;font-size:0.88rem;margin:-0.5rem 0 1.5rem;">저장 즉시 홈페이지에 반영됩니다. 새로고침 없이 실시간 적용.</p>
+
+                <!-- 탭 -->
+                <div style="display:flex;gap:0.5rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+                    <button class="ftab active" onclick="showContentTab('hero',this)" style="padding:0.5rem 1.2rem;border:none;border-radius:20px;cursor:pointer;font-weight:600;font-size:0.88rem;background:#667eea;color:#fff;">🏠 메인 상단</button>
+                    <button class="ftab" onclick="showContentTab('service',this)" style="padding:0.5rem 1.2rem;border:none;border-radius:20px;cursor:pointer;font-weight:600;font-size:0.88rem;background:#f0f2f5;color:#444;">📋 서비스 소개</button>
+                    <button class="ftab" onclick="showContentTab('pricing',this)" style="padding:0.5rem 1.2rem;border:none;border-radius:20px;cursor:pointer;font-weight:600;font-size:0.88rem;background:#f0f2f5;color:#444;">💰 수수료 안내</button>
+                    <button class="ftab" onclick="showContentTab('footer',this)" style="padding:0.5rem 1.2rem;border:none;border-radius:20px;cursor:pointer;font-weight:600;font-size:0.88rem;background:#f0f2f5;color:#444;">📝 하단 정보</button>
+                    <button class="ftab" onclick="showContentTab('banner',this)" style="padding:0.5rem 1.2rem;border:none;border-radius:20px;cursor:pointer;font-weight:600;font-size:0.88rem;background:#f0f2f5;color:#444;">📢 공지 배너</button>
+                </div>
+
+                <!-- 메인 상단 -->
+                <div id="ctab-hero" class="ctab-panel">
+                    <div class="panel">
+                        <div class="panel-header" style="margin-bottom:1.2rem;"><span class="panel-title">🏠 메인 히어로 섹션</span></div>
+                        <div style="display:grid;gap:1rem;">
+                            <div>
+                                <label style="font-weight:600;color:#444;font-size:0.9rem;display:block;margin-bottom:0.4rem;">메인 제목 (첫 줄)</label>
+                                <input id="c_hero_title1" type="text" placeholder="법원 갈 시간에" style="width:100%;padding:0.85rem 1rem;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;font-family:inherit;box-sizing:border-box;">
+                            </div>
+                            <div>
+                                <label style="font-weight:600;color:#444;font-size:0.9rem;display:block;margin-bottom:0.4rem;">메인 제목 (강조 둘째 줄)</label>
+                                <input id="c_hero_title2" type="text" placeholder="가족과 함께" style="width:100%;padding:0.85rem 1rem;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;font-family:inherit;box-sizing:border-box;">
+                            </div>
+                            <div>
+                                <label style="font-weight:600;color:#444;font-size:0.9rem;display:block;margin-bottom:0.4rem;">부제목 (첫 줄)</label>
+                                <input id="c_hero_sub1" type="text" placeholder="쉬운 경매를 위해 대장TV가 직접 만들었습니다" style="width:100%;padding:0.85rem 1rem;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;font-family:inherit;box-sizing:border-box;">
+                            </div>
+                            <div>
+                                <label style="font-weight:600;color:#444;font-size:0.9rem;display:block;margin-bottom:0.4rem;">부제목 (둘째 줄)</label>
+                                <input id="c_hero_sub2" type="text" placeholder="대리입찰, 이제 무료로 맡기세요" style="width:100%;padding:0.85rem 1rem;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;font-family:inherit;box-sizing:border-box;">
+                            </div>
+                            <div>
+                                <label style="font-weight:600;color:#444;font-size:0.9rem;display:block;margin-bottom:0.4rem;">상단 배지 텍스트</label>
+                                <input id="c_hero_badge" type="text" placeholder="부동산경매 1등 대장TV가 운영하는 무료 대리입찰 플랫폼" style="width:100%;padding:0.85rem 1rem;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;font-family:inherit;box-sizing:border-box;">
+                            </div>
+                        </div>
+                        <button onclick="saveContents('hero')" style="margin-top:1.2rem;padding:0.85rem 2rem;border:none;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);color:white;font-size:0.95rem;font-weight:700;cursor:pointer;font-family:inherit;">
+                            <i class="fas fa-save"></i> 저장 & 홈페이지 반영
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 서비스 소개 -->
+                <div id="ctab-service" class="ctab-panel" style="display:none;">
+                    <div class="panel">
+                        <div class="panel-header" style="margin-bottom:1.2rem;"><span class="panel-title">📋 이용 방법 섹션</span></div>
+                        <div style="display:grid;gap:1rem;">
+                            <div>
+                                <label style="font-weight:600;color:#444;font-size:0.9rem;display:block;margin-bottom:0.4rem;">섹션 제목</label>
+                                <input id="c_how_title" type="text" placeholder="이용 방법" style="width:100%;padding:0.85rem 1rem;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;font-family:inherit;box-sizing:border-box;">
+                            </div>
+                            <div>
+                                <label style="font-weight:600;color:#444;font-size:0.9rem;display:block;margin-bottom:0.4rem;">섹션 부제목</label>
+                                <input id="c_how_sub" type="text" placeholder="딱 4단계로 완료됩니다" style="width:100%;padding:0.85rem 1rem;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;font-family:inherit;box-sizing:border-box;">
+                            </div>
+                            <hr style="border:none;border-top:1px solid #eee;">
+                            <p style="font-weight:700;color:#444;margin:0;">STEP 1</p>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+                                <div><label style="font-weight:600;color:#888;font-size:0.85rem;display:block;margin-bottom:0.3rem;">제목</label><input id="c_step1_title" type="text" placeholder="사건번호 입력" style="width:100%;padding:0.75rem;border:2px solid #e0e0e0;border-radius:8px;font-size:0.9rem;font-family:inherit;box-sizing:border-box;"></div>
+                                <div><label style="font-weight:600;color:#888;font-size:0.85rem;display:block;margin-bottom:0.3rem;">설명</label><input id="c_step1_desc" type="text" placeholder="대법원 경매 사건번호를 입력하면..." style="width:100%;padding:0.75rem;border:2px solid #e0e0e0;border-radius:8px;font-size:0.9rem;font-family:inherit;box-sizing:border-box;"></div>
+                            </div>
+                            <p style="font-weight:700;color:#444;margin:0;">STEP 2</p>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+                                <div><label style="font-weight:600;color:#888;font-size:0.85rem;display:block;margin-bottom:0.3rem;">제목</label><input id="c_step2_title" type="text" placeholder="입찰가 결정" style="width:100%;padding:0.75rem;border:2px solid #e0e0e0;border-radius:8px;font-size:0.9rem;font-family:inherit;box-sizing:border-box;"></div>
+                                <div><label style="font-weight:600;color:#888;font-size:0.85rem;display:block;margin-bottom:0.3rem;">설명</label><input id="c_step2_desc" type="text" placeholder="원하는 입찰 금액과 보증금..." style="width:100%;padding:0.75rem;border:2px solid #e0e0e0;border-radius:8px;font-size:0.9rem;font-family:inherit;box-sizing:border-box;"></div>
+                            </div>
+                            <p style="font-weight:700;color:#444;margin:0;">STEP 3</p>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+                                <div><label style="font-weight:600;color:#888;font-size:0.85rem;display:block;margin-bottom:0.3rem;">제목</label><input id="c_step3_title" type="text" placeholder="전자서명" style="width:100%;padding:0.75rem;border:2px solid #e0e0e0;border-radius:8px;font-size:0.9rem;font-family:inherit;box-sizing:border-box;"></div>
+                                <div><label style="font-weight:600;color:#888;font-size:0.85rem;display:block;margin-bottom:0.3rem;">설명</label><input id="c_step3_desc" type="text" placeholder="온라인 전자서명으로 위임장 작성..." style="width:100%;padding:0.75rem;border:2px solid #e0e0e0;border-radius:8px;font-size:0.9rem;font-family:inherit;box-sizing:border-box;"></div>
+                            </div>
+                            <p style="font-weight:700;color:#444;margin:0;">STEP 4</p>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+                                <div><label style="font-weight:600;color:#888;font-size:0.85rem;display:block;margin-bottom:0.3rem;">제목</label><input id="c_step4_title" type="text" placeholder="결과 수령" style="width:100%;padding:0.75rem;border:2px solid #e0e0e0;border-radius:8px;font-size:0.9rem;font-family:inherit;box-sizing:border-box;"></div>
+                                <div><label style="font-weight:600;color:#888;font-size:0.85rem;display:block;margin-bottom:0.3rem;">설명</label><input id="c_step4_desc" type="text" placeholder="입찰 당일 문자로 낙찰/패찰 결과..." style="width:100%;padding:0.75rem;border:2px solid #e0e0e0;border-radius:8px;font-size:0.9rem;font-family:inherit;box-sizing:border-box;"></div>
+                            </div>
+                        </div>
+                        <button onclick="saveContents('service')" style="margin-top:1.2rem;padding:0.85rem 2rem;border:none;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);color:white;font-size:0.95rem;font-weight:700;cursor:pointer;font-family:inherit;">
+                            <i class="fas fa-save"></i> 저장 & 홈페이지 반영
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 수수료 안내 -->
+                <div id="ctab-pricing" class="ctab-panel" style="display:none;">
+                    <div class="panel">
+                        <div class="panel-header" style="margin-bottom:1.2rem;"><span class="panel-title">💰 수수료 안내 섹션</span></div>
+                        <div style="display:grid;gap:1rem;">
+                            <div>
+                                <label style="font-weight:600;color:#444;font-size:0.9rem;display:block;margin-bottom:0.4rem;">섹션 제목</label>
+                                <input id="c_price_title" type="text" placeholder="정찰제 수수료" style="width:100%;padding:0.85rem 1rem;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;font-family:inherit;box-sizing:border-box;">
+                            </div>
+                            <div>
+                                <label style="font-weight:600;color:#444;font-size:0.9rem;display:block;margin-bottom:0.4rem;">섹션 부제목</label>
+                                <input id="c_price_sub" type="text" placeholder="숨겨진 비용 없이 딱 하나의 가격" style="width:100%;padding:0.85rem 1rem;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;font-family:inherit;box-sizing:border-box;">
+                            </div>
+                            <div>
+                                <label style="font-weight:600;color:#444;font-size:0.9rem;display:block;margin-bottom:0.4rem;">수수료 금액 (강조 텍스트)</label>
+                                <input id="c_price_amount" type="text" placeholder="예: 전국 균일 30,000원" style="width:100%;padding:0.85rem 1rem;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;font-family:inherit;box-sizing:border-box;">
+                            </div>
+                            <div>
+                                <label style="font-weight:600;color:#444;font-size:0.9rem;display:block;margin-bottom:0.4rem;">수수료 설명</label>
+                                <textarea id="c_price_desc" rows="3" placeholder="수수료 관련 상세 설명..." style="width:100%;padding:0.85rem 1rem;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;font-family:inherit;resize:vertical;box-sizing:border-box;"></textarea>
+                            </div>
+                        </div>
+                        <button onclick="saveContents('pricing')" style="margin-top:1.2rem;padding:0.85rem 2rem;border:none;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);color:white;font-size:0.95rem;font-weight:700;cursor:pointer;font-family:inherit;">
+                            <i class="fas fa-save"></i> 저장 & 홈페이지 반영
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 하단 정보 -->
+                <div id="ctab-footer" class="ctab-panel" style="display:none;">
+                    <div class="panel">
+                        <div class="panel-header" style="margin-bottom:1.2rem;"><span class="panel-title">📝 하단 회사 정보</span></div>
+                        <div style="display:grid;gap:1rem;">
+                            <div>
+                                <label style="font-weight:600;color:#444;font-size:0.9rem;display:block;margin-bottom:0.4rem;">상호명</label>
+                                <input id="c_footer_company" type="text" placeholder="대리입찰톡" style="width:100%;padding:0.85rem 1rem;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;font-family:inherit;box-sizing:border-box;">
+                            </div>
+                            <div>
+                                <label style="font-weight:600;color:#444;font-size:0.9rem;display:block;margin-bottom:0.4rem;">회사명</label>
+                                <input id="c_footer_corp" type="text" placeholder="대장TV" style="width:100%;padding:0.85rem 1rem;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;font-family:inherit;box-sizing:border-box;">
+                            </div>
+                            <div>
+                                <label style="font-weight:600;color:#444;font-size:0.9rem;display:block;margin-bottom:0.4rem;">주소</label>
+                                <input id="c_footer_address" type="text" placeholder="서울특별시 금천구 가산디지털1로 75-24 901호" style="width:100%;padding:0.85rem 1rem;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;font-family:inherit;box-sizing:border-box;">
+                            </div>
+                            <div>
+                                <label style="font-weight:600;color:#444;font-size:0.9rem;display:block;margin-bottom:0.4rem;">대표전화</label>
+                                <input id="c_footer_tel" type="text" placeholder="02-853-5875" style="width:100%;padding:0.85rem 1rem;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;font-family:inherit;box-sizing:border-box;">
+                            </div>
+                            <div>
+                                <label style="font-weight:600;color:#444;font-size:0.9rem;display:block;margin-bottom:0.4rem;">운영시간</label>
+                                <input id="c_footer_hours" type="text" placeholder="평일 09:00~18:00" style="width:100%;padding:0.85rem 1rem;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;font-family:inherit;box-sizing:border-box;">
+                            </div>
+                            <div>
+                                <label style="font-weight:600;color:#444;font-size:0.9rem;display:block;margin-bottom:0.4rem;">대표자</label>
+                                <input id="c_footer_ceo" type="text" placeholder="장영준" style="width:100%;padding:0.85rem 1rem;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;font-family:inherit;box-sizing:border-box;">
+                            </div>
+                            <div>
+                                <label style="font-weight:600;color:#444;font-size:0.9rem;display:block;margin-bottom:0.4rem;">이메일</label>
+                                <input id="c_footer_email" type="text" placeholder="qkqk5342@naver.com" style="width:100%;padding:0.85rem 1rem;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;font-family:inherit;box-sizing:border-box;">
+                            </div>
+                            <div>
+                                <label style="font-weight:600;color:#444;font-size:0.9rem;display:block;margin-bottom:0.4rem;">저작권 텍스트</label>
+                                <input id="c_footer_copyright" type="text" placeholder="© 2026 대리입찰 톡 (대장TV). All rights reserved." style="width:100%;padding:0.85rem 1rem;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;font-family:inherit;box-sizing:border-box;">
+                            </div>
+                        </div>
+                        <button onclick="saveContents('footer')" style="margin-top:1.2rem;padding:0.85rem 2rem;border:none;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);color:white;font-size:0.95rem;font-weight:700;cursor:pointer;font-family:inherit;">
+                            <i class="fas fa-save"></i> 저장 & 홈페이지 반영
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 공지 배너 -->
+                <div id="ctab-banner" class="ctab-panel" style="display:none;">
+                    <div class="panel">
+                        <div class="panel-header" style="margin-bottom:1.2rem;"><span class="panel-title">📢 상단 공지 배너</span></div>
+                        <div style="display:grid;gap:1rem;">
+                            <div style="display:flex;align-items:center;gap:1rem;">
+                                <label style="font-weight:700;color:#444;font-size:0.95rem;">배너 표시</label>
+                                <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;">
+                                    <input type="checkbox" id="c_banner_show" style="width:18px;height:18px;">
+                                    <span style="font-size:0.9rem;color:#666;">활성화</span>
+                                </label>
+                            </div>
+                            <div>
+                                <label style="font-weight:600;color:#444;font-size:0.9rem;display:block;margin-bottom:0.4rem;">배너 텍스트</label>
+                                <textarea id="c_banner_text" rows="2" placeholder="예: 🎉 서비스 오픈 기념 — 법무사 매칭 서비스를 무료로 이용하실 수 있습니다." style="width:100%;padding:0.85rem 1rem;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;font-family:inherit;resize:vertical;box-sizing:border-box;"></textarea>
+                            </div>
+                            <div>
+                                <label style="font-weight:600;color:#444;font-size:0.9rem;display:block;margin-bottom:0.4rem;">배너 배경색</label>
+                                <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+                                    <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer;"><input type="radio" name="bannerColor" value="#0D9488"> <span style="background:#0D9488;color:#fff;padding:3px 10px;border-radius:20px;font-size:0.82rem;">민트</span></label>
+                                    <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer;"><input type="radio" name="bannerColor" value="#667eea" checked> <span style="background:#667eea;color:#fff;padding:3px 10px;border-radius:20px;font-size:0.82rem;">보라</span></label>
+                                    <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer;"><input type="radio" name="bannerColor" value="#ef4444"> <span style="background:#ef4444;color:#fff;padding:3px 10px;border-radius:20px;font-size:0.82rem;">빨강 (긴급)</span></label>
+                                    <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer;"><input type="radio" name="bannerColor" value="#1a1a2e"> <span style="background:#1a1a2e;color:#fff;padding:3px 10px;border-radius:20px;font-size:0.82rem;">다크</span></label>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="saveContents('banner')" style="margin-top:1.2rem;padding:0.85rem 2rem;border:none;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);color:white;font-size:0.95rem;font-weight:700;cursor:pointer;font-family:inherit;">
+                            <i class="fas fa-save"></i> 저장 & 홈페이지 반영
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- ══ /콘텐츠 관리 섹션 ══ -->
 
         </div><!-- /admin-content -->
     </main>
@@ -1148,7 +1343,7 @@ function doLogout() {
 const SECTION_TITLES = {
     dashboard: '대시보드', applications: '신청 관리',
     experts: '전문가 승인', users: '회원 관리', settlements: '정산 관리',
-    myinfo: '내 정보 / 비밀번호 변경'
+    myinfo: '내 정보 / 비밀번호 변경', contents: '콘텐츠 관리'
 };
 
 function goto(sec, el) {
@@ -1179,6 +1374,7 @@ function goto(sec, el) {
     if (sec === 'users')        loadUsers();
     if (sec === 'settlements')  loadSettlements();
     if (sec === 'myinfo')        loadMyInfo();
+    if (sec === 'contents')      loadContents();
 }
 
 function refreshCurrent() { goto(currentSection, null); }
@@ -2407,6 +2603,129 @@ function loadMyInfo() {
         const el = document.getElementById(id);
         if (el) el.value = '';
     });
+}
+
+// ═══════════════════════════════════════════════════════
+// 콘텐츠 관리
+// ═══════════════════════════════════════════════════════
+
+// 기본값 (Firestore에 저장된 값 없을 때 사용)
+const CONTENT_DEFAULTS = {
+    hero: {
+        hero_title1: '법원 갈 시간에',
+        hero_title2: '가족과 함께',
+        hero_sub1: '쉬운 경매를 위해 대장TV가 직접 만들었습니다',
+        hero_sub2: '대리입찰, 이제 무료로 맡기세요',
+        hero_badge: '부동산경매 1등 대장TV가 운영하는 무료 대리입찰 플랫폼',
+    },
+    service: {
+        how_title: '이용 방법',
+        how_sub: '딱 4단계로 완료됩니다',
+        step1_title: '사건번호 입력', step1_desc: '대법원 경매 사건번호를 입력하면 자동으로 정보를 불러옵니다',
+        step2_title: '입찰가 결정',   step2_desc: '원하는 입찰 금액과 보증금 납부 방법을 선택합니다',
+        step3_title: '전자서명',      step3_desc: '온라인 전자서명으로 위임장 작성. 인감증명서 불필요',
+        step4_title: '결과 수령',     step4_desc: '입찰 당일 문자로 낙찰/패찰 결과를 즉시 안내받습니다',
+    },
+    pricing: {
+        price_title: '정찰제 수수료',
+        price_sub: '숨겨진 비용 없이 딱 하나의 가격',
+        price_amount: '전국 균일 수수료',
+        price_desc: '법무사가 직접 수수료를 받습니다. 플랫폼 중개 수수료는 무료입니다.',
+    },
+    footer: {
+        footer_company: '대리입찰톡',
+        footer_corp: '대장TV',
+        footer_address: '서울특별시 금천구 가산디지털1로 75-24 901호',
+        footer_tel: '02-853-5875',
+        footer_hours: '평일 09:00~18:00',
+        footer_ceo: '장영준',
+        footer_email: 'qkqk5342@naver.com',
+        footer_copyright: '© 2026 대리입찰 톡 (대장TV). All rights reserved.',
+    },
+    banner: {
+        banner_show: true,
+        banner_text: '법무사 매칭 서비스 — 무료로 법무사 매칭 서비스를 이용하실 수 있습니다.',
+        banner_color: '#667eea',
+    }
+};
+
+// 탭 전환
+function showContentTab(tab, el) {
+    document.querySelectorAll('.ctab-panel').forEach(p => p.style.display = 'none');
+    document.querySelectorAll('#sec-contents .ftab').forEach(b => {
+        b.style.background = '#f0f2f5'; b.style.color = '#444';
+    });
+    document.getElementById('ctab-' + tab).style.display = 'block';
+    if (el) { el.style.background = '#667eea'; el.style.color = '#fff'; }
+}
+
+// Firestore에서 콘텐츠 불러와 입력란에 채우기
+async function loadContents() {
+    try {
+        const db = getDB();
+        const doc = await db.collection('siteContents').doc('main').get();
+        const data = doc.exists ? doc.data() : {};
+
+        // 모든 섹션 기본값 병합
+        const merged = {};
+        Object.values(CONTENT_DEFAULTS).forEach(d => Object.assign(merged, d));
+        Object.assign(merged, data);
+
+        // 입력란에 값 채우기
+        Object.keys(merged).forEach(key => {
+            const el = document.getElementById('c_' + key);
+            if (!el) return;
+            if (el.type === 'checkbox') { el.checked = !!merged[key]; }
+            else { el.value = merged[key] || ''; }
+        });
+
+        // 배너 색상 라디오
+        const bannerColor = merged.banner_color || '#667eea';
+        const radios = document.querySelectorAll('input[name="bannerColor"]');
+        radios.forEach(r => { r.checked = (r.value === bannerColor); });
+
+        showToast('콘텐츠 로드 완료', 'success');
+    } catch(e) {
+        console.warn('콘텐츠 로드 실패:', e);
+        showToast('기본값으로 표시합니다.', 'info');
+        // 기본값으로 채우기
+        Object.values(CONTENT_DEFAULTS).forEach(section => {
+            Object.keys(section).forEach(key => {
+                const el = document.getElementById('c_' + key);
+                if (!el) return;
+                if (el.type === 'checkbox') { el.checked = !!section[key]; }
+                else { el.value = section[key] || ''; }
+            });
+        });
+    }
+}
+
+// Firestore에 콘텐츠 저장
+async function saveContents(tab) {
+    try {
+        const db = getDB();
+        const keys = Object.keys(CONTENT_DEFAULTS[tab] || {});
+        const updates = {};
+
+        keys.forEach(key => {
+            const el = document.getElementById('c_' + key);
+            if (!el) return;
+            if (el.type === 'checkbox') { updates[key] = el.checked; }
+            else { updates[key] = el.value.trim(); }
+        });
+
+        // 배너 색상은 별도 처리
+        if (tab === 'banner') {
+            const colorEl = document.querySelector('input[name="bannerColor"]:checked');
+            if (colorEl) updates.banner_color = colorEl.value;
+        }
+
+        await db.collection('siteContents').doc('main').set(updates, { merge: true });
+        showToast('✅ 저장 완료! 홈페이지에 즉시 반영됩니다.', 'success');
+    } catch(e) {
+        console.error('콘텐츠 저장 실패:', e);
+        showToast('저장 실패: ' + e.message, 'error');
+    }
 }
 
 async function changeAdminPassword() {
