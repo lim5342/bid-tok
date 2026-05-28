@@ -1903,15 +1903,28 @@ function renderExpertList(experts) {
         wrap.innerHTML = `<div class="empty-box"><i class="fas fa-inbox"></i><p>${msg[expertFilter]||'없습니다.'}</p></div>`;
         return;
     }
-    wrap.innerHTML = experts.map(ex => `
+    wrap.innerHTML = experts.map(ex => {
+        // 서류 링크 생성 헬퍼
+        const docBtn = (url, name) => url
+            ? `<a href="${url}" target="_blank" style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:#EBF2FF;color:#1F6FFF;border-radius:6px;font-size:0.75rem;font-weight:600;text-decoration:none;border:1px solid #bfdbfe;">
+                <i class="fas fa-external-link-alt"></i> ${name}
+               </a>`
+            : `<span style="font-size:0.75rem;color:#ccc;">미업로드</span>`;
+        const profileImg = ex.profileUrl
+            ? `<img src="${ex.profileUrl}" style="width:48px;height:48px;border-radius:${ex.profileType==='logo'?'8px':'50%'};object-fit:cover;border:2px solid #e5e7eb;" onerror="this.style.display='none'">`
+            : `<div class="assign-ava"><i class="fas fa-user-tie"></i></div>`;
+        return `
     <div class="expert-card" id="ec_${ex.id}">
         <div class="expert-card-head">
             <div style="display:flex;align-items:center;gap:0.75rem;">
-                <div class="assign-ava"><i class="fas fa-user-tie"></i></div>
+                ${profileImg}
                 <div>
                     <strong style="font-size:1rem;">${ex.name||'-'}</strong>
+                    ${ex.officeName ? `<span style="font-size:0.78rem;color:#6b7280;margin-left:6px;">${ex.officeName}</span>` : ''}
+                    <br>
                     ${badge(ex.status)}
                     ${ex.registeredByAdmin ? '<span style="font-size:0.72rem;background:#fef3c7;color:#92400e;padding:2px 6px;border-radius:10px;margin-left:4px;">관리자 등록</span>' : ''}
+                    ${!ex.registeredByAdmin && ex.status==='pending' ? '<span style="font-size:0.72rem;background:#dbeafe;color:#1e40af;padding:2px 6px;border-radius:10px;margin-left:4px;">자체 신청</span>' : ''}
                 </div>
             </div>
             <span style="font-size:0.8rem;color:#888;">신청: ${fmtDate(ex.createdAt)}</span>
@@ -1921,10 +1934,23 @@ function renderExpertList(experts) {
                 <div class="info-item"><div class="lbl">이메일</div><div class="val">${ex.email||'-'}</div></div>
                 <div class="info-item"><div class="lbl">연락처</div><div class="val">${ex.phone||'-'}</div></div>
                 <div class="info-item"><div class="lbl">등록번호</div><div class="val">${ex.licenseNumber||'-'}</div></div>
-                <div class="info-item"><div class="lbl">사무소</div><div class="val">${ex.officeAddress||'-'}</div></div>
+                <div class="info-item"><div class="lbl">사무소 주소</div><div class="val">${ex.officeAddress||'-'}</div></div>
+                <div class="info-item"><div class="lbl">은행/계좌</div><div class="val">${ex.bankName ? `${ex.bankName} ${ex.bankAccount||''} (${ex.bankHolder||''})` : '-'}</div></div>
+                <div class="info-item"><div class="lbl">유입경로</div><div class="val">${ex.refSource||'-'}</div></div>
+                ${ex.introduce ? `<div class="info-item" style="grid-column:span 2;"><div class="lbl">소개</div><div class="val">${ex.introduce}</div></div>` : ''}
                 <div class="info-item" style="grid-column:span 2;">
-                    <div class="lbl">서비스 지역</div>
-                    <div class="val">${Array.isArray(ex.serviceRegions) ? ex.serviceRegions.join(', ') : (ex.serviceRegions||'-')}</div>
+                    <div class="lbl">활동 법원 (${Array.isArray(ex.serviceRegions)?ex.serviceRegions.length:0}개)</div>
+                    <div class="val" style="font-size:0.8rem;line-height:1.8;">${Array.isArray(ex.serviceRegions) ? ex.serviceRegions.join(' · ') : (ex.serviceRegions||'-')}</div>
+                </div>
+            </div>
+            <!-- 첨부 서류 -->
+            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:0.85rem 1rem;margin-top:0.7rem;">
+                <div style="font-size:0.78rem;font-weight:700;color:#475569;margin-bottom:0.6rem;">📎 첨부 서류</div>
+                <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                    ${docBtn(ex.licenseDoc, '대리인등록증')}
+                    ${docBtn(ex.insuranceDoc, '공제증서')}
+                    ${docBtn(ex.officeDoc, '사무실등록증')}
+                    ${docBtn(ex.bizRegDoc, '사업자등록증')}
                 </div>
             </div>
             ${expertFilter === 'setup_pending' ? `
@@ -1934,9 +1960,6 @@ function renderExpertList(experts) {
                 ${ex.setupToken ? `<br><br>📎 초대 링크: <span style="font-family:monospace;font-size:0.78rem;word-break:break-all;">${location.origin}/expert-setup.html?token=${ex.setupToken}</span>
                 <button onclick="navigator.clipboard.writeText('${location.origin}/expert-setup.html?token=${ex.setupToken}');showToast('링크 복사 완료','success');" style="margin-left:6px;background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:2px 8px;cursor:pointer;font-size:0.75rem;">복사</button>` : ''}
             </div>` : ''}
-            <div style="background:#f8f9fa;border-radius:8px;padding:0.75rem;font-size:0.82rem;color:#666;margin-top:0.5rem;">
-                📎 첨부서류: ${ex.licenseFileName||'자격증'} / ${ex.insuranceFileName||'보험증권'} / ${ex.bizRegFileName||'사업자등록증'}
-            </div>
             ${ex.adminMemo ? `<div style="margin-top:0.5rem;background:#fefce8;border-radius:8px;padding:0.75rem;font-size:0.82rem;color:#854d0e;">📝 메모: ${ex.adminMemo}</div>` : ''}
             ${ex.rejectReason ? `<div style="margin-top:0.5rem;background:#fef2f2;border-radius:8px;padding:0.75rem;font-size:0.82rem;color:#ef4444;">거부 사유: ${ex.rejectReason}</div>` : ''}
         </div>
@@ -1956,7 +1979,8 @@ function renderExpertList(experts) {
                 <button class="btn-sm btn-blue" onclick="reApproveExpert('${ex.id}')"><i class="fas fa-redo"></i> 재승인</button>
             ` : ''}
         </div>
-    </div>`).join('');
+    </div>`;
+    }).join('');
 }
 
 function setExpertFilter(status, el) {
@@ -1967,19 +1991,49 @@ function setExpertFilter(status, el) {
 }
 
 async function approveExpert(id) {
-    if (!confirm('이 법무사를 승인하시겠습니까?')) return;
+    if (!confirm('이 법무사를 승인하시겠습니까?\n승인 시 SMS 알림이 발송됩니다.')) return;
     try {
+        const expert = await API.users.getById(id);
         await API.users.update(id, { status: 'active', approvedAt: new Date().toISOString() });
         showToast('✅ 법무사 승인 완료!', 'success');
+        // 승인 SMS 발송
+        if (expert && expert.phone) {
+            const phone = expert.phone.replace(/[^0-9]/g,'');
+            const name = expert.name || '파트너';
+            fetch('https://bidtok-sms-proxy.qkqk5342.workers.dev', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({
+                    type: 'partner_approved',
+                    to: phone,
+                    data: { name }
+                })
+            }).catch(()=>{});
+        }
         fadeRemoveCard('ec_' + id, loadExperts);
     } catch(e) { showToast('처리 실패', 'error'); }
 }
 
 async function quickApprove(id) {
-    if (!confirm('이 법무사를 승인하시겠습니까?')) return;
+    if (!confirm('이 법무사를 승인하시겠습니까?\n승인 시 SMS 알림이 발송됩니다.')) return;
     try {
+        const expert = await API.users.getById(id);
         await API.users.update(id, { status: 'active', approvedAt: new Date().toISOString() });
         showToast('✅ 법무사 승인 완료!', 'success');
+        // 승인 SMS 발송
+        if (expert && expert.phone) {
+            const phone = expert.phone.replace(/[^0-9]/g,'');
+            const name = expert.name || '파트너';
+            fetch('https://bidtok-sms-proxy.qkqk5342.workers.dev', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({
+                    type: 'partner_approved',
+                    to: phone,
+                    data: { name }
+                })
+            }).catch(()=>{});
+        }
         loadDashboard();
     } catch(e) { showToast('처리 실패', 'error'); }
 }
@@ -1989,8 +2043,23 @@ async function rejectExpert(id) {
     if (reason === null) return;
     if (!reason.trim()) { showToast('거부 사유를 입력해주세요.', 'error'); return; }
     try {
+        const expert = await API.users.getById(id);
         await API.users.update(id, { status: 'rejected', rejectedAt: new Date().toISOString(), rejectReason: reason.trim() });
         showToast('거부 처리 완료', 'info');
+        // 거부 SMS 발송
+        if (expert && expert.phone) {
+            const phone = expert.phone.replace(/[^0-9]/g,'');
+            const name = expert.name || '파트너';
+            fetch('https://bidtok-sms-proxy.qkqk5342.workers.dev', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({
+                    type: 'partner_rejected',
+                    to: phone,
+                    data: { name, reason: reason.trim() }
+                })
+            }).catch(()=>{});
+        }
         fadeRemoveCard('ec_' + id, loadExperts);
     } catch(e) { showToast('처리 실패', 'error'); }
 }
