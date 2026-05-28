@@ -375,27 +375,20 @@
         // 탭 전환
         const tabs = document.querySelectorAll('.login-tab');
         const forms = document.querySelectorAll('.login-form');
-        
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                // 탭 활성화
-                tabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                
-                // 폼 전환
-                const type = tab.dataset.type;
-                forms.forEach(form => {
-                    form.classList.remove('active');
-                    if (form.id === `${type}LoginForm`) {
-                        form.classList.add('active');
-                    }
-                });
 
-                // 하단 가입 링크 전환
-                document.getElementById('clientSignupLink').style.display = type === 'client' ? 'block' : 'none';
-                document.getElementById('expertSignupLink').style.display = type === 'expert' ? 'block' : 'none';
-            });
-        });
+        function switchTab(type) {
+            tabs.forEach(t => t.classList.toggle('active', t.dataset.type === type));
+            forms.forEach(f => f.classList.toggle('active', f.id === `${type}LoginForm`));
+            document.getElementById('clientSignupLink').style.display = type === 'client' ? 'block' : 'none';
+            document.getElementById('expertSignupLink').style.display = type === 'expert' ? 'block' : 'none';
+        }
+
+        tabs.forEach(tab => tab.addEventListener('click', () => switchTab(tab.dataset.type)));
+
+        // URL 파라미터로 탭 자동 선택 (?type=expert)
+        if (new URLSearchParams(location.search).get('type') === 'expert') {
+            switchTab('expert');
+        }
         
         // 신청자 로그인
         document.getElementById('clientLoginForm').addEventListener('submit', async (e) => {
