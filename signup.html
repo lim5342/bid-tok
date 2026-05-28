@@ -362,8 +362,10 @@
                         <a href="privacy.html" target="_blank" style="margin-left: 0.5rem; color: #667eea; text-decoration: none; font-size: 0.9rem;">내용보기</a>
                     </div>
                     <div class="terms-checkbox">
-                        <input type="checkbox" id="clientTerms3" name="terms3">
-                        <label for="clientTerms3">[선택] 마케팅 정보 수신 동의</label>
+                        <input type="checkbox" id="clientTerms3" name="terms3" required>
+                        <label for="clientTerms3">[필수] 카카오 알림톡/SMS 서비스 알림 수신 동의
+                            <small style="color:#666;font-weight:400;display:block;margin-top:2px;">(입찰결과, 법무사 배정 등 서비스 알림)</small>
+                        </label>
                     </div>
                 </div>
 
@@ -718,8 +720,9 @@
             
             const terms1 = document.getElementById('clientTerms1').checked;
             const terms2 = document.getElementById('clientTerms2').checked;
+            const terms3 = document.getElementById('clientTerms3').checked;
             
-            if (!terms1 || !terms2) {
+            if (!terms1 || !terms2 || !terms3) {
                 alert('필수 약관에 동의해주세요.');
                 return;
             }
@@ -731,7 +734,8 @@
                 name: document.getElementById('clientName').value,
                 phone: document.getElementById('clientPhone').value,
                 userType: 'client',
-                marketingConsent: document.getElementById('clientTerms3').checked,
+                smsConsent: true,
+                smsConsentDate: new Date().toISOString(),
                 createdAt: new Date().toISOString()
             };
             
