@@ -9,4 +9,4 @@ compatibility_date = "2024-01-01"
 # npx wrangler secret put KAKAO_CHANNEL_ID (솔라피 카카오 채널 pfId - 없으면 SMS 폴백)
 
 [vars]
-SENDER = "01083445342"
+SENDER = "0285355875"
