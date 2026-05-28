@@ -473,8 +473,7 @@
         box-shadow:0 2px 8px rgba(13,148,136,0.3);
     ">
         <i class="fas fa-bolt" style="margin-right:6px;"></i>
-        <strong>법무사 매칭 서비스</strong> — <strong>무료로</strong> 법무사 매칭 서비스를 이용하실 수 있습니다.
-        결제 없이 신청만 하면 법무사가 배정됩니다.
+        <span id="bannerText"><strong>법무사 매칭 서비스</strong> — <strong>무료로</strong> 법무사 매칭 서비스를 이용하실 수 있습니다. 결제 없이 신청만 하면 법무사가 배정됩니다.</span>
         <button onclick="document.getElementById('betaBanner').style.display='none';document.getElementById('betaBannerSpacer').style.display='none';" style="
             position:absolute; right:12px; top:50%; transform:translateY(-50%);
             background:none; border:none; color:rgba(255,255,255,0.7);
@@ -491,10 +490,10 @@
                 <!-- 대장TV 배지 -->
                 <div style="display:inline-flex;align-items:center;gap:8px;background:#fff;border:2px solid #0D9488;border-radius:50px;padding:6px 16px;margin-bottom:1.2rem;box-shadow:0 2px 12px rgba(13,148,136,0.12);">
                     <span style="font-size:1.1rem;">📺</span>
-                    <span style="font-size:0.82rem;font-weight:700;color:#0D9488;">부동산경매 1등 <strong>대장TV</strong>가 운영하는 무료 대리입찰 플랫폼</span>
+                    <span id="heroBadge" style="font-size:0.82rem;font-weight:700;color:#0D9488;">부동산경매 1등 <strong>대장TV</strong>가 운영하는 무료 대리입찰 플랫폼</span>
                 </div>
-                <h1>법원 갈 시간에<br><span class="accent">가족과 함께</span></h1>
-                <p class="subtitle">쉬운 경매를 위해 대장TV가 직접 만들었습니다<br>대리입찰, 이제 무료로 맡기세요</p>
+                <h1 id="heroTitle">법원 갈 시간에<br><span class="accent" id="heroTitle2">가족과 함께</span></h1>
+                <p class="subtitle" id="heroSub">쉬운 경매를 위해 대장TV가 직접 만들었습니다<br>대리입찰, 이제 무료로 맡기세요</p>
                 <div class="hero-btn-wrap">
                     <button class="btn-mint" id="heroApplyBtn" onclick="location.href='apply.html'">지금 신청하기</button>
                     <button class="btn-outline-gray" onclick="location.href='partner.html'">대리인 신청</button>
@@ -543,28 +542,28 @@
         <!-- 이용 방법 -->
         <section class="how-section" id="service">
             <div class="container">
-                <h2>이용 방법</h2>
-                <p class="sub">딱 4단계로 완료됩니다</p>
+                <h2 id="howTitle">이용 방법</h2>
+                <p class="sub" id="howSub">딱 4단계로 완료됩니다</p>
                 <div class="how-steps">
                     <div class="how-step">
                         <div class="how-num">1</div>
-                        <h4>사건번호 입력</h4>
-                        <p>대법원 경매 사건번호를 입력하면 자동으로 정보를 불러옵니다</p>
+                        <h4 id="step1Title">사건번호 입력</h4>
+                        <p id="step1Desc">대법원 경매 사건번호를 입력하면 자동으로 정보를 불러옵니다</p>
                     </div>
                     <div class="how-step">
                         <div class="how-num">2</div>
-                        <h4>입찰가 결정</h4>
-                        <p>원하는 입찰 금액과 보증금 납부 방법을 선택합니다</p>
+                        <h4 id="step2Title">입찰가 결정</h4>
+                        <p id="step2Desc">원하는 입찰 금액과 보증금 납부 방법을 선택합니다</p>
                     </div>
                     <div class="how-step">
                         <div class="how-num">3</div>
-                        <h4>전자서명</h4>
-                        <p>온라인 전자서명으로 위임장 작성. 인감증명서 불필요</p>
+                        <h4 id="step3Title">전자서명</h4>
+                        <p id="step3Desc">온라인 전자서명으로 위임장 작성. 인감증명서 불필요</p>
                     </div>
                     <div class="how-step">
                         <div class="how-num done">✓</div>
-                        <h4>결과 수령</h4>
-                        <p>입찰 당일 문자로 낙찰/패찰 결과를 즉시 안내받습니다</p>
+                        <h4 id="step4Title">결과 수령</h4>
+                        <p id="step4Desc">입찰 당일 문자로 낙찰/패찰 결과를 즉시 안내받습니다</p>
                     </div>
                 </div>
             </div>
@@ -678,18 +677,18 @@
         <!-- Pricing Section -->
         <section class="section pricing-section">
             <div class="container">
-                <h2 class="section-title">정찰제 수수료</h2>
-                <p class="section-subtitle" style="text-align:center; margin-bottom:2rem;">숨겨진 비용 없이 딱 하나의 가격</p>
+                <h2 class="section-title" id="pricingTitle">정찰제 수수료</h2>
+                <p class="section-subtitle" id="pricingSub" style="text-align:center; margin-bottom:2rem;">숨겨진 비용 없이 딱 하나의 가격</p>
                 <div class="pricing-grid" style="display:flex; justify-content:center; align-items:center;">
                     <div class="pricing-card recommended-pricing" style="max-width:500px;">
                         <div class="pricing-badge">정찰제</div>
                         <h3 class="pricing-title">⚖️ 법무사 대리입찰</h3>
                         <div class="pricing-amount">
-                            <span class="amount">99,000</span>
+                            <span class="amount" id="pricingAmount">99,000</span>
                             <span class="currency">원</span>
                         </div>
                         <p class="pricing-vat">(VAT 포함)</p>
-                        <p class="pricing-desc">온라인 전자서명 3분 완료</p>
+                        <p class="pricing-desc" id="pricingDesc">온라인 전자서명 3분 완료</p>
                         <div class="pricing-features">
                             <div class="pricing-feature">
                                 <i class="fas fa-check"></i>
@@ -1720,11 +1719,11 @@
                     <span>대리입찰 톡</span>
                 </div>
                 <div class="footer-info">
-                    <p><strong>상호명:</strong> 대리입찰톡</p>
-                    <p><strong>회사:</strong> 대장TV</p>
-                    <p><strong>주소:</strong> 서울특별시 금천구 가산디지털1로 75-24 901호</p>
-                    <p><strong>대표전화:</strong> <a href="tel:02-853-5875" style="color:var(--mint);">02-853-5875</a> &nbsp;|&nbsp; 평일 09:00~18:00</p>
-                    <p><strong>대표 관리자:</strong> 장영준 &nbsp;|&nbsp; <strong>이메일:</strong> <a href="mailto:qkqk5342@naver.com" style="color:var(--mint);">qkqk5342@naver.com</a></p>
+                    <p><strong>상호명:</strong> <span id="footerCompany">대리입찰톡</span></p>
+                    <p><strong>회사:</strong> <span id="footerCorp">대장TV</span></p>
+                    <p><strong>주소:</strong> <span id="footerAddress">서울특별시 금천구 가산디지털1로 75-24 901호</span></p>
+                    <p><strong>대표전화:</strong> <a id="footerTelLink" href="tel:02-853-5875" style="color:var(--mint);"><span id="footerTel">02-853-5875</span></a> &nbsp;|&nbsp; <span id="footerHours">평일 09:00~18:00</span></p>
+                    <p><strong>대표 관리자:</strong> <span id="footerCeo">장영준</span> &nbsp;|&nbsp; <strong>이메일:</strong> <a id="footerEmailLink" href="mailto:qkqk5342@naver.com" style="color:var(--mint);"><span id="footerEmail">qkqk5342@naver.com</span></a></p>
                 </div>
                 <div class="footer-links">
                     <a href="terms.html">이용약관</a>
@@ -1733,7 +1732,7 @@
                 </div>
             </div>
             <div class="footer-copyright">
-                <p>&copy; 2026 대리입찰 톡 (대장TV). All rights reserved.</p>
+                <p id="footerCopyright">&copy; 2026 대리입찰 톡 (대장TV). All rights reserved.</p>
                 <div class="footer-disclaimer">
                     <h4>⚖️ 법적 고지</h4>
                     <p>플랫폼은 의뢰인과 매수신청대리인을 연결하는 중개 서비스입니다.</p>
@@ -1948,6 +1947,119 @@
         activateTab('price');
         startWhyRolling();
     });
+    </script>
+
+    <!-- ── 홈페이지 콘텐츠 동적 로드 (Firestore siteContents/main) ── -->
+    <script>
+    (function() {
+        // 기본값 (Firestore 저장 전 fallback)
+        const DEFAULTS = {
+            hero_title1: '법원 갈 시간에',
+            hero_title2: '가족과 함께',
+            hero_sub1: '쉬운 경매를 위해 대장TV가 직접 만들었습니다',
+            hero_sub2: '대리입찰, 이제 무료로 맡기세요',
+            hero_badge: '부동산경매 1등 대장TV가 운영하는 무료 대리입찰 플랫폼',
+            how_title: '이용 방법',
+            how_sub: '딱 4단계로 완료됩니다',
+            step1_title: '사건번호 입력', step1_desc: '대법원 경매 사건번호를 입력하면 자동으로 정보를 불러옵니다',
+            step2_title: '입찰가 결정',   step2_desc: '원하는 입찰 금액과 보증금 납부 방법을 선택합니다',
+            step3_title: '전자서명',      step3_desc: '온라인 전자서명으로 위임장 작성. 인감증명서 불필요',
+            step4_title: '결과 수령',     step4_desc: '입찰 당일 문자로 낙찰/패찰 결과를 즉시 안내받습니다',
+            price_title: '정찰제 수수료',
+            price_sub: '숨겨진 비용 없이 딱 하나의 가격',
+            price_amount: '99,000',
+            price_desc: '온라인 전자서명 3분 완료',
+            footer_company: '대리입찰톡',
+            footer_corp: '대장TV',
+            footer_address: '서울특별시 금천구 가산디지털1로 75-24 901호',
+            footer_tel: '02-853-5875',
+            footer_hours: '평일 09:00~18:00',
+            footer_ceo: '장영준',
+            footer_email: 'qkqk5342@naver.com',
+            footer_copyright: '© 2026 대리입찰 톡 (대장TV). All rights reserved.',
+            banner_show: true,
+            banner_text: '법무사 매칭 서비스 — 무료로 법무사 매칭 서비스를 이용하실 수 있습니다. 결제 없이 신청만 하면 법무사가 배정됩니다.',
+            banner_color: '#667eea',
+        };
+
+        function applyContent(d) {
+            const set = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined) el.textContent = val; };
+            const setInner = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined) el.innerHTML = val; };
+            const setHref = (id, val) => { const el = document.getElementById(id); if (el && val) el.href = val; };
+
+            // 히어로
+            const heroTitle = document.getElementById('heroTitle');
+            if (heroTitle) heroTitle.innerHTML = (d.hero_title1 || DEFAULTS.hero_title1) + '<br><span class="accent" id="heroTitle2">' + (d.hero_title2 || DEFAULTS.hero_title2) + '</span>';
+            const heroSub = document.getElementById('heroSub');
+            if (heroSub) heroSub.innerHTML = (d.hero_sub1 || DEFAULTS.hero_sub1) + '<br>' + (d.hero_sub2 || DEFAULTS.hero_sub2);
+            set('heroBadge', d.hero_badge || DEFAULTS.hero_badge);
+
+            // 이용방법
+            set('howTitle', d.how_title || DEFAULTS.how_title);
+            set('howSub', d.how_sub || DEFAULTS.how_sub);
+            set('step1Title', d.step1_title || DEFAULTS.step1_title);
+            set('step1Desc', d.step1_desc || DEFAULTS.step1_desc);
+            set('step2Title', d.step2_title || DEFAULTS.step2_title);
+            set('step2Desc', d.step2_desc || DEFAULTS.step2_desc);
+            set('step3Title', d.step3_title || DEFAULTS.step3_title);
+            set('step3Desc', d.step3_desc || DEFAULTS.step3_desc);
+            set('step4Title', d.step4_title || DEFAULTS.step4_title);
+            set('step4Desc', d.step4_desc || DEFAULTS.step4_desc);
+
+            // 수수료
+            set('pricingTitle', d.price_title || DEFAULTS.price_title);
+            set('pricingSub', d.price_sub || DEFAULTS.price_sub);
+            set('pricingAmount', d.price_amount || DEFAULTS.price_amount);
+            set('pricingDesc', d.price_desc || DEFAULTS.price_desc);
+
+            // 푸터
+            set('footerCompany', d.footer_company || DEFAULTS.footer_company);
+            set('footerCorp', d.footer_corp || DEFAULTS.footer_corp);
+            set('footerAddress', d.footer_address || DEFAULTS.footer_address);
+            set('footerTel', d.footer_tel || DEFAULTS.footer_tel);
+            set('footerHours', d.footer_hours || DEFAULTS.footer_hours);
+            set('footerCeo', d.footer_ceo || DEFAULTS.footer_ceo);
+            set('footerEmail', d.footer_email || DEFAULTS.footer_email);
+            set('footerCopyright', d.footer_copyright || DEFAULTS.footer_copyright);
+            setHref('footerTelLink', 'tel:' + (d.footer_tel || DEFAULTS.footer_tel).replace(/-/g,''));
+            setHref('footerEmailLink', 'mailto:' + (d.footer_email || DEFAULTS.footer_email));
+
+            // 배너
+            const bannerEl = document.getElementById('betaBanner');
+            const bannerTextEl = document.getElementById('bannerText');
+            if (bannerEl) {
+                const show = (d.banner_show !== undefined) ? d.banner_show : DEFAULTS.banner_show;
+                if (!show) {
+                    bannerEl.style.display = 'none';
+                    const spacer = document.getElementById('betaBannerSpacer');
+                    if (spacer) spacer.style.display = 'none';
+                } else {
+                    bannerEl.style.background = d.banner_color || DEFAULTS.banner_color;
+                    if (bannerTextEl) bannerTextEl.textContent = d.banner_text || DEFAULTS.banner_text;
+                }
+            }
+        }
+
+        // Firestore에서 로드, 실패 시 기본값 사용
+        function loadSiteContent() {
+            try {
+                const db = typeof getDB === 'function' ? getDB() : null;
+                if (!db) { applyContent({}); return; }
+                db.collection('siteContents').doc('main').get().then(doc => {
+                    applyContent(doc.exists ? doc.data() : {});
+                }).catch(() => applyContent({}));
+            } catch(e) {
+                applyContent({});
+            }
+        }
+
+        // DOM 준비되면 로드
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadSiteContent);
+        } else {
+            loadSiteContent();
+        }
+    })();
     </script>
 </body>
 </html>
