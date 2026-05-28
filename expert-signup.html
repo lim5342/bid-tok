@@ -406,6 +406,12 @@
 </head>
 <body>
 
+<!-- 개발/테스트 모드 배너 (devskip=1 파라미터 있을 때만 표시) -->
+<div id="devBanner" style="display:none; background:#ff6b35; color:#fff; text-align:center; padding:8px 16px; font-size:0.85rem; font-weight:700; position:sticky; top:0; z-index:9999;">
+    ⚡ 테스트 모드 — SMS 인증 &amp; 파일 업로드 자동 스킵 중
+    <a href="expert-signup.html" style="color:#fff; text-decoration:underline; margin-left:16px;">테스트 모드 끄기</a>
+</div>
+
 <div class="page-wrap">
 
     <!-- 헤더 -->
@@ -925,9 +931,12 @@
 // ══════════════════════════════════════════════
 const SMS_WORKER_URL = 'https://bidtok-sms-proxy.qkqk5342.workers.dev';
 
+// ⚡ 개발/테스트 모드: true 로 설정하면 SMS 인증 + 파일 업로드 SKIP
+const DEV_SKIP_AUTH = window.location.search.includes('devskip=1');
+
 let currentStep = 1;
 let totalSteps = 6;
-let phoneVerified = false;
+let phoneVerified = DEV_SKIP_AUTH ? true : false; // 테스트 모드 시 인증 패스
 let userIdChecked = false;
 let emailChecked = false;
 let verifyTimerInterval = null;
@@ -1240,6 +1249,15 @@ function formatPhone(el) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // 테스트 모드 배너
+    if (DEV_SKIP_AUTH) {
+        document.getElementById('devBanner').style.display = 'block';
+        // 인증 완료 UI 미리 표시
+        const okEl = document.getElementById('verifyOk');
+        if (okEl) okEl.classList.add('show');
+        const btn = document.getElementById('sendVerifyBtn');
+        if (btn) { btn.textContent = '✅ 테스트모드 자동인증'; btn.disabled = true; }
+    }
     const ph = document.getElementById('phone');
     if (ph) ph.addEventListener('input', function(){ formatPhone(this); });
     const kp = document.getElementById('kakaoPhone');
@@ -1254,6 +1272,18 @@ async function sendVerify() {
     const phone = document.getElementById('phone').value.replace(/[^0-9]/g,'');
     const btn = document.getElementById('sendVerifyBtn');
     if (phone.length !== 11) { alert('올바른 휴대폰 번호를 입력해주세요.'); return; }
+
+    // 테스트 모드: SMS 스킵
+    if (DEV_SKIP_AUTH) {
+        sessionStorage.setItem('expertVerifyCode', '000000');
+        phoneVerified = true;
+        document.getElementById('verifyGroup').style.display = 'block';
+        document.getElementById('verifyOk').classList.add('show');
+        btn.textContent = '✅ 테스트모드 자동인증';
+        btn.disabled = true;
+        console.log('[DEV] 전화 인증 자동 완료');
+        return;
+    }
 
     btn.disabled = true;
     btn.textContent = '발송 중...';
@@ -1370,11 +1400,20 @@ function onProfileSelect(input) {
 // Firebase Storage 업로드 헬퍼
 // ══════════════════════════════════════════════
 async function uploadFile(file, path) {
+    // 테스트 모드: 실제 업로드 스킵
+    if (DEV_SKIP_AUTH) {
+        console.log('[DEV] uploadFile skip:', path);
+        return 'https://placeholder.test/' + encodeURIComponent(path);
+    }
     const storage = getStorage();
     if (!storage) throw new Error('Storage 연결 실패');
     const ref = storage.ref(path);
-    const snap = await ref.put(file);
-    return await snap.ref.getDownloadURL();
+    // 30초 타임아웃 설정 - 무한 hang 방지
+    const uploadPromise = ref.put(file).then(snap => snap.ref.getDownloadURL());
+    const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('업로드 시간 초과 (30초). Firebase Storage 권한 또는 네트워크를 확인해주세요.')), 30000)
+    );
+    return await Promise.race([uploadPromise, timeoutPromise]);
 }
 
 // ══════════════════════════════════════════════
