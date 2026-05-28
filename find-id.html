@@ -353,27 +353,49 @@
             }
         }
 
-        // ── 아이디 찾기 폼 제출 (실제 API 연동) ──────────────────
+        // ── 아이디 찾기 폼 제출 ──────────────────
         document.getElementById('findIdForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             if (!phoneVerified) { alert('휴대폰 인증을 완료해주세요.'); return; }
 
             const name  = document.getElementById('name').value.trim();
             const phone = document.getElementById('phone').value.trim();
+            const phoneClean = phone.replace(/[^0-9]/g, '');
 
             const btn = document.getElementById('submitBtn');
             btn.disabled = true;
             btn.textContent = '조회 중...';
 
             try {
-                // phone 으로 users 테이블 조회
-                const data = await API.get(`users?phone=${encodeURIComponent(phone)}&limit=10`);
-                const users = (data && data.data) ? data.data : [];
+                // Firestore에서 phone으로 조회
+                const db = firebase.firestore();
+                const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 10000));
 
-                // 이름까지 일치하는 계정 찾기
+                // 하이픈 포함/미포함 두 가지 형식으로 조회
+                const phoneFormatted = phoneClean.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+                const [snap1, snap2] = await Promise.all([
+                    Promise.race([
+                        db.collection('users').where('phone', '==', phoneClean).get(),
+                        timeout
+                    ]),
+                    Promise.race([
+                        db.collection('users').where('phone', '==', phoneFormatted).get(),
+                        new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 10000))
+                    ])
+                ]);
+
+                const docs = [...snap1.docs, ...snap2.docs];
+                // 중복 제거 (같은 id)
+                const seen = new Set();
+                const users = docs.filter(d => {
+                    if (seen.has(d.id)) return false;
+                    seen.add(d.id);
+                    return true;
+                }).map(d => ({ id: d.id, ...d.data() }));
+
+                // 이름 일치 + 관리자 제외
                 const matched = users.filter(u =>
-                    u.name === name &&
-                    u.userType !== 'admin'   // 관리자 계정은 제외
+                    u.name === name && u.userType !== 'admin'
                 );
 
                 if (matched.length === 0) {
@@ -383,7 +405,7 @@
                     return;
                 }
 
-                // 결과 표시 – 여러 개면 모두 보여줌 (마스킹: 가운데 2~3자리 *)
+                // 결과 표시 – 가운데 마스킹
                 const idList = matched.map(u => {
                     const id = u.userId || u.email || '-';
                     if (id.length <= 3) return id;
