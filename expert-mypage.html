@@ -199,6 +199,24 @@
             return; // 이후 코드 실행 방지
         }
 
+        // ── 카카오/SMS 알림톡 발송 (expert-mypage) ───────────────
+        const KAKAO_WORKER_URL = 'https://bidtok-kakao-proxy.qkqk5342.workers.dev';
+        async function sendKakaoNotif(type, to, data) {
+            if (!to) return;
+            try {
+                const res = await fetch(KAKAO_WORKER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type, to, data })
+                });
+                const result = await res.json();
+                if (!res.ok) throw new Error(result.error || '알림 발송 실패');
+                console.log(`✅ 알림 발송 [${type}] → ${to}`);
+            } catch(e) {
+                console.warn(`⚠️ 알림 실패 [${type}]:`, e.message);
+            }
+        }
+
         // 사용자 정보 로드
         const user = Auth.getCurrentUser();
         document.getElementById('userName').textContent = user.name;
@@ -519,6 +537,21 @@
                     bid_amount_revealed: true  // 낙찰가 공개 플래그
                 });
 
+                // ── 고객에게 법무사 배정완료 알림 발송 ──────────────
+                if (appData && appData.phone) {
+                    const notifData = {
+                        appId:      id.toString().slice(-8).toUpperCase(),
+                        name:       appData.applicant_name || '',
+                        court:      appData.court          || '',
+                        caseNumber: appData.case_number    || '',
+                        bidDate:    appData.bid_date       || '',
+                        expertName: user.name              || '',
+                        expertPhone: user.phone            || '',
+                    };
+                    sendKakaoNotif('expert_assigned', appData.phone, notifData);
+                }
+                // ─────────────────────────────────────────────────────
+
                 // 낙찰가 공개 알림
                 const bidStr = bidAmountRevealed ? `\n낙찰가: ${formatPrice(bidAmountRevealed)}원` : '';
                 alert(`✅ 승인 완료! 신청자에게 담당 법무사 배정 알림이 발송됩니다.${bidStr}`);
@@ -685,10 +718,37 @@
                 this.disabled = true;
                 this.textContent = '처리 중...';
                 try {
+                    // Firestore에서 신청 정보 조회 (고객 전화번호 등)
+                    const db = getDB();
+                    const appDoc = await db.collection('applications').doc(id).get();
+                    const appData = appDoc.exists ? appDoc.data() : null;
+
                     await API.applications.updateStatus(id, status, {
                         completedAt: new Date().toISOString(),
                         result: isSuccess ? 'success' : 'fail'
                     });
+
+                    // ── 고객에게 결과 알림 발송 ──────────────────────
+                    if (appData && appData.phone) {
+                        const notifData = {
+                            appId:      id.toString().slice(-8).toUpperCase(),
+                            name:       appData.applicant_name || '',
+                            court:      appData.court          || '',
+                            caseNumber: appData.case_number    || '',
+                            bidDate:    appData.bid_date       || '',
+                            bidAmount:  appData.bid_amount     || 0,
+                            expertName: user.name              || '',
+                            expertPhone: user.phone            || '',
+                            result:     isSuccess ? '낙찰' : '유찰',
+                        };
+                        if (isSuccess) {
+                            sendKakaoNotif('bid_won', appData.phone, notifData);
+                        } else {
+                            sendKakaoNotif('bid_lost', appData.phone, notifData);
+                        }
+                    }
+                    // ─────────────────────────────────────────────────
+
                     modal.style.display = 'none';
                     showExpertToast(isSuccess ? '🎉 낙찰 결과가 입력되었습니다!' : '입찰 결과가 입력되었습니다.', isSuccess ? 'success' : 'info');
                     loadOngoing();
