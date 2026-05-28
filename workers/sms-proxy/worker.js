@@ -21,10 +21,32 @@ export default {
     }
 
     try {
-      const { to, code } = await request.json();
+      const body = await request.json();
+      const { to, code, type, data } = body;
 
-      if (!to || !code) {
-        return new Response(JSON.stringify({ error: '수신번호와 코드가 필요합니다.' }), {
+      // 전화번호 필수
+      if (!to) {
+        return new Response(JSON.stringify({ error: '수신번호가 필요합니다.' }), {
+          status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      // 메시지 타입별 텍스트 생성
+      let text = '';
+      if (type === 'partner_approved') {
+        // 파트너 승인 알림
+        const name = (data && data.name) ? data.name : '파트너';
+        text = `[대리입찰톡] ${name}님, 파트너 심사가 완료되었습니다! 🎉\n이제 로그인 후 매칭 서비스를 이용하실 수 있습니다.\n▶ https://bid-tok.kr/login.html`;
+      } else if (type === 'partner_rejected') {
+        // 파트너 거부 알림
+        const name = (data && data.name) ? data.name : '파트너';
+        const reason = (data && data.reason) ? data.reason : '';
+        text = `[대리입찰톡] ${name}님, 파트너 신청 심사 결과를 안내드립니다.\n아쉽게도 이번 심사에서는 승인이 어렵습니다.${reason ? '\n사유: ' + reason : ''}\n문의: 02-853-5875`;
+      } else if (code) {
+        // 기본 인증번호 발송
+        text = `[대리입찰톡] 인증번호 [${code}]를 입력해주세요. (5분 이내 입력)`;
+      } else {
+        return new Response(JSON.stringify({ error: '올바른 요청 형식이 아닙니다.' }), {
           status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         });
       }
@@ -35,7 +57,7 @@ export default {
       // 솔라피 HMAC 인증 생성
       const apiKey    = env.SOLAPI_KEY;
       const apiSecret = env.SOLAPI_SECRET;
-      const sender    = env.SENDER || '0285355875';
+      const sender    = env.SENDER || '028535875';
 
       const date      = new Date().toISOString();
       const salt      = crypto.randomUUID().replace(/-/g, '');
@@ -65,7 +87,7 @@ export default {
           message: {
             to: toClean,
             from: sender,
-            text: `[대리입찰톡] 인증번호 [${code}]를 입력해주세요. (5분 이내 입력)`
+            text
           }
         })
       });

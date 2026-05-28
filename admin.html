@@ -307,26 +307,114 @@
 
         /* 전문가 승인 카드 */
         .expert-card {
-            border: 1px solid #e0e0e0; border-radius: 14px;
-            overflow: hidden; margin-bottom: 1rem; transition: box-shadow 0.2s;
+            border: 1px solid #e2e8f0; border-radius: 16px;
+            overflow: hidden; margin-bottom: 1rem;
+            transition: box-shadow 0.2s, transform 0.15s;
+            background: #fff;
         }
-        .expert-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+        .expert-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.10); }
+        /* 카드 헤더 - 클릭으로 접기/펼치기 */
         .expert-card-head {
-            background: #f8f9fa; padding: 1rem 1.2rem;
+            background: #f8fafc; padding: 1rem 1.2rem;
             display: flex; align-items: center; justify-content: space-between;
+            cursor: pointer; user-select: none;
         }
+        .expert-card-head:hover { background: #f1f5f9; }
+        .expert-card-head .toggle-icon {
+            color: #94a3b8; font-size: 0.85rem;
+            transition: transform 0.25s; margin-left: 8px;
+        }
+        .expert-card.collapsed .toggle-icon { transform: rotate(-90deg); }
+        .expert-card-collapsible { overflow: hidden; transition: max-height 0.3s ease; }
+        .expert-card.collapsed .expert-card-collapsible { max-height: 0 !important; }
         .expert-card-body { padding: 1.2rem; }
         .expert-card-body .info-grid {
             display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 1rem;
             margin-bottom: 1rem;
         }
         .info-item { font-size: 0.85rem; }
-        .info-item .lbl { color: #999; font-size: 0.78rem; margin-bottom: 0.1rem; }
-        .info-item .val { color: #333; font-weight: 600; }
+        .info-item .lbl { color: #94a3b8; font-size: 0.75rem; margin-bottom: 0.15rem; font-weight: 500; }
+        .info-item .val { color: #1e293b; font-weight: 600; word-break: break-all; }
         .expert-card-foot {
-            padding: 0.75rem 1.2rem; border-top: 1px solid #f0f0f0;
+            padding: 0.75rem 1.2rem; border-top: 1px solid #f0f4f8;
             display: flex; gap: 0.6rem; justify-content: flex-end;
         }
+        /* 프로필 아바타 (큰 사이즈) */
+        .expert-avatar-lg {
+            width: 56px; height: 56px; flex-shrink: 0;
+            border-radius: 50%; object-fit: cover;
+            border: 2px solid #e2e8f0; overflow: hidden;
+            background: #e2e8f0; display:flex; align-items:center; justify-content:center;
+        }
+        .expert-avatar-lg.logo-type { border-radius: 12px; }
+        .expert-avatar-lg img { width:100%; height:100%; object-fit:cover; display:block; }
+        .expert-avatar-lg i { font-size: 1.6rem; color: #94a3b8; }
+        /* 서류 이미지 미리보기 섹션 */
+        .doc-section {
+            background: #f8fafc; border: 1px solid #e2e8f0;
+            border-radius: 12px; margin-top: 0.75rem; overflow: hidden;
+        }
+        .doc-section-head {
+            padding: 0.6rem 1rem;
+            display: flex; align-items: center; justify-content: space-between;
+            cursor: pointer; user-select: none;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .doc-section-head:hover { background: #f1f5f9; }
+        .doc-section-head .doc-title {
+            font-size: 0.8rem; font-weight: 700; color: #475569;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .doc-section-head .doc-toggle-icon {
+            color: #94a3b8; font-size: 0.8rem;
+            transition: transform 0.2s;
+        }
+        .doc-section.doc-open .doc-toggle-icon { transform: rotate(180deg); }
+        .doc-section-body {
+            display: none; padding: 0.85rem 1rem;
+        }
+        .doc-section.doc-open .doc-section-body { display: block; }
+        .doc-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
+        }
+        @media (max-width: 600px) { .doc-grid { grid-template-columns: 1fr; } }
+        .doc-item {
+            border: 1px solid #e2e8f0; border-radius: 10px;
+            overflow: hidden; background: #fff;
+        }
+        .doc-item-head {
+            padding: 5px 10px;
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .doc-item-name { font-size: 0.72rem; font-weight: 700; color: #475569; }
+        .doc-item-open {
+            font-size: 0.68rem; color: #1F6FFF;
+            text-decoration: none; font-weight: 600;
+        }
+        .doc-item-open:hover { text-decoration: underline; }
+        .doc-preview {
+            width: 100%; aspect-ratio: 4/3;
+            object-fit: contain; background: #f8fafc;
+            display: block; cursor: pointer;
+        }
+        .doc-preview-pdf {
+            width: 100%; aspect-ratio: 4/3;
+            background: #f1f5f9;
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column; gap: 6px; cursor: pointer;
+            text-decoration: none;
+        }
+        .doc-preview-pdf i { font-size: 2.5rem; color: #ef4444; }
+        .doc-preview-pdf span { font-size: 0.75rem; color: #64748b; font-weight: 600; }
+        .doc-none {
+            width: 100%; aspect-ratio: 4/3;
+            background: #f1f5f9;
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column; gap: 6px;
+        }
+        .doc-none i { font-size: 1.8rem; color: #cbd5e1; }
+        .doc-none span { font-size: 0.72rem; color: #94a3b8; }
 
         /* 정산 요약 */
         .settlement-summary {
@@ -1903,42 +1991,104 @@ function renderExpertList(experts) {
         wrap.innerHTML = `<div class="empty-box"><i class="fas fa-inbox"></i><p>${msg[expertFilter]||'없습니다.'}</p></div>`;
         return;
     }
-    wrap.innerHTML = experts.map(ex => `
+    wrap.innerHTML = experts.map(ex => {
+        // ── 프로필 아바타 ──
+        const isLogo = ex.profileType === 'logo';
+        const avatarHtml = ex.profileUrl
+            ? `<div class="expert-avatar-lg ${isLogo?'logo-type':''}"><img src="${ex.profileUrl}" onerror="this.parentElement.innerHTML='<i class=\'fas fa-user-tie\'></i>'"></div>`
+            : `<div class="expert-avatar-lg"><i class="fas fa-user-tie"></i></div>`;
+
+        // ── 서류 미리보기 헬퍼 ──
+        function docPreviewHtml(url, label) {
+            if (!url) return `<div class="doc-item"><div class="doc-item-head"><span class="doc-item-name">${label}</span></div><div class="doc-none"><i class="fas fa-file-times"></i><span>미업로드</span></div></div>`;
+            const isPdf = url.toLowerCase().includes('.pdf') || url.toLowerCase().includes('pdf');
+            const previewBlock = isPdf
+                ? `<a href="${url}" target="_blank" class="doc-preview-pdf"><i class="fas fa-file-pdf"></i><span>PDF 열기</span></a>`
+                : `<img class="doc-preview" src="${url}" loading="lazy" onclick="window.open('${url}','_blank')" title="클릭하면 원본 열기" onerror="this.outerHTML='<div class=\'doc-none\'><i class=\'fas fa-exclamation-circle\'></i><span>미리보기 실패</span></div>'">`;
+            return `<div class="doc-item">
+                <div class="doc-item-head">
+                    <span class="doc-item-name">${label}</span>
+                    <a href="${url}" target="_blank" class="doc-item-open"><i class="fas fa-external-link-alt"></i> 원본</a>
+                </div>
+                ${previewBlock}
+            </div>`;
+        }
+
+        const docCount = [ex.licenseDoc, ex.insuranceDoc, ex.officeDoc, ex.bizRegDoc].filter(Boolean).length;
+
+        return `
     <div class="expert-card" id="ec_${ex.id}">
-        <div class="expert-card-head">
-            <div style="display:flex;align-items:center;gap:0.75rem;">
-                <div class="assign-ava"><i class="fas fa-user-tie"></i></div>
-                <div>
-                    <strong style="font-size:1rem;">${ex.name||'-'}</strong>
-                    ${badge(ex.status)}
-                    ${ex.registeredByAdmin ? '<span style="font-size:0.72rem;background:#fef3c7;color:#92400e;padding:2px 6px;border-radius:10px;margin-left:4px;">관리자 등록</span>' : ''}
+        <!-- ── 헤더 (항상 표시 / 클릭으로 접기) ── -->
+        <div class="expert-card-head" onclick="toggleExpertCard('${ex.id}')">
+            <div style="display:flex;align-items:center;gap:0.85rem;flex:1;min-width:0;">
+                ${avatarHtml}
+                <div style="flex:1;min-width:0;">
+                    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                        <strong style="font-size:1rem;color:#1e293b;">${ex.name||'-'}</strong>
+                        ${ex.officeName ? `<span style="font-size:0.78rem;color:#64748b;">${ex.officeName}</span>` : ''}
+                        ${badge(ex.status)}
+                        ${ex.registeredByAdmin ? '<span style="font-size:0.7rem;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:20px;">관리자등록</span>' : ''}
+                        ${!ex.registeredByAdmin && !ex.setupToken ? '<span style="font-size:0.7rem;background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:20px;">자체신청</span>' : ''}
+                    </div>
+                    <div style="margin-top:3px;font-size:0.78rem;color:#94a3b8;display:flex;gap:12px;flex-wrap:wrap;">
+                        <span><i class="fas fa-phone" style="margin-right:3px;"></i>${ex.phone||'-'}</span>
+                        <span><i class="fas fa-envelope" style="margin-right:3px;"></i>${ex.email||'-'}</span>
+                        <span><i class="fas fa-paperclip" style="margin-right:3px;"></i>서류 ${docCount}/4</span>
+                    </div>
                 </div>
             </div>
-            <span style="font-size:0.8rem;color:#888;">신청: ${fmtDate(ex.createdAt)}</span>
+            <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+                <span style="font-size:0.75rem;color:#94a3b8;white-space:nowrap;">신청: ${fmtDate(ex.createdAt)}</span>
+                <i class="fas fa-chevron-down toggle-icon"></i>
+            </div>
         </div>
+
+        <!-- ── 접힐 수 있는 본문 ── -->
+        <div class="expert-card-collapsible" id="ecb_${ex.id}" style="max-height:2000px;">
         <div class="expert-card-body">
+
+            <!-- 기본 정보 그리드 -->
             <div class="info-grid">
-                <div class="info-item"><div class="lbl">이메일</div><div class="val">${ex.email||'-'}</div></div>
-                <div class="info-item"><div class="lbl">연락처</div><div class="val">${ex.phone||'-'}</div></div>
-                <div class="info-item"><div class="lbl">등록번호</div><div class="val">${ex.licenseNumber||'-'}</div></div>
-                <div class="info-item"><div class="lbl">사무소</div><div class="val">${ex.officeAddress||'-'}</div></div>
+                <div class="info-item"><div class="lbl">법무사 등록번호</div><div class="val">${ex.licenseNumber||'-'}</div></div>
+                <div class="info-item"><div class="lbl">사무소 주소</div><div class="val">${ex.officeAddress||'-'}</div></div>
+                <div class="info-item"><div class="lbl">정산 계좌</div><div class="val">${ex.bankName ? `${ex.bankName} ${ex.bankAccount||''} (${ex.bankHolder||''})` : '-'}</div></div>
+                <div class="info-item"><div class="lbl">유입경로</div><div class="val">${ex.refSource||'-'}</div></div>
+                <div class="info-item"><div class="lbl">카톡 알림번호</div><div class="val">${ex.kakaoPhone||ex.phone||'-'}</div></div>
+                <div class="info-item"><div class="lbl">세금계산서 이메일</div><div class="val">${ex.email||'-'}</div></div>
+                ${ex.introduce ? `<div class="info-item" style="grid-column:span 2;"><div class="lbl">소개</div><div class="val" style="color:#475569;">${ex.introduce}</div></div>` : ''}
                 <div class="info-item" style="grid-column:span 2;">
-                    <div class="lbl">서비스 지역</div>
-                    <div class="val">${Array.isArray(ex.serviceRegions) ? ex.serviceRegions.join(', ') : (ex.serviceRegions||'-')}</div>
+                    <div class="lbl">활동 법원 (${Array.isArray(ex.serviceRegions)?ex.serviceRegions.length:0}개)</div>
+                    <div class="val" style="font-size:0.79rem;color:#475569;line-height:1.9;">${Array.isArray(ex.serviceRegions) && ex.serviceRegions.length > 0
+                        ? ex.serviceRegions.map(c=>`<span style="display:inline-block;background:#f1f5f9;padding:1px 8px;border-radius:20px;margin:2px 3px 2px 0;">${c}</span>`).join('')
+                        : '-'}</div>
                 </div>
             </div>
+
+            <!-- 첨부 서류 (토글) -->
+            <div class="doc-section doc-open" id="docs_${ex.id}">
+                <div class="doc-section-head" onclick="toggleDocSection('${ex.id}')">
+                    <span class="doc-title"><i class="fas fa-paperclip"></i> 첨부 서류 <span style="background:${docCount===4?'#dcfce7':'#fff7ed'};color:${docCount===4?'#16a34a':'#f97316'};padding:1px 8px;border-radius:20px;font-size:0.7rem;">${docCount}/4 업로드</span></span>
+                    <i class="fas fa-chevron-up doc-toggle-icon"></i>
+                </div>
+                <div class="doc-section-body">
+                    <div class="doc-grid">
+                        ${docPreviewHtml(ex.licenseDoc, '📋 대리인등록증')}
+                        ${docPreviewHtml(ex.insuranceDoc, '🛡️ 공제증서')}
+                        ${docPreviewHtml(ex.officeDoc, '🏢 사무실등록증')}
+                        ${docPreviewHtml(ex.bizRegDoc, '📄 사업자등록증')}
+                    </div>
+                </div>
+            </div>
+
             ${expertFilter === 'setup_pending' ? `
-            <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:0.75rem;font-size:0.82rem;color:#92400e;margin-top:0.5rem;">
+            <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:0.75rem;font-size:0.82rem;color:#92400e;margin-top:0.75rem;">
                 ⏳ 법무사가 초대 링크에서 비밀번호/프로필 설정 완료 시 이 목록에 나타납니다.<br>
                 설정 완료 확인 후 <strong>최종 활성화</strong> 버튼을 눌러주세요.
                 ${ex.setupToken ? `<br><br>📎 초대 링크: <span style="font-family:monospace;font-size:0.78rem;word-break:break-all;">${location.origin}/expert-setup.html?token=${ex.setupToken}</span>
                 <button onclick="navigator.clipboard.writeText('${location.origin}/expert-setup.html?token=${ex.setupToken}');showToast('링크 복사 완료','success');" style="margin-left:6px;background:#f59e0b;color:#fff;border:none;border-radius:4px;padding:2px 8px;cursor:pointer;font-size:0.75rem;">복사</button>` : ''}
             </div>` : ''}
-            <div style="background:#f8f9fa;border-radius:8px;padding:0.75rem;font-size:0.82rem;color:#666;margin-top:0.5rem;">
-                📎 첨부서류: ${ex.licenseFileName||'자격증'} / ${ex.insuranceFileName||'보험증권'} / ${ex.bizRegFileName||'사업자등록증'}
-            </div>
-            ${ex.adminMemo ? `<div style="margin-top:0.5rem;background:#fefce8;border-radius:8px;padding:0.75rem;font-size:0.82rem;color:#854d0e;">📝 메모: ${ex.adminMemo}</div>` : ''}
-            ${ex.rejectReason ? `<div style="margin-top:0.5rem;background:#fef2f2;border-radius:8px;padding:0.75rem;font-size:0.82rem;color:#ef4444;">거부 사유: ${ex.rejectReason}</div>` : ''}
+            ${ex.adminMemo ? `<div style="margin-top:0.6rem;background:#fefce8;border-radius:8px;padding:0.75rem;font-size:0.82rem;color:#854d0e;">📝 메모: ${ex.adminMemo}</div>` : ''}
+            ${ex.rejectReason ? `<div style="margin-top:0.6rem;background:#fef2f2;border-radius:8px;padding:0.75rem;font-size:0.82rem;color:#ef4444;">❌ 거부 사유: ${ex.rejectReason}</div>` : ''}
         </div>
         <div class="expert-card-foot">
             ${expertFilter === 'pending' ? `
@@ -1956,7 +2106,31 @@ function renderExpertList(experts) {
                 <button class="btn-sm btn-blue" onclick="reApproveExpert('${ex.id}')"><i class="fas fa-redo"></i> 재승인</button>
             ` : ''}
         </div>
-    </div>`).join('');
+        </div><!-- /collapsible -->
+    </div>`;
+    }).join('');
+}
+
+// 카드 접기/펼치기
+function toggleExpertCard(id) {
+    const card = document.getElementById('ec_' + id);
+    if (!card) return;
+    const body = document.getElementById('ecb_' + id);
+    const isCollapsed = card.classList.contains('collapsed');
+    if (isCollapsed) {
+        card.classList.remove('collapsed');
+        body.style.maxHeight = '2000px';
+    } else {
+        card.classList.add('collapsed');
+        body.style.maxHeight = '0';
+    }
+}
+
+// 서류 섹션 접기/펼치기
+function toggleDocSection(id) {
+    const sec = document.getElementById('docs_' + id);
+    if (!sec) return;
+    sec.classList.toggle('doc-open');
 }
 
 function setExpertFilter(status, el) {
@@ -1967,19 +2141,49 @@ function setExpertFilter(status, el) {
 }
 
 async function approveExpert(id) {
-    if (!confirm('이 법무사를 승인하시겠습니까?')) return;
+    if (!confirm('이 법무사를 승인하시겠습니까?\n승인 시 SMS 알림이 발송됩니다.')) return;
     try {
+        const expert = await API.users.getById(id);
         await API.users.update(id, { status: 'active', approvedAt: new Date().toISOString() });
         showToast('✅ 법무사 승인 완료!', 'success');
+        // 승인 SMS 발송
+        if (expert && expert.phone) {
+            const phone = expert.phone.replace(/[^0-9]/g,'');
+            const name = expert.name || '파트너';
+            fetch('https://bidtok-sms-proxy.qkqk5342.workers.dev', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({
+                    type: 'partner_approved',
+                    to: phone,
+                    data: { name }
+                })
+            }).catch(()=>{});
+        }
         fadeRemoveCard('ec_' + id, loadExperts);
     } catch(e) { showToast('처리 실패', 'error'); }
 }
 
 async function quickApprove(id) {
-    if (!confirm('이 법무사를 승인하시겠습니까?')) return;
+    if (!confirm('이 법무사를 승인하시겠습니까?\n승인 시 SMS 알림이 발송됩니다.')) return;
     try {
+        const expert = await API.users.getById(id);
         await API.users.update(id, { status: 'active', approvedAt: new Date().toISOString() });
         showToast('✅ 법무사 승인 완료!', 'success');
+        // 승인 SMS 발송
+        if (expert && expert.phone) {
+            const phone = expert.phone.replace(/[^0-9]/g,'');
+            const name = expert.name || '파트너';
+            fetch('https://bidtok-sms-proxy.qkqk5342.workers.dev', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({
+                    type: 'partner_approved',
+                    to: phone,
+                    data: { name }
+                })
+            }).catch(()=>{});
+        }
         loadDashboard();
     } catch(e) { showToast('처리 실패', 'error'); }
 }
@@ -1989,8 +2193,23 @@ async function rejectExpert(id) {
     if (reason === null) return;
     if (!reason.trim()) { showToast('거부 사유를 입력해주세요.', 'error'); return; }
     try {
+        const expert = await API.users.getById(id);
         await API.users.update(id, { status: 'rejected', rejectedAt: new Date().toISOString(), rejectReason: reason.trim() });
         showToast('거부 처리 완료', 'info');
+        // 거부 SMS 발송
+        if (expert && expert.phone) {
+            const phone = expert.phone.replace(/[^0-9]/g,'');
+            const name = expert.name || '파트너';
+            fetch('https://bidtok-sms-proxy.qkqk5342.workers.dev', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({
+                    type: 'partner_rejected',
+                    to: phone,
+                    data: { name, reason: reason.trim() }
+                })
+            }).catch(()=>{});
+        }
         fadeRemoveCard('ec_' + id, loadExperts);
     } catch(e) { showToast('처리 실패', 'error'); }
 }
