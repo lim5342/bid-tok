@@ -561,14 +561,20 @@
             input.value = formatted;
         }
 
-        // 휴대폰 입력 필드에 포맷팅 추가
-        document.getElementById('clientPhone').addEventListener('input', function() {
-            formatPhoneNumber(this);
-        });
+        // 휴대폰 입력 필드에 포맷팅 추가 (요소가 없는 경우 안전하게 처리)
+        const clientPhoneEl = document.getElementById('clientPhone');
+        if (clientPhoneEl) {
+            clientPhoneEl.addEventListener('input', function() {
+                formatPhoneNumber(this);
+            });
+        }
         
-        document.getElementById('expertPhone').addEventListener('input', function() {
-            formatPhoneNumber(this);
-        });
+        const expertPhoneEl = document.getElementById('expertPhone');
+        if (expertPhoneEl) {
+            expertPhoneEl.addEventListener('input', function() {
+                formatPhoneNumber(this);
+            });
+        }
 
         // 솔라피 SMS Worker URL
         const SMS_WORKER_URL = 'https://bidtok-sms-proxy.qkqk5342.workers.dev';
@@ -751,8 +757,10 @@
             }
         });
 
-        // 법무사 회원가입 제출
-        document.getElementById('expertSignupForm').addEventListener('submit', async function(e) {
+        // 법무사 회원가입 제출 (현재 expertSignupForm은 div이므로 submit 이벤트 없음 - 안전하게 처리)
+        const expertSignupFormEl = document.getElementById('expertSignupForm');
+        if (expertSignupFormEl && expertSignupFormEl.tagName === 'FORM') {
+        expertSignupFormEl.addEventListener('submit', async function(e) {
             e.preventDefault();
             
             // 아이디 중복 확인
@@ -858,6 +866,7 @@
                 submitBtn.textContent = '법무사 가입 신청';
             }
         });
+        } // end if expertSignupFormEl
 
         // 법무사 가입 완료 화면 표시
         function showExpertSignupSuccess() {
