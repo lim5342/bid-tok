@@ -2001,6 +2001,14 @@ function renderExpertList(experts) {
         // ── 서류 미리보기 헬퍼 ──
         function docPreviewHtml(url, label) {
             if (!url) return `<div class="doc-item"><div class="doc-item-head"><span class="doc-item-name">${label}</span></div><div class="doc-none"><i class="fas fa-file-times"></i><span>미업로드</span></div></div>`;
+            // 테스트 모드에서 저장된 placeholder URL 처리
+            const isPlaceholder = url.includes('placeholder.test');
+            if (isPlaceholder) {
+                return `<div class="doc-item">
+                    <div class="doc-item-head"><span class="doc-item-name">${label}</span></div>
+                    <div class="doc-none" style="color:#f59e0b;"><i class="fas fa-flask"></i><span>테스트 데이터 (실제 파일 없음)</span></div>
+                </div>`;
+            }
             const isPdf = url.toLowerCase().includes('.pdf') || url.toLowerCase().includes('pdf');
             const previewBlock = isPdf
                 ? `<a href="${url}" target="_blank" class="doc-preview-pdf"><i class="fas fa-file-pdf"></i><span>PDF 열기</span></a>`

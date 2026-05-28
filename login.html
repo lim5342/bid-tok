@@ -288,7 +288,11 @@
                 <p>로그인하여 서비스를 이용하세요</p>
             </div>
             
-            <!-- 법무사 탭 제거됨: 법무사는 관리자가 직접 등록 -->
+            <!-- 로그인 탭 -->
+            <div class="login-tabs">
+                <button class="login-tab active" data-type="client">👤 일반 회원</button>
+                <button class="login-tab" data-type="expert">⚖️ 법무사 파트너</button>
+            </div>
             
             <!-- 신청자 로그인 -->
             <form class="login-form active" id="clientLoginForm">
@@ -317,13 +321,44 @@
                 <button type="submit" class="btn-login">로그인</button>
             </form>
             
-            <!-- 법무사 로그인 폼 제거됨 - 관리자가 직접 등록 후 expert-setup.html로 비밀번호 설정 -->
-            <form class="login-form" id="expertLoginForm" style="display:none;"></form>
-            
+            <!-- 법무사 로그인 폼 -->
+            <form class="login-form" id="expertLoginForm">
+                <div class="form-group">
+                    <label for="expertUserId">아이디</label>
+                    <input type="text" id="expertUserId" placeholder="아이디를 입력하세요" required>
+                </div>
+                <div class="form-group">
+                    <label for="expertPassword">비밀번호</label>
+                    <input type="password" id="expertPassword" placeholder="비밀번호를 입력하세요" required>
+                </div>
+                <div class="login-options">
+                    <div class="remember-me">
+                        <input type="checkbox" id="expertRemember">
+                        <label for="expertRemember">자동 로그인</label>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <a href="find-id.html" class="forgot-password">아이디 찾기</a>
+                        <span style="color: #ddd;">|</span>
+                        <a href="find-password.html" class="forgot-password">비밀번호 찾기</a>
+                    </div>
+                </div>
+                <button type="submit" class="btn-login">법무사 로그인</button>
+
+                <!-- 승인 대기 안내 -->
+                <div id="expertPendingNotice" style="display:none; margin-top:1rem; padding:1rem; background:#fffbeb; border:1px solid #fcd34d; border-radius:8px; font-size:0.88rem; color:#92400e;">
+                    <strong>⏳ 승인 검토 중입니다</strong><br>
+                    신청하신 파트너 계정은 운영팀 검토 후 활성화됩니다.<br>
+                    승인 완료 시 등록하신 연락처로 SMS 알림이 발송됩니다.
+                </div>
+            </form>
+
             <div class="divider">또는</div>
-            
-            <div class="signup-link">
+
+            <div class="signup-link" id="clientSignupLink">
                 계정이 없으신가요? <a href="signup.html">회원가입</a>
+            </div>
+            <div class="signup-link" id="expertSignupLink" style="display:none;">
+                법무사 파트너 신청은 <a href="expert-signup.html">여기서 신청</a>하세요
             </div>
             
             <div class="back-home">
@@ -340,23 +375,20 @@
         // 탭 전환
         const tabs = document.querySelectorAll('.login-tab');
         const forms = document.querySelectorAll('.login-form');
-        
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                // 탭 활성화
-                tabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                
-                // 폼 전환
-                const type = tab.dataset.type;
-                forms.forEach(form => {
-                    form.classList.remove('active');
-                    if (form.id === `${type}LoginForm`) {
-                        form.classList.add('active');
-                    }
-                });
-            });
-        });
+
+        function switchTab(type) {
+            tabs.forEach(t => t.classList.toggle('active', t.dataset.type === type));
+            forms.forEach(f => f.classList.toggle('active', f.id === `${type}LoginForm`));
+            document.getElementById('clientSignupLink').style.display = type === 'client' ? 'block' : 'none';
+            document.getElementById('expertSignupLink').style.display = type === 'expert' ? 'block' : 'none';
+        }
+
+        tabs.forEach(tab => tab.addEventListener('click', () => switchTab(tab.dataset.type)));
+
+        // URL 파라미터로 탭 자동 선택 (?type=expert)
+        if (new URLSearchParams(location.search).get('type') === 'expert') {
+            switchTab('expert');
+        }
         
         // 신청자 로그인
         document.getElementById('clientLoginForm').addEventListener('submit', async (e) => {
