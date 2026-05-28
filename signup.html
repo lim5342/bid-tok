@@ -570,8 +570,8 @@
             formatPhoneNumber(this);
         });
 
-        // 뿌리오 문자 발송 Worker URL
-        const SMS_WORKER_URL = 'https://sms-api.qkqk5342.workers.dev';
+        // 솔라피 SMS Worker URL
+        const SMS_WORKER_URL = 'https://bidtok-sms-proxy.qkqk5342.workers.dev';
 
         // 인증번호 발송
         async function sendVerifyCode(type) {
@@ -596,7 +596,7 @@
                 const res = await fetch(SMS_WORKER_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ phone, code: verifyCode })
+                    body: JSON.stringify({ to: phone, code: verifyCode })
                 });
 
                 const data = await res.json();
