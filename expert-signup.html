@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <!-- 카카오 주소 검색 API -->
+    <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <style>
         :root {
             --primary: #1F6FFF;
@@ -575,7 +577,13 @@
                 <!-- 사무소 주소 -->
                 <div class="form-group">
                     <label>사무소 주소 <span class="req">*</span></label>
-                    <input type="text" id="officeAddress" placeholder="예: 서울시 서초구 서초대로 123">
+                    <div class="input-btn-row">
+                        <input type="text" id="officeZip" placeholder="우편번호" readonly style="flex:0 0 110px;background:var(--gray-50);cursor:pointer;" onclick="searchAddress()">
+                        <button class="btn-inline" type="button" onclick="searchAddress()"><i class="fas fa-search"></i> 검색</button>
+                    </div>
+                    <input type="text" id="officeAddress" placeholder="기본 주소 (주소 검색 후 자동 입력)" readonly style="margin-top:8px;background:var(--gray-50);cursor:pointer;" onclick="searchAddress()">
+                    <input type="text" id="officeAddressDetail" placeholder="상세 주소 입력 (동·호수 등)" style="margin-top:8px;">
+                    <small>검색 버튼을 눌러 주소를 찾은 후 상세 주소를 직접 입력하세요</small>
                 </div>
 
                 <!-- 등록번호 -->
@@ -652,29 +660,47 @@
                 <div class="form-group">
                     <label>활동 희망 법원 선택 <span class="req">*</span> <span class="opt">(복수 선택 가능)</span></label>
 
+                    <!-- 전체 선택/해제 버튼 영역 -->
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:1rem;flex-wrap:wrap;">
+                        <button type="button" class="btn-inline" onclick="selectAllCourts()" style="background:var(--primary);padding:7px 16px;font-size:0.82rem;"><i class="fas fa-check-double"></i> 전체 선택</button>
+                        <button type="button" class="btn-inline" onclick="deselectAllCourts()" style="background:var(--gray-400);padding:7px 16px;font-size:0.82rem;"><i class="fas fa-times"></i> 전체 해제</button>
+                        <span style="font-size:0.82rem;color:var(--gray-400);">선택된 법원: <strong id="selectedRegionCount" style="color:var(--primary);">0</strong>개</span>
+                    </div>
+
                     <div style="margin-bottom:0.8rem;">
-                        <span class="section-title">📍 수도권</span>
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem;">
+                            <span class="section-title" style="margin-bottom:0;">📍 수도권</span>
+                            <button type="button" onclick="selectRegion(0)" style="font-size:0.72rem;color:var(--primary);background:none;border:1px solid var(--primary);padding:2px 10px;border-radius:20px;cursor:pointer;">전체</button>
+                        </div>
                         <div class="region-grid" id="regionGrid1"></div>
                     </div>
                     <div style="margin-bottom:0.8rem;">
-                        <span class="section-title">📍 충청권</span>
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem;">
+                            <span class="section-title" style="margin-bottom:0;">📍 충청권</span>
+                            <button type="button" onclick="selectRegion(1)" style="font-size:0.72rem;color:var(--primary);background:none;border:1px solid var(--primary);padding:2px 10px;border-radius:20px;cursor:pointer;">전체</button>
+                        </div>
                         <div class="region-grid" id="regionGrid2"></div>
                     </div>
                     <div style="margin-bottom:0.8rem;">
-                        <span class="section-title">📍 전라권</span>
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem;">
+                            <span class="section-title" style="margin-bottom:0;">📍 전라권</span>
+                            <button type="button" onclick="selectRegion(2)" style="font-size:0.72rem;color:var(--primary);background:none;border:1px solid var(--primary);padding:2px 10px;border-radius:20px;cursor:pointer;">전체</button>
+                        </div>
                         <div class="region-grid" id="regionGrid3"></div>
                     </div>
                     <div style="margin-bottom:0.8rem;">
-                        <span class="section-title">📍 경상권</span>
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem;">
+                            <span class="section-title" style="margin-bottom:0;">📍 경상권</span>
+                            <button type="button" onclick="selectRegion(3)" style="font-size:0.72rem;color:var(--primary);background:none;border:1px solid var(--primary);padding:2px 10px;border-radius:20px;cursor:pointer;">전체</button>
+                        </div>
                         <div class="region-grid" id="regionGrid4"></div>
                     </div>
                     <div>
-                        <span class="section-title">📍 강원 · 제주</span>
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem;">
+                            <span class="section-title" style="margin-bottom:0;">📍 강원 · 제주</span>
+                            <button type="button" onclick="selectRegion(4)" style="font-size:0.72rem;color:var(--primary);background:none;border:1px solid var(--primary);padding:2px 10px;border-radius:20px;cursor:pointer;">전체</button>
+                        </div>
                         <div class="region-grid" id="regionGrid5"></div>
-                    </div>
-
-                    <div style="margin-top:1rem;font-size:0.82rem;color:var(--gray-400);">
-                        선택된 법원: <strong id="selectedRegionCount" style="color:var(--primary);">0</strong>개
                     </div>
                 </div>
 
@@ -991,8 +1017,62 @@ function getSelectedCourts() {
 }
 
 // ══════════════════════════════════════════════
-// 스텝 이동 + 유효성 검사
+// 전체 선택 / 해제 / 권역별 선택
 // ══════════════════════════════════════════════
+function selectAllCourts() {
+    document.querySelectorAll('.region-item input[type="checkbox"]').forEach(cb => {
+        cb.checked = true;
+        cb.closest('.region-item').classList.add('checked');
+    });
+    updateRegionCount();
+}
+function deselectAllCourts() {
+    document.querySelectorAll('.region-item input[type="checkbox"]').forEach(cb => {
+        cb.checked = false;
+        cb.closest('.region-item').classList.remove('checked');
+    });
+    updateRegionCount();
+}
+// idx: 0=수도권, 1=충청, 2=전라, 3=경상, 4=강원제주
+function selectRegion(idx) {
+    const gridIds = ['regionGrid1','regionGrid2','regionGrid3','regionGrid4','regionGrid5'];
+    const grid = document.getElementById(gridIds[idx]);
+    if (!grid) return;
+    const checkboxes = grid.querySelectorAll('input[type="checkbox"]');
+    // 현재 모두 체크되어 있으면 전체 해제, 아니면 전체 선택
+    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+    checkboxes.forEach(cb => {
+        cb.checked = !allChecked;
+        cb.closest('.region-item').classList.toggle('checked', !allChecked);
+    });
+    updateRegionCount();
+}
+
+// ══════════════════════════════════════════════
+// 주소 검색 (카카오 우편번호 API)
+// ══════════════════════════════════════════════
+function searchAddress() {
+    new daum.Postcode({
+        oncomplete: function(data) {
+            // 도로명 주소 우선, 없으면 지번 주소
+            const addr = data.roadAddress || data.jibunAddress;
+            const zip  = data.zonecode;
+            document.getElementById('officeZip').value     = zip;
+            document.getElementById('officeAddress').value = addr;
+            // 상세주소 입력칸으로 포커스
+            const detail = document.getElementById('officeAddressDetail');
+            if (detail) {
+                detail.value = '';
+                detail.focus();
+            }
+        },
+        // 모바일: 팝업 대신 레이어로
+        width:  '100%',
+        height: '100%',
+    }).open();
+}
+
+
 function goStep(n) {
     // 현재 스텝 유효성 검사
     if (n > currentStep) {
@@ -1026,7 +1106,7 @@ function validateStep(step) {
     if (step === 3) {
         if (!document.getElementById('name').value.trim()) return '담당자 성함을 입력해주세요.';
         if (!document.getElementById('officeName').value.trim()) return '사무소 상호명을 입력해주세요.';
-        if (!document.getElementById('officeAddress').value.trim()) return '사무소 주소를 입력해주세요.';
+        if (!document.getElementById('officeAddress').value.trim()) return '사무소 주소를 검색해주세요. (주소 검색 버튼 클릭)';
         if (!document.getElementById('licenseNumber').value.trim()) return '법무사 등록번호를 입력해주세요.';
         if (!phoneVerified) return '휴대폰 인증을 완료해주세요.';
         if (!document.getElementById('refSource').value) return '대리입찰 톡을 알게 된 경로를 선택해주세요.';
@@ -1339,13 +1419,18 @@ async function submitSignup() {
         // 3. Firestore 저장
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 정보 저장 중...';
         const kakaoPhone = document.getElementById('kakaoPhone').value.trim();
+        // 주소 조합: 기본주소 + 상세주소
+        const addrBase   = document.getElementById('officeAddress').value.trim();
+        const addrDetail = document.getElementById('officeAddressDetail').value.trim();
+        const fullAddress = addrDetail ? `${addrBase} ${addrDetail}` : addrBase;
         const userData = {
             userId,
             password: document.getElementById('password').value,
             email: document.getElementById('email').value.trim(),
             name: document.getElementById('name').value.trim(),
             officeName: document.getElementById('officeName').value.trim(),
-            officeAddress: document.getElementById('officeAddress').value.trim(),
+            officeAddress: fullAddress,
+            officeZip: document.getElementById('officeZip').value.trim(),
             licenseNumber: document.getElementById('licenseNumber').value.trim(),
             introduce: document.getElementById('introduce').value.trim(),
             phone,
