@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────
-// 비드톡 카카오 알림톡 중계 Cloudflare Worker
+// 대리입찰톡 카카오 알림톡 중계 Cloudflare Worker
 // 환경변수: SOLAPI_KEY, SOLAPI_SECRET, SENDER, KAKAO_CHANNEL_ID
 // 배포: npx wrangler deploy (workers/kakao-proxy/)
 //
@@ -161,7 +161,7 @@ function buildMessage(type, d = {}, to, env) {
       templateCode: 'bidtok_apply_complete',
       variables: { name, court, caseNum, bidDate, appId, mypageUrl },
       smsText:
-`[비드톡] 대리입찰 신청완료
+`[대리입찰톡] 대리입찰 신청완료
 
 안녕하세요, ${name}님!
 대리입찰 신청이 접수되었습니다.
@@ -173,7 +173,7 @@ function buildMessage(type, d = {}, to, env) {
 담당 법무사 배정 후 다시 안내드립니다.
 마이페이지: ${mypageUrl}
 
-문의: 카카오톡 채널 @비드톡`,
+문의: 카카오톡 채널 @대리입찰톡`,
     },
 
     // ② 법무사 배정완료 - 고객 수신
@@ -181,7 +181,7 @@ function buildMessage(type, d = {}, to, env) {
       templateCode: 'bidtok_expert_assigned',
       variables: { name, court, caseNum, bidDate, expertNm, expertPh, mypageUrl },
       smsText:
-`[비드톡] 법무사 배정완료
+`[대리입찰톡] 법무사 배정완료
 
 ${name}님, 담당 법무사가 배정되었습니다!
 
@@ -201,7 +201,7 @@ ${name}님, 담당 법무사가 배정되었습니다!
       templateCode: 'bidtok_expert_notify',
       variables: { expertNm, court, caseNum, bidDate, address, bidAmt },
       smsText:
-`[비드톡] 새 사건 배정
+`[대리입찰톡] 새 사건 배정
 
 ${expertNm} 법무사님,
 새로운 대리입찰 사건이 배정되었습니다.
@@ -221,7 +221,7 @@ ${expertNm} 법무사님,
       templateCode: 'bidtok_bid_proceeding',
       variables: { name, court, caseNum, bidDate, expertNm },
       smsText:
-`[비드톡] 입찰 진행중
+`[대리입찰톡] 입찰 진행중
 
 ${name}님, 오늘 입찰이 진행 중입니다.
 
@@ -239,7 +239,7 @@ ${name}님, 오늘 입찰이 진행 중입니다.
       templateCode: 'bidtok_bid_won',
       variables: { name, court, caseNum, bidDate, bidAmt, expertNm, expertPh, mypageUrl },
       smsText:
-`[비드톡] 🎉 낙찰되었습니다!
+`[대리입찰톡] 🎉 낙찰되었습니다!
 
 ${name}님, 축하드립니다!
 입찰에 낙찰되셨습니다.
@@ -259,7 +259,7 @@ ${name}님, 축하드립니다!
       templateCode: 'bidtok_bid_lost',
       variables: { name, court, caseNum, bidDate, result, applyUrl },
       smsText:
-`[비드톡] 입찰 결과 안내
+`[대리입찰톡] 입찰 결과 안내
 
 ${name}님, 입찰 결과를 안내드립니다.
 
@@ -270,7 +270,7 @@ ${name}님, 입찰 결과를 안내드립니다.
 다음 기일에 다시 도전해보세요!
 신규 신청: ${applyUrl}
 
-비드톡을 이용해주셔서 감사합니다.`,
+대리입찰톡을 이용해주셔서 감사합니다.`,
     },
   };
 

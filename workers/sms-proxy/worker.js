@@ -65,7 +65,7 @@ export default {
           message: {
             to: toClean,
             from: sender,
-            text: `[대리입찰 톡] 인증번호 [${code}]를 입력해주세요. (5분 이내 입력)`
+            text: `[대리입찰톡] 인증번호 [${code}]를 입력해주세요. (5분 이내 입력)`
           }
         })
       });
