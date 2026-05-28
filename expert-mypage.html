@@ -507,7 +507,7 @@
             if (!confirm('승인하시면 낙찰가(개인정보)가 공개됩니다.\n승인 후 취소 3회 시 계정이 자동 정지됩니다.\n\n이 요청을 승인하시겠습니까?')) return;
             try {
                 // 낙찰가 공개 처리 → status 진행중으로 변경
-                const db = getDB ? getDB() : firebase.firestore();
+                const db = getDB();
                 const appDoc = await db.collection('applications').doc(id).get();
                 const appData = appDoc.data();
                 const bidAmountRevealed = appData ? appData.bid_amount : null;
@@ -555,7 +555,7 @@
             if (!confirm(warningMsg)) return;
 
             try {
-                const db = getDB ? getDB() : firebase.firestore();
+                const db = getDB();
 
                 // cancelCount 증가
                 await db.collection('users').doc(user.id).update({
