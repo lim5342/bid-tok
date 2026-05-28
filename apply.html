@@ -1366,30 +1366,78 @@ const KAKAO_WORKER_URL  = 'https://bidtok-kakao-proxy.qkqk5342.workers.dev';
 
 function sendSmsCode() {
     const phone = document.getElementById('applicantPhone').value.trim();
-    if (!phone || phone.replace(/[^0-9]/g,'').length < 10) {
+    const phoneClean = phone.replace(/[^0-9]/g,'');
+    if (!phone || phoneClean.length < 10) {
         toast('올바른 휴대폰 번호를 입력해주세요.', 'error'); return;
     }
 
-    // ── 임시 자동 통과 ──
-    phoneVerified = true;
     const btn = document.getElementById('btnSendSms');
     btn.disabled = true;
-    btn.textContent = '인증완료';
-    btn.style.background = '#10B981';
+    btn.textContent = '발송 중...';
 
-    document.getElementById('smsCodeRow').style.display = 'block';
-    document.getElementById('smsCode').value = '000000';
-    document.getElementById('smsTimer').textContent = '✅ 인증 완료';
-    document.getElementById('smsTimer').style.color = '#10B981';
+    // 6자리 인증번호 생성
+    smsCodeReal = Math.floor(100000 + Math.random() * 900000).toString();
 
-    toast('휴대폰 인증이 완료되었습니다!', 'success');
+    fetch(SMS_WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ to: phoneClean, code: smsCodeReal })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            btn.textContent = '재발송';
+            btn.disabled = false;
+            btn.style.background = '#6B7280';
+
+            document.getElementById('smsCodeRow').style.display = 'block';
+            document.getElementById('smsCode').value = '';
+            document.getElementById('smsTimer').textContent = '';
+            document.getElementById('smsTimer').style.color = '#1550E8';
+
+            // 3분 타이머
+            let remaining = 180;
+            clearInterval(smsTimerInterval);
+            smsTimerInterval = setInterval(() => {
+                remaining--;
+                const m = Math.floor(remaining / 60);
+                const s = remaining % 60;
+                document.getElementById('smsTimer').textContent = `인증 유효시간 ${m}:${s.toString().padStart(2,'0')}`;
+                if (remaining <= 0) {
+                    clearInterval(smsTimerInterval);
+                    document.getElementById('smsTimer').textContent = '⏰ 인증시간 만료 - 재발송해주세요';
+                    document.getElementById('smsTimer').style.color = '#dc3545';
+                    smsCodeReal = '';
+                }
+            }, 1000);
+
+            toast('📱 인증번호가 발송되었습니다!', 'success');
+        } else {
+            toast('문자 발송 실패: ' + (data.error || ''), 'error');
+            btn.disabled = false;
+            btn.textContent = '인증번호 발송';
+        }
+    })
+    .catch(err => {
+        console.error('SMS 오류:', err);
+        toast('문자 발송 중 오류가 발생했습니다.', 'error');
+        btn.disabled = false;
+        btn.textContent = '인증번호 발송';
+    });
 }
 
 function verifySmsCode() {
+    const inputCode = document.getElementById('smsCode').value.trim();
+    if (!inputCode) { toast('인증번호를 입력해주세요.', 'error'); return; }
+    if (!smsCodeReal) { toast('인증번호를 먼저 발송해주세요.', 'error'); return; }
+    if (inputCode !== smsCodeReal) { toast('인증번호가 일치하지 않습니다.', 'error'); return; }
+
     phoneVerified = true;
+    clearInterval(smsTimerInterval);
     document.getElementById('smsTimer').textContent = '✅ 인증 완료';
     document.getElementById('smsTimer').style.color = '#10B981';
-    clearInterval(smsTimerInterval);
+    document.getElementById('smsCode').disabled = true;
+    document.getElementById('btnSendSms').disabled = true;
     toast('휴대폰 인증이 완료되었습니다!', 'success');
 }
 
