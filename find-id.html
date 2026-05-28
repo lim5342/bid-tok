@@ -368,7 +368,7 @@
 
             try {
                 // Firestore에서 phone으로 조회
-                const db = firebase.firestore();
+                const db = getDB();
                 const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 10000));
 
                 // 하이픈 포함/미포함 두 가지 형식으로 조회
