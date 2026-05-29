@@ -419,6 +419,16 @@
     </style>
     <script>
     (function() {
+        // ── 관리자 대신 로그인 처리 ───────────────────────────────
+        const _adminKey = new URLSearchParams(location.search).get('adminLoginAs');
+        if (_adminKey) {
+            const _data = JSON.parse(localStorage.getItem(_adminKey) || 'null');
+            if (_data) {
+                localStorage.removeItem(_adminKey);
+                localStorage.setItem('currentUser', JSON.stringify(_data));
+                history.replaceState(null, '', location.pathname);
+            }
+        }
         // ── 로그인 체크 ────────────────────────────────────────
         if (!Auth.isLoggedIn() || Auth.getUserType() !== 'client') {
             alert('로그인이 필요합니다.');
