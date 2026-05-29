@@ -404,12 +404,15 @@
                 '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>불러오는 중...</p></div>';
         }
 
-        // ── 배정 요청 로드 (실제 API) ───────────────────────────
+        // ── 배정 요청 로드 (매칭완료 + 매칭중 모두 포함) ────────────
         async function loadRequests() {
             const listContainer = document.getElementById('requestsList');
             setLoading('requestsList');
             try {
-                const data = await API.applications.getByExpertId(user.userId || user.id, '매칭중');
+                // 매칭완료(관리자 배정) + 매칭중(법무사 직접 배정 대기) 모두 가져옴
+                const allData = await API.applications.getByExpertId(user.userId || user.id);
+                // 배정 요청 = 매칭완료 또는 매칭중 상태
+                const data = allData.filter(a => a.status === '매칭완료' || a.status === '매칭중');
                 document.getElementById('pendingCount').textContent = data.length;
 
                 if (data.length === 0) {
@@ -419,18 +422,18 @@
 
                 // 법무사 취소 횟수 경고 메시지 표시
                 const cancelCount = user.cancelCount || 0;
-                const pendingContainer = document.getElementById('requestsList');
                 let warningHtml = '';
                 if (cancelCount > 0) {
-                    const remaining = 3 - cancelCount;
+                    const remaining = Math.max(0, 3 - cancelCount);
                     warningHtml = `
                     <div style="background:#fffbeb;border:1.5px solid #f59e0b;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1rem;display:flex;align-items:flex-start;gap:0.75rem;">
                         <i class="fas fa-exclamation-triangle" style="color:#f59e0b;margin-top:2px;"></i>
                         <div>
                             <p style="font-weight:700;color:#92400e;margin:0 0 0.25rem;">⚠️ 승인 후 취소 경고 (${cancelCount}/3회)</p>
                             <p style="font-size:0.83rem;color:#78350f;margin:0;line-height:1.6;">
-                                승인 후 취소 시 낙찰가(개인정보)가 이미 공개된 상태입니다. 개인정보 보호 정책에 따라 <strong>3회 이상 승인 취소 시 계정이 자동 정지</strong>됩니다.
-                                ${remaining > 0 ? `앞으로 <strong>${remaining}회</strong> 더 취소 시 계정이 정지됩니다.` : ''}
+                                승인 후 취소 시 낙찰가(개인정보)가 이미 공개된 상태입니다.<br>
+                                <strong>3회 이상 취소 시 계정이 자동 정지</strong>됩니다.
+                                ${remaining > 0 ? `앞으로 <strong>${remaining}회</strong> 더 취소 시 계정이 정지됩니다.` : '<strong style="color:#ef4444;">다음 취소 시 즉시 계정 정지!</strong>'}
                             </p>
                         </div>
                     </div>`;
@@ -439,9 +442,9 @@
                 listContainer.innerHTML = warningHtml + data.map(req => {
                     const bidDateMs = req.bid_date ? new Date(req.bid_date).getTime() - Date.now() : 0;
                     const remainSec = Math.floor(bidDateMs / 1000);
-                    const isUrgent = remainSec > 0 && remainSec < 900;
+                    const isUrgent  = remainSec > 0 && remainSec < 900;
                     const timeLabel = remainSec > 0 ? formatTimeRemaining(remainSec) + ' 남음' : '마감';
-
+                    // 승인 전 공개 필드: 입찰일·신청자이름·물건종류만 표시, 주소/연락처/입찰가는 숨김
                     return `
                     <div class="application-card request-card">
                         <div class="card-header">
@@ -450,38 +453,29 @@
                                 <span class="timer-badge ${isUrgent ? 'urgent' : ''}">
                                     <i class="fas fa-clock"></i> ${timeLabel}
                                 </span>
+                                <span class="status-badge" style="background:#e0f2fe;color:#0369a1;margin-left:4px;">${req.status || '-'}</span>
                             </div>
                             <span class="bid-date">입찰일: ${req.bid_date || '-'}</span>
                         </div>
                         <div class="card-body">
-                            <p class="address"><i class="fas fa-map-marker-alt"></i> ${req.address || '-'}</p>
                             <p><i class="fas fa-university" style="color:#667eea;margin-right:4px;"></i><strong>법원:</strong> ${req.court || '-'}</p>
                             <p class="client-info"><i class="fas fa-user"></i> 신청자: ${req.applicant_name || '-'}</p>
-                            <div class="price-info" style="margin-top:0.75rem;">
-                                <div>
-                                    <span class="label">감정가</span>
-                                    <span class="value">${formatPrice(req.appraisal_price)}원</span>
-                                </div>
-                                <div>
-                                    <span class="label">낙찰가</span>
-                                    <span class="value" style="color:#999;font-style:italic;">
-                                        <i class="fas fa-lock" style="font-size:0.75rem;"></i> 승인 후 공개
-                                    </span>
-                                </div>
+                            <p><i class="fas fa-home" style="color:#667eea;margin-right:4px;"></i><strong>물건종류:</strong> ${req.property_type || '-'}</p>
+                            <div style="margin-top:0.75rem;padding:0.75rem 1rem;background:#f8fafc;border-radius:10px;border:1.5px dashed #cbd5e1;">
+                                <p style="margin:0 0 0.35rem;font-size:0.82rem;font-weight:700;color:#64748b;"><i class="fas fa-lock" style="color:#94a3b8;"></i> 승인 전 비공개 정보</p>
+                                <p style="margin:0;font-size:0.82rem;color:#94a3b8;">📍 주소 &nbsp;·&nbsp; 📞 연락처 &nbsp;·&nbsp; 💰 입찰가</p>
+                                <p style="margin:0.35rem 0 0;font-size:0.79rem;color:#cbd5e1;">승인 버튼을 누르면 위 정보가 공개됩니다.</p>
                             </div>
-                            <div style="margin-top:0.75rem;padding:0.65rem 0.9rem;background:#fff8e1;border-radius:8px;border-left:3px solid #f59e0b;font-size:0.82rem;color:#78350f;">
-                                <i class="fas fa-info-circle"></i> 낙찰가는 <strong>승인 버튼을 누른 후</strong> 공개됩니다. 승인 후 취소 3회 시 계정이 정지됩니다.
-                            </div>
-                            <p style="color:#666;font-size:0.88rem;margin-top:0.5rem;">
-                                <i class="fas fa-clock"></i> 요청: ${req.assigned_at ? req.assigned_at.slice(0,16).replace('T',' ') : '-'}
+                            <p style="color:#999;font-size:0.83rem;margin-top:0.6rem;">
+                                <i class="fas fa-clock"></i> 배정: ${req.assigned_at ? req.assigned_at.slice(0,16).replace('T',' ') : '-'}
                             </p>
                         </div>
                         <div class="card-footer">
-                            <button class="btn btn-success" onclick="acceptRequest('${req.id}')">
-                                <i class="fas fa-check"></i> 승인 (낙찰가 공개)
+                            <button class="btn btn-success" onclick="acceptRequest('${req.id}')" style="flex:1;">
+                                <i class="fas fa-check"></i> 승인
                             </button>
-                            <button class="btn btn-outline" onclick="rejectRequest('${req.id}')">
-                                <i class="fas fa-times"></i> 거부하기
+                            <button class="btn btn-danger" onclick="openRejectModal('${req.id}')" style="flex:1;">
+                                <i class="fas fa-times"></i> 거절
                             </button>
                         </div>
                     </div>`;
@@ -498,7 +492,8 @@
             const listContainer = document.getElementById('ongoingList');
             setLoading('ongoingList');
             try {
-                const data = await API.applications.getByExpertId(user.userId || user.id, '진행중');
+                const allData = await API.applications.getByExpertId(user.userId || user.id);
+                const data = allData.filter(a => a.status === '진행중');
 
                 if (data.length === 0) {
                     listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>진행 중인 입찰이 없습니다.</p></div>';
@@ -521,22 +516,23 @@
                             <p class="address"><i class="fas fa-map-marker-alt"></i> ${item.address || item.court || '-'}</p>
                             <p><i class="fas fa-university" style="color:#667eea;margin-right:4px;"></i><strong>법원:</strong> ${item.court || '-'}</p>
                             <p class="client-info"><i class="fas fa-user"></i> 신청자: ${item.applicant_name || '-'}</p>
+                            <p class="client-info"><i class="fas fa-phone"></i> 연락처: ${item.phone || '-'}</p>
                             <div class="price-info">
                                 <div>
                                     <span class="label">감정가</span>
                                     <span class="value">${formatPrice(item.appraisal_price)}원</span>
                                 </div>
                                 <div>
-                                    <span class="label">낙찰가 (공개됨)</span>
+                                    <span class="label">입찰가 (공개됨)</span>
                                     <span class="value highlight">${formatPrice(item.bid_amount)}원</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="card-footer">
-                            <button class="btn btn-outline" onclick="viewDetail('${item.id}')">상세보기</button>
-                            <button class="btn btn-primary" onclick="updateStatus('${item.id}')">결과 입력</button>
-                            <button class="btn btn-danger" onclick="cancelAfterAccept('${item.id}')" title="취소 ${cancelCount}/3회 (${remainCancels}회 남음)" style="font-size:0.82rem;">
-                                <i class="fas fa-ban"></i> 취소 (${cancelCount}/3)
+                        <div class="card-footer" style="flex-wrap:wrap;gap:0.5rem;">
+                            <button class="btn btn-outline" onclick="viewDetail('${item.id}')" style="flex:1;min-width:80px;">상세보기</button>
+                            <button class="btn btn-primary" onclick="openResultModal('${item.id}')" style="flex:1;min-width:80px;">사건종료</button>
+                            <button class="btn btn-danger" onclick="cancelAfterAccept('${item.id}')" style="flex:1;min-width:80px;font-size:0.82rem;" title="취소 ${cancelCount}/3회">
+                                <i class="fas fa-ban"></i> 승인취소 (${cancelCount}/3)
                             </button>
                         </div>
                     </div>`).join('');
@@ -551,7 +547,8 @@
             const listContainer = document.getElementById('completedList');
             setLoading('completedList');
             try {
-                const data = await API.applications.getByExpertId(user.userId || user.id, '완료');
+                const allData = await API.applications.getByExpertId(user.userId || user.id);
+                const data = allData.filter(a => a.status === '완료' || a.status === '낙찰' || a.status === '사건종료');
                 const successList = data.filter(i => i.status === '낙찰' || i.result === 'success');
 
                 document.getElementById('totalCompleted').textContent = data.length;
@@ -603,7 +600,8 @@
             const listContainer = document.getElementById('settlementList');
             setLoading('settlementList');
             try {
-                const data = await API.applications.getByExpertId(user.userId || user.id, '완료');
+                const allData = await API.applications.getByExpertId(user.userId || user.id);
+                const data = allData.filter(a => a.status === '완료' || a.status === '낙찰' || a.status === '사건종료');
 
                 // 월별 집계
                 const monthly = {};
@@ -648,42 +646,36 @@
             }
         }
 
-        // ── 수락(승인) / 거부 (실제 API) ─────────────────────────────
+        // ── 수락(승인) ─────────────────────────────────────────────
         async function acceptRequest(id) {
-            // 낙찰가 공개 안내
-            if (!confirm('승인하시면 낙찰가(개인정보)가 공개됩니다.\n승인 후 취소 3회 시 계정이 자동 정지됩니다.\n\n이 요청을 승인하시겠습니까?')) return;
+            if (!confirm('승인하시면 주소·연락처·입찰가가 공개됩니다.\n승인 후 취소 3회 시 계정이 자동 정지됩니다.\n\n이 요청을 승인하시겠습니까?')) return;
             try {
-                // 낙찰가 공개 처리 → status 진행중으로 변경
                 const db = getDB();
                 const appDoc = await db.collection('applications').doc(id).get();
                 const appData = appDoc.data();
-                const bidAmountRevealed = appData ? appData.bid_amount : null;
 
+                // ★ 핵심 수정: assigned_expert_id + expert_name 필드명 통일
                 await API.applications.updateStatus(id, '진행중', {
-                    acceptedAt: new Date().toISOString(),
-                    expertId: user.userId || user.id,
-                    expertName: user.name,
-                    bid_amount_revealed: true  // 낙찰가 공개 플래그
+                    acceptedAt:          new Date().toISOString(),
+                    assigned_expert_id:  user.userId || user.id,   // 필드명 통일
+                    expert_name:         user.name,                 // 필드명 통일
+                    bid_amount_revealed: true
                 });
 
-                // ── 고객에게 법무사 배정완료 알림 발송 ──────────────
+                // 고객에게 법무사 배정완료 알림
                 if (appData && appData.phone) {
-                    const notifData = {
-                        appId:      id.toString().slice(-8).toUpperCase(),
-                        name:       appData.applicant_name || '',
-                        court:      appData.court          || '',
-                        caseNumber: appData.case_number    || '',
-                        bidDate:    appData.bid_date       || '',
-                        expertName: user.name              || '',
-                        expertPhone: user.phone            || '',
-                    };
-                    sendKakaoNotif('expert_assigned', appData.phone, notifData);
+                    sendKakaoNotif('expert_assigned', appData.phone, {
+                        appId:       id.slice(-8).toUpperCase(),
+                        name:        appData.applicant_name || '',
+                        court:       appData.court          || '',
+                        caseNumber:  appData.case_number    || '',
+                        bidDate:     appData.bid_date       || '',
+                        expertName:  user.name              || '',
+                        expertPhone: user.phone             || '',
+                    });
                 }
-                // ─────────────────────────────────────────────────────
 
-                // 낙찰가 공개 알림
-                const bidStr = bidAmountRevealed ? `\n낙찰가: ${formatPrice(bidAmountRevealed)}원` : '';
-                alert(`✅ 승인 완료! 신청자에게 담당 법무사 배정 알림이 발송됩니다.${bidStr}`);
+                showExpertToast('✅ 승인 완료! 신청자에게 알림이 발송됩니다.', 'success');
                 loadRequests();
                 loadOngoing();
             } catch (err) {
@@ -692,61 +684,122 @@
             }
         }
 
-        async function rejectRequest(id) {
-            if (!confirm('이 요청을 거부하시겠습니까?\n거부 시 다른 법무사에게 자동 배정됩니다.')) return;
+        // ── 거절 사유 모달 열기 ──────────────────────────────────────
+        function openRejectModal(id) {
+            const modal = document.getElementById('rejectModal');
+            modal.style.display = 'flex';
+            modal.dataset.appId = id;
+            // 초기화
+            document.querySelectorAll('input[name="rejectReason"]').forEach(r => r.checked = false);
+            document.getElementById('rejectOtherWrap').style.display = 'none';
+            document.getElementById('rejectOtherText').value = '';
+            document.getElementById('rejectConfirmBtn').disabled = true;
+            document.getElementById('rejectConfirmBtn').style.opacity = '0.5';
+        }
+
+        // ── 거절 처리 ─────────────────────────────────────────────────
+        async function confirmReject() {
+            const modal = document.getElementById('rejectModal');
+            const id    = modal.dataset.appId;
+            const checked = document.querySelector('input[name="rejectReason"]:checked');
+            if (!checked) return;
+
+            let rejectReason = checked.value;
+            if (rejectReason === '기타') {
+                const txt = document.getElementById('rejectOtherText').value.trim();
+                if (!txt) { alert('거절 사유를 입력해주세요.'); return; }
+                rejectReason = '기타: ' + txt;
+            }
+
+            const btn = document.getElementById('rejectConfirmBtn');
+            btn.disabled = true;
+            btn.textContent = '처리 중...';
+
             try {
                 await API.applications.updateStatus(id, '매칭중', {
-                    rejectedExpert: user.userId || user.id,
-                    rejectedAt: new Date().toISOString(),
-                    assigned_expert_id: null
+                    rejectedExpert:      user.userId || user.id,
+                    rejectedExpertName:  user.name,
+                    rejectReason:        rejectReason,
+                    rejectedAt:          new Date().toISOString(),
+                    assigned_expert_id:  '',
+                    expert_name:         ''
                 });
-                alert('거부되었습니다.');
+                modal.style.display = 'none';
+                showExpertToast('거절 처리되었습니다.', 'info');
                 loadRequests();
             } catch (err) {
+                console.error(err);
                 alert('처리 중 오류가 발생했습니다.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '거절 확정';
             }
         }
 
-        // ── 승인 후 취소 (진행중 → 취소, 3회 초과 시 계정정지) ──────
+        // ── 승인 후 취소 ──────────────────────────────────────────────
         async function cancelAfterAccept(id) {
-            const cancelCount = (user.cancelCount || 0) + 1;
-            let warningMsg = `정말 취소하시겠습니까?\n\n⚠️ 낙찰가가 이미 공개된 상태입니다.\n개인정보 보호 정책에 따라 승인 후 취소 ${cancelCount}회 기록됩니다.`;
-            if (cancelCount >= 3) {
-                warningMsg += '\n\n🚫 3회 이상 취소 시 계정이 즉시 정지됩니다!';
+            const newCancelCount = (user.cancelCount || 0) + 1;
+            let warningMsg = `정말 승인을 취소하시겠습니까?\n\n⚠️ 입찰가(개인정보)가 이미 공개된 상태입니다.\n취소 기록: ${newCancelCount}회 / 3회`;
+            if (newCancelCount >= 3) {
+                warningMsg += '\n\n🚫 이번 취소 시 계정이 즉시 정지됩니다!';
             }
             if (!confirm(warningMsg)) return;
 
             try {
                 const db = getDB();
+                const now = new Date().toISOString();
 
-                // cancelCount 증가
-                await db.collection('users').doc(user.id).update({
-                    cancelCount: cancelCount,
-                    lastCancelAt: new Date().toISOString()
-                });
-
-                // 신청 취소
+                // 신청 상태 취소로 변경
                 await API.applications.updateStatus(id, '취소', {
-                    cancelledBy: user.userId || user.id,
-                    cancelledAt: new Date().toISOString(),
-                    cancelReason: '법무사 승인 후 취소'
+                    cancelledBy:     user.userId || user.id,
+                    cancelledByName: user.name,
+                    cancelledAt:     now,
+                    cancelReason:    '법무사 승인 후 취소'
                 });
 
-                // 3회 이상 → 계정 정지
-                if (cancelCount >= 3) {
+                // cancelCount 증가 저장
+                await db.collection('users').doc(user.id).update({
+                    cancelCount:  newCancelCount,
+                    lastCancelAt: now
+                });
+
+                // ── 관리자 알림 (adminNotifications 컬렉션) ──────────
+                const appDoc = await db.collection('applications').doc(id).get();
+                const appData = appDoc.exists ? appDoc.data() : {};
+                const isAutoBlock = newCancelCount >= 3;
+
+                await db.collection('adminNotifications').add({
+                    type:         isAutoBlock ? 'expert_auto_blocked' : 'expert_cancel_after_accept',
+                    expertId:     user.userId || user.id,
+                    expertName:   user.name,
+                    expertDocId:  user.id,
+                    appId:        id,
+                    cancelCount:  newCancelCount,
+                    caseNumber:   appData.case_number || '',
+                    court:        appData.court || '',
+                    bidDate:      appData.bid_date || '',
+                    message:      isAutoBlock
+                        ? `🚫 [자동정지] ${user.name} 법무사가 승인 취소 ${newCancelCount}회로 계정이 자동 정지되었습니다.`
+                        : `⚠️ ${user.name} 법무사가 승인 후 취소했습니다. (${newCancelCount}/3회) 사건: ${appData.case_number || id}`,
+                    isRead:       false,
+                    createdAt:    now
+                });
+                // ─────────────────────────────────────────────────────
+
+                // 3회 이상 → 계정 자동 정지
+                if (isAutoBlock) {
                     await db.collection('users').doc(user.id).update({
-                        status: 'blocked',
-                        blockedAt: new Date().toISOString(),
-                        blockedReason: '법무사 승인 후 3회 이상 취소 - 낙찰가(개인정보) 무단 열람 방지를 위한 자동 계정 정지 조치'
+                        status:        'blocked',
+                        blockedAt:     now,
+                        blockedReason: `법무사 승인 후 ${newCancelCount}회 취소 자동정지`
                     });
-                    alert('🚫 계정 정지 안내\n\n낙찰가는 신청자의 소중한 개인재산 정보입니다.\n승인 후 3회 이상 취소로 인해 계정이 정지되었습니다.\n\n사유: 개인정보 보호 정책 위반 (낙찰가 무단 열람 방지)\n\n계정 복구를 원하시면 관리자에게 문의해 주세요.\n고객센터: 02-853-5875');
+                    alert('🚫 계정 정지 안내\n\n입찰가는 신청자의 소중한 개인재산 정보입니다.\n승인 후 3회 이상 취소로 인해 계정이 자동 정지되었습니다.\n\n계정 복구: 관리자 문의 (02-853-5875)');
                     Auth.logout();
                     return;
                 }
 
-                alert(`취소 완료 (${cancelCount}/3회)\n${3-cancelCount}회 더 취소 시 계정이 정지됩니다.`);
-                // 로컬 사용자 정보 업데이트
-                user.cancelCount = cancelCount;
+                user.cancelCount = newCancelCount;
+                showExpertToast(`승인 취소 처리 (${newCancelCount}/3회). ${3-newCancelCount}회 남음.`, 'info');
                 loadOngoing();
             } catch (err) {
                 console.error(err);
@@ -754,8 +807,8 @@
             }
         }
 
-        // ── 결과 입력 (모달 방식) ───────────────────────────
-        function updateStatus(id) {
+        // ── 사건종료 모달 열기 (결과 입력) ─────────────────────────
+        function openResultModal(id) {
             const modal = document.getElementById('resultModal');
             modal.style.display = 'flex';
             modal.dataset.appId = id;
@@ -765,6 +818,8 @@
             btn.style.opacity = '0.5';
             btn.style.cursor = 'not-allowed';
         }
+        // 구버전 updateStatus 호환
+        function updateStatus(id) { openResultModal(id); }
 
         // ── 토스트 알림 ───────────────────────────────────────
         function showExpertToast(message, type) {
@@ -823,11 +878,22 @@
             if (e.key === 'Escape') {
                 closeExpertDetailModal();
                 document.getElementById('resultModal').style.display = 'none';
+                document.getElementById('rejectModal').style.display  = 'none';
             }
         });
 
-        // 결과 모달 이벤트 (DOMContentLoaded)
+        // 전역 노출
+        window.openRejectModal   = openRejectModal;
+        window.confirmReject     = confirmReject;
+        window.openResultModal   = openResultModal;
+        window.acceptRequest     = acceptRequest;
+        window.cancelAfterAccept = cancelAfterAccept;
+        window.viewDetail        = viewDetail;
+        window.updateStatus      = updateStatus;
+
+        // 결과 모달 + 거절 모달 이벤트 (DOMContentLoaded)
         document.addEventListener('DOMContentLoaded', function() {
+            // 결과 라디오 → 버튼 활성화
             document.querySelectorAll('input[name="bidResult"]').forEach(radio => {
                 radio.addEventListener('change', function() {
                     const btn = document.getElementById('resultSubmitBtn');
@@ -837,60 +903,72 @@
                 });
             });
 
+            // 사건종료 확정 버튼
             document.getElementById('resultSubmitBtn').addEventListener('click', async function() {
-                const modal = document.getElementById('resultModal');
-                const id = modal.dataset.appId;
+                const modal    = document.getElementById('resultModal');
+                const id       = modal.dataset.appId;
                 const selected = document.querySelector('input[name="bidResult"]:checked');
                 if (!selected) return;
-                const isSuccess = selected.value === 'success';
-                const status = isSuccess ? '낙찰' : '완료';
-                this.disabled = true;
-                this.textContent = '처리 중...';
+                const isSuccess   = selected.value === 'success';
+                const finalStatus = isSuccess ? '낙찰' : '사건종료';
+                this.disabled     = true;
+                this.textContent  = '처리 중...';
                 try {
-                    // Firestore에서 신청 정보 조회 (고객 전화번호 등)
-                    const db = getDB();
+                    const db     = getDB();
                     const appDoc = await db.collection('applications').doc(id).get();
                     const appData = appDoc.exists ? appDoc.data() : null;
 
-                    await API.applications.updateStatus(id, status, {
-                        completedAt: new Date().toISOString(),
-                        result: isSuccess ? 'success' : 'fail'
+                    await API.applications.updateStatus(id, finalStatus, {
+                        completedAt:  new Date().toISOString(),
+                        closedAt:     new Date().toISOString(),
+                        result:       isSuccess ? 'success' : 'fail',
+                        closedBy:     user.userId || user.id,
+                        closedByName: user.name
                     });
 
-                    // ── 고객에게 결과 알림 발송 ──────────────────────
                     if (appData && appData.phone) {
-                        const notifData = {
-                            appId:      id.toString().slice(-8).toUpperCase(),
-                            name:       appData.applicant_name || '',
-                            court:      appData.court          || '',
-                            caseNumber: appData.case_number    || '',
-                            bidDate:    appData.bid_date       || '',
-                            bidAmount:  appData.bid_amount     || 0,
-                            expertName: user.name              || '',
-                            expertPhone: user.phone            || '',
-                            result:     isSuccess ? '낙찰' : '유찰',
-                        };
-                        if (isSuccess) {
-                            sendKakaoNotif('bid_won', appData.phone, notifData);
-                        } else {
-                            sendKakaoNotif('bid_lost', appData.phone, notifData);
-                        }
+                        sendKakaoNotif(isSuccess ? 'bid_won' : 'bid_lost', appData.phone, {
+                            appId:       id.slice(-8).toUpperCase(),
+                            name:        appData.applicant_name || '',
+                            court:       appData.court          || '',
+                            caseNumber:  appData.case_number    || '',
+                            bidDate:     appData.bid_date       || '',
+                            bidAmount:   appData.bid_amount     || 0,
+                            expertName:  user.name              || '',
+                            expertPhone: user.phone             || '',
+                            result:      isSuccess ? '낙찰' : '패찰',
+                        });
                     }
-                    // ─────────────────────────────────────────────────
 
                     modal.style.display = 'none';
-                    showExpertToast(isSuccess ? '🎉 낙찰 결과가 입력되었습니다!' : '입찰 결과가 입력되었습니다.', isSuccess ? 'success' : 'info');
+                    showExpertToast(
+                        isSuccess ? '🎉 낙찰! 사건이 종료되었습니다.' : '📋 패찰. 사건이 종료되었습니다.',
+                        isSuccess ? 'success' : 'info'
+                    );
                     loadOngoing();
+                    loadCompleted();
                 } catch (err) {
                     alert('처리 중 오류가 발생했습니다.');
                 } finally {
-                    this.disabled = false;
-                    this.textContent = '결과 입력';
+                    this.disabled    = false;
+                    this.textContent = '사건종료 확정';
                 }
             });
 
             document.getElementById('resultModalClose').addEventListener('click', function() {
                 document.getElementById('resultModal').style.display = 'none';
+            });
+
+            // 거절 모달 라디오 → 기타 텍스트 영역 표시 + 버튼 활성화
+            document.querySelectorAll('input[name="rejectReason"]').forEach(function(r) {
+                r.addEventListener('change', function() {
+                    const isOther = this.value === '기타';
+                    document.getElementById('rejectOtherWrap').style.display = isOther ? 'block' : 'none';
+                    const btn = document.getElementById('rejectConfirmBtn');
+                    btn.disabled       = false;
+                    btn.style.opacity  = '1';
+                    btn.style.cursor   = 'pointer';
+                });
             });
         });
 
@@ -1135,7 +1213,7 @@
     <div id="resultModal" class="result-modal-overlay">
         <div class="result-modal-box">
             <div class="result-modal-header">
-                <h3><i class="fas fa-gavel" style="color:#1550E8;margin-right:0.5rem;"></i>입찰 결과 입력</h3>
+                <h3><i class="fas fa-gavel" style="color:#1550E8;margin-right:0.5rem;"></i>사건종료 – 결과 입력</h3>
                 <button id="resultModalClose" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#999;line-height:1;">&times;</button>
             </div>
             <div class="result-modal-body">
@@ -1158,7 +1236,66 @@
                 </div>
                 <button id="resultSubmitBtn" class="btn btn-primary"
                     style="width:100%;padding:0.9rem;font-size:1rem;opacity:0.5;cursor:not-allowed;"
-                    disabled>결과 입력</button>
+                    disabled>사건종료 확정</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 거절 사유 모달 -->
+    <div id="rejectModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:9999; align-items:center; justify-content:center; padding:1rem;">
+        <div style="background:white; border-radius:20px; width:100%; max-width:420px; box-shadow:0 20px 60px rgba(0,0,0,0.3); overflow:hidden;">
+            <div style="padding:1.4rem 1.75rem 1rem; border-bottom:1px solid #e0e0e0; display:flex; justify-content:space-between; align-items:center; background:linear-gradient(135deg,#f97316 0%,#ef4444 100%);">
+                <h3 style="margin:0; font-size:1.05rem; color:white;"><i class="fas fa-times-circle" style="margin-right:0.5rem;"></i>거절 사유 선택</h3>
+                <button onclick="document.getElementById('rejectModal').style.display='none'" style="background:rgba(255,255,255,0.2); border:none; font-size:1.3rem; cursor:pointer; color:white; border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; line-height:1;">&times;</button>
+            </div>
+            <div style="padding:1.5rem 1.75rem;">
+                <p style="font-size:0.88rem; color:#64748b; margin:0 0 1.25rem;">거절 사유를 선택해주세요. 관리자와 고객에게 전달됩니다.</p>
+
+                <!-- 선택지 1 -->
+                <label style="display:flex; align-items:flex-start; gap:0.75rem; padding:1rem; border:2px solid #e0e0e0; border-radius:12px; cursor:pointer; margin-bottom:0.75rem; transition:all 0.2s;" id="rejectLabel1"
+                    onclick="document.querySelectorAll('#rejectModal label').forEach(l=>l.style.borderColor='#e0e0e0'); this.style.borderColor='#ef4444'; document.getElementById('rejectLabel1').style.background='#fef2f2'; document.getElementById('rejectLabel2').style.background='#fff'; document.getElementById('rejectLabel3').style.background='#fff';">
+                    <input type="radio" name="rejectReason" value="입찰일 진행 불가" style="margin-top:3px; accent-color:#ef4444;">
+                    <div>
+                        <p style="font-weight:700; color:#374151; margin:0 0 0.2rem;">📅 입찰일 진행 불가</p>
+                        <p style="font-size:0.8rem; color:#6b7280; margin:0;">해당 입찰일에 다른 일정이 있어 진행이 어렵습니다.</p>
+                    </div>
+                </label>
+
+                <!-- 선택지 2 -->
+                <label style="display:flex; align-items:flex-start; gap:0.75rem; padding:1rem; border:2px solid #e0e0e0; border-radius:12px; cursor:pointer; margin-bottom:0.75rem; transition:all 0.2s;" id="rejectLabel2"
+                    onclick="document.querySelectorAll('#rejectModal label').forEach(l=>{l.style.borderColor='#e0e0e0'; l.style.background='#fff';}); this.style.borderColor='#ef4444'; this.style.background='#fef2f2';">
+                    <input type="radio" name="rejectReason" value="법인 및 공동입찰 진행 안함" style="margin-top:3px; accent-color:#ef4444;">
+                    <div>
+                        <p style="font-weight:700; color:#374151; margin:0 0 0.2rem;">🏢 법인 및 공동입찰 진행 안함</p>
+                        <p style="font-size:0.8rem; color:#6b7280; margin:0;">법인 또는 공동 입찰 건은 처리하지 않습니다.</p>
+                    </div>
+                </label>
+
+                <!-- 선택지 3 (기타) -->
+                <label style="display:flex; align-items:flex-start; gap:0.75rem; padding:1rem; border:2px solid #e0e0e0; border-radius:12px; cursor:pointer; margin-bottom:0.75rem; transition:all 0.2s;" id="rejectLabel3"
+                    onclick="document.querySelectorAll('#rejectModal label').forEach(l=>{l.style.borderColor='#e0e0e0'; l.style.background='#fff';}); this.style.borderColor='#ef4444'; this.style.background='#fef2f2';">
+                    <input type="radio" name="rejectReason" value="기타" style="margin-top:3px; accent-color:#ef4444;">
+                    <div style="flex:1;">
+                        <p style="font-weight:700; color:#374151; margin:0 0 0.2rem;">✏️ 기타 (직접 입력)</p>
+                        <p style="font-size:0.8rem; color:#6b7280; margin:0;">위 사유 외 다른 사유를 직접 입력합니다.</p>
+                    </div>
+                </label>
+
+                <!-- 기타 텍스트 입력 -->
+                <div id="rejectOtherWrap" style="display:none; margin-top:0.5rem;">
+                    <textarea id="rejectOtherText"
+                        placeholder="거절 사유를 입력해주세요 (최대 200자)"
+                        maxlength="200"
+                        style="width:100%; padding:0.85rem; border:1.5px solid #cbd5e1; border-radius:10px; font-size:0.88rem; resize:vertical; min-height:80px; box-sizing:border-box; font-family:inherit;"></textarea>
+                </div>
+
+                <div style="display:flex; gap:0.75rem; margin-top:1.25rem;">
+                    <button onclick="document.getElementById('rejectModal').style.display='none'"
+                        style="flex:1; padding:0.9rem; background:white; color:#64748b; border:1.5px solid #e0e0e0; border-radius:10px; font-weight:700; cursor:pointer; font-size:0.9rem;">취소</button>
+                    <button id="rejectConfirmBtn" onclick="confirmReject()"
+                        style="flex:2; padding:0.9rem; background:linear-gradient(135deg,#f97316,#ef4444); color:white; border:none; border-radius:10px; font-weight:700; cursor:not-allowed; font-size:0.9rem; opacity:0.5;"
+                        disabled>거절 확정</button>
+                </div>
             </div>
         </div>
     </div>

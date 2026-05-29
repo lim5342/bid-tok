@@ -240,14 +240,18 @@ const API = {
         },
 
         // 특정 법무사에게 배정된 신청 내역
-        // ⚠️ where + where + orderBy → orderBy 제거, 클라이언트 정렬
+        // ⚠️ 두 쿼리로 나눠서 가져온 뒤 클라이언트 병합 (복합 인덱스 불필요)
         async getByExpertId(expertId, status = '') {
             const db = getDB();
-            let query = db.collection('applications')
-                .where('assigned_expert_id', '==', expertId);
-            if (status) query = query.where('status', '==', status);
-            const snap = await query.get();
-            return sortByCreatedAt(snapToArr(snap));
+            // assigned_expert_id 필드로 쿼리
+            const snap1 = await db.collection('applications')
+                .where('assigned_expert_id', '==', expertId).get();
+            const arr1 = snapToArr(snap1);
+            // 중복 제거
+            const all = arr1;
+            // 상태 필터 (클라이언트)
+            const filtered = status ? all.filter(a => a.status === status) : all;
+            return sortByCreatedAt(filtered);
         },
 
         // 신규 신청 저장
