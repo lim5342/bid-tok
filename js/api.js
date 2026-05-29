@@ -274,6 +274,13 @@ const API = {
             return data;
         },
 
+        // 신청 삭제 (사용자가 직접 삭제)
+        async delete(id) {
+            const db = getDB();
+            await db.collection('applications').doc(id).delete();
+            return true;
+        },
+
         // 법무사 배정
         async assignExpert(id, expertId, expertName) {
             const db = getDB();

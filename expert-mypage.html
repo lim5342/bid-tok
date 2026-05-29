@@ -27,8 +27,9 @@
     <div class="mypage-container">
         <aside class="mypage-sidebar">
             <div class="sidebar-profile">
-                <div class="profile-avatar">
-                    <i class="fas fa-user-tie"></i>
+                <!-- 프로필 아바타 (사진 or 아이콘) -->
+                <div class="profile-avatar" id="sidebarAvatar" style="overflow:hidden;">
+                    <i class="fas fa-user-tie" id="sidebarAvatarIcon"></i>
                 </div>
                 <h3 id="profileName">법무사</h3>
                 <p id="profileEmail">expert@example.com</p>
@@ -137,50 +138,80 @@
                     <h2><i class="fas fa-user-edit"></i> 회원정보</h2>
                 </div>
 
+                <!-- 관리자 대신 로그인 배너 -->
+                <div id="adminAsBanner" style="display:none;background:linear-gradient(90deg,#f97316,#ef4444);color:white;padding:0.85rem 1.25rem;border-radius:12px;margin-bottom:1.25rem;font-size:0.88rem;font-weight:700;display:flex;align-items:center;gap:0.6rem;">
+                    <i class="fas fa-shield-alt"></i> 관리자 모드: 모든 정보 수정 가능합니다
+                </div>
+
+                <!-- 프로필 사진 미리보기 -->
+                <div id="profilePhotoPreview" style="display:none;margin-bottom:1.5rem;padding:1.25rem;background:#f8fafc;border-radius:14px;border:1px solid #e2e8f0;">
+                    <p style="font-size:0.82rem;font-weight:700;color:#64748b;margin:0 0 0.75rem;">등록된 프로필 사진</p>
+                    <div style="display:flex;align-items:center;gap:1rem;">
+                        <div id="profilePhotoThumb" style="width:72px;height:72px;border-radius:12px;overflow:hidden;background:#e0e7ff;display:flex;align-items:center;justify-content:center;border:2px solid #c7d2fe;flex-shrink:0;"></div>
+                        <p style="font-size:0.8rem;color:#94a3b8;margin:0;line-height:1.6;">사진 변경은 고객센터(02-853-5875)를 통해 요청해주세요.</p>
+                    </div>
+                </div>
+
                 <div class="profile-form-container">
                     <form id="profileForm">
                         <div class="form-group">
                             <label>아이디</label>
                             <input type="text" id="profileUserId" disabled>
                         </div>
-                        
+
                         <div class="form-group">
                             <label>이메일</label>
-                            <input type="email" id="profileEmailInput" disabled>
+                            <input type="email" id="profileEmailInput" id="profileEmailInput">
                         </div>
-                        
+
                         <div class="form-group">
-                            <label>이름</label>
+                            <label>이름 <span id="nameAdminNote" style="display:none;font-size:0.78rem;color:#f97316;font-weight:400;">(관리자: 수정 가능)</span></label>
                             <input type="text" id="profileNameInput" required>
                         </div>
-                        
+
                         <div class="form-group">
-                            <label>법무사 등록번호</label>
-                            <input type="text" id="licenseNumber" disabled>
+                            <label>법무사 등록번호 <span id="licenseAdminNote" style="display:none;font-size:0.78rem;color:#f97316;font-weight:400;">(관리자: 수정 가능)</span></label>
+                            <input type="text" id="licenseNumber">
                         </div>
-                        
+
                         <div class="form-group">
                             <label>휴대폰 번호</label>
                             <input type="tel" id="profilePhone" required>
                         </div>
-                        
+
                         <div class="form-group">
                             <label>사무소 주소</label>
-                            <input type="text" id="officeAddress" required>
+                            <input type="text" id="officeAddress">
                         </div>
-                        
+
+                        <!-- 활동 법원 선택 (추가/해제만 가능) -->
                         <div class="form-group">
-                            <label>비밀번호 변경</label>
-                            <input type="password" id="newPassword" placeholder="새 비밀번호 (변경 시에만 입력)">
+                            <label>활동 법원 <span style="font-size:0.78rem;color:#667eea;font-weight:400;">(법원 추가/해제 가능)</span></label>
+                            <div id="courtEditWrap" style="margin-top:0.5rem;"></div>
                         </div>
-                        
+
+                        <div class="form-group">
+                            <label>비밀번호 변경 <span style="color:#999;font-weight:400;font-size:0.8rem;">(변경 시에만 입력)</span></label>
+                            <input type="password" id="newPassword" placeholder="새 비밀번호 (8자 이상)">
+                        </div>
+
                         <div class="form-group">
                             <label>비밀번호 확인</label>
                             <input type="password" id="newPasswordConfirm" placeholder="새 비밀번호 확인">
                         </div>
-                        
-                        <button type="submit" class="btn btn-primary">저장하기</button>
+
+                        <button type="submit" class="btn btn-primary" id="profileSaveBtn">저장하기</button>
                     </form>
+
+                    <!-- 탈퇴 영역 -->
+                    <div style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid #f0f0f0;">
+                        <p style="font-size:0.82rem;color:#94a3b8;margin-bottom:0.75rem;">서비스 이용을 그만하시려면 탈퇴 처리해주세요.</p>
+                        <button type="button" onclick="handleWithdraw()" style="padding:0.65rem 1.5rem;background:white;color:#e53e3e;border:1.5px solid #e53e3e;border-radius:8px;font-size:0.85rem;font-weight:700;cursor:pointer;transition:all 0.2s;"
+                            onmouseover="this.style.background='#e53e3e';this.style.color='white';"
+                            onmouseout="this.style.background='white';this.style.color='#e53e3e';">
+                            <i class="fas fa-user-minus"></i> 회원 탈퇴
+                        </button>
+                    </div>
                 </div>
             </section>
         </main>
@@ -194,19 +225,21 @@
     (function() {
         // ── 관리자 대신 로그인 처리 ──────────────────────────────────
         const _adminKey = new URLSearchParams(location.search).get('adminLoginAs');
+        let IS_ADMIN_AS = false;
         if (_adminKey) {
             const _data = JSON.parse(localStorage.getItem(_adminKey) || 'null');
             if (_data) {
                 localStorage.removeItem(_adminKey);
                 localStorage.setItem('currentUser', JSON.stringify(_data));
                 history.replaceState(null, '', location.pathname);
+                IS_ADMIN_AS = true;
             }
         }
         // 로그인 체크
         if (!Auth.isLoggedIn() || Auth.getUserType() !== 'expert') {
             alert('법무사 로그인이 필요합니다.');
             window.location.href = 'login.html';
-            return; // 이후 코드 실행 방지
+            return;
         }
 
         // ── 카카오/SMS 알림톡 발송 (expert-mypage) ───────────────
@@ -236,8 +269,94 @@
         document.getElementById('profileEmailInput').value = user.email;
         document.getElementById('profileNameInput').value = user.name;
         document.getElementById('profilePhone').value = user.phone || '';
-        document.getElementById('licenseNumber').value = user.licenseNumber || '서울-12345';
+        document.getElementById('licenseNumber').value = user.licenseNumber || '';
         document.getElementById('officeAddress').value = user.officeAddress || '';
+
+        // ── 프로필 사진 표시 ────────────────────────────────────
+        if (user.profileUrl && !user.profileUrl.includes('placeholder.test')) {
+            // 사이드바 아바타
+            const avatarEl = document.getElementById('sidebarAvatar');
+            const iconEl   = document.getElementById('sidebarAvatarIcon');
+            if (iconEl) iconEl.style.display = 'none';
+            const img = document.createElement('img');
+            img.src = user.profileUrl;
+            img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+            img.onerror = function() { if(iconEl) iconEl.style.display=''; this.remove(); };
+            if (avatarEl) avatarEl.appendChild(img);
+
+            // 회원정보 탭 썸네일
+            const thumbWrap = document.getElementById('profilePhotoPreview');
+            const thumb = document.getElementById('profilePhotoThumb');
+            if (thumbWrap) thumbWrap.style.display = 'block';
+            if (thumb) {
+                const isLogo = user.profileType === 'logo';
+                const img2 = document.createElement('img');
+                img2.src = user.profileUrl;
+                img2.style.cssText = `width:100%;height:100%;object-fit:${isLogo?'contain':'cover'};padding:${isLogo?'4px':'0'};`;
+                img2.onerror = function() { thumb.innerHTML='<i class="fas fa-user-tie" style="color:#667eea;font-size:1.8rem;"></i>'; };
+                thumb.appendChild(img2);
+            }
+        }
+
+        // ── 관리자 모드 UI 설정 ─────────────────────────────────
+        if (IS_ADMIN_AS) {
+            document.getElementById('adminAsBanner').style.display = 'flex';
+            // 관리자는 이름, 등록번호도 수정 가능
+            const nameNote = document.getElementById('nameAdminNote');
+            const licNote  = document.getElementById('licenseAdminNote');
+            if (nameNote) nameNote.style.display = 'inline';
+            if (licNote)  licNote.style.display  = 'inline';
+            // 이메일도 수정 가능
+            document.getElementById('profileEmailInput').disabled = false;
+        } else {
+            // 일반 모드: 이름만 수정 가능 (이메일, 등록번호 disabled)
+            document.getElementById('profileEmailInput').disabled = true;
+            document.getElementById('licenseNumber').disabled = true;
+        }
+
+        // ── 활동 법원 체크박스 렌더링 ──────────────────────────
+        const COURTS = {
+            수도권: [
+                '서울중앙지법','서울동부지법','서울서부지법','서울남부지법','서울북부지법',
+                '의정부지법','의정부지법 고양지원','인천지법','인천지법 부천지원',
+                '수원지법','수원지법 성남지원','수원지법 여주지원','수원지법 평택지원','수원지법 안산지원','수원지법 안양지원'
+            ],
+            충청권: [
+                '대전지법','대전지법 홍성지원','대전지법 논산지원','대전지법 천안지원','대전지법 공주지원','대전지법 서산지원',
+                '청주지법','청주지법 충주지원','청주지법 제천지원','청주지법 영동지원'
+            ],
+            전라권: [
+                '광주지법','광주지법 목포지원','광주지법 장흥지원','광주지법 순천지원','광주지법 해남지원',
+                '전주지법','전주지법 군산지원','전주지법 정읍지원','전주지법 남원지원'
+            ],
+            경상권: [
+                '부산지법','부산지법 동부지원','울산지법',
+                '대구지법','대구지법 안동지원','대구지법 경주지원','대구지법 김천지원','대구지법 상주지원','대구지법 의성지원','대구지법 영덕지원','대구지법 포항지원',
+                '창원지법','창원지법 마산지원','창원지법 진주지원','창원지법 통영지원','창원지법 밀양지원','창원지법 거창지원'
+            ],
+            강원제주: [
+                '춘천지법','춘천지법 강릉지원','춘천지법 원주지원','춘천지법 속초지원','춘천지법 영월지원',
+                '제주지법'
+            ]
+        };
+        const savedCourts = Array.isArray(user.selectedCourts) ? user.selectedCourts : [];
+        const courtWrap = document.getElementById('courtEditWrap');
+        if (courtWrap) {
+            let html = '';
+            Object.entries(COURTS).forEach(([region, courts]) => {
+                html += `<div style="margin-bottom:0.85rem;"><p style="font-size:0.78rem;font-weight:700;color:#667eea;margin:0 0 0.4rem;">${region}</p><div style="display:flex;flex-wrap:wrap;gap:0.35rem;">`;
+                courts.forEach(court => {
+                    const checked = savedCourts.includes(court) ? 'checked' : '';
+                    html += `<label style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border:1.5px solid ${checked?'#667eea':'#e0e0e0'};border-radius:20px;font-size:0.78rem;cursor:pointer;background:${checked?'#eff6ff':'#fff'};transition:all 0.15s;"
+                        id="cl_${encodeURIComponent(court)}">
+                        <input type="checkbox" name="selectedCourts" value="${court}" ${checked} style="display:none;" onchange="updateCourtLabel(this)">
+                        ${court}
+                    </label>`;
+                });
+                html += '</div></div>';
+            });
+            courtWrap.innerHTML = html;
+        }
 
         // 섹션 전환
         function showSection(section, el) {
@@ -775,27 +894,73 @@
             });
         });
 
+        // ── 법원 라벨 색상 업데이트 ───────────────────────────
+        window.updateCourtLabel = function(checkbox) {
+            const label = checkbox.closest('label');
+            if (!label) return;
+            if (checkbox.checked) {
+                label.style.borderColor = '#667eea';
+                label.style.background  = '#eff6ff';
+            } else {
+                label.style.borderColor = '#e0e0e0';
+                label.style.background  = '#fff';
+            }
+        };
+
+        // ── 회원 탈퇴 ─────────────────────────────────────────
+        window.handleWithdraw = async function() {
+            if (!confirm('정말 탈퇴하시겠습니까?\n\n탈퇴 시 계정이 삭제되며 복구가 불가능합니다.')) return;
+            if (!confirm('마지막 확인입니다. 계속하시겠습니까?')) return;
+            try {
+                if (typeof API !== 'undefined' && user.id) {
+                    await API.users.update(user.id, { status: 'withdrawn', withdrawnAt: new Date().toISOString(), withdrawReason: '법무사 자발적 탈퇴' });
+                }
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('autoLogin');
+                alert('탈퇴 처리가 완료되었습니다.\n그동안 이용해주셔서 감사합니다.');
+                window.location.href = 'index.html';
+            } catch(e) {
+                alert('탈퇴 처리 중 오류가 발생했습니다.');
+            }
+        };
+
         // ── 회원정보 저장 (실제 API) ───────────────────────────
         document.getElementById('profileForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const newPassword = document.getElementById('newPassword').value;
             const newPasswordConfirm = document.getElementById('newPasswordConfirm').value;
-            if (newPassword && newPassword !== newPasswordConfirm) {
-                alert('비밀번호가 일치하지 않습니다.');
-                return;
-            }
+            if (newPassword && newPassword !== newPasswordConfirm) { alert('비밀번호가 일치하지 않습니다.'); return; }
+            if (newPassword && newPassword.length < 8) { alert('비밀번호는 8자 이상이어야 합니다.'); return; }
+
+            // 선택된 법원 목록
+            const selectedCourts = Array.from(document.querySelectorAll('input[name="selectedCourts"]:checked')).map(c => c.value);
+
             const updates = {
-                name: document.getElementById('profileNameInput').value,
-                phone: document.getElementById('profilePhone').value,
-                officeAddress: document.getElementById('officeAddress').value
+                name:          document.getElementById('profileNameInput').value,
+                phone:         document.getElementById('profilePhone').value,
+                officeAddress: document.getElementById('officeAddress').value,
+                selectedCourts
             };
+            // 관리자 모드: 추가 필드 수정
+            if (IS_ADMIN_AS) {
+                updates.email         = document.getElementById('profileEmailInput').value;
+                updates.licenseNumber = document.getElementById('licenseNumber').value;
+            }
             if (newPassword) updates.password = newPassword;
 
-            const btn = this.querySelector('button[type="submit"]');
+            const btn = document.getElementById('profileSaveBtn');
             btn.disabled = true; btn.textContent = '저장 중...';
 
             const result = await Auth.saveProfile(updates);
-            alert(result.success ? '회원정보가 저장되었습니다.' : (result.message || '저장 중 오류가 발생했습니다.'));
+            if (result.success) {
+                document.getElementById('userName').textContent = updates.name;
+                document.getElementById('profileName').textContent = updates.name;
+                document.getElementById('newPassword').value = '';
+                document.getElementById('newPasswordConfirm').value = '';
+                alert('✅ 회원정보가 저장되었습니다.');
+            } else {
+                alert(result.message || '저장 중 오류가 발생했습니다.');
+            }
             btn.disabled = false; btn.textContent = '저장하기';
         });
 
