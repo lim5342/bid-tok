@@ -848,10 +848,18 @@
                     <button class="ftab" onclick="setUserFilter('withdrawn',this)">탈퇴 <span class="cnt" id="ucnt-withdrawn">0</span></button>
                 </div>
 
-                <div class="toolbar">
-                    <div class="search-box">
+                <div class="toolbar" style="flex-wrap:wrap;gap:0.6rem;">
+                    <div class="search-box" style="flex:1;min-width:180px;">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="userSearchName" placeholder="이름 검색..." oninput="filterUserTable()">
+                    </div>
+                    <div class="search-box" style="flex:1;min-width:180px;">
+                        <i class="fas fa-phone"></i>
+                        <input type="text" id="userSearchPhone" placeholder="연락처 검색..." oninput="filterUserTable()">
+                    </div>
+                    <div class="search-box" style="flex:1;min-width:180px;">
                         <i class="fas fa-search"></i>
-                        <input type="text" id="userSearch" placeholder="이름, 이메일, 전화번호, 아이디 검색..." oninput="filterUserTable()">
+                        <input type="text" id="userSearch" placeholder="아이디, 이메일 검색..." oninput="filterUserTable()">
                     </div>
                     <select id="userSortSelect" onchange="filterUserTable()" style="padding:0.65rem 1rem; border:2px solid #e0e0e0; border-radius:10px; font-size:0.88rem; font-family:inherit;">
                         <option value="newest">최근 가입순</option>
@@ -2682,20 +2690,20 @@ function setUserFilter(type, el) {
 }
 
 function filterUserTable() {
-    const q    = (document.getElementById('userSearch')?.value || '').toLowerCase();
-    const sort = document.getElementById('userSortSelect')?.value || 'newest';
+    const q     = (document.getElementById('userSearch')?.value || '').toLowerCase();
+    const qName = (document.getElementById('userSearchName')?.value || '').toLowerCase();
+    const qPhone= (document.getElementById('userSearchPhone')?.value || '').replace(/[^0-9]/g,'');
+    const sort  = document.getElementById('userSortSelect')?.value || 'newest';
     let filtered = allUsers.filter(u => {
         let matchType = true;
-        if (userFilter === 'client')    matchType = u.userType === 'client';
+        if (userFilter === 'client')      matchType = u.userType === 'client';
         else if (userFilter === 'expert') matchType = u.userType === 'expert';
-        else if (userFilter === 'blocked')   matchType = u.status === 'blocked';
-        else if (userFilter === 'withdrawn') matchType = u.status === 'withdrawn';
-        const matchQ = !q ||
-            (u.name||'').toLowerCase().includes(q) ||
-            (u.email||'').toLowerCase().includes(q) ||
-            (u.phone||'').includes(q) ||
-            (u.userId||'').toLowerCase().includes(q);
-        return matchType && matchQ;
+        else if (userFilter === 'blocked')    matchType = u.status === 'blocked';
+        else if (userFilter === 'withdrawn')  matchType = u.status === 'withdrawn';
+        const matchName  = !qName  || (u.name||'').toLowerCase().includes(qName);
+        const matchPhone = !qPhone || (u.phone||'').replace(/[^0-9]/g,'').includes(qPhone);
+        const matchQ     = !q || (u.email||'').toLowerCase().includes(q) || (u.userId||'').toLowerCase().includes(q);
+        return matchType && matchName && matchPhone && matchQ;
     });
 
     // 정렬
@@ -2808,6 +2816,8 @@ async function openUserDetail(id) {
         if (u.userType === 'expert' && (u.cancelCount||0) > 0) {
             footBtns += `<button class="btn-full" onclick="closeModal('modalUser');resetCancelCount('${uId}','${uName}')" style="background:#3b82f6;color:white;"><i class="fas fa-redo"></i> 취소횟수 초기화</button>`;
         }
+        const uUserId = (u.userId||'').replace(/'/g,'');
+        footBtns += `<button class="btn-full" onclick="closeModal('modalUser');deleteUser('${uId}','${uName}','${uUserId}')" style="background:#7f1d1d;color:white;"><i class="fas fa-trash"></i> 완전 삭제</button>`;
         document.getElementById('modalUserFoot').innerHTML = footBtns;
 
     } catch(e) {
