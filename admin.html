@@ -1589,13 +1589,13 @@ async function loadDashboard() {
         const apps    = (appRes?.data) || [];
         allApps = apps;
 
-        // 전문가
+        // 전문가 (API가 파라미터를 무시하므로 클라이언트에서 필터)
         const expRes  = await API.users.getAll('userType=expert&status=active&limit=500');
-        const experts = (expRes?.data) || [];
+        const experts = ((expRes?.data) || []).filter(u => u.userType === 'expert' && u.status === 'active');
 
         // 승인대기 전문가
         const pendRes = await API.users.getAll('userType=expert&status=pending&limit=100');
-        const pending = (pendRes?.data) || [];
+        const pending = ((pendRes?.data) || []).filter(u => u.userType === 'expert' && u.status === 'pending');
 
         // ── 통계 카드 ──────────────────────────────
         const thisMonth = new Date().toISOString().slice(0, 7);
@@ -1942,7 +1942,7 @@ async function openAssign(appId) {
         const region = app?.region || '';
 
         const res    = await API.users.getAll('userType=expert&status=active&limit=200');
-        const experts = (res?.data) || [];
+        const experts = ((res?.data) || []).filter(u => u.userType === 'expert' && u.status === 'active');
 
         if (experts.length === 0) {
             document.getElementById('assignList').innerHTML =
@@ -2073,8 +2073,10 @@ async function loadExperts() {
     const statusMap = { pending: 'pending', active: 'active', rejected: 'rejected', setup_pending: 'setup_pending' };
     const statusParam = statusMap[expertFilter] || 'pending';
     try {
-        const res     = await API.users.getAll(`userType=expert&status=${statusParam}&limit=200&sort=-createdAt`);
-        const experts = (res?.data) || [];
+        const res  = await API.users.getAll(`userType=expert&status=${statusParam}&limit=200&sort=-createdAt`);
+        const all  = (res?.data) || [];
+        // ⚠️ API.users.getAll은 파라미터 무시하고 전체를 반환 → 클라이언트에서 필터링
+        const experts = all.filter(u => u.userType === 'expert' && u.status === statusParam);
         allExperts = experts; // 전역 캐시 저장
         renderExpertList(experts);
     } catch(e) {
@@ -2443,7 +2445,7 @@ function copySetupLink() {
 async function loadSetupPendingCount() {
     try {
         const res = await API.users.getAll('userType=expert&status=setup_pending&limit=200');
-        const cnt = (res?.data || []).length;
+        const cnt = (res?.data || []).filter(u => u.userType === 'expert' && u.status === 'setup_pending').length;
         const el = document.getElementById('cnt-setup-pending');
         if (el) el.textContent = cnt;
     } catch(e) {}
