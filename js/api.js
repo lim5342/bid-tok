@@ -184,6 +184,13 @@ const API = {
             return data;
         },
 
+        // 완전 삭제 (Firestore 문서 영구 삭제)
+        async delete(id) {
+            const db = getDB();
+            await db.collection('users').doc(id).delete();
+            return true;
+        },
+
         // 로그인 검증
         async authenticate(userId, password, userType) {
             try {
