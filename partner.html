@@ -359,6 +359,125 @@
     .p-footer a { color: rgba(255,255,255,0.5); text-decoration: none; }
     .p-footer a:hover { color: rgba(255,255,255,0.8); }
 
+    /* ── 대장TV 신뢰 배너 ── */
+    .dajangtv-trust-banner {
+        background: linear-gradient(90deg, #0D1B2A 0%, #1a2a3a 50%, #0D1B2A 100%);
+        border-bottom: 2px solid rgba(255,59,59,0.5);
+        padding: 10px 24px;
+        display: flex; align-items: center; justify-content: center;
+        gap: 14px; flex-wrap: wrap;
+        position: relative; z-index: 99;
+    }
+    .dajangtv-trust-banner .yt-logo {
+        display: flex; align-items: center; gap: 7px;
+        background: #FF0000; border-radius: 6px;
+        padding: 5px 12px 5px 9px;
+        font-size: 0.82rem; font-weight: 800; color: #fff;
+        letter-spacing: -0.01em; white-space: nowrap;
+        text-decoration: none;
+        transition: background 0.15s;
+    }
+    .dajangtv-trust-banner .yt-logo:hover { background: #CC0000; }
+    .dajangtv-trust-banner .yt-logo i { font-size: 1.05rem; }
+    .dajangtv-trust-banner .trust-text {
+        font-size: 0.88rem; color: rgba(255,255,255,0.85); font-weight: 500;
+        white-space: nowrap;
+    }
+    .dajangtv-trust-banner .trust-text strong { color: #FFD700; font-weight: 800; }
+    .dajangtv-trust-banner .trust-badge {
+        background: rgba(255,215,0,0.15); border: 1px solid rgba(255,215,0,0.4);
+        color: #FFD700; font-size: 0.75rem; font-weight: 700;
+        padding: 3px 10px; border-radius: 20px; white-space: nowrap;
+    }
+    .dajangtv-trust-banner .divider {
+        width: 1px; height: 18px; background: rgba(255,255,255,0.2);
+    }
+
+    /* ── 대장TV 소개 섹션 ── */
+    .dajangtv-section {
+        background: linear-gradient(180deg, #0a1520 0%, #0D1B2A 100%);
+        padding: 72px 24px;
+    }
+    .dajangtv-inner {
+        max-width: 1080px; margin: 0 auto;
+        display: grid; grid-template-columns: 1fr 1fr;
+        gap: 56px; align-items: center;
+    }
+    .dajangtv-video-wrap {
+        position: relative;
+        border-radius: 16px; overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        border: 1px solid rgba(255,255,255,0.1);
+        aspect-ratio: 16/9;
+        background: #000;
+    }
+    .dajangtv-video-wrap iframe {
+        width: 100%; height: 100%; border: none; display: block;
+    }
+    .dajangtv-info {}
+    .dajangtv-eyebrow {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: rgba(255,0,0,0.15); border: 1px solid rgba(255,80,80,0.35);
+        color: #FF6B6B; font-size: 0.78rem; font-weight: 800;
+        padding: 5px 14px; border-radius: 20px; margin-bottom: 20px;
+        letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .dajangtv-eyebrow i { font-size: 0.85rem; }
+    .dajangtv-title {
+        font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+        font-weight: 900; color: #fff;
+        line-height: 1.25; letter-spacing: -0.03em;
+        margin-bottom: 16px;
+    }
+    .dajangtv-title .gold { color: #FFD700; }
+    .dajangtv-desc {
+        font-size: 0.93rem; color: rgba(255,255,255,0.65);
+        line-height: 1.8; margin-bottom: 28px;
+    }
+    .dajangtv-stats {
+        display: flex; gap: 24px; margin-bottom: 32px; flex-wrap: wrap;
+    }
+    .dj-stat {
+        text-align: center;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 12px; padding: 14px 20px;
+        min-width: 100px;
+    }
+    .dj-stat .ds-num {
+        font-size: 1.5rem; font-weight: 900;
+        color: #FFD700; line-height: 1;
+        margin-bottom: 4px;
+    }
+    .dj-stat .ds-lbl {
+        font-size: 0.72rem; color: rgba(255,255,255,0.5); font-weight: 600;
+    }
+    .dajangtv-btns {
+        display: flex; gap: 12px; flex-wrap: wrap;
+    }
+    .btn-yt-channel {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: #FF0000; color: #fff;
+        border-radius: 10px; padding: 12px 22px;
+        font-size: 0.9rem; font-weight: 700;
+        text-decoration: none; transition: all 0.2s;
+        box-shadow: 0 4px 16px rgba(255,0,0,0.35);
+    }
+    .btn-yt-channel:hover { background: #CC0000; transform: translateY(-2px); }
+    .btn-yt-sub {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.8);
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 10px; padding: 12px 22px;
+        font-size: 0.9rem; font-weight: 600;
+        text-decoration: none; transition: all 0.2s;
+    }
+    .btn-yt-sub:hover { background: rgba(255,255,255,0.14); color: #fff; }
+    @media (max-width: 860px) {
+        .dajangtv-inner { grid-template-columns: 1fr; gap: 36px; }
+        .dajangtv-info { order: -1; }
+    }
+
     /* ── 반응형 ── */
     @media (max-width: 768px) {
         .p-nav { padding: 0 20px; }
@@ -383,6 +502,19 @@
 </head>
 <body>
 
+<!-- 대장TV 신뢰 배너 -->
+<div class="dajangtv-trust-banner">
+    <a href="https://www.youtube.com/@ksj" target="_blank" rel="noopener" class="yt-logo">
+        <i class="fab fa-youtube"></i>
+        대장TV
+    </a>
+    <div class="divider"></div>
+    <span class="trust-text">부동산경매 전문 <strong>36만 구독자</strong> 유튜버 대장TV가 직접 만든 플랫폼</span>
+    <div class="divider"></div>
+    <span class="trust-badge">🏆 경매 1위 채널</span>
+    <span class="trust-badge">✅ 공식 인증</span>
+</div>
+
 <!-- 네비 -->
 <nav class="p-nav">
     <a href="index.html" class="p-nav-logo">
@@ -398,6 +530,64 @@
     <a href="#apply" class="p-nav-cta">대리인 합류하기 →</a>
     <a href="#apply" class="p-nav-mobile-btn"><i class="fas fa-arrow-right"></i></a>
 </nav>
+
+<!-- 대장TV 소개 섹션 -->
+<section class="dajangtv-section" id="dajangtv">
+    <div class="dajangtv-inner">
+        <!-- 영상 -->
+        <div class="dajangtv-video-wrap">
+            <iframe
+                src="https://www.youtube.com/embed/ytU-lbH8htc?rel=0&modestbranding=1"
+                title="대장TV 김상준 대표 - 부동산경매 전문 채널"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+                loading="lazy">
+            </iframe>
+        </div>
+        <!-- 정보 -->
+        <div class="dajangtv-info">
+            <div class="dajangtv-eyebrow">
+                <i class="fab fa-youtube"></i>
+                공식 파트너 채널
+            </div>
+            <h2 class="dajangtv-title">
+                부동산경매 전문<br>
+                <span class="gold">36만 유튜버 대장TV</span>가<br>
+                직접 만든 플랫폼
+            </h2>
+            <p class="dajangtv-desc">
+                대장TV 김상준 대표는 10년 이상 부동산 경매를 직접 실전에서 실행하며
+                쌓아온 노하우를 유튜브로 공유해 온 국내 <strong style="color:#fff;">부동산경매 1위 채널</strong>입니다.
+                그 경험과 신뢰를 바탕으로 만든 대리입찰 플랫폼 — 대리입찰 톡이
+                공인중개사 여러분과 함께 성장할 파트너를 모집합니다.
+            </p>
+            <div class="dajangtv-stats">
+                <div class="dj-stat">
+                    <div class="ds-num">36만</div>
+                    <div class="ds-lbl">유튜브 구독자</div>
+                </div>
+                <div class="dj-stat">
+                    <div class="ds-num">1,100+</div>
+                    <div class="ds-lbl">경매 실전 영상</div>
+                </div>
+                <div class="dj-stat">
+                    <div class="ds-num">10년+</div>
+                    <div class="ds-lbl">경매 실전 경험</div>
+                </div>
+            </div>
+            <div class="dajangtv-btns">
+                <a href="https://www.youtube.com/@ksj" target="_blank" rel="noopener" class="btn-yt-channel">
+                    <i class="fab fa-youtube"></i>
+                    대장TV 채널 방문
+                </a>
+                <a href="#apply" class="btn-yt-sub">
+                    <i class="fas fa-handshake"></i>
+                    파트너 지원하기
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
 
 <!-- 히어로 -->
 <section class="hero" id="about">

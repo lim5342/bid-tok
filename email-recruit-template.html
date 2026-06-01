@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>대리입찰 톡 파트너 모집 - 대장TV</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #f4f6f9;
+    font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .email-wrapper {
+    max-width: 620px;
+    margin: 30px auto;
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+  }
+
+  /* ── 헤더 ── */
+  .email-header {
+    background: linear-gradient(135deg, #0D1B2A 0%, #1B2B4A 100%);
+    padding: 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .email-header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 70% 50%, rgba(31,111,255,0.25) 0%, transparent 70%);
+  }
+  .header-top-bar {
+    background: #FF0000;
+    padding: 10px 24px;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    position: relative; z-index: 1;
+  }
+  .header-top-bar .yt-icon {
+    width: 22px; height: 22px;
+    background: #fff; border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; color: #FF0000; font-weight: 900;
+    flex-shrink: 0;
+  }
+  .header-top-bar span {
+    color: #fff; font-size: 0.83rem; font-weight: 700;
+    letter-spacing: 0.03em;
+  }
+  .header-top-bar .sub-badge {
+    background: rgba(255,255,255,0.25);
+    color: #fff; font-size: 0.72rem; font-weight: 800;
+    padding: 2px 9px; border-radius: 20px;
+    white-space: nowrap;
+  }
+  .header-main {
+    padding: 36px 32px 32px;
+    position: relative; z-index: 1;
+  }
+  .platform-badge {
+    display: inline-block;
+    background: rgba(31,111,255,0.2);
+    border: 1px solid rgba(31,111,255,0.45);
+    color: #93C5FD; font-size: 0.75rem; font-weight: 700;
+    padding: 5px 14px; border-radius: 20px;
+    margin-bottom: 18px; letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .header-main h1 {
+    font-size: 1.9rem; font-weight: 900;
+    color: #fff; line-height: 1.25;
+    letter-spacing: -0.03em;
+    margin-bottom: 12px;
+  }
+  .header-main h1 .blue { color: #60A5FA; }
+  .header-main h1 .gold { color: #FFD700; }
+  .header-sub {
+    font-size: 0.9rem; color: rgba(255,255,255,0.65);
+    line-height: 1.7; margin-bottom: 28px;
+  }
+  .header-stats {
+    display: flex; gap: 0; justify-content: center;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 24px;
+  }
+  .h-stat {
+    flex: 1; text-align: center;
+    border-right: 1px solid rgba(255,255,255,0.1);
+    padding: 0 12px;
+  }
+  .h-stat:last-child { border-right: none; }
+  .h-stat .num { font-size: 1.4rem; font-weight: 900; color: #FFD700; line-height: 1; }
+  .h-stat .lbl { font-size: 0.68rem; color: rgba(255,255,255,0.5); margin-top: 4px; font-weight: 600; }
+
+  /* ── 대장TV 소개 블록 ── */
+  .djtv-block {
+    background: linear-gradient(135deg, #0a1520 0%, #0f1f30 100%);
+    padding: 28px 32px;
+    display: flex; align-items: center; gap: 22px;
+    border-top: 3px solid #FF0000;
+  }
+  .djtv-thumb {
+    width: 88px; height: 88px; border-radius: 50%;
+    background: linear-gradient(135deg, #FF0000, #cc0000);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 2.2rem;
+    box-shadow: 0 6px 20px rgba(255,0,0,0.4);
+    overflow: hidden;
+    border: 3px solid rgba(255,255,255,0.15);
+  }
+  .djtv-info h3 {
+    font-size: 1.05rem; font-weight: 900; color: #fff;
+    margin-bottom: 6px; letter-spacing: -0.02em;
+  }
+  .djtv-info h3 .red { color: #FF6B6B; }
+  .djtv-info p {
+    font-size: 0.83rem; color: rgba(255,255,255,0.6);
+    line-height: 1.65;
+  }
+  .djtv-tags {
+    display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px;
+  }
+  .djtv-tag {
+    background: rgba(255,215,0,0.12); border: 1px solid rgba(255,215,0,0.3);
+    color: #FFD700; font-size: 0.7rem; font-weight: 700;
+    padding: 2px 9px; border-radius: 12px;
+    white-space: nowrap;
+  }
+
+  /* ── 본문 ── */
+  .email-body { padding: 36px 32px; }
+  .greeting {
+    font-size: 1.1rem; color: #1E293B; font-weight: 700;
+    margin-bottom: 16px; line-height: 1.5;
+  }
+  .greeting .name { color: #1F6FFF; }
+  .body-text {
+    font-size: 0.88rem; color: #475569; line-height: 1.85;
+    margin-bottom: 28px;
+  }
+  .body-text strong { color: #1E293B; font-weight: 700; }
+
+  /* ── 혜택 카드 그리드 ── */
+  .benefit-title {
+    font-size: 1rem; font-weight: 900; color: #1E293B;
+    margin-bottom: 16px; letter-spacing: -0.02em;
+  }
+  .benefit-title .accent { color: #1F6FFF; }
+  .benefits-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 12px; margin-bottom: 32px;
+  }
+  .b-card {
+    background: #F8FAFC; border: 1px solid #E2E8F0;
+    border-radius: 12px; padding: 18px 16px;
+    border-top: 3px solid #1F6FFF;
+  }
+  .b-card .b-icon { font-size: 1.6rem; margin-bottom: 8px; }
+  .b-card h4 { font-size: 0.85rem; font-weight: 800; color: #1E293B; margin-bottom: 5px; }
+  .b-card p { font-size: 0.78rem; color: #64748B; line-height: 1.6; }
+  .b-card .b-num { font-size: 1.5rem; font-weight: 900; color: #1F6FFF; line-height: 1; margin-bottom: 4px; }
+
+  /* ── 플랫폼 화면 소개 ── */
+  .platform-preview {
+    background: linear-gradient(135deg, #1F6FFF 0%, #0D4FBF 100%);
+    border-radius: 14px; padding: 28px 24px;
+    text-align: center; margin-bottom: 32px;
+    position: relative; overflow: hidden;
+  }
+  .platform-preview::before {
+    content: '';
+    position: absolute; top: -30px; right: -30px;
+    width: 120px; height: 120px; border-radius: 50%;
+    background: rgba(255,255,255,0.07);
+  }
+  .platform-preview h3 {
+    font-size: 1rem; font-weight: 900; color: #fff;
+    margin-bottom: 8px; position: relative;
+  }
+  .platform-preview p {
+    font-size: 0.82rem; color: rgba(255,255,255,0.75);
+    line-height: 1.65; margin-bottom: 20px; position: relative;
+  }
+  .pp-features {
+    display: flex; gap: 8px; justify-content: center;
+    flex-wrap: wrap; position: relative;
+  }
+  .pp-feat {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: #fff; font-size: 0.77rem; font-weight: 700;
+    padding: 6px 14px; border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  /* ── 프로세스 ── */
+  .process-section { margin-bottom: 32px; }
+  .process-title {
+    font-size: 0.95rem; font-weight: 900; color: #1E293B;
+    margin-bottom: 14px; letter-spacing: -0.02em;
+  }
+  .process-steps {
+    display: flex; gap: 0; position: relative;
+  }
+  .process-steps::before {
+    content: '';
+    position: absolute; top: 18px; left: 12%; right: 12%; height: 2px;
+    background: #E2E8F0;
+  }
+  .p-step { flex: 1; text-align: center; position: relative; z-index: 1; }
+  .p-step .ps-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: #1F6FFF; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; font-weight: 800;
+    margin: 0 auto 8px;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 8px rgba(31,111,255,0.3);
+  }
+  .p-step .ps-lbl {
+    font-size: 0.72rem; color: #475569; font-weight: 600; line-height: 1.4;
+  }
+
+  /* ── 신청 CTA ── */
+  .cta-section {
+    background: linear-gradient(135deg, #0D1B2A 0%, #1B2B4A 100%);
+    border-radius: 14px; padding: 32px 24px;
+    text-align: center; margin-bottom: 28px;
+    position: relative; overflow: hidden;
+  }
+  .cta-section::before {
+    content: '';
+    position: absolute; bottom: -40px; left: -40px;
+    width: 150px; height: 150px; border-radius: 50%;
+    background: rgba(31,111,255,0.12);
+  }
+  .cta-section h3 {
+    font-size: 1.15rem; font-weight: 900; color: #fff;
+    margin-bottom: 8px; position: relative;
+    letter-spacing: -0.02em;
+  }
+  .cta-section p {
+    font-size: 0.83rem; color: rgba(255,255,255,0.6);
+    line-height: 1.65; margin-bottom: 22px; position: relative;
+  }
+  .cta-btn {
+    display: inline-block;
+    background: linear-gradient(90deg, #1F6FFF, #0EA5E9);
+    color: #fff; font-size: 1rem; font-weight: 800;
+    padding: 16px 40px; border-radius: 12px;
+    text-decoration: none; letter-spacing: -0.01em;
+    box-shadow: 0 6px 24px rgba(31,111,255,0.45);
+    position: relative;
+  }
+  .cta-deadline {
+    margin-top: 14px;
+    font-size: 0.77rem; color: rgba(255,255,255,0.45);
+    position: relative;
+  }
+  .cta-deadline strong { color: #FFD700; }
+
+  /* ── 연락처 ── */
+  .contact-block {
+    background: #F8FAFC; border: 1px solid #E2E8F0;
+    border-radius: 12px; padding: 20px 22px; margin-bottom: 28px;
+    display: flex; align-items: flex-start; gap: 16px;
+  }
+  .contact-icon {
+    width: 42px; height: 42px; border-radius: 10px;
+    background: #EBF2FF; display: flex; align-items: center; justify-content: center;
+    font-size: 1.15rem; flex-shrink: 0;
+  }
+  .contact-info h4 { font-size: 0.88rem; font-weight: 800; color: #1E293B; margin-bottom: 6px; }
+  .contact-info p { font-size: 0.82rem; color: #64748B; line-height: 1.7; }
+  .contact-info a { color: #1F6FFF; text-decoration: none; font-weight: 600; }
+
+  /* ── 푸터 ── */
+  .email-footer {
+    background: #0D1B2A;
+    padding: 24px 32px;
+    text-align: center;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .footer-logo {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-bottom: 12px;
+  }
+  .footer-logo .lb {
+    width: 28px; height: 28px; background: #1F6FFF;
+    border-radius: 6px; display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; color: #fff; font-weight: 900;
+  }
+  .footer-logo span { color: rgba(255,255,255,0.7); font-size: 0.9rem; font-weight: 700; }
+  .footer-text {
+    font-size: 0.72rem; color: rgba(255,255,255,0.3);
+    line-height: 1.8;
+  }
+  .footer-text a { color: rgba(255,255,255,0.4); text-decoration: none; }
+  .footer-divider {
+    width: 40px; height: 1px; background: rgba(255,255,255,0.1);
+    margin: 14px auto;
+  }
+
+  /* 강조 박스 */
+  .highlight-box {
+    background: #EBF2FF; border: 1px solid #BFDBFE;
+    border-left: 4px solid #1F6FFF;
+    border-radius: 0 10px 10px 0;
+    padding: 16px 18px; margin-bottom: 28px;
+    font-size: 0.86rem; color: #1E3A5F; line-height: 1.7;
+  }
+  .highlight-box strong { color: #1F6FFF; }
+
+  .yt-red { color: #FF0000; font-weight: 800; }
+  .section-divider {
+    height: 1px; background: #E2E8F0; margin: 0 0 28px 0;
+  }
+</style>
+</head>
+<body>
+<div class="email-wrapper">
+
+  <!-- ── 상단 대장TV 레드 바 ── -->
+  <div class="header-top-bar">
+    <div class="yt-icon">▶</div>
+    <span>부동산경매 전문 유튜버 <strong>대장TV</strong>의 공식 파트너 플랫폼</span>
+    <span class="sub-badge">구독자 36만</span>
+  </div>
+
+  <!-- ── 헤더 ── -->
+  <div class="email-header">
+    <div class="header-main">
+      <div class="platform-badge">🎯 파트너 대리인 모집</div>
+      <h1>
+        <span class="gold">대장TV</span>가 만든<br>
+        <span class="blue">대리입찰 전문</span><br>
+        플랫폼에 합류하세요
+      </h1>
+      <p class="header-sub">
+        36만 부동산경매 유튜버 대장TV가 직접 운영하는<br>
+        <strong style="color:#fff;">대리입찰 톡</strong> — 공인중개사 파트너를 모집합니다.
+      </p>
+      <div class="header-stats">
+        <div class="h-stat">
+          <div class="num">0%</div>
+          <div class="lbl">베타기간<br>수수료</div>
+        </div>
+        <div class="h-stat">
+          <div class="num">전국</div>
+          <div class="lbl">서비스<br>가능 법원</div>
+        </div>
+        <div class="h-stat">
+          <div class="num">선착순</div>
+          <div class="lbl">우선<br>매칭 배정</div>
+        </div>
+        <div class="h-stat">
+          <div class="num">24h</div>
+          <div class="lbl">실시간<br>의뢰 알림</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 대장TV 소개 블록 ── -->
+  <div class="djtv-block">
+    <div class="djtv-thumb">🎬</div>
+    <div class="djtv-info">
+      <h3><span class="red">대장TV</span> 김상준 대표</h3>
+      <p>
+        10년 이상 부동산 경매 실전 경험을 바탕으로<br>
+        36만 구독자에게 경매 노하우를 공유해 온<br>
+        국내 <strong style="color:#fff;">부동산경매 채널 1위</strong> 유튜버입니다.
+      </p>
+      <div class="djtv-tags">
+        <span class="djtv-tag">📺 구독자 36만</span>
+        <span class="djtv-tag">🏆 경매채널 1위</span>
+        <span class="djtv-tag">📹 1,100+ 영상</span>
+        <span class="djtv-tag">⏰ 10년+ 실전경험</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 본문 ── -->
+  <div class="email-body">
+
+    <p class="greeting">
+      안녕하세요, <span class="name">대리입찰 톡</span> 파트너팀입니다.
+    </p>
+
+    <p class="body-text">
+      부동산경매 전문 36만 유튜버 <strong>대장TV 김상준 대표</strong>가 직접 기획하고 만든 대리입찰 전문 플랫폼,
+      <strong>대리입찰 톡</strong>에서 함께 할 <strong>매수신청대리인 파트너</strong>를 모집합니다.<br><br>
+      대장TV의 36만 구독자 채널을 통해 홍보되는 플랫폼인 만큼, 출시와 동시에 <strong>대규모 의뢰 유입</strong>이
+      예상됩니다. 베타 기간 중 선착순으로 모집하오니, 지금 바로 지원하세요.
+    </p>
+
+    <div class="highlight-box">
+      💡 <strong>왜 대장TV 플랫폼인가요?</strong><br>
+      대장TV 36만 구독자 대부분이 부동산 경매에 관심 있는 잠재 고객입니다.
+      유튜브 채널을 통한 지속적인 마케팅으로 <strong>의뢰 물량이 안정적으로 확보</strong>되며,
+      플랫폼 신뢰도 또한 압도적입니다.
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- 혜택 -->
+    <p class="benefit-title">🎁 파트너 <span class="accent">활동 혜택</span></p>
+    <div class="benefits-grid">
+      <div class="b-card">
+        <div class="b-num">0%</div>
+        <h4>베타기간 수수료 무료</h4>
+        <p>베타 운영 기간 동안 플랫폼 수수료 없음. 수임료 <strong>전액 본인 수령</strong></p>
+      </div>
+      <div class="b-card">
+        <div class="b-icon">🔔</div>
+        <h4>실시간 의뢰 알림</h4>
+        <p>희망 법원의 새 의뢰 발생 시 앱으로 즉시 푸시 알림 수신</p>
+      </div>
+      <div class="b-card">
+        <div class="b-icon">⚡</div>
+        <h4>선착순 우선 배정</h4>
+        <p>빠른 수락일수록 더 많은 의뢰가 우선 배정되는 구조</p>
+      </div>
+      <div class="b-card">
+        <div class="b-icon">🗺️</div>
+        <h4>희망 법원 직접 선택</h4>
+        <p>전국 60개 법원 중 내가 원하는 법원만 선택해 매칭</p>
+      </div>
+      <div class="b-card">
+        <div class="b-icon">📊</div>
+        <h4>수임 이력 관리</h4>
+        <p>모든 의뢰·수임 내역을 앱에서 한 번에 확인 및 관리</p>
+      </div>
+      <div class="b-card">
+        <div class="b-icon">🤝</div>
+        <h4>전담 매니저 지원</h4>
+        <p>활동 중 발생하는 모든 문의를 전담 매니저가 즉시 처리</p>
+      </div>
+    </div>
+
+    <!-- 플랫폼 소개 -->
+    <div class="platform-preview">
+      <h3>📱 대리입찰 톡 플랫폼 특징</h3>
+      <p>
+        고객이 의뢰를 등록하면 관리자가 법원·지역 기준으로<br>
+        최적의 파트너에게 <strong style="color:#fff;">자동 매칭</strong>합니다.<br>
+        카카오톡 + SMS 이중 알림으로 절대 놓치지 마세요.
+      </p>
+      <div class="pp-features">
+        <span class="pp-feat">📲 카카오톡 알림</span>
+        <span class="pp-feat">💬 SMS 이중 발송</span>
+        <span class="pp-feat">⚖️ 법원별 매칭</span>
+        <span class="pp-feat">🔒 정보 보안 강화</span>
+        <span class="pp-feat">📋 전자 계약</span>
+      </div>
+    </div>
+
+    <!-- 프로세스 -->
+    <div class="process-section">
+      <p class="process-title">📋 신청 프로세스</p>
+      <div class="process-steps">
+        <div class="p-step">
+          <div class="ps-num">1</div>
+          <div class="ps-lbl">신청 폼<br>작성</div>
+        </div>
+        <div class="p-step">
+          <div class="ps-num">2</div>
+          <div class="ps-lbl">서류<br>검토</div>
+        </div>
+        <div class="p-step">
+          <div class="ps-num">3</div>
+          <div class="ps-lbl">담당자<br>연락</div>
+        </div>
+        <div class="p-step">
+          <div class="ps-num">4</div>
+          <div class="ps-lbl">계정<br>활성화</div>
+        </div>
+        <div class="p-step">
+          <div class="ps-num">5</div>
+          <div class="ps-lbl">의뢰<br>수신 시작</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- CTA -->
+    <div class="cta-section">
+      <h3>🚀 지금 바로 파트너 신청하기</h3>
+      <p>
+        선착순 모집이 마감되기 전에 신청하세요.<br>
+        빨리 등록할수록 더 많은 의뢰를 우선 배정받습니다.
+      </p>
+      <a href="https://bid-tok.kr/partner.html" class="cta-btn">
+        대리입찰 톡 파트너 신청 →
+      </a>
+      <p class="cta-deadline">
+        ※ 베타기간 한정 <strong>수수료 0%</strong> 혜택 · 선착순 마감
+      </p>
+    </div>
+
+    <!-- 연락처 -->
+    <div class="contact-block">
+      <div class="contact-icon">📞</div>
+      <div class="contact-info">
+        <h4>문의 및 상담</h4>
+        <p>
+          대표전화: <a href="tel:02-853-5875">02-853-5875</a><br>
+          이메일: <a href="mailto:qkqk5342@naver.com">qkqk5342@naver.com</a><br>
+          홈페이지: <a href="https://bid-tok.kr/partner.html">bid-tok.kr/partner.html</a><br>
+          유튜브: <a href="https://www.youtube.com/@ksj">youtube.com/@ksj (대장TV)</a>
+        </p>
+      </div>
+    </div>
+
+    <p class="body-text" style="font-size:0.8rem;color:#94A3B8;text-align:center;">
+      본 메일은 대리입찰 파트너 모집 안내를 위해 발송되었습니다.<br>
+      수신을 원치 않으시면 위 이메일로 수신거부 의사를 알려주세요.
+    </p>
+  </div>
+
+  <!-- ── 푸터 ── -->
+  <div class="email-footer">
+    <div class="footer-logo">
+      <div class="lb">⚖</div>
+      <span>대리입찰 톡 — 대장TV</span>
+    </div>
+    <div class="footer-divider"></div>
+    <div class="footer-text">
+      상호명: 대리입찰톡 - 대장TV &nbsp;|&nbsp; 운영사: (주)원스타프로비<br>
+      서울특별시 금천구 가산디지털1로 75-24 901호<br>
+      대표관리자: 장영준 &nbsp;|&nbsp; 대표전화: <a href="tel:02-853-5875">02-853-5875</a><br><br>
+      © 2026 (주)원스타프로비 대리입찰톡. All rights reserved.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
