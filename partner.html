@@ -395,18 +395,19 @@
 
     /* ── 대장TV 소개 섹션 ── */
     .dajangtv-section {
-        background: linear-gradient(180deg, #0a1520 0%, #0D1B2A 100%);
-        padding: 72px 24px;
+        background: linear-gradient(180deg, #080f18 0%, #0D1B2A 100%);
+        padding: 80px 24px 0;
     }
     .dajangtv-inner {
         max-width: 1080px; margin: 0 auto;
         display: grid; grid-template-columns: 1fr 1fr;
-        gap: 56px; align-items: center;
+        gap: 60px; align-items: center;
+        padding-bottom: 72px;
     }
     .dajangtv-video-wrap {
         position: relative;
         border-radius: 16px; overflow: hidden;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.6);
         border: 1px solid rgba(255,255,255,0.1);
         aspect-ratio: 16/9;
         background: #000;
@@ -431,27 +432,56 @@
     }
     .dajangtv-title .gold { color: #FFD700; }
     .dajangtv-desc {
-        font-size: 0.93rem; color: rgba(255,255,255,0.65);
-        line-height: 1.8; margin-bottom: 28px;
+        font-size: 0.9rem; color: rgba(255,255,255,0.6);
+        line-height: 1.85; margin-bottom: 24px;
     }
+    .dajangtv-desc strong { color: #fff; }
+    /* 통계 4개 그리드 */
     .dajangtv-stats {
-        display: flex; gap: 24px; margin-bottom: 32px; flex-wrap: wrap;
+        display: grid; grid-template-columns: 1fr 1fr;
+        gap: 10px; margin-bottom: 28px;
     }
     .dj-stat {
-        text-align: center;
         background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.1);
-        border-radius: 12px; padding: 14px 20px;
-        min-width: 100px;
+        border: 1px solid rgba(255,255,255,0.09);
+        border-radius: 12px; padding: 14px 16px;
+        display: flex; align-items: center; gap: 12px;
     }
+    .dj-stat .ds-icon {
+        font-size: 1.4rem; flex-shrink: 0;
+        width: 40px; height: 40px;
+        background: rgba(255,215,0,0.1);
+        border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .dj-stat .ds-txt { line-height: 1.2; }
     .dj-stat .ds-num {
-        font-size: 1.5rem; font-weight: 900;
-        color: #FFD700; line-height: 1;
-        margin-bottom: 4px;
+        font-size: 1.25rem; font-weight: 900;
+        color: #FFD700; display: block;
     }
     .dj-stat .ds-lbl {
-        font-size: 0.72rem; color: rgba(255,255,255,0.5); font-weight: 600;
+        font-size: 0.7rem; color: rgba(255,255,255,0.45); font-weight: 600;
     }
+    /* 연결 메시지 박스 */
+    .dj-connect-box {
+        background: linear-gradient(135deg, rgba(31,111,255,0.12) 0%, rgba(45,212,191,0.08) 100%);
+        border: 1px solid rgba(31,111,255,0.3);
+        border-left: 4px solid var(--blue);
+        border-radius: 0 12px 12px 0;
+        padding: 18px 20px;
+        margin-bottom: 28px;
+    }
+    .dj-connect-box p {
+        font-size: 0.875rem; color: rgba(255,255,255,0.75);
+        line-height: 1.8;
+    }
+    .dj-connect-box p strong { color: #60CDFF; }
+    .dj-connect-box .dj-tagline {
+        margin-top: 10px;
+        font-size: 0.95rem; font-weight: 800; color: #fff;
+        letter-spacing: -0.02em;
+    }
+    .dj-connect-box .dj-tagline span { color: #FFD700; }
     .dajangtv-btns {
         display: flex; gap: 12px; flex-wrap: wrap;
     }
@@ -466,16 +496,46 @@
     .btn-yt-channel:hover { background: #CC0000; transform: translateY(-2px); }
     .btn-yt-sub {
         display: inline-flex; align-items: center; gap: 8px;
-        background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.8);
-        border: 1px solid rgba(255,255,255,0.2);
+        background: var(--blue); color: #fff;
+        border: none;
         border-radius: 10px; padding: 12px 22px;
-        font-size: 0.9rem; font-weight: 600;
+        font-size: 0.9rem; font-weight: 700;
         text-decoration: none; transition: all 0.2s;
+        box-shadow: 0 4px 16px rgba(31,111,255,0.35);
     }
-    .btn-yt-sub:hover { background: rgba(255,255,255,0.14); color: #fff; }
+    .btn-yt-sub:hover { background: var(--blue-hover); transform: translateY(-2px); }
+    /* 총합 배너 (섹션 하단) */
+    .dj-total-banner {
+        max-width: 1080px; margin: 0 auto;
+        background: linear-gradient(90deg, rgba(255,215,0,0.07) 0%, rgba(31,111,255,0.07) 100%);
+        border-top: 1px solid rgba(255,255,255,0.07);
+        border-radius: 0;
+        padding: 28px 0;
+        display: flex; align-items: center; justify-content: center;
+        gap: 12px; flex-wrap: wrap;
+    }
+    .dj-total-banner .tb-label {
+        font-size: 0.85rem; color: rgba(255,255,255,0.5); font-weight: 600;
+    }
+    .dj-total-banner .tb-num {
+        font-size: 1.7rem; font-weight: 900; color: #FFD700;
+        letter-spacing: -0.03em;
+    }
+    .dj-total-banner .tb-desc {
+        font-size: 0.85rem; color: rgba(255,255,255,0.7); font-weight: 600;
+    }
+    .dj-total-banner .tb-divider {
+        width: 1px; height: 32px; background: rgba(255,255,255,0.12);
+        margin: 0 8px;
+    }
     @media (max-width: 860px) {
         .dajangtv-inner { grid-template-columns: 1fr; gap: 36px; }
         .dajangtv-info { order: -1; }
+        .dj-total-banner { gap: 8px; padding: 22px 16px; }
+        .dj-total-banner .tb-divider { display: none; }
+    }
+    @media (max-width: 480px) {
+        .dajangtv-stats { grid-template-columns: 1fr 1fr; }
     }
 
     /* ── 반응형 ── */
@@ -556,25 +616,55 @@
                 직접 만든 플랫폼
             </h2>
             <p class="dajangtv-desc">
-                대장TV 김상준 대표는 10년 이상 부동산 경매를 직접 실전에서 실행하며
-                쌓아온 노하우를 유튜브로 공유해 온 국내 <strong style="color:#fff;">부동산경매 1위 채널</strong>입니다.
-                그 경험과 신뢰를 바탕으로 만든 대리입찰 플랫폼 — 대리입찰 톡이
-                공인중개사 여러분과 함께 성장할 파트너를 모집합니다.
+                대장TV 김상준 대표는 <strong>10년 이상 부동산 경매를 직접 실전</strong>에서 실행하며
+                쌓아온 노하우를 공유해 온 국내 <strong>부동산경매 1위 채널</strong>입니다.<br>
+                단순한 유튜버가 아닌 — <strong>실제로 경매를 하고 있기에</strong>
+                대리입찰이 필요한 고객이 얼마나 많은지 누구보다 잘 압니다.
             </p>
+
+            <!-- 커뮤니티 규모 통계 4개 -->
             <div class="dajangtv-stats">
                 <div class="dj-stat">
-                    <div class="ds-num">36만</div>
-                    <div class="ds-lbl">유튜브 구독자</div>
+                    <div class="ds-icon">📺</div>
+                    <div class="ds-txt">
+                        <span class="ds-num">36만</span>
+                        <span class="ds-lbl">유튜브 구독자</span>
+                    </div>
                 </div>
                 <div class="dj-stat">
-                    <div class="ds-num">1,100+</div>
-                    <div class="ds-lbl">경매 실전 영상</div>
+                    <div class="ds-icon">🏛️</div>
+                    <div class="ds-txt">
+                        <span class="ds-num">3만명</span>
+                        <span class="ds-lbl">대장옥션 경매정보지 이용자</span>
+                    </div>
                 </div>
                 <div class="dj-stat">
-                    <div class="ds-num">10년+</div>
-                    <div class="ds-lbl">경매 실전 경험</div>
+                    <div class="ds-icon">🎓</div>
+                    <div class="ds-txt">
+                        <span class="ds-num">6천명</span>
+                        <span class="ds-lbl">경매 학원 수강생</span>
+                    </div>
+                </div>
+                <div class="dj-stat">
+                    <div class="ds-icon">📣</div>
+                    <div class="ds-txt">
+                        <span class="ds-num">12만명</span>
+                        <span class="ds-lbl">카페·커뮤니티 채널</span>
+                    </div>
                 </div>
             </div>
+
+            <!-- 연결 메시지 -->
+            <div class="dj-connect-box">
+                <p>
+                    이 모든 커뮤니티 회원들이 <strong>대리입찰을 희망하는 실수요 고객</strong>입니다.<br>
+                    저희는 이미 <strong>고객이 있습니다.</strong> 이제 <strong>대신 입찰해 줄 분</strong>이 필요합니다.
+                </p>
+                <div class="dj-tagline">
+                    대리입찰 하고 싶은 사람이 많습니다. <span>연결해 드리겠습니다.</span>
+                </div>
+            </div>
+
             <div class="dajangtv-btns">
                 <a href="https://www.youtube.com/@ksj" target="_blank" rel="noopener" class="btn-yt-channel">
                     <i class="fab fa-youtube"></i>
@@ -586,6 +676,15 @@
                 </a>
             </div>
         </div>
+    </div>
+
+    <!-- 총합 배너 -->
+    <div class="dj-total-banner">
+        <span class="tb-label">대장TV 전체 커뮤니티</span>
+        <span class="tb-num">57만+</span>
+        <span class="tb-desc">명의 부동산경매 실수요 고객이 대리입찰을 기다리고 있습니다</span>
+        <div class="tb-divider"></div>
+        <span class="tb-label">✅ 해본 사람이 만든 플랫폼 &nbsp;·&nbsp; 고객이 먼저 있습니다</span>
     </div>
 </section>
 
