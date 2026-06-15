@@ -1785,15 +1785,8 @@ async function loadDashboard() {
 // ═══════════════════════════════════════════════════════
 async function loadAdminNotifs() {
     try {
-        const db = getDB();
-        if (!db) return;
-        const snap = await db.collection('adminNotifications')
-            .orderBy('createdAt', 'desc')
-            .limit(30)
-            .get();
-
-        const notifs = [];
-        snap.forEach(doc => notifs.push({ id: doc.id, ...doc.data() }));
+        const items = await _fsGetCollection('adminNotifications');
+        const notifs = items.sort((a,b) => (b.createdAt||'').localeCompare(a.createdAt||'')).slice(0,30);
 
         const unread = notifs.filter(n => !n.isRead).length;
         const badge  = document.getElementById('adminNotifBadge');
@@ -1830,51 +1823,22 @@ async function loadAdminNotifs() {
             </div>`;
         }).join('');
     } catch(err) {
-        // Firestore 인덱스 없는 경우 클라이언트 정렬로 폴백
-        try {
-            const db = getDB();
-            const snap2 = await db.collection('adminNotifications').get();
-            const notifs2 = [];
-            snap2.forEach(doc => notifs2.push({ id: doc.id, ...doc.data() }));
-            notifs2.sort((a,b) => (b.createdAt||'').localeCompare(a.createdAt||''));
-            const listEl = document.getElementById('adminNotifList');
-            if (!listEl) return;
-            if (notifs2.length === 0) {
-                listEl.innerHTML = '<div style="text-align:center;padding:2rem;color:#ccc;font-size:0.85rem;">알림 없음</div>';
-                return;
-            }
-            const unread2 = notifs2.filter(n => !n.isRead).length;
-            const badge2  = document.getElementById('adminNotifBadge');
-            if (badge2) { badge2.textContent = unread2; badge2.style.display = unread2 > 0 ? 'inline' : 'none'; }
-            listEl.innerHTML = notifs2.slice(0,30).map(n => {
-                const isBlock = n.type === 'expert_auto_blocked';
-                const icon = isBlock ? '🚫' : '⚠️';
-                const dt   = n.createdAt ? n.createdAt.slice(0,16).replace('T',' ') : '-';
-                return `<div style="padding:0.85rem 1rem;border-bottom:1px solid #f0f0f0;background:${n.isRead?'#f8fafc':'#fffbeb'};">
-                    <p style="margin:0;font-size:0.83rem;font-weight:${n.isRead?'400':'700'};color:#1e293b;">${icon} ${n.message||'-'}</p>
-                    <p style="margin:0.25rem 0 0;font-size:0.75rem;color:#94a3b8;">${dt}</p>
-                    ${isBlock && n.expertDocId ? `<button onclick="unblockUser('${n.expertDocId}','${(n.expertName||'').replace(/'/g,'')}');event.stopPropagation();" style="margin-top:0.4rem;padding:0.3rem 0.75rem;background:#667eea;color:white;border:none;border-radius:6px;font-size:0.75rem;cursor:pointer;">정지 해제</button>` : ''}
-                </div>`;
-            }).join('');
-        } catch(e2) { console.warn('관리자 알림 로드 실패:', e2); }
+        console.warn('관리자 알림 로드 실패:', err);
     }
 }
 
 async function markNotifRead(notifId) {
     try {
-        const db = getDB();
-        await db.collection('adminNotifications').doc(notifId).update({ isRead: true });
+        await _fsUpdateDoc('adminNotifications', notifId, { isRead: true });
         loadAdminNotifs();
     } catch(e) { console.warn('알림 읽음 처리 실패:', e); }
 }
 
 async function markAllNotifsRead() {
     try {
-        const db = getDB();
-        const snap = await db.collection('adminNotifications').where('isRead', '==', false).get();
-        const batch = db.batch();
-        snap.forEach(doc => batch.update(doc.ref, { isRead: true }));
-        await batch.commit();
+        const items = await _fsGetCollection('adminNotifications');
+        const unreadIds = items.filter(n => !n.isRead).map(n => n.id);
+        await Promise.all(unreadIds.map(id => _fsUpdateDoc('adminNotifications', id, { isRead: true })));
         loadAdminNotifs();
         showToast('모든 알림을 읽음 처리했습니다.', 'success');
     } catch(e) { console.warn('알림 일괄 처리 실패:', e); }

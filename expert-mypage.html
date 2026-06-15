@@ -746,10 +746,8 @@
             if (!confirm(warningMsg)) return;
 
             try {
-                const db = getDB();
                 const now = new Date().toISOString();
 
-                // 신청 상태 취소로 변경
                 await API.applications.updateStatus(id, '취소', {
                     cancelledBy:     user.userId || user.id,
                     cancelledByName: user.name,
@@ -757,18 +755,15 @@
                     cancelReason:    '법무사 승인 후 취소'
                 });
 
-                // cancelCount 증가 저장
-                await db.collection('users').doc(user.id).update({
+                await _fsUpdateDoc('users', user.id, {
                     cancelCount:  newCancelCount,
                     lastCancelAt: now
                 });
 
-                // ── 관리자 알림 (adminNotifications 컬렉션) ──────────
-                const appDoc = await db.collection('applications').doc(id).get();
-                const appData = appDoc.exists ? appDoc.data() : {};
+                const appData = await _fsGetDoc('applications', id) || {};
                 const isAutoBlock = newCancelCount >= 3;
 
-                await db.collection('adminNotifications').add({
+                await _fsAddDoc('adminNotifications', {
                     type:         isAutoBlock ? 'expert_auto_blocked' : 'expert_cancel_after_accept',
                     expertId:     user.userId || user.id,
                     expertName:   user.name,
@@ -784,11 +779,9 @@
                     isRead:       false,
                     createdAt:    now
                 });
-                // ─────────────────────────────────────────────────────
 
-                // 3회 이상 → 계정 자동 정지
                 if (isAutoBlock) {
-                    await db.collection('users').doc(user.id).update({
+                    await _fsUpdateDoc('users', user.id, {
                         status:        'blocked',
                         blockedAt:     now,
                         blockedReason: `법무사 승인 후 ${newCancelCount}회 취소 자동정지`
@@ -914,9 +907,7 @@
                 this.disabled     = true;
                 this.textContent  = '처리 중...';
                 try {
-                    const db     = getDB();
-                    const appDoc = await db.collection('applications').doc(id).get();
-                    const appData = appDoc.exists ? appDoc.data() : null;
+                    const appData = await _fsGetDoc('applications', id) || {};
 
                     await API.applications.updateStatus(id, finalStatus, {
                         completedAt:  new Date().toISOString(),

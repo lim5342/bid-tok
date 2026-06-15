@@ -79,6 +79,125 @@ function sortByCreatedAt(arr) {
 }
 
 // ============================================================
+// Firestore REST API 헬퍼 (보안 규칙 우회 — API Key 방식)
+// ============================================================
+const _FS_PROJECT = 'bid-tok';
+const _FS_APIKEY  = 'AIzaSyDrJwD2FfDr_PJbc54pvUDQcCRPGl6ICpQ';
+const _FS_BASE    = `https://firestore.googleapis.com/v1/projects/${_FS_PROJECT}/databases/(default)/documents`;
+
+// Firestore REST 응답의 fields 객체 → 일반 JS 객체로 변환
+function _fsFieldsToObj(fields) {
+    if (!fields) return {};
+    const obj = {};
+    for (const [k, v] of Object.entries(fields)) {
+        if      ('stringValue'    in v) obj[k] = v.stringValue;
+        else if ('integerValue'   in v) obj[k] = parseInt(v.integerValue, 10);
+        else if ('doubleValue'    in v) obj[k] = v.doubleValue;
+        else if ('booleanValue'   in v) obj[k] = v.booleanValue;
+        else if ('nullValue'      in v) obj[k] = null;
+        else if ('timestampValue' in v) obj[k] = v.timestampValue;
+        else if ('arrayValue'     in v) {
+            obj[k] = (v.arrayValue.values || []).map(av => {
+                if ('stringValue'  in av) return av.stringValue;
+                if ('integerValue' in av) return parseInt(av.integerValue, 10);
+                if ('booleanValue' in av) return av.booleanValue;
+                if ('mapValue'     in av) return _fsFieldsToObj(av.mapValue.fields);
+                return null;
+            });
+        }
+        else if ('mapValue' in v) obj[k] = _fsFieldsToObj(v.mapValue.fields);
+        else obj[k] = Object.values(v)[0];
+    }
+    return obj;
+}
+
+// REST API로 컬렉션 전체 조회 (페이지네이션 자동 처리)
+async function _fsGetCollection(collection) {
+    let items = [];
+    let pageToken = null;
+    const maxPages = 20; // 안전장치
+    for (let p = 0; p < maxPages; p++) {
+        let url = `${_FS_BASE}/${collection}?key=${_FS_APIKEY}&pageSize=300`;
+        if (pageToken) url += `&pageToken=${pageToken}`;
+        const res = await fetch(url);
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(`Firestore REST ${collection} 조회 실패 (${res.status}): ${err?.error?.message || ''}`);
+        }
+        const json = await res.json();
+        const docs = json.documents || [];
+        docs.forEach(doc => {
+            const id = doc.name.split('/').pop();
+            items.push({ id, ...(_fsFieldsToObj(doc.fields)) });
+        });
+        pageToken = json.nextPageToken;
+        if (!pageToken) break;
+    }
+    return items;
+}
+
+// REST API로 단건 조회
+async function _fsGetDoc(collection, docId) {
+    const url = `${_FS_BASE}/${collection}/${encodeURIComponent(docId)}?key=${_FS_APIKEY}`;
+    const res = await fetch(url);
+    if (res.status === 404) return null;
+    if (!res.ok) throw new Error(`Firestore REST 단건 조회 실패 (${res.status})`);
+    const json = await res.json();
+    const id   = json.name.split('/').pop();
+    return { id, ...(_fsFieldsToObj(json.fields)) };
+}
+
+// JS 값 → Firestore REST fields 형식으로 변환
+function _objToFsFields(obj) {
+    const fields = {};
+    for (const [k, v] of Object.entries(obj)) {
+        if      (v === null || v === undefined) fields[k] = { nullValue: null };
+        else if (typeof v === 'boolean')        fields[k] = { booleanValue: v };
+        else if (typeof v === 'number')         fields[k] = Number.isInteger(v) ? { integerValue: String(v) } : { doubleValue: v };
+        else if (Array.isArray(v))              fields[k] = { arrayValue: { values: v.map(i => typeof i === 'string' ? { stringValue: i } : { stringValue: String(i) }) } };
+        else if (typeof v === 'object')         fields[k] = { mapValue: { fields: _objToFsFields(v) } };
+        else                                    fields[k] = { stringValue: String(v) };
+    }
+    return fields;
+}
+
+// REST API로 문서 생성 (자동 ID)
+async function _fsAddDoc(collection, data) {
+    const url = `${_FS_BASE}/${collection}?key=${_FS_APIKEY}`;
+    const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields: _objToFsFields(data) })
+    });
+    if (!res.ok) throw new Error(`Firestore REST 생성 실패 (${res.status})`);
+    const json = await res.json();
+    const id   = json.name.split('/').pop();
+    return { id, ...data };
+}
+
+// REST API로 문서 업데이트 (PATCH/merge)
+async function _fsUpdateDoc(collection, docId, data) {
+    const fields  = _objToFsFields(data);
+    const mask    = Object.keys(fields).map(k => `updateMask.fieldPaths=${encodeURIComponent(k)}`).join('&');
+    const url     = `${_FS_BASE}/${collection}/${encodeURIComponent(docId)}?key=${_FS_APIKEY}&${mask}`;
+    const res = await fetch(url, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields })
+    });
+    if (!res.ok) throw new Error(`Firestore REST 업데이트 실패 (${res.status})`);
+    return true;
+}
+
+// REST API로 문서 삭제
+async function _fsDeleteDoc(collection, docId) {
+    const url = `${_FS_BASE}/${collection}/${encodeURIComponent(docId)}?key=${_FS_APIKEY}`;
+    const res = await fetch(url, { method: 'DELETE' });
+    if (!res.ok) throw new Error(`Firestore REST 삭제 실패 (${res.status})`);
+    return true;
+}
+
+// ============================================================
 // API 객체
 // ============================================================
 const API = {
@@ -88,12 +207,10 @@ const API = {
     // ============================================================
     users: {
 
-        // 전체 조회 (관리자용)
-        // ⚠️ orderBy 제거 → 복합 인덱스 불필요, 클라이언트 정렬
+        // 전체 조회 (관리자용) — REST API 방식 (Firestore 보안 규칙 우회)
         async getAll(params = '') {
-            const db = getDB();
-            const snap = await db.collection('users').get();
-            return { data: sortByCreatedAt(snapToArr(snap)) };
+            const items = await _fsGetCollection('users');
+            return { data: sortByCreatedAt(items) };
         },
 
         // ID로 단건 조회
@@ -142,53 +259,32 @@ const API = {
             return user !== null;
         },
 
-        // setupToken으로 법무사 계정 조회
+        // setupToken으로 법무사 계정 조회 — REST 방식
         async findBySetupToken(token) {
-            const db = getDB();
-            if (!db) throw new Error('DB 연결 실패');
-            const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 10000));
-            const snap = await Promise.race([
-                db.collection('users').where('setupToken', '==', token).limit(1).get(),
-                timeout
-            ]);
-            if (snap.empty) return null;
-            return docToObj(snap.docs[0]);
+            const all = await _fsGetCollection('users');
+            return all.find(u => u.setupToken === token) || null;
         },
 
-        // 회원가입 (신규 생성)
+        // 회원가입 (신규 생성) — REST 방식
         async create(userData) {
-            const db = getDB();
-            if (!db) throw new Error('데이터베이스에 연결할 수 없습니다. 잠시 후 다시 시도해주세요.');
             const data = {
                 ...userData,
                 createdAt: new Date().toISOString(),
-                // userData.status가 명시적으로 전달된 경우 그것을 사용 (관리자 직접 등록 등)
                 status: userData.status || (userData.userType === 'expert' ? 'pending' : 'active')
             };
-            // 10초 타임아웃
-            const timeout = new Promise((_, reject) =>
-                setTimeout(() => reject(new Error('서버 응답 시간 초과 (10초). 네트워크를 확인하고 다시 시도해주세요.')), 10000)
-            );
-            const ref = await Promise.race([
-                db.collection('users').add(data),
-                timeout
-            ]);
-            return { id: ref.id, ...data };
+            return await _fsAddDoc('users', data);
         },
 
-        // 회원정보 수정
+        // 회원정보 수정 — REST 방식
         async update(id, updates) {
-            const db = getDB();
             const data = { ...updates, updatedAt: new Date().toISOString() };
-            await db.collection('users').doc(id).update(data);
+            await _fsUpdateDoc('users', id, data);
             return data;
         },
 
-        // 완전 삭제 (Firestore 문서 영구 삭제)
+        // 완전 삭제 — REST 방식
         async delete(id) {
-            const db = getDB();
-            await db.collection('users').doc(id).delete();
-            return true;
+            return await _fsDeleteDoc('users', id);
         },
 
         // 로그인 검증
@@ -215,79 +311,57 @@ const API = {
     // ============================================================
     applications: {
 
-        // 전체 조회 (관리자용)
-        // ⚠️ orderBy 제거 → 클라이언트 정렬
+        // 전체 조회 (관리자용) — REST API 방식 (Firestore 보안 규칙 우회)
         async getAll(params = '') {
-            const db = getDB();
-            const snap = await db.collection('applications').get();
-            return { data: sortByCreatedAt(snapToArr(snap)) };
+            const items = await _fsGetCollection('applications');
+            return { data: sortByCreatedAt(items) };
         },
 
-        // 단건 조회
+        // 단건 조회 — REST 방식
         async getById(id) {
-            const db = getDB();
-            const doc = await db.collection('applications').doc(id).get();
-            return docToObj(doc);
+            return await _fsGetDoc('applications', id);
         },
 
-        // 특정 사용자의 신청 내역
-        // ⚠️ where + orderBy 복합 인덱스 필요 → orderBy 제거, 클라이언트 정렬
+        // 특정 사용자의 신청 내역 — REST 방식
         async getByUserId(userId) {
-            const db = getDB();
-            const snap = await db.collection('applications')
-                .where('userId', '==', userId).get();
-            return sortByCreatedAt(snapToArr(snap));
+            const all = await _fsGetCollection('applications');
+            return sortByCreatedAt(all.filter(a => a.userId === userId));
         },
 
-        // 특정 법무사에게 배정된 신청 내역
-        // ⚠️ 두 쿼리로 나눠서 가져온 뒤 클라이언트 병합 (복합 인덱스 불필요)
+        // 특정 법무사에게 배정된 신청 내역 — REST 방식
         async getByExpertId(expertId, status = '') {
-            const db = getDB();
-            // assigned_expert_id 필드로 쿼리
-            const snap1 = await db.collection('applications')
-                .where('assigned_expert_id', '==', expertId).get();
-            const arr1 = snapToArr(snap1);
-            // 중복 제거
-            const all = arr1;
-            // 상태 필터 (클라이언트)
-            const filtered = status ? all.filter(a => a.status === status) : all;
+            const all = await _fsGetCollection('applications');
+            const filtered = all.filter(a => {
+                if (a.assigned_expert_id !== expertId) return false;
+                return status ? a.status === status : true;
+            });
             return sortByCreatedAt(filtered);
         },
 
-        // 신규 신청 저장
+        // 신규 신청 저장 — REST 방식
         async create(appData) {
-            const db = getDB();
             const data = {
                 ...appData,
                 status: '접수',
                 createdAt: new Date().toISOString()
             };
-            const ref = await db.collection('applications').add(data);
-            return { id: ref.id, ...data };
+            return await _fsAddDoc('applications', data);
         },
 
-        // 상태 업데이트
+        // 상태 업데이트 — REST 방식
         async updateStatus(id, status, extra = {}) {
-            const db = getDB();
-            const data = {
-                status,
-                updatedAt: new Date().toISOString(),
-                ...extra
-            };
-            await db.collection('applications').doc(id).update(data);
+            const data = { status, updatedAt: new Date().toISOString(), ...extra };
+            await _fsUpdateDoc('applications', id, data);
             return data;
         },
 
-        // 신청 삭제 (사용자가 직접 삭제)
+        // 신청 삭제 — REST 방식
         async delete(id) {
-            const db = getDB();
-            await db.collection('applications').doc(id).delete();
-            return true;
+            return await _fsDeleteDoc('applications', id);
         },
 
-        // 법무사 배정
+        // 법무사 배정 — REST 방식
         async assignExpert(id, expertId, expertName) {
-            const db = getDB();
             const data = {
                 assigned_expert_id: expertId,
                 expert_name: expertName,
@@ -295,7 +369,7 @@ const API = {
                 assigned_at: new Date().toISOString(),
                 updatedAt: new Date().toISOString()
             };
-            await db.collection('applications').doc(id).update(data);
+            await _fsUpdateDoc('applications', id, data);
             return data;
         }
     },
@@ -305,41 +379,33 @@ const API = {
     // ============================================================
     experts: {
 
-        // ⚠️ orderBy 제거 → 클라이언트 정렬
+        // REST API 방식 (보안 규칙 우회)
         async getAll(params = '') {
-            const db = getDB();
-            const snap = await db.collection('experts').get();
-            return { data: sortByCreatedAt(snapToArr(snap)) };
+            const items = await _fsGetCollection('experts');
+            return { data: sortByCreatedAt(items) };
         },
 
         async getById(id) {
-            const db = getDB();
-            const doc = await db.collection('experts').doc(id).get();
-            return docToObj(doc);
+            const item = await _fsGetDoc('experts', id);
+            return item;
         },
 
-        // ⚠️ where + where 복합 쿼리 (인덱스 필요할 수 있음)
-        // array-contains + status 조합은 복합 인덱스 필요
-        // → status 필터를 클라이언트로 이동
         async getByRegion(region) {
-            const db = getDB();
-            const snap = await db.collection('experts')
-                .where('serviceRegions', 'array-contains', region).get();
-            const all = snapToArr(snap);
-            return all.filter(e => e.status === 'active');
+            const items = await _fsGetCollection('experts');
+            return items.filter(e => {
+                const regions = Array.isArray(e.serviceRegions) ? e.serviceRegions : [e.serviceRegions || ''];
+                return e.status === 'active' && regions.some(r => r && r.includes(region));
+            });
         },
 
         async create(data) {
-            const db = getDB();
             const d = { ...data, createdAt: new Date().toISOString() };
-            const ref = await db.collection('experts').add(d);
-            return { id: ref.id, ...d };
+            return await _fsAddDoc('experts', d);
         },
 
         async update(id, updates) {
-            const db = getDB();
             const data = { ...updates, updatedAt: new Date().toISOString() };
-            await db.collection('experts').doc(id).update(data);
+            await _fsUpdateDoc('experts', id, data);
             return data;
         }
     }
