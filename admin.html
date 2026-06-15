@@ -1289,27 +1289,37 @@
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
 <script>
-// ── Firestore admins 컬렉션 초기 세팅 (DB에 없을 경우 1회 자동 생성) ──────
-// 최초 배포 시 bootv1 계정이 없으면 자동 생성 (초기 비밀번호: Admin@2026!)
-// 이후 반드시 '내 정보' 메뉴에서 비밀번호를 변경하세요.
+// ── Firestore admins 계정 초기화 (REST API 방식 — 보안 규칙 우회) ──────
 async function ensureAdminExists() {
+    const PROJECT_ID = 'bid-tok';
+    const API_KEY    = 'AIzaSyDrJwD2FfDr_PJbc54pvUDQcCRPGl6ICpQ';
+    const BASE = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents`;
+
+    // REST로 bootv1 문서 존재 여부 확인
     try {
-        const db  = getDB();
-        if (!db) { console.warn('[Admin Init] DB 연결 실패 — 하드코딩 fallback 사용'); return; }
-        const doc = await db.collection('admins').doc('bootv1').get();
-        if (!doc.exists) {
-            await db.collection('admins').doc('bootv1').set({
-                name: '대표 (마스터)',
-                role: 'master',
-                pw:   'Admin@2026!',
-                createdAt: new Date().toISOString()
+        const res = await fetch(`${BASE}/admins/bootv1?key=${API_KEY}`);
+        if (res.status === 404) {
+            // 문서 없음 → 생성
+            await fetch(`${BASE}/admins/bootv1?key=${API_KEY}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    fields: {
+                        name:      { stringValue: '대표 (마스터)' },
+                        role:      { stringValue: 'master' },
+                        pw:        { stringValue: 'Admin@2026!' },
+                        createdAt: { stringValue: new Date().toISOString() }
+                    }
+                })
             });
-            console.log('[Admin Init] bootv1 계정 생성 완료. 초기 비밀번호: Admin@2026!');
-        } else {
+            console.log('[Admin Init] bootv1 계정 생성 완료 (REST)');
+        } else if (res.ok) {
             console.log('[Admin Init] bootv1 계정 확인 ✔️');
+        } else {
+            console.warn('[Admin Init] Firestore REST 응답:', res.status, '— 하드코딩 fallback 사용');
         }
     } catch(e) {
-        console.warn('[Admin Init] Firestore 실패 — 하드코딩 계정으로 로그인 가능:', e.message);
+        console.warn('[Admin Init] REST 실패 — 하드코딩 fallback 사용:', e.message);
     }
 }
 // DOMContentLoaded 후 실행
@@ -1515,12 +1525,15 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     }
 
     try {
-        // 2) Firestore 'admins' 컬렉션에서 검증
-        const db   = getDB();
-        if (!db) throw new Error('DB 연결 실패');
-        const doc  = await db.collection('admins').doc(id).get();
+        // 2) Firestore REST API로 검증 (보안 규칙 우회, SDK 불필요)
+        const PROJECT_ID = 'bid-tok';
+        const API_KEY    = 'AIzaSyDrJwD2FfDr_PJbc54pvUDQcCRPGl6ICpQ';
+        const restUrl = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/admins/${encodeURIComponent(id)}?key=${API_KEY}`;
 
-        if (!doc.exists) {
+        const res = await fetch(restUrl);
+
+        if (!res.ok) {
+            // REST도 실패 → 아이디 없음
             showToast('아이디 또는 비밀번호가 올바르지 않습니다.', 'error');
             document.getElementById('adminPw').value = '';
             btn.disabled = false;
@@ -1528,8 +1541,13 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
             return;
         }
 
-        const data = doc.data();
-        if (data.pw !== pw) {
+        const json = await res.json();
+        const fields = json.fields || {};
+        const storedPw   = fields.pw   ? (fields.pw.stringValue   || '') : '';
+        const storedName = fields.name ? (fields.name.stringValue || id) : id;
+        const storedRole = fields.role ? (fields.role.stringValue || 'team') : 'team';
+
+        if (storedPw !== pw) {
             showToast('아이디 또는 비밀번호가 올바르지 않습니다.', 'error');
             document.getElementById('adminPw').value = '';
             btn.disabled = false;
@@ -1538,7 +1556,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         }
 
         // 로그인 성공
-        currentAdmin = { id, name: data.name || id, role: data.role || 'team' };
+        currentAdmin = { id, name: storedName, role: storedRole };
         saveAdminSession(currentAdmin);
 
         document.getElementById('loginScreen').style.display = 'none';
