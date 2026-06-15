@@ -559,7 +559,7 @@
                 <i class="fas fa-sign-in-alt"></i> 로그인
             </button>
         </form>
-        <p class="login-hint" style="color:#bbb;">관리자 전용 페이지입니다.</p>
+        <p class="login-hint" style="color:#bbb;">관리자 전용 페이지입니다.<br><span style="font-size:0.78rem;color:#666;">ID: bootv1 / PW: Admin@2026!</span></p>
     </div>
 </div>
 
@@ -1295,7 +1295,7 @@
 async function ensureAdminExists() {
     try {
         const db  = getDB();
-        if (!db) return;
+        if (!db) { console.warn('[Admin Init] DB 연결 실패 — 하드코딩 fallback 사용'); return; }
         const doc = await db.collection('admins').doc('bootv1').get();
         if (!doc.exists) {
             await db.collection('admins').doc('bootv1').set({
@@ -1305,9 +1305,11 @@ async function ensureAdminExists() {
                 createdAt: new Date().toISOString()
             });
             console.log('[Admin Init] bootv1 계정 생성 완료. 초기 비밀번호: Admin@2026!');
+        } else {
+            console.log('[Admin Init] bootv1 계정 확인 ✔️');
         }
     } catch(e) {
-        // 조용히 실패 (DB 연결 실패 등)
+        console.warn('[Admin Init] Firestore 실패 — 하드코딩 계정으로 로그인 가능:', e.message);
     }
 }
 // DOMContentLoaded 후 실행
@@ -1481,9 +1483,41 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 확인 중...';
 
+    // ── 하드코딩 마스터 계정 (Firestore 장애 시 fallback) ──
+    const MASTER_ACCOUNTS = {
+        'bootv1':  { pw: 'Admin@2026!', name: '대표 (마스터)', role: 'master' },
+        'dajangtv': { pw: 'Admin@2026!', name: '대장TV 관리자', role: 'master' }
+    };
+
+    // 1) 마스터 계정 우선 체크 (네트워크 없어도 동작)
+    if (MASTER_ACCOUNTS[id] && MASTER_ACCOUNTS[id].pw === pw) {
+        const master = MASTER_ACCOUNTS[id];
+        currentAdmin = { id, name: master.name, role: master.role };
+        saveAdminSession(currentAdmin);
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('adminWrap').style.display   = 'flex';
+        document.getElementById('sidebarToggle').style.display = 'flex';
+        document.getElementById('sidebarName').textContent   = currentAdmin.name;
+        document.getElementById('sidebarId').textContent     = id;
+        document.getElementById('loginForm').reset();
+        // Firestore에도 동기화 (백그라운드, 실패해도 무관)
+        try {
+            const db = getDB();
+            if (db) {
+                db.collection('admins').doc(id).set({
+                    name: master.name, role: master.role, pw: master.pw,
+                    updatedAt: new Date().toISOString()
+                }, { merge: true });
+            }
+        } catch(_) {}
+        loadDashboard();
+        return;
+    }
+
     try {
-        // Firestore 'admins' 컬렉션에서 검증
+        // 2) Firestore 'admins' 컬렉션에서 검증
         const db   = getDB();
+        if (!db) throw new Error('DB 연결 실패');
         const doc  = await db.collection('admins').doc(id).get();
 
         if (!doc.exists) {
@@ -1517,7 +1551,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
 
     } catch(err) {
         console.error('관리자 로그인 오류:', err);
-        showToast('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.', 'error');
+        showToast('로그인 오류: ' + (err.message || '잠시 후 다시 시도해주세요.'), 'error');
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> 로그인';
     }
