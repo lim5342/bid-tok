@@ -1,7 +1,8 @@
-// ============================================
-// API 연동 모듈 (api.js)
-// Firebase Firestore 기반
-// ============================================
+// ============================================================
+// API 연동 모듈 (api.js)  v3.0
+// ★ Firebase 403 자동 폴백 → LocalDB (IndexedDB) 사용
+// ★ Firebase 규칙이 열리면 자동으로 Firebase로 복구
+// ============================================================
 
 // Firebase 설정
 const firebaseConfig = {
@@ -14,27 +15,17 @@ const firebaseConfig = {
     measurementId: "G-GD3DDTB9BY"
 };
 
-// Firebase SDK 로드 (CDN)
-// → 각 HTML 파일 <body> 끝에 아래 스크립트 태그가 있어야 함:
-//   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-//   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-//   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
-
-// Firebase 초기화 (중복 방지)
 let _db = null;
 let _storage = null;
+let _fsBlocked = null;  // null=미확인, true=차단됨, false=열려있음
 
 function getDB() {
     if (_db) return _db;
     try {
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        } else {
-            // 이미 초기화된 앱 재사용
-            firebase.app();
-        }
+        if (typeof firebase === 'undefined') return null;
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        else firebase.app();
         _db = firebase.firestore();
-        console.log('Firebase Firestore 연결 ✅');
         return _db;
     } catch (e) {
         console.error('Firebase 초기화 오류:', e);
@@ -45,13 +36,12 @@ function getDB() {
 function getStorage() {
     if (_storage) return _storage;
     try {
+        if (typeof firebase === 'undefined') return null;
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         else firebase.app();
         _storage = firebase.storage();
-        console.log('Firebase Storage 연결 ✅');
         return _storage;
     } catch (e) {
-        console.error('Firebase Storage 초기화 오류:', e);
         return null;
     }
 }
@@ -69,7 +59,6 @@ function snapToArr(snap) {
     return arr;
 }
 
-// 클라이언트에서 createdAt 기준 내림차순 정렬
 function sortByCreatedAt(arr) {
     return arr.sort((a, b) => {
         const ta = a.createdAt || a.created_at || '';
@@ -79,13 +68,12 @@ function sortByCreatedAt(arr) {
 }
 
 // ============================================================
-// Firestore REST API 헬퍼 (보안 규칙 우회 — API Key 방식)
+// Firestore REST API 헬퍼
 // ============================================================
 const _FS_PROJECT = 'bid-tok';
 const _FS_APIKEY  = 'AIzaSyDrJwD2FfDr_PJbc54pvUDQcCRPGl6ICpQ';
 const _FS_BASE    = `https://firestore.googleapis.com/v1/projects/${_FS_PROJECT}/databases/(default)/documents`;
 
-// Firestore REST 응답의 fields 객체 → 일반 JS 객체로 변환
 function _fsFieldsToObj(fields) {
     if (!fields) return {};
     const obj = {};
@@ -111,43 +99,6 @@ function _fsFieldsToObj(fields) {
     return obj;
 }
 
-// REST API로 컬렉션 전체 조회 (페이지네이션 자동 처리)
-async function _fsGetCollection(collection) {
-    let items = [];
-    let pageToken = null;
-    const maxPages = 20; // 안전장치
-    for (let p = 0; p < maxPages; p++) {
-        let url = `${_FS_BASE}/${collection}?key=${_FS_APIKEY}&pageSize=300`;
-        if (pageToken) url += `&pageToken=${pageToken}`;
-        const res = await fetch(url);
-        if (!res.ok) {
-            const err = await res.json().catch(() => ({}));
-            throw new Error(`Firestore REST ${collection} 조회 실패 (${res.status}): ${err?.error?.message || ''}`);
-        }
-        const json = await res.json();
-        const docs = json.documents || [];
-        docs.forEach(doc => {
-            const id = doc.name.split('/').pop();
-            items.push({ id, ...(_fsFieldsToObj(doc.fields)) });
-        });
-        pageToken = json.nextPageToken;
-        if (!pageToken) break;
-    }
-    return items;
-}
-
-// REST API로 단건 조회
-async function _fsGetDoc(collection, docId) {
-    const url = `${_FS_BASE}/${collection}/${encodeURIComponent(docId)}?key=${_FS_APIKEY}`;
-    const res = await fetch(url);
-    if (res.status === 404) return null;
-    if (!res.ok) throw new Error(`Firestore REST 단건 조회 실패 (${res.status})`);
-    const json = await res.json();
-    const id   = json.name.split('/').pop();
-    return { id, ...(_fsFieldsToObj(json.fields)) };
-}
-
-// JS 값 → Firestore REST fields 형식으로 변환
 function _objToFsFields(obj) {
     const fields = {};
     for (const [k, v] of Object.entries(obj)) {
@@ -161,13 +112,67 @@ function _objToFsFields(obj) {
     return fields;
 }
 
-// REST API로 문서 생성 (자동 ID)
+// Firebase 접근 가능 여부 캐시 (5분 TTL)
+let _fsBlockedTs = 0;
+async function _isFirestoreAvailable() {
+    const now = Date.now();
+    if (_fsBlocked !== null && (now - _fsBlockedTs) < 5 * 60 * 1000) {
+        return !_fsBlocked;
+    }
+    try {
+        const res = await fetch(`${_FS_BASE}/admins?key=${_FS_APIKEY}&pageSize=1`, { signal: AbortSignal.timeout(5000) });
+        _fsBlocked = !res.ok;
+        _fsBlockedTs = now;
+        if (!_fsBlocked) console.log('[API] Firestore 접근 가능 ✅');
+        else console.warn('[API] Firestore 차단됨 (403) → LocalDB 모드');
+    } catch(e) {
+        _fsBlocked = true;
+        _fsBlockedTs = now;
+        console.warn('[API] Firestore 연결 불가 → LocalDB 모드');
+    }
+    return !_fsBlocked;
+}
+
+// Firestore REST 컬렉션 전체 조회
+async function _fsGetCollection(collection) {
+    let items = [], pageToken = null;
+    for (let p = 0; p < 20; p++) {
+        let url = `${_FS_BASE}/${collection}?key=${_FS_APIKEY}&pageSize=300`;
+        if (pageToken) url += `&pageToken=${pageToken}`;
+        const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(`Firestore REST ${collection} 조회 실패 (${res.status}): ${err?.error?.message || ''}`);
+        }
+        const json = await res.json();
+        (json.documents || []).forEach(doc => {
+            const id = doc.name.split('/').pop();
+            items.push({ id, ...(_fsFieldsToObj(doc.fields)) });
+        });
+        pageToken = json.nextPageToken;
+        if (!pageToken) break;
+    }
+    return items;
+}
+
+// Firestore REST 단건 조회
+async function _fsGetDoc(collection, docId) {
+    const url = `${_FS_BASE}/${collection}/${encodeURIComponent(docId)}?key=${_FS_APIKEY}`;
+    const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+    if (res.status === 404) return null;
+    if (!res.ok) throw new Error(`Firestore REST 단건 조회 실패 (${res.status})`);
+    const json = await res.json();
+    const id   = json.name.split('/').pop();
+    return { id, ...(_fsFieldsToObj(json.fields)) };
+}
+
 async function _fsAddDoc(collection, data) {
     const url = `${_FS_BASE}/${collection}?key=${_FS_APIKEY}`;
     const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fields: _objToFsFields(data) })
+        body: JSON.stringify({ fields: _objToFsFields(data) }),
+        signal: AbortSignal.timeout(8000)
     });
     if (!res.ok) throw new Error(`Firestore REST 생성 실패 (${res.status})`);
     const json = await res.json();
@@ -175,7 +180,6 @@ async function _fsAddDoc(collection, data) {
     return { id, ...data };
 }
 
-// REST API로 문서 업데이트 (PATCH/merge)
 async function _fsUpdateDoc(collection, docId, data) {
     const fields  = _objToFsFields(data);
     const mask    = Object.keys(fields).map(k => `updateMask.fieldPaths=${encodeURIComponent(k)}`).join('&');
@@ -183,18 +187,141 @@ async function _fsUpdateDoc(collection, docId, data) {
     const res = await fetch(url, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fields })
+        body: JSON.stringify({ fields }),
+        signal: AbortSignal.timeout(8000)
     });
     if (!res.ok) throw new Error(`Firestore REST 업데이트 실패 (${res.status})`);
     return true;
 }
 
-// REST API로 문서 삭제
 async function _fsDeleteDoc(collection, docId) {
     const url = `${_FS_BASE}/${collection}/${encodeURIComponent(docId)}?key=${_FS_APIKEY}`;
-    const res = await fetch(url, { method: 'DELETE' });
+    const res = await fetch(url, { method: 'DELETE', signal: AbortSignal.timeout(8000) });
     if (!res.ok) throw new Error(`Firestore REST 삭제 실패 (${res.status})`);
     return true;
+}
+
+// ============================================================
+// 스마트 컬렉션 조회: Firebase 먼저 시도 → 실패 시 LocalDB
+// ★ LocalDB가 비어있으면 Firebase를 다시 시도
+// ============================================================
+async function _smartGetCollection(collection) {
+    // 1) Firebase REST 시도
+    try {
+        const items = await _fsGetCollection(collection);
+        // 성공 시 LocalDB 백업
+        _fsBlocked = false;
+        _fsBlockedTs = Date.now();
+        if (window.LocalDB) {
+            items.forEach(item => {
+                window.LocalDB.update(collection, item.id, { ...item, _localOnly: false }).catch(() => {});
+            });
+        }
+        console.log(`[API] ${collection} Firebase 조회 성공: ${items.length}건`);
+        return items;
+    } catch(e) {
+        console.warn(`[API] ${collection} Firebase 실패 → LocalDB 시도:`, e.message);
+        _fsBlocked = true;
+        _fsBlockedTs = Date.now();
+    }
+
+    // 2) LocalDB 폴백
+    if (window.LocalDB) {
+        const localItems = await window.LocalDB.getAll(collection);
+        console.log(`[API] ${collection} LocalDB 데이터: ${localItems.length}건`);
+        return localItems;
+    }
+
+    return [];
+}
+
+async function _smartGetDoc(collection, docId) {
+    // 1) Firebase REST 시도
+    try {
+        const item = await _fsGetDoc(collection, docId);
+        _fsBlocked = false;
+        // 백업
+        if (item && window.LocalDB) {
+            window.LocalDB.update(collection, item.id, { ...item, _localOnly: false }).catch(() => {});
+        }
+        return item;
+    } catch(e) {
+        console.warn(`[API] ${collection}/${docId} Firebase 실패 → LocalDB:`, e.message);
+        _fsBlocked = true;
+    }
+
+    // 2) LocalDB 폴백
+    if (window.LocalDB) {
+        return await window.LocalDB.getById(collection, docId);
+    }
+    return null;
+}
+
+async function _smartAddDoc(collection, data) {
+    // 1) Firebase REST 시도
+    try {
+        const result = await _fsAddDoc(collection, data);
+        _fsBlocked = false;
+        // LocalDB에도 저장
+        if (window.LocalDB) {
+            window.LocalDB.update(collection, result.id, { ...result, _localOnly: false }).catch(() => {});
+        }
+        return result;
+    } catch(e) {
+        console.warn(`[API] ${collection} Firebase 추가 실패 → LocalDB:`, e.message);
+        _fsBlocked = true;
+    }
+
+    // 2) LocalDB 폴백
+    if (window.LocalDB) {
+        const result = await window.LocalDB.add(collection, data);
+        console.log(`[API] ${collection} LocalDB 저장: ${result.id}`);
+        return result;
+    }
+    throw new Error('저장 불가: Firebase 차단 + LocalDB 없음');
+}
+
+async function _smartUpdateDoc(collection, docId, data) {
+    // 1) Firebase REST 시도
+    try {
+        await _fsUpdateDoc(collection, docId, data);
+        _fsBlocked = false;
+        // LocalDB도 업데이트
+        if (window.LocalDB) {
+            window.LocalDB.update(collection, docId, data).catch(() => {});
+        }
+        return true;
+    } catch(e) {
+        console.warn(`[API] ${collection}/${docId} Firebase 업데이트 실패 → LocalDB:`, e.message);
+        _fsBlocked = true;
+    }
+
+    // 2) LocalDB 폴백
+    if (window.LocalDB) {
+        await window.LocalDB.update(collection, docId, data);
+        return true;
+    }
+    throw new Error('업데이트 불가: Firebase 차단 + LocalDB 없음');
+}
+
+async function _smartDeleteDoc(collection, docId) {
+    // 1) Firebase REST 시도
+    try {
+        await _fsDeleteDoc(collection, docId);
+        _fsBlocked = false;
+        if (window.LocalDB) window.LocalDB.remove(collection, docId).catch(() => {});
+        return true;
+    } catch(e) {
+        console.warn(`[API] ${collection}/${docId} Firebase 삭제 실패 → LocalDB:`, e.message);
+        _fsBlocked = true;
+    }
+
+    // 2) LocalDB 폴백
+    if (window.LocalDB) {
+        await window.LocalDB.remove(collection, docId);
+        return true;
+    }
+    throw new Error('삭제 불가: Firebase 차단 + LocalDB 없음');
 }
 
 // ============================================================
@@ -202,92 +329,61 @@ async function _fsDeleteDoc(collection, docId) {
 // ============================================================
 const API = {
 
-    // ============================================================
-    // USERS 컬렉션
-    // ============================================================
+    // ── USERS ─────────────────────────────────────────────
     users: {
-
-        // 전체 조회 (관리자용) — REST API 방식 (Firestore 보안 규칙 우회)
         async getAll(params = '') {
-            const items = await _fsGetCollection('users');
+            const items = await _smartGetCollection('users');
             return { data: sortByCreatedAt(items) };
         },
 
-        // ID로 단건 조회
         async getById(id) {
-            const db = getDB();
-            const doc = await db.collection('users').doc(id).get();
-            return docToObj(doc);
+            return await _smartGetDoc('users', id);
         },
 
-        // userId 필드로 조회 (로그인용)
-        // ⚠️ where만 사용 (orderBy 없음) → 단순 인덱스로 OK
         async findByUserId(userId) {
-            const db = getDB();
-            if (!db) throw new Error('DB 연결 실패');
-            const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 10000));
-            const snap = await Promise.race([
-                db.collection('users').where('userId', '==', userId).limit(1).get(),
-                timeout
-            ]);
-            if (snap.empty) return null;
-            return docToObj(snap.docs[0]);
+            const all = await _smartGetCollection('users');
+            return all.find(u => u.userId === userId) || null;
         },
 
-        // 이메일로 조회
         async findByEmail(email) {
-            const db = getDB();
-            if (!db) throw new Error('DB 연결 실패');
-            const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 10000));
-            const snap = await Promise.race([
-                db.collection('users').where('email', '==', email).limit(1).get(),
-                timeout
-            ]);
-            if (snap.empty) return null;
-            return docToObj(snap.docs[0]);
+            const all = await _smartGetCollection('users');
+            return all.find(u => u.email === email) || null;
         },
 
-        // 아이디 중복 체크
         async isUserIdTaken(userId) {
             const user = await API.users.findByUserId(userId);
             return user !== null;
         },
 
-        // 이메일 중복 체크
         async isEmailTaken(email) {
             const user = await API.users.findByEmail(email);
             return user !== null;
         },
 
-        // setupToken으로 법무사 계정 조회 — REST 방식
         async findBySetupToken(token) {
-            const all = await _fsGetCollection('users');
+            const all = await _smartGetCollection('users');
             return all.find(u => u.setupToken === token) || null;
         },
 
-        // 회원가입 (신규 생성) — REST 방식
         async create(userData) {
             const data = {
                 ...userData,
                 createdAt: new Date().toISOString(),
                 status: userData.status || (userData.userType === 'expert' ? 'pending' : 'active')
             };
-            return await _fsAddDoc('users', data);
+            return await _smartAddDoc('users', data);
         },
 
-        // 회원정보 수정 — REST 방식
         async update(id, updates) {
             const data = { ...updates, updatedAt: new Date().toISOString() };
-            await _fsUpdateDoc('users', id, data);
+            await _smartUpdateDoc('users', id, data);
             return data;
         },
 
-        // 완전 삭제 — REST 방식
         async delete(id) {
-            return await _fsDeleteDoc('users', id);
+            return await _smartDeleteDoc('users', id);
         },
 
-        // 로그인 검증
         async authenticate(userId, password, userType) {
             try {
                 const user = await API.users.findByUserId(userId);
@@ -295,7 +391,7 @@ const API = {
                 if (user.userType !== userType) return { success: false, message: '회원 유형이 일치하지 않습니다.' };
                 if (user.password !== password) return { success: false, message: '비밀번호가 올바르지 않습니다.' };
                 if (user.status === 'pending') return { success: false, message: '관리자 승인 대기 중입니다.' };
-                if (user.status === 'setup_pending') return { success: false, message: '계정 설정이 완료되지 않았습니다. 관리자가 최종 활성화를 진행 중입니다. 잠시 기다려주세요.' };
+                if (user.status === 'setup_pending') return { success: false, message: '계정 설정이 완료되지 않았습니다.' };
                 if (user.status === 'blocked') return { success: false, message: '이용이 제한된 계정입니다.' };
                 if (user.status === 'withdrawn') return { success: false, message: '탈퇴한 계정입니다.' };
                 return { success: true, user };
@@ -306,61 +402,49 @@ const API = {
         }
     },
 
-    // ============================================================
-    // APPLICATIONS 컬렉션
-    // ============================================================
+    // ── APPLICATIONS ──────────────────────────────────────
     applications: {
-
-        // 전체 조회 (관리자용) — REST API 방식 (Firestore 보안 규칙 우회)
         async getAll(params = '') {
-            const items = await _fsGetCollection('applications');
+            const items = await _smartGetCollection('applications');
             return { data: sortByCreatedAt(items) };
         },
 
-        // 단건 조회 — REST 방식
         async getById(id) {
-            return await _fsGetDoc('applications', id);
+            return await _smartGetDoc('applications', id);
         },
 
-        // 특정 사용자의 신청 내역 — REST 방식
         async getByUserId(userId) {
-            const all = await _fsGetCollection('applications');
+            const all = await _smartGetCollection('applications');
             return sortByCreatedAt(all.filter(a => a.userId === userId));
         },
 
-        // 특정 법무사에게 배정된 신청 내역 — REST 방식
         async getByExpertId(expertId, status = '') {
-            const all = await _fsGetCollection('applications');
-            const filtered = all.filter(a => {
+            const all = await _smartGetCollection('applications');
+            return sortByCreatedAt(all.filter(a => {
                 if (a.assigned_expert_id !== expertId) return false;
                 return status ? a.status === status : true;
-            });
-            return sortByCreatedAt(filtered);
+            }));
         },
 
-        // 신규 신청 저장 — REST 방식
         async create(appData) {
             const data = {
                 ...appData,
                 status: '접수',
                 createdAt: new Date().toISOString()
             };
-            return await _fsAddDoc('applications', data);
+            return await _smartAddDoc('applications', data);
         },
 
-        // 상태 업데이트 — REST 방식
         async updateStatus(id, status, extra = {}) {
             const data = { status, updatedAt: new Date().toISOString(), ...extra };
-            await _fsUpdateDoc('applications', id, data);
+            await _smartUpdateDoc('applications', id, data);
             return data;
         },
 
-        // 신청 삭제 — REST 방식
         async delete(id) {
-            return await _fsDeleteDoc('applications', id);
+            return await _smartDeleteDoc('applications', id);
         },
 
-        // 법무사 배정 — REST 방식
         async assignExpert(id, expertId, expertName) {
             const data = {
                 assigned_expert_id: expertId,
@@ -369,29 +453,24 @@ const API = {
                 assigned_at: new Date().toISOString(),
                 updatedAt: new Date().toISOString()
             };
-            await _fsUpdateDoc('applications', id, data);
+            await _smartUpdateDoc('applications', id, data);
             return data;
         }
     },
 
-    // ============================================================
-    // EXPERTS 컬렉션
-    // ============================================================
+    // ── EXPERTS ───────────────────────────────────────────
     experts: {
-
-        // REST API 방식 (보안 규칙 우회)
         async getAll(params = '') {
-            const items = await _fsGetCollection('experts');
+            const items = await _smartGetCollection('experts');
             return { data: sortByCreatedAt(items) };
         },
 
         async getById(id) {
-            const item = await _fsGetDoc('experts', id);
-            return item;
+            return await _smartGetDoc('experts', id);
         },
 
         async getByRegion(region) {
-            const items = await _fsGetCollection('experts');
+            const items = await _smartGetCollection('experts');
             return items.filter(e => {
                 const regions = Array.isArray(e.serviceRegions) ? e.serviceRegions : [e.serviceRegions || ''];
                 return e.status === 'active' && regions.some(r => r && r.includes(region));
@@ -400,26 +479,24 @@ const API = {
 
         async create(data) {
             const d = { ...data, createdAt: new Date().toISOString() };
-            return await _fsAddDoc('experts', d);
+            return await _smartAddDoc('experts', d);
         },
 
         async update(id, updates) {
             const data = { ...updates, updatedAt: new Date().toISOString() };
-            await _fsUpdateDoc('experts', id, data);
+            await _smartUpdateDoc('experts', id, data);
             return data;
         }
     }
 };
 
-// 전역 노출
 window.API = API;
-console.log('API module loaded ✅ (Firebase Firestore)');
+console.log('[API] 모듈 로드 ✅ (Firebase + LocalDB 이중화)');
 
 // ============================================================
 // STORAGE — 파일 업로드
 // ============================================================
 const StorageAPI = {
-    // 단일 파일 업로드 → downloadURL 반환
     upload: async function(file, folder, prefix) {
         folder = folder || 'expert_docs';
         prefix = prefix || '';
@@ -433,7 +510,6 @@ const StorageAPI = {
         var url      = await snapshot.ref.getDownloadURL();
         return { url: url, path: path, name: file.name };
     },
-    // 여러 파일 병렬 업로드
     uploadMultiple: async function(items) {
         return Promise.all(items.map(function(item) {
             return item.file
@@ -444,4 +520,18 @@ const StorageAPI = {
 };
 
 window.StorageAPI = StorageAPI;
-console.log('StorageAPI module loaded ✅ (Firebase Storage)');
+console.log('[StorageAPI] 모듈 로드 ✅');
+
+// ============================================================
+// 전역 노출 (admin.html에서 직접 호출용)
+// ============================================================
+window._fsGetCollection = _fsGetCollection;
+window._fsGetDoc        = _fsGetDoc;
+window._fsAddDoc        = _fsAddDoc;
+window._fsUpdateDoc     = _fsUpdateDoc;
+window._fsDeleteDoc     = _fsDeleteDoc;
+window._smartGetCollection = _smartGetCollection;
+window._smartGetDoc     = _smartGetDoc;
+window._smartAddDoc     = _smartAddDoc;
+window._smartUpdateDoc  = _smartUpdateDoc;
+window._smartDeleteDoc  = _smartDeleteDoc;

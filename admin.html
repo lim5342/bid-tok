@@ -1281,11 +1281,72 @@
 <!-- 토스트 -->
 <div class="toast" id="toast"></div>
 
+<!-- ★ Firebase 상태 배너 -->
+<div id="fbStatusBanner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:99999;background:#dc2626;color:#fff;text-align:center;padding:10px 16px;font-size:0.85rem;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,0.3);">
+    ⚠️ Firebase 연결 불가 — 로컬 저장 데이터로 표시 중 &nbsp;
+    <button onclick="attemptFirebaseMigration()" style="background:#fff;color:#dc2626;border:none;border-radius:4px;padding:3px 10px;font-size:0.8rem;cursor:pointer;font-weight:700;">데이터 동기화 시도</button>
+    <button onclick="document.getElementById('dbToolModal').style.display='flex'" style="background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.5);border-radius:4px;padding:3px 10px;font-size:0.8rem;cursor:pointer;margin-left:6px;">DB 도구</button>
+</div>
+
+<!-- ★ DB 관리 도구 모달 -->
+<div id="dbToolModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:99998;align-items:center;justify-content:center;padding:1rem;">
+  <div style="background:#fff;border-radius:16px;padding:1.5rem;max-width:520px;width:100%;max-height:85vh;overflow-y:auto;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;">
+      <h3 style="margin:0;font-size:1.1rem;color:#1e293b;">🗄️ 데이터 관리 도구</h3>
+      <button onclick="document.getElementById('dbToolModal').style.display='none'" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:#888;">✕</button>
+    </div>
+    <p style="font-size:0.83rem;color:#64748b;margin:0 0 1.2rem;line-height:1.6;">Firebase 보안 규칙 차단 시 이 도구로 데이터를 관리하세요.<br>데이터는 이 브라우저의 <strong>IndexedDB</strong>에 안전하게 저장됩니다.</p>
+    
+    <div style="display:grid;gap:0.75rem;">
+      <!-- Firebase → LocalDB 동기화 -->
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:1rem;">
+        <div style="font-weight:700;color:#166534;margin-bottom:0.4rem;">🔄 Firebase → 로컬 동기화</div>
+        <div style="font-size:0.82rem;color:#166534;margin-bottom:0.6rem;">Firebase 규칙이 열려 있으면 클라우드 데이터를 가져옵니다.</div>
+        <button onclick="attemptFirebaseMigration()" style="background:#16a34a;color:#fff;border:none;border-radius:8px;padding:0.5rem 1rem;cursor:pointer;font-weight:600;font-size:0.85rem;width:100%;">지금 동기화</button>
+      </div>
+
+      <!-- LocalDB 현황 -->
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:1rem;">
+        <div style="font-weight:700;color:#334155;margin-bottom:0.4rem;">📊 로컬 데이터 현황</div>
+        <div id="localDbStats" style="font-size:0.82rem;color:#64748b;line-height:1.8;">확인 중...</div>
+        <button onclick="refreshLocalDbStats()" style="background:#64748b;color:#fff;border:none;border-radius:8px;padding:0.4rem 0.8rem;cursor:pointer;font-size:0.8rem;margin-top:0.5rem;">새로고침</button>
+      </div>
+
+      <!-- JSON 내보내기 -->
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:1rem;">
+        <div style="font-weight:700;color:#1e40af;margin-bottom:0.4rem;">💾 데이터 내보내기 (백업)</div>
+        <div style="font-size:0.82rem;color:#1e40af;margin-bottom:0.6rem;">전체 데이터를 JSON 파일로 다운로드합니다.</div>
+        <button onclick="exportLocalDbToFile()" style="background:#2563eb;color:#fff;border:none;border-radius:8px;padding:0.5rem 1rem;cursor:pointer;font-weight:600;font-size:0.85rem;width:100%;">JSON 다운로드</button>
+      </div>
+
+      <!-- JSON 가져오기 -->
+      <div style="background:#fefce8;border:1px solid #fef08a;border-radius:10px;padding:1rem;">
+        <div style="font-weight:700;color:#854d0e;margin-bottom:0.4rem;">📂 데이터 가져오기 (복원)</div>
+        <div style="font-size:0.82rem;color:#854d0e;margin-bottom:0.6rem;">백업 JSON 파일을 불러와 데이터를 복원합니다.</div>
+        <input type="file" id="importDbFile" accept=".json" onchange="importLocalDbFromFile(this)" style="font-size:0.8rem;width:100%;">
+      </div>
+
+      <!-- Firebase 규칙 안내 -->
+      <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:1rem;">
+        <div style="font-weight:700;color:#991b1b;margin-bottom:0.4rem;">🔑 Firebase 규칙 변경 방법</div>
+        <div style="font-size:0.82rem;color:#991b1b;line-height:1.6;margin-bottom:0.6rem;">
+          아래 링크에서 규칙을 <code style="background:#fee2e2;padding:1px 4px;border-radius:3px;">allow read, write: if true;</code> 로 변경하세요.
+        </div>
+        <a href="https://console.firebase.google.com/project/bid-tok/firestore/rules" target="_blank"
+           style="display:block;background:#dc2626;color:#fff;text-decoration:none;text-align:center;border-radius:8px;padding:0.5rem 1rem;font-weight:600;font-size:0.85rem;">
+          🔗 Firebase Console 열기
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- 오버레이 (모바일 사이드바) -->
 <div id="sidebarOverlay" onclick="toggleSidebar()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:90;"></div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="js/localdb.js"></script>
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
 <script>
@@ -1323,7 +1384,18 @@ async function ensureAdminExists() {
     }
 }
 // DOMContentLoaded 후 실행
-document.addEventListener('DOMContentLoaded', ensureAdminExists);
+document.addEventListener('DOMContentLoaded', async function() {
+    ensureAdminExists();
+    // LocalDB 초기화 + Firebase 데이터 자동 마이그레이션
+    if (window.LocalDB) {
+        try {
+            await window.LocalDB.init();
+            console.log('[Admin] LocalDB 준비 완료');
+        } catch(e) {
+            console.warn('[Admin] LocalDB 초기화 실패:', e);
+        }
+    }
+});
 // ═══════════════════════════════════════════════════════
 // 상수 & 전역 상태
 // ═══════════════════════════════════════════════════════
@@ -1586,6 +1658,102 @@ function doLogout() {
 }
 
 // ═══════════════════════════════════════════════════════
+// ★ LocalDB / Firebase 상태 관리
+// ═══════════════════════════════════════════════════════
+
+// Firebase 차단 상태 배너 표시
+function updateFirebaseStatusBanner(isBlocked) {
+    const banner = document.getElementById('fbStatusBanner');
+    if (!banner) return;
+    if (isBlocked) {
+        banner.style.display = 'block';
+        document.body.style.paddingTop = '46px';
+    } else {
+        banner.style.display = 'none';
+        document.body.style.paddingTop = '';
+    }
+}
+
+// Firebase → LocalDB 수동 동기화
+async function attemptFirebaseMigration() {
+    showToast('Firebase 동기화 시도 중...', 'info');
+    try {
+        if (!window.LocalDB) throw new Error('LocalDB 모듈 없음');
+        // 강제 재시도 (캐시 무효화)
+        window._fsBlocked = null;
+        const result = await window.LocalDB.migrateFromFirebase();
+        if (result.skipped) {
+            // 이미 마이그레이션 됨 - 강제로 다시
+            localStorage.removeItem('_ldb_migrated');
+            const r2 = await window.LocalDB.migrateFromFirebase();
+            showToast(`동기화 완료: ${r2.migrated || 0}건 가져옴`, 'success');
+        } else {
+            showToast(`동기화 완료: ${result.migrated || 0}건 가져옴`, 'success');
+        }
+        updateFirebaseStatusBanner(false);
+        refreshLocalDbStats();
+        // 화면 새로고침
+        setTimeout(() => loadDashboard(), 500);
+    } catch(e) {
+        showToast('Firebase 접근 불가: ' + e.message, 'error');
+    }
+}
+
+// LocalDB 현황 조회
+async function refreshLocalDbStats() {
+    const el = document.getElementById('localDbStats');
+    if (!el || !window.LocalDB) return;
+    try {
+        const stores = ['users', 'applications', 'experts', 'adminNotifications'];
+        const stats = [];
+        for (const s of stores) {
+            const items = await window.LocalDB.getAll(s);
+            const labels = { users:'회원', applications:'신청', experts:'전문가', adminNotifications:'알림' };
+            stats.push(`${labels[s] || s}: <strong>${items.length}건</strong>`);
+        }
+        el.innerHTML = stats.join(' &nbsp;|&nbsp; ');
+    } catch(e) {
+        el.textContent = '조회 실패: ' + e.message;
+    }
+}
+
+// LocalDB → JSON 파일 다운로드
+async function exportLocalDbToFile() {
+    if (!window.LocalDB) return showToast('LocalDB 없음', 'error');
+    try {
+        const data = await window.LocalDB.exportAll();
+        const json = JSON.stringify(data, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href     = url;
+        a.download = `bidtok_backup_${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast('백업 파일 다운로드 완료', 'success');
+    } catch(e) {
+        showToast('내보내기 실패: ' + e.message, 'error');
+    }
+}
+
+// JSON 파일 → LocalDB 가져오기
+async function importLocalDbFromFile(input) {
+    if (!input.files?.[0]) return;
+    if (!window.LocalDB) return showToast('LocalDB 없음', 'error');
+    try {
+        const text = await input.files[0].text();
+        const data = JSON.parse(text);
+        if (!confirm('기존 로컬 데이터에 덮어쓰시겠습니까?')) return;
+        await window.LocalDB.importAll(data);
+        showToast('데이터 가져오기 완료', 'success');
+        refreshLocalDbStats();
+        loadDashboard();
+    } catch(e) {
+        showToast('가져오기 실패: ' + e.message, 'error');
+    }
+}
+
+// ═══════════════════════════════════════════════════════
 // 섹션 이동
 // ═══════════════════════════════════════════════════════
 const SECTION_TITLES = {
@@ -1650,6 +1818,10 @@ async function loadDashboard() {
         const appRes  = await API.applications.getAll('limit=1000&sort=-createdAt');
         const apps    = (appRes?.data) || [];
         allApps = apps;
+
+        // Firebase 상태 배너 업데이트
+        updateFirebaseStatusBanner(window._fsBlocked === true);
+        if (window._fsBlocked === true) refreshLocalDbStats();
 
         // 전문가 (API가 파라미터를 무시하므로 클라이언트에서 필터)
         const expRes  = await API.users.getAll('userType=expert&status=active&limit=500');
@@ -1785,7 +1957,7 @@ async function loadDashboard() {
 // ═══════════════════════════════════════════════════════
 async function loadAdminNotifs() {
     try {
-        const items = await _fsGetCollection('adminNotifications');
+        const items = await _smartGetCollection('adminNotifications');
         const notifs = items.sort((a,b) => (b.createdAt||'').localeCompare(a.createdAt||'')).slice(0,30);
 
         const unread = notifs.filter(n => !n.isRead).length;
@@ -1829,16 +2001,16 @@ async function loadAdminNotifs() {
 
 async function markNotifRead(notifId) {
     try {
-        await _fsUpdateDoc('adminNotifications', notifId, { isRead: true });
+        await _smartUpdateDoc('adminNotifications', notifId, { isRead: true });
         loadAdminNotifs();
     } catch(e) { console.warn('알림 읽음 처리 실패:', e); }
 }
 
 async function markAllNotifsRead() {
     try {
-        const items = await _fsGetCollection('adminNotifications');
+        const items = await _smartGetCollection('adminNotifications');
         const unreadIds = items.filter(n => !n.isRead).map(n => n.id);
-        await Promise.all(unreadIds.map(id => _fsUpdateDoc('adminNotifications', id, { isRead: true })));
+        await Promise.all(unreadIds.map(id => _smartUpdateDoc('adminNotifications', id, { isRead: true })));
         loadAdminNotifs();
         showToast('모든 알림을 읽음 처리했습니다.', 'success');
     } catch(e) { console.warn('알림 일괄 처리 실패:', e); }
