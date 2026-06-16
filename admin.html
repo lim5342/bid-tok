@@ -1284,8 +1284,9 @@
 <!-- ★ Firebase 상태 배너 -->
 <div id="fbStatusBanner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:99999;background:#dc2626;color:#fff;text-align:center;padding:10px 16px;font-size:0.85rem;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,0.3);">
     ⚠️ Firebase 연결 불가 — 로컬 저장 데이터로 표시 중 &nbsp;
-    <button onclick="attemptFirebaseMigration()" style="background:#fff;color:#dc2626;border:none;border-radius:4px;padding:3px 10px;font-size:0.8rem;cursor:pointer;font-weight:700;">데이터 동기화 시도</button>
-    <button onclick="document.getElementById('dbToolModal').style.display='flex'" style="background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.5);border-radius:4px;padding:3px 10px;font-size:0.8rem;cursor:pointer;margin-left:6px;">DB 도구</button>
+    <a href="/firebase-fix.html" target="_blank" style="background:#fff;color:#dc2626;border:none;border-radius:4px;padding:3px 10px;font-size:0.8rem;cursor:pointer;font-weight:700;text-decoration:none;">🔑 데이터 복구 센터</a>
+    <button onclick="attemptFirebaseMigration()" style="background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.5);border-radius:4px;padding:3px 10px;font-size:0.8rem;cursor:pointer;margin-left:6px;">동기화 시도</button>
+    <button onclick="document.getElementById('dbToolModal').style.display='flex'" style="background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.4);border-radius:4px;padding:3px 10px;font-size:0.8rem;cursor:pointer;margin-left:4px;">DB 도구</button>
 </div>
 
 <!-- ★ DB 관리 도구 모달 -->
