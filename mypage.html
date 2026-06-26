@@ -601,7 +601,7 @@
                                 <tr>
                                     <td>${app.paid_at || app.created_at || '-'}</td>
                                     <td>${app.case_number || app.caseNumber || '-'}</td>
-                                    <td><strong>${formatPrice(app.service_fee || app.serviceFee || 99000)}원</strong></td>
+                                    <td><strong>${formatPrice(app.service_fee || app.serviceFee || 132000)}원</strong></td>
                                     <td>${app.payment_method || app.paymentMethod || '카드'}</td>
                                     <td><span class="status-badge status-success">결제완료</span></td>
                                 </tr>`).join('')}
@@ -646,7 +646,7 @@
                         <tr><td>담당 법무사</td><td>${app.expert_name
                             ? `<span style="color:#10B981;font-weight:600;">${app.expert_name}</span>`
                             : '<span style="color:#999;">배정 대기 중</span>'}</td></tr>
-                        <tr><td>서비스 수수료</td><td>${formatPrice(app.service_fee || 99000)}원</td></tr>
+                        <tr><td>서비스 수수료</td><td>${formatPrice(app.service_fee || 132000)}원</td></tr>
                         <tr><td>결제 상태</td><td>${app.payment_status || '결제대기'}</td></tr>
                         <tr><td>신청일시</td><td>${app.created_at ? app.created_at.slice(0,16).replace('T',' ') : '-'}</td></tr>
                     </table>`;

@@ -719,7 +719,7 @@
                 <strong>제1조 (위임 내용)</strong> 갑은 을에게 아래 경매 물건에 대한 입찰 대리권을 위임합니다.<br>
                 <strong>제2조 (위임 범위)</strong> 을은 갑을 대신하여 지정 법원에 출석, 지정 금액으로 입찰표를 제출합니다.<br>
                 <strong>제3조 (보증금 관리)</strong> 을은 갑으로부터 전달받은 입찰보증금을 안전하게 관리하고, 낙찰 실패 시 즉시 반환합니다.<br>
-                <strong>제4조 (수수료)</strong> 현재 서비스 수수료는 무료입니다. 공동입찰 또는 법인 입찰의 경우 별도 협의 후 비용이 추가될 수 있습니다.<br>
+                <strong>제4조 (대리입찰 가격 및 정산)</strong> 대리입찰 가격은 전국 단일가 132,000원(VAT 포함)이며, 결제하신 금액은 배정된 전문가에게 직접 정산됩니다. 플랫폼은 중개수수료 0원으로, 별도로 떼는 금액이 없습니다. 공동입찰 또는 법인 입찰의 경우 담당 전문가와 별도 협의 후 비용이 추가될 수 있습니다.<br>
                 <strong>제5조 (책임)</strong> 을은 입찰 대리 중 발생하는 사고에 대해 배상책임보험 한도 내에서 책임집니다.<br>
                 <strong>제6조 (취소)</strong> 입찰 기일 48시간 전까지 취소 신청이 가능합니다.
             </div>
@@ -778,10 +778,10 @@
 
         <!-- 수수료 안내 -->
         <div class="fee-notice">
-            <div class="fee-title">🎁 서비스 수수료</div>
-            <div class="fee-amount">무료 <span style="font-size:1rem; font-weight:400; color:#555;">매칭</span></div>
-            <div class="fee-desc">✓ 전국 어디든 무료 매칭 &nbsp;|&nbsp; ✓ 법무사 직접 연결 &nbsp;|&nbsp; ✓ 낙찰·패찰 관계없이 무료</div>
-            <div style="margin-top:0.5rem; font-size:0.82rem; color:#888;">공동입찰이나 법인 입찰의 경우 금액이 추가될 수 있습니다</div>
+            <div class="fee-title">💳 대리입찰 가격 <span style="font-size:0.8rem; font-weight:500; color:#16A34A; background:#DCFCE7; padding:2px 8px; border-radius:6px; margin-left:6px;">중개수수료 0원</span></div>
+            <div class="fee-amount">132,000원 <span style="font-size:1rem; font-weight:400; color:#555;">(VAT 포함)</span></div>
+            <div class="fee-desc">✓ 전국 단일가 &nbsp;|&nbsp; ✓ 전문가(법무사·공인중개사) 직접 연결 &nbsp;|&nbsp; ✓ 결제 금액은 전문가에게 직접 정산</div>
+            <div style="margin-top:0.5rem; font-size:0.82rem; color:#888;">플랫폼 중개수수료는 0원이며, 결제하신 132,000원은 전액 배정된 전문가에게 정산됩니다. 공동입찰·법인 입찰은 별도 협의 후 비용이 추가될 수 있습니다.</div>
         </div>
 
         <div class="apply-card">
@@ -792,7 +792,7 @@
                 제1조(목적) 본 약관은 대리입찰 톡(이하 "회사")이 제공하는 대리입찰 서비스의 이용조건 및 절차 등에 관한 사항을 규정함을 목적으로 합니다.<br><br>
                 제2조(서비스 내용) 회사는 신청자의 의뢰를 받아 법무사 또는 매수신청대리인이 법원 경매 입찰에 대리 참여하는 서비스를 제공합니다.<br><br>
                 제3조(책임 범위) 법무사는 배상책임보험에 가입되어 있으며, 보증금 분실 또는 횡령에 대해 보험 한도 내에서 보상합니다. 단, 고객이 제공한 잘못된 정보로 인한 손해는 책임지지 않습니다.<br><br>
-                제4조(수수료) 현재 서비스 수수료는 무료입니다. 단, 공동입찰 또는 법인 입찰의 경우 담당 법무사와 별도 협의 후 비용이 추가될 수 있습니다.<br><br>
+                제4조(대리입찰 가격 및 정산) 대리입찰 가격은 전국 단일가 132,000원(VAT 포함)입니다. 회사는 중개수수료 0원으로 운영되며, 결제하신 금액 전액은 배정된 전문가(법무사 또는 공인중개사)에게 직접 정산됩니다. 단, 공동입찰 또는 법인 입찰의 경우 담당 전문가와 별도 협의 후 비용이 추가될 수 있습니다.<br><br>
                 제5조(취소) 입찰 기일 48시간 전까지 취소 신청이 가능합니다.
             </div>
             <div class="agree-check">
@@ -816,7 +816,7 @@
         <div class="apply-btn-row">
             <button class="btn-back" onclick="goStep(3)"><i class="fas fa-arrow-left"></i> 이전</button>
             <button class="btn-submit" onclick="submitApplication()">
-                <i class="fas fa-check-circle"></i> 대리입찰 신청
+                <i class="fas fa-check-circle"></i> 132,000원 결제하고 신청 완료
             </button>
         </div>
     </div>
@@ -909,6 +909,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <script src="js/localdb.js"></script>
+    <script src="js/payment-config.js"></script>
     <script src="js/api.js"></script>
 <script src="js/auth.js"></script>
 <script>
@@ -1094,7 +1095,8 @@ function fillSummary() {
         ['보증금 납부 방법', val2('depositMethod')],
         ['입찰 형태', val2('bidType')],
         ['전자계약 서명', '완료'],
-        ['서비스 수수료', '무료 매칭'],
+        ['대리입찰 가격', '132,000원 (VAT 포함)'],
+        ['중개수수료', '0원 (플랫폼이 떼는 돈 없음)'],
     ];
 
     document.getElementById('summaryTable').innerHTML = rows
@@ -1111,9 +1113,8 @@ function val2(id) {
 // 신청 제출
 // ─────────────────────────────────────────────
 // ─────────────────────────────────────────────
-// 토스페이먼츠 클라이언트 키 (현재 미사용 - 무료 매칭 운영 중)
+// 토스페이먼츠 설정은 js/payment-config.js (window.PAYMENT_CONFIG) 에서 관리
 // ─────────────────────────────────────────────
-const TOSS_CLIENT_KEY = 'test_ck_oEjb0gm23Pw75kkppyk48pGwBJn5';
 
 async function submitApplication() {
     if (!document.getElementById('agreeTerms').checked) {
@@ -1141,7 +1142,12 @@ async function submitApplication() {
         if (name) jointMembers.push({ name, ratio: ratio || '' });
     });
 
+    const cfg = window.PAYMENT_CONFIG || {};
+    const serviceFee = cfg.amount || 132000;
+    const orderId = 'BIDTOK_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+
     const appData = {
+        order_id: orderId,
         region: val2('regionSelect'),
         court: val2('courtSelect'),
         case_number: rawCase,
@@ -1159,23 +1165,23 @@ async function submitApplication() {
         account_number: val2('accountNumber'),
         bid_amount: parseNumber(val2('bidAmount')),
         deposit_amount: Math.floor(parseNumber(val2('bidAmount')) * 0.1),
-        deposit_method: val2('depositMethod') || '법무사님께 직접 이체',
+        deposit_method: val2('depositMethod') || '전문가님께 직접 이체',
         signature_data: signatureData ? 'signed' : '',
         bid_type: val2('bidType'),
         joint_members: jointMembers,
         memo: val2('memo'),
-        service_fee: 0,
-        payment_status: '무료매칭',
+        service_fee: serviceFee,
+        payment_status: '대기',
         user_id: user ? (user.userId || user.id) : '',
         userId: user ? (user.userId || user.id) : '',
-        status: '접수',
+        status: '결제대기',
         created_at: new Date().toISOString()
     };
 
     try {
-        // ── DB 저장 (결제창 없이 바로 완료) ──
+        // ── 1. 신청 데이터를 '결제대기' 상태로 먼저 저장 ──
         let savedApp;
-        if (typeof API !== 'undefined') {
+        if (typeof API !== 'undefined' && API.applications) {
             savedApp = await API.applications.create(appData);
         } else {
             const localKey = 'myApplications_' + (user ? (user.userId || user.id) : 'guest');
@@ -1186,43 +1192,39 @@ async function submitApplication() {
             savedApp = newApp;
         }
 
-        const appId = savedApp ? (savedApp.id || savedApp._id || 'APP-' + Date.now()) : 'APP-' + Date.now();
+        // 결제 성공 페이지에서 사용할 임시 데이터 저장
+        try { sessionStorage.setItem('bidtok_pending_order', JSON.stringify(appData)); } catch (e) {}
 
-        // ── 카카오 알림톡 발송 (신청완료) ──
-        try {
-            await sendKakaoNotification('apply_complete', appData.phone, {
-                appId:      appId.toString().slice(-8).toUpperCase(),
-                name:       appData.applicant_name,
-                court:      appData.court,
-                caseNumber: appData.case_number,
-                bidDate:    appData.bid_date,
-                address:    appData.address,
-            });
-        } catch (kErr) {
-            console.warn('알림톡 발송 실패 (무시):', kErr);
+        // ── 2. 토스페이먼츠 결제창 호출 ──
+        if (typeof TossPayments === 'undefined' || !cfg.clientKey) {
+            toast('결제 모듈을 불러오지 못했습니다. 새로고침 후 다시 시도해주세요.', 'error');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-check-circle"></i> 결제하고 신청 완료';
+            return;
         }
 
-        // ── 신청 완료 화면으로 이동 ──
-        document.getElementById('appNumberBadge').textContent = '신청번호: ' + appId.toString().slice(-8).toUpperCase();
-
-        // 스텝 인디케이터 모두 완료 처리
-        for (let i = 1; i <= 4; i++) {
-            const item = document.getElementById('stepItem' + i);
-            if (item) { item.classList.remove('active'); item.classList.add('done'); }
-        }
-        document.getElementById('progressFill').style.width = '100%';
-
-        // 패널 전환 (goStep 대신 직접 전환 - 유효성검사 없이)
-        document.getElementById('panel' + currentStep).classList.remove('active');
-        document.getElementById('panel5').classList.add('active');
-        currentStep = 5;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        const tossPayments = TossPayments(cfg.clientKey);
+        await tossPayments.requestPayment('카드', {
+            amount: serviceFee,
+            orderId: orderId,
+            orderName: '대리입찰 신청 (' + (appData.court || '') + ' ' + (appData.case_number || '') + ')',
+            customerName: appData.applicant_name || '고객',
+            customerMobilePhone: (appData.phone || '').replace(/[^0-9]/g, '') || undefined,
+            successUrl: cfg.successUrl || (location.origin + '/payment-success.html'),
+            failUrl: cfg.failUrl || (location.origin + '/payment-fail.html'),
+        });
+        // 결제창으로 리다이렉트되므로 이후 코드는 실행되지 않음
 
     } catch (err) {
-        console.error('신청 오류:', err);
-        toast('처리 중 오류가 발생했습니다: ' + (err.message || ''), 'error');
+        if (err && err.code === 'USER_CANCEL') {
+            // 사용자가 결제창을 닫음 → 다시 시도 가능
+            toast('결제가 취소되었습니다. 다시 시도해주세요.', 'error');
+        } else {
+            console.error('신청/결제 오류:', err);
+            toast('처리 중 오류가 발생했습니다: ' + (err.message || ''), 'error');
+        }
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-check-circle"></i> 대리입찰 신청';
+        btn.innerHTML = '<i class="fas fa-check-circle"></i> 결제하고 신청 완료';
     }
 }
 

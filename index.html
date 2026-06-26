@@ -462,7 +462,7 @@
         </div>
     </nav>
 
-    <!-- ── 베타 서비스 안내 배너 ── -->
+    <!-- ── 서비스 안내 배너 ── -->
     <div id="betaBanner" style="
         position:fixed; top:60px; left:0; right:0; z-index:90;
         background:linear-gradient(90deg,#0D9488,#2DD4BF);
@@ -473,7 +473,7 @@
         box-shadow:0 2px 8px rgba(13,148,136,0.3);
     ">
         <i class="fas fa-bolt" style="margin-right:6px;"></i>
-        <span id="bannerText"><strong>법무사 매칭 서비스</strong> — <strong>무료로</strong> 법무사 매칭 서비스를 이용하실 수 있습니다. 결제 없이 신청만 하면 법무사가 배정됩니다.</span>
+        <span id="bannerText"><strong>중개수수료 0원</strong> — 대리입찰 톡은 의뢰인과 전문가를 <strong>무료로 연결</strong>해 드립니다. 플랫폼이 가져가는 수수료는 없습니다.</span>
         <button onclick="document.getElementById('betaBanner').style.display='none';document.getElementById('betaBannerSpacer').style.display='none';" style="
             position:absolute; right:12px; top:50%; transform:translateY(-50%);
             background:none; border:none; color:rgba(255,255,255,0.7);
@@ -490,10 +490,10 @@
                 <!-- 대장TV 배지 -->
                 <div style="display:inline-flex;align-items:center;gap:8px;background:#fff;border:2px solid #0D9488;border-radius:50px;padding:6px 16px;margin-bottom:1.2rem;box-shadow:0 2px 12px rgba(13,148,136,0.12);">
                     <span style="font-size:1.1rem;">📺</span>
-                    <span id="heroBadge" style="font-size:0.82rem;font-weight:700;color:#0D9488;">부동산경매 1등 <strong>대장TV</strong>가 운영하는 무료 대리입찰 플랫폼</span>
+                    <span id="heroBadge" style="font-size:0.82rem;font-weight:700;color:#0D9488;">부동산경매 1등 <strong>대장TV</strong>가 운영하는 중개수수료 무료 대리입찰 플랫폼</span>
                 </div>
                 <h1 id="heroTitle">법원 갈 시간에<br><span class="accent" id="heroTitle2">가족과 함께</span></h1>
-                <p class="subtitle" id="heroSub">쉬운 경매를 위해 대장TV가 직접 만들었습니다<br>대리입찰, 이제 무료로 맡기세요</p>
+                <p class="subtitle" id="heroSub">쉬운 경매를 위해 대장TV가 직접 만들었습니다<br>대리입찰, 이제 전문가에게 맡기세요</p>
                 <div class="hero-btn-wrap">
                     <button class="btn-mint" id="heroApplyBtn" onclick="location.href='apply.html'">지금 신청하기</button>
                     <button class="btn-outline-gray" onclick="location.href='partner.html'">대리인 신청</button>
@@ -508,11 +508,11 @@
                 <div class="why-section-header">
                     <span class="eyebrow">WHY 대리입찰 톡</span>
                     <h2>왜 대리입찰 톡을<br>선택해야 할까요?</h2>
-                    <p>경매 전문 법무사가 직접 뛰는 유일한 정찰제 서비스</p>
+                    <p>경매 전문 법무사·공인중개사가 직접 진행하는 대리입찰 서비스</p>
                 </div>
                 <!-- 탭 메뉴 -->
                 <div class="why-tabs">
-                    <button class="why-tab active" data-tab="price">💰 정찰제 가격</button>
+                    <button class="why-tab active" data-tab="price">💰 단일가</button>
                     <button class="why-tab" data-tab="time">⏰ 대신 입찰</button>
                     <button class="why-tab" data-tab="distance">🗺️ 모든법원</button>
                     <button class="why-tab" data-tab="worker">⚡ 3분 완성</button>
@@ -677,14 +677,14 @@
         <!-- Pricing Section -->
         <section class="section pricing-section">
             <div class="container">
-                <h2 class="section-title" id="pricingTitle">정찰제 수수료</h2>
-                <p class="section-subtitle" id="pricingSub" style="text-align:center; margin-bottom:2rem;">숨겨진 비용 없이 딱 하나의 가격</p>
+                <h2 class="section-title" id="pricingTitle">대리입찰 가격</h2>
+                <p class="section-subtitle" id="pricingSub" style="text-align:center; margin-bottom:2rem;">숨겨진 비용 없이 전국 어디서나 같은 가격</p>
                 <div class="pricing-grid" style="display:flex; justify-content:center; align-items:center;">
                     <div class="pricing-card recommended-pricing" style="max-width:500px;">
-                        <div class="pricing-badge">정찰제</div>
-                        <h3 class="pricing-title">⚖️ 법무사 대리입찰</h3>
+                        <div class="pricing-badge">전국 동일</div>
+                        <h3 class="pricing-title">📋 대리입찰</h3>
                         <div class="pricing-amount">
-                            <span class="amount" id="pricingAmount">99,000</span>
+                            <span class="amount" id="pricingAmount">132,000</span>
                             <span class="currency">원</span>
                         </div>
                         <p class="pricing-vat">(VAT 포함)</p>
@@ -926,9 +926,9 @@
                             <label for="selectLawyer" style="cursor: default;">
                                 <div class="expert-type-header">
                                     <h4>⚖️ 법무사 전자서명</h4>
-                                    <span class="expert-type-price" style="font-size: 1.5rem; color: #1550E8;">99,000원</span>
+                                    <span class="expert-type-price" style="font-size: 1.5rem; color: #1550E8;">132,000원</span>
                                 </div>
-                                <p class="expert-type-desc" style="font-weight: 600; color: #1550E8;">✅ 정찰제 (VAT 포함)</p>
+                                <p class="expert-type-desc" style="font-weight: 600; color: #1550E8;">✅ 부가세 포함 (전국 단일가)</p>
                                 <ul class="expert-type-features">
                                     <li>✅ 온라인 전자서명만 (3분 완료)</li>
                                     <li>✅ 주민센터 방문 불필요</li>
@@ -1108,7 +1108,7 @@
 
                             <h4>매수신청 대리 보수</h4>
                             <ul>
-                                <li>확정 보수액: 110,000원 (VAT 포함)</li>
+                                <li>확정 보수액: 132,000원 (VAT 포함)</li>
                                 <li>보수 지급 시기: 대리입찰 접수 시</li>
                             </ul>
 
@@ -1171,9 +1171,10 @@
                             <span>대리입찰 톡</span>
                         </div>
                         <div class="payment-amount">
-                            <span class="label">대리입찰 수수료</span>
-                            <span class="amount">110,000원</span>
+                            <span class="label">대리입찰 비용</span>
+                            <span class="amount">132,000원</span>
                         </div>
+                        <p style="margin:10px 16px 0;font-size:0.8rem;color:rgba(255,255,255,0.85);line-height:1.5;">중개수수료 0원 · 플랫폼이 떼는 돈은 없습니다.<br>대리입찰 비용 132,000원은 배정된 전문가에게 직접 전달됩니다.</p>
                     </div>
 
                     <div class="form-card">
@@ -1227,9 +1228,10 @@
                                 3. 환불은 결제 수단으로 영업일 기준 3~5일 내 처리됩니다.</p>
                                 
                                 <h4>제4조 (책임의 제한)</h4>
-                                <p>1. 플랫폼은 입찰의뢰인과 매수신청대리인을 연결하는 중개 역할만 수행합니다.<br>
-                                2. 매수신청대리인의 과실로 인한 손해는 배상책임보험으로 처리됩니다.<br>
-                                3. 의뢰인의 정보 오류로 인한 불이익은 플랫폼이 책임지지 않습니다.</p>
+                                <p>1. 플랫폼은 입찰의뢰인과 전문가(법무사·공인중개사)를 연결하는 중개 역할만 수행하며, 중개수수료를 받지 않습니다.<br>
+                                2. 대리입찰 비용 132,000원은 배정된 전문가에게 직접 전달됩니다.<br>
+                                3. 전문가의 과실로 인한 손해는 배상책임보험으로 처리됩니다.<br>
+                                4. 의뢰인의 정보 오류로 인한 불이익은 플랫폼이 책임지지 않습니다.</p>
                             </div>
                         </div>
 
@@ -1256,7 +1258,7 @@
                         <div class="payment-summary">
                             <div class="summary-row">
                                 <span>수수료</span>
-                                <span>110,000원</span>
+                                <span>132,000원</span>
                             </div>
                             <div class="summary-row">
                                 <span>포인트 할인</span>
@@ -1264,7 +1266,7 @@
                             </div>
                             <div class="summary-row total">
                                 <span>최종 결제금액</span>
-                                <span>110,000원</span>
+                                <span>132,000원</span>
                             </div>
                         </div>
 
@@ -1283,7 +1285,7 @@
                     <button class="btn btn-back" id="backToMainFromExpert">
                         <i class="fas fa-arrow-left"></i> 홈으로
                     </button>
-                    <h1>매수신청대리인/법무사 전문가 신청</h1>
+                    <h1>법무사 / 공인중개사 전문가 신청</h1>
                     <p>대리입찰 톡과 함께 전국의 입찰의뢰인을 만나보세요</p>
                 </div>
             </div>
@@ -1293,20 +1295,20 @@
                 <div class="container">
                     <div class="recruit-urgent-badge">
                         <span class="pulse-dot"></span>
-                        🔥 법무사 긴급 모집 중 — 선착순 마감 예정
+                        ⚖️ 법무사 · 공인중개사 파트너 모집 중
                     </div>
 
                     <div class="recruit-card">
                         <!-- 왼쪽: 텍스트 -->
                         <div class="recruit-text">
-                            <div class="recruit-tag">⚖️ 법무사 전용</div>
+                            <div class="recruit-tag">⚖️ 법무사 · 🏠 공인중개사</div>
                             <h2 class="recruit-title">
-                                대장TV와 함께 수익<br>
+                                대리입찰 톡 파트너로<br>
                                 <span class="highlight-text">지금 바로 시작하세요</span>
                             </h2>
                             <p class="recruit-desc">
                                 대리입찰 톡에 등록하고 의뢰를 받아보세요.<br>
-                                건당 99,000원, 추가 업무 없이 수수료 전액 수령.
+                                건당 132,000원(부가세 포함) 수수료 전액을 전문가가 수령합니다.
                             </p>
 
                             <div class="recruit-benefits">
@@ -1327,13 +1329,13 @@
                                 <div class="recruit-benefit">
                                     <i class="fas fa-check-circle"></i>
                                     <div>
-                                        <strong>선착순 50명 우선 매칭</strong>
-                                        <span>먼저 등록할수록 더 많은 의뢰 배정</span>
+                                        <strong>등록 즉시 의뢰 매칭</strong>
+                                        <span>승인 후 바로 의뢰 배정 시작</span>
                                     </div>
                                 </div>
                             </div>
 
-                            <p class="recruit-note">* 법무사 자격증 + 배상책임보험 보유자만 가입 가능</p>
+                            <p class="recruit-note">* 법무사 또는 공인중개사 자격증 + 배상책임보험 보유자만 가입 가능</p>
                         </div>
 
                         <!-- 오른쪽: 수익 시뮬레이터 -->
@@ -1349,16 +1351,16 @@
                             <div class="sim-result">
                                 <div class="sim-result-row">
                                     <span>건당 수수료</span>
-                                    <span>99,000원</span>
+                                    <span>132,000원</span>
                                 </div>
                                 <div class="sim-result-row">
                                     <span>플랫폼 수수료</span>
-                                    <span class="green">0원 (무료 매칭)</span>
+                                    <span class="green">0원 (전액 전문가 정산)</span>
                                 </div>
                                 <div class="sim-result-divider"></div>
                                 <div class="sim-result-row total">
                                     <span>예상 월 수익</span>
-                                    <span id="simTotal" class="sim-total-val">990,000원</span>
+                                    <span id="simTotal" class="sim-total-val">1,320,000원</span>
                                 </div>
                             </div>
                             <p class="sim-note">실제 수익은 처리 건수에 따라 달라질 수 있습니다</p>
@@ -1374,10 +1376,22 @@
                     
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle"></i>
-                        <span><strong>대리입찰 톡은 법무사만 신청 가능합니다</strong></span>
+                        <span><strong>대리입찰 톡은 법무사 · 공인중개사 신청이 가능합니다</strong></span>
                     </div>
-                    
-                    <input type="hidden" name="expertType" value="법무사">
+
+                    <div class="form-group">
+                        <label>전문가 유형 <span class="required">*</span></label>
+                        <div style="display:flex; gap:12px; margin-top:8px;">
+                            <label style="flex:1; cursor:pointer; border:2px solid #1550E8; border-radius:8px; padding:14px; display:flex; align-items:center; gap:10px; background:#EEF2FF;">
+                                <input type="radio" name="expertType" id="selectLawyer" value="법무사" checked onchange="updateExpertTypeUI()">
+                                <span style="font-weight:600; color:#1550E8;">⚖️ 법무사</span>
+                            </label>
+                            <label style="flex:1; cursor:pointer; border:2px solid #0D9488; border-radius:8px; padding:14px; display:flex; align-items:center; gap:10px; background:#F0FDF9;">
+                                <input type="radio" name="expertType" id="selectAgent" value="공인중개사" onchange="updateExpertTypeUI()">
+                                <span style="font-weight:600; color:#0D9488;">🏠 공인중개사</span>
+                            </label>
+                        </div>
+                    </div>
 
                     <div class="form-group">
                         <label>성명 <span class="required">*</span></label>
@@ -1385,7 +1399,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label>자격증 번호 <span class="required">*</span></label>
+                        <label id="licenseNumberLabel">자격증 번호 <span class="required">*</span></label>
                         <input type="text" id="licenseNumber" class="form-control" placeholder="예) 제2024-001호">
                     </div>
 
@@ -1489,7 +1503,7 @@
                     <div class="form-group">
                         <label>자격증 사본 <span class="required">*</span></label>
                         <input type="file" id="licenseFile" class="form-control" accept="image/*,.pdf">
-                        <small class="form-text">매수신청대리인 등록증 또는 법무사 자격증</small>
+                        <small class="form-text" id="licenseFileHint">법무사 자격증 또는 매수신청대리인 등록증</small>
                     </div>
 
                     <div class="form-group">
@@ -1508,10 +1522,10 @@
                     <div class="form-group">
                         <label>수수료 안내</label>
                         <div class="info-box" style="background: #f8f9fa; padding: 1rem; border-radius: 8px; text-align: center;">
-                            <p style="margin: 0; font-size: 1.25rem; font-weight: 600; color: #1550E8;">정찰제 99,000원 (VAT 포함)</p>
-                            <small style="color: #666;">모든 법무사에게 동일하게 적용됩니다</small>
+                            <p style="margin: 0; font-size: 1.25rem; font-weight: 600; color: #1550E8;">132,000원 (부가세 포함)</p>
+                            <small style="color: #666;">모든 전문가에게 동일하게 적용됩니다</small>
                         </div>
-                        <input type="hidden" id="expertFee" value="99000">
+                        <input type="hidden" id="expertFee" value="132000">
                     </div>
 
                     <div class="form-group">
@@ -1656,7 +1670,7 @@
                                         <td>제2023-055호</td>
                                         <td>010-1111-2222</td>
                                         <td>서울 전체</td>
-                                        <td>110,000원</td>
+                                        <td>132,000원</td>
                                         <td><span class="status-badge status-approved">활동중</span></td>
                                         <td>
                                             <button class="btn btn-sm btn-primary">상세보기</button>
@@ -1702,11 +1716,11 @@
                 <div style="font-size:2rem;">📺</div>
                 <div style="flex:1;min-width:200px;">
                     <div style="font-size:0.95rem;font-weight:800;color:#fff;margin-bottom:4px;">
-                        부동산경매 1등 <span style="color:#2DD4BF;">대장TV</span>가 운영하는 무료 대리입찰 플랫폼
+                        부동산경매 1등 <span style="color:#2DD4BF;">대장TV</span>가 운영하는 중개수수료 무료 대리입찰 플랫폼
                     </div>
                     <div style="font-size:0.8rem;color:rgba(255,255,255,0.7);line-height:1.6;">
                         쉬운 경매 문화를 만들기 위해 대장TV가 직접 기획·운영합니다.
-                        수수료 없이 무료로 법무사를 연결해 드리며, 봉사와 나눔의 가치를 실천합니다. 🤝
+                        중개수수료 없이 의뢰인과 전문가를 연결해 드리며, 봉사와 나눔의 가치를 실천합니다. 🤝
                     </div>
                 </div>
                 <a href="https://www.youtube.com/@ksj" target="_blank" style="background:#0D9488;color:#fff;padding:0.5rem 1.1rem;border-radius:50px;font-size:0.82rem;font-weight:700;text-decoration:none;white-space:nowrap;">
@@ -1739,7 +1753,7 @@
                     <p>본 플랫폼은 입찰 대리 서비스를 직접 제공하지 않으며, 모든 법률 행위는 자격을 갖춘 법무사가 수행합니다.</p>
                     <p>법무사는 법무사법 제2조 및 제23조에 따라 등기 및 공탁에 관한 대리 업무를 수행할 수 있습니다.</p>
                     <p>본 서비스 이용 시 발생하는 법률적 책임은 해당 법무사에게 있으며, 플랫폼은 중개 역할만을 담당합니다.</p>
-                    <p><strong>중개 수수료 무료 - 대리인이 직접 수수료를 받습니다.</strong></p>
+                    <p><strong>중개 수수료 무료 — 대리입찰 비용은 배정된 전문가가 직접 받습니다.</strong></p>
                     <p>각 법무사는 배상책임보험(최대 5억원)에 가입되어 있습니다.</p>
                 </div>
             </div>
@@ -1776,33 +1790,67 @@
     </div>
 
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script src="https://js.tosspayments.com/v1/payment"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+    <script src="js/payment-config.js"></script>
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/main.js"></script>
     <script src="js/admin.js"></script>
     <script>
-    // ── 법무사 수익 시뮬레이터 ───────────────────────────────
+    // ── 법무사·공인중개사 수익 시뮬레이터 ───────────────────────────────
     function updateSimulator() {
         const count = parseInt(document.getElementById('simCount').value, 10);
-        const total = count * 99000;
+        const total = count * 132000;
         document.getElementById('simCountVal').textContent = count + '건';
         document.getElementById('simTotal').textContent = total.toLocaleString('ko-KR') + '원';
+    }
+
+    // ── 전문가 유형(법무사/공인중개사) 선택 UI 업데이트 ───────────────────
+    function updateExpertTypeUI() {
+        const lawyerEl = document.getElementById('selectLawyer');
+        const agentEl  = document.getElementById('selectAgent');
+        if (!lawyerEl || !agentEl) return;
+        const isLawyer = lawyerEl.checked;
+
+        // 라디오 라벨 테두리/배경 강조
+        const lawyerLabel = lawyerEl.closest('label');
+        const agentLabel  = agentEl.closest('label');
+        if (lawyerLabel && agentLabel) {
+            lawyerLabel.style.borderColor = isLawyer ? '#1550E8' : '#D1D5DB';
+            lawyerLabel.style.background  = isLawyer ? '#EEF2FF' : '#fff';
+            agentLabel.style.borderColor  = isLawyer ? '#D1D5DB' : '#0D9488';
+            agentLabel.style.background    = isLawyer ? '#fff' : '#F0FDF9';
+        }
+
+        // 자격증 입력 안내 문구를 유형에 맞게 변경
+        const numLabel = document.getElementById('licenseNumberLabel');
+        const numInput = document.getElementById('licenseNumber');
+        const fileHint = document.getElementById('licenseFileHint');
+        if (isLawyer) {
+            if (numLabel) numLabel.innerHTML = '법무사 등록번호 <span class="required">*</span>';
+            if (numInput) numInput.placeholder = '예) 제2024-001호';
+            if (fileHint) fileHint.textContent = '법무사 자격증 또는 매수신청대리인 등록증';
+        } else {
+            if (numLabel) numLabel.innerHTML = '공인중개사 등록번호 <span class="required">*</span>';
+            if (numInput) numInput.placeholder = '예) 제12345-2024-00001호';
+            if (fileHint) fileHint.textContent = '공인중개사 자격증 + 매수신청대리인 등록증';
+        }
     }
 
     // ── WHY 탭 전환 (대리입찰 톡 스타일 2-컬럼) ─────────────────────────────────────────
     const WHY_DATA = {
         price: {
-            badge: '💰 정찰제 가격',
-            heading: '전국 어디서나<br><em>99,000원</em> 단일가',
-            desc: '법무사 대리입찰 서비스 중 유일한 정찰제.\n숨겨진 수수료, 지역별 차등 없이 전국 동일합니다.',
-            points: ['추가 비용 일절 없음', '법무사 공식 서비스 보장', '결제 즉시 매칭 시작'],
+            badge: '💰 단일가',
+            heading: '전국 어디서나<br><em>132,000원</em> 단일가',
+            desc: '자격을 갖춘 전문가가 직접 진행하는 대리입찰.\n숨겨진 수수료, 지역별 차등 없이 전국 동일합니다.',
+            points: ['추가 비용 일절 없음', '인증된 전문가가 직접 진행', '결제 즉시 매칭 시작'],
             vcIcon: '💰',
             vcTitle: '투명한 단일 가격',
-            vcBody: '서울·경기부터 제주까지 동일한 99,000원.\n경쟁사 대비 최대 50% 저렴한 법무사 공식 서비스.',
-            stats: [{num:'99,000', label:'원 정찰제'}, {num:'0', label:'숨겨진 비용'}, {num:'100%', label:'법무사 직접 진행'}]
+            vcBody: '서울·경기부터 제주까지 동일한 132,000원(부가세 포함).\n중개수수료 0원, 전국 전문가 직접 연결.',
+            stats: [{num:'132,000', label:'원 단일가'}, {num:'0', label:'숨겨진 비용'}, {num:'100%', label:'전문가 직접 진행'}]
         },
         time: {
             badge: '⏰ 대신 입찰',
@@ -1957,17 +2005,17 @@
             hero_title1: '법원 갈 시간에',
             hero_title2: '가족과 함께',
             hero_sub1: '쉬운 경매를 위해 대장TV가 직접 만들었습니다',
-            hero_sub2: '대리입찰, 이제 무료로 맡기세요',
-            hero_badge: '부동산경매 1등 대장TV가 운영하는 무료 대리입찰 플랫폼',
+            hero_sub2: '대리입찰, 이제 전문가에게 맡기세요',
+            hero_badge: '부동산경매 1등 대장TV가 운영하는 중개수수료 무료 대리입찰 플랫폼',
             how_title: '이용 방법',
             how_sub: '딱 4단계로 완료됩니다',
             step1_title: '사건번호 입력', step1_desc: '대법원 경매 사건번호를 입력하면 자동으로 정보를 불러옵니다',
             step2_title: '입찰가 결정',   step2_desc: '원하는 입찰 금액과 보증금 납부 방법을 선택합니다',
             step3_title: '전자서명',      step3_desc: '온라인 전자서명으로 위임장 작성. 인감증명서 불필요',
             step4_title: '결과 수령',     step4_desc: '입찰 당일 문자로 낙찰/패찰 결과를 즉시 안내받습니다',
-            price_title: '정찰제 수수료',
-            price_sub: '숨겨진 비용 없이 딱 하나의 가격',
-            price_amount: '99,000',
+            price_title: '대리입찰 가격',
+            price_sub: '숨겨진 비용 없이 전국 어디서나 같은 가격',
+            price_amount: '132,000',
             price_desc: '온라인 전자서명 3분 완료',
             footer_company: '대리입찰톡',
             footer_corp: '대장TV',
@@ -1978,7 +2026,7 @@
             footer_email: 'qkqk5342@naver.com',
             footer_copyright: '© 2026 대리입찰 톡 (대장TV). All rights reserved.',
             banner_show: true,
-            banner_text: '법무사 매칭 서비스 — 무료로 법무사 매칭 서비스를 이용하실 수 있습니다. 결제 없이 신청만 하면 법무사가 배정됩니다.',
+            banner_text: '<strong>중개수수료 0원</strong> — 대리입찰 톡은 의뢰인과 전문가를 <strong>무료로 연결</strong>해 드립니다. 플랫폼이 가져가는 수수료는 없습니다.',
             banner_color: '#667eea',
         };
 
@@ -1987,12 +2035,13 @@
             const setInner = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined) el.innerHTML = val; };
             const setHref = (id, val) => { const el = document.getElementById(id); if (el && val) el.href = val; };
 
-            // 히어로
+            // 히어로 — DB에 남아있을 수 있는 옛 '무료로 맡기세요/무료 대리입찰' 문구는 무시
+            const cleanHero = (val, def) => (!val || /무료로 맡기세요|무료 대리입찰 플랫폼/.test(val)) ? def : val;
             const heroTitle = document.getElementById('heroTitle');
             if (heroTitle) heroTitle.innerHTML = (d.hero_title1 || DEFAULTS.hero_title1) + '<br><span class="accent" id="heroTitle2">' + (d.hero_title2 || DEFAULTS.hero_title2) + '</span>';
             const heroSub = document.getElementById('heroSub');
-            if (heroSub) heroSub.innerHTML = (d.hero_sub1 || DEFAULTS.hero_sub1) + '<br>' + (d.hero_sub2 || DEFAULTS.hero_sub2);
-            set('heroBadge', d.hero_badge || DEFAULTS.hero_badge);
+            if (heroSub) heroSub.innerHTML = (d.hero_sub1 || DEFAULTS.hero_sub1) + '<br>' + cleanHero(d.hero_sub2, DEFAULTS.hero_sub2);
+            set('heroBadge', cleanHero(d.hero_badge, DEFAULTS.hero_badge));
 
             // 이용방법
             set('howTitle', d.how_title || DEFAULTS.how_title);
@@ -2006,9 +2055,10 @@
             set('step4Title', d.step4_title || DEFAULTS.step4_title);
             set('step4Desc', d.step4_desc || DEFAULTS.step4_desc);
 
-            // 수수료
-            set('pricingTitle', d.price_title || DEFAULTS.price_title);
-            set('pricingSub', d.price_sub || DEFAULTS.price_sub);
+            // 수수료 — DB에 남아있을 수 있는 옛 '정찰제' 문구는 무시하고 코드 기본값 사용
+            const cleanText = (val, def) => (!val || /정찰제/.test(val)) ? def : val;
+            set('pricingTitle', cleanText(d.price_title, DEFAULTS.price_title));
+            set('pricingSub', cleanText(d.price_sub, DEFAULTS.price_sub));
             set('pricingAmount', d.price_amount || DEFAULTS.price_amount);
             set('pricingDesc', d.price_desc || DEFAULTS.price_desc);
 
@@ -2035,7 +2085,9 @@
                     if (spacer) spacer.style.display = 'none';
                 } else {
                     bannerEl.style.background = d.banner_color || DEFAULTS.banner_color;
-                    if (bannerTextEl) bannerTextEl.textContent = d.banner_text || DEFAULTS.banner_text;
+                    // DB에 남아있을 수 있는 옛 문구(결제 없이/법무사만 등)는 무시하고 기본값 사용
+                    const oldBanner = d.banner_text && /결제 없이|법무사 매칭 서비스/.test(d.banner_text);
+                    if (bannerTextEl) bannerTextEl.innerHTML = oldBanner ? DEFAULTS.banner_text : (d.banner_text || DEFAULTS.banner_text);
                 }
             }
         }

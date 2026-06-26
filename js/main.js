@@ -109,7 +109,7 @@ function initializeApp() {
     // Set default expert type and fee if not already set
     if (!AppState.formData.selectedExpertType) {
         AppState.formData.selectedExpertType = '매수신청대리인';
-        AppState.formData.serviceFee = 70000;
+        AppState.formData.serviceFee = 132000;
     }
 }
 
@@ -393,11 +393,11 @@ function proceedToStep(stepNumber, applicationType) {
         const selectedExpertType = document.querySelector('input[name="expertType"]:checked');
         if (selectedExpertType) {
             AppState.formData.selectedExpertType = selectedExpertType.value;
-            AppState.formData.serviceFee = selectedExpertType.value === '매수신청대리인' ? 70000 : 100000;
+            AppState.formData.serviceFee = 132000;
         } else {
             // Default to 매수신청대리인
             AppState.formData.selectedExpertType = '매수신청대리인';
-            AppState.formData.serviceFee = 70000;
+            AppState.formData.serviceFee = 132000;
         }
         console.log('Proceeding with:', AppState.formData.selectedExpertType, AppState.formData.serviceFee);
     }
@@ -437,12 +437,8 @@ function handleExpertTypeChange(e) {
     const selectedType = e.target.value;
     AppState.formData.selectedExpertType = selectedType;
     
-    // Update fee display (will be used in payment step)
-    if (selectedType === '매수신청대리인') {
-        AppState.formData.serviceFee = 70000;
-    } else if (selectedType === '법무사') {
-        AppState.formData.serviceFee = 100000;
-    }
+    // 전국 단일가: 전문가 유형과 무관하게 132,000원 (부가세 포함)
+    AppState.formData.serviceFee = 132000;
     
     console.log('Selected expert type:', selectedType, 'Fee:', AppState.formData.serviceFee);
 }
@@ -779,7 +775,7 @@ function completeSignature() {
 // Step 4: Payment
 // ============================================
 function updatePaymentDisplay() {
-    const serviceFee = AppState.formData.serviceFee || 70000;
+    const serviceFee = AppState.formData.serviceFee || 132000;
     const expertType = AppState.formData.selectedExpertType || '매수신청대리인';
     
     // Update all payment amount displays
@@ -802,65 +798,85 @@ function updatePaymentDisplay() {
     console.log(`Payment display updated: ${expertType} - ${formatNumber(serviceFee)}원`);
 }
 
-function handlePayment() {
+async function handlePayment() {
     const agreePayment = document.getElementById('agreePayment').checked;
-    
+
     if (!agreePayment) {
         alert('결제약관 및 환불 규정에 동의해주세요.');
         return;
     }
-    
-    const serviceFee = AppState.formData.serviceFee || 70000;
-    const expertType = AppState.formData.selectedExpertType || '매수신청대리인';
-    
-    if (confirm(`${formatNumber(serviceFee)}원을 결제하시겠습니까?\n(${expertType})`)) {
-        // Prepare application data
-        const applicationData = {
-            applicant_name: AppState.formData.bidderName || '',
-            phone: AppState.formData.phoneNumber || '',
-            email: AppState.formData.email || '',
-            region: AppState.caseData.region || '',
-            court: AppState.caseData.court || '',
-            case_number: AppState.caseData.caseNumber || '',
-            property_number: AppState.caseData.propertyNumber || '',
-            bid_amount: parseInt(AppState.formData.bidAmount?.replace(/,/g, '') || 0),
-            deposit: parseInt(AppState.formData.depositAmount?.replace(/,/g, '') || 0),
-            expert_type: expertType,
-            service_fee: serviceFee,
-            bid_type: AppState.formData.bidType || '개인',
-            status: '접수',
-            payment_status: '완료',
-            signature_data: AppState.signatureData || '',
-            bid_date: AppState.caseData.bidDate || ''
-        };
-        
-        // Submit to API
-        fetch('tables/applications', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(applicationData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Application submitted:', data);
-            alert(`결제가 완료되었습니다!\n\n대리입찰 신청이 성공적으로 완료되었습니다.\n선택하신 ${expertType}이 입찰을 진행합니다.\n입찰 결과는 매각기일 이후 문자로 안내해 드립니다.`);
-            
-            // Clear saved data after successful payment
-            localStorage.removeItem('daerijangTalk_formData');
-            AppState.formData = {};
-            AppState.caseData = {};
-            AppState.signatureData = null;
-            
-            switchToMainPage();
-        })
-        .catch(error => {
-            console.error('Application submission error:', error);
-            alert(`결제가 완료되었습니다!\n\n대리입찰 신청이 성공적으로 완료되었습니다.\n선택하신 ${expertType}이 입찰을 진행합니다.\n입찰 결과는 매각기일 이후 문자로 안내해 드립니다.\n\n(데모 환경에서 실행 중입니다)`);
-            
-            // Clear saved data
-            localStorage.removeItem('daerijangTalk_formData');
-            switchToMainPage();
+
+    const cfg = window.PAYMENT_CONFIG || {};
+    const serviceFee = cfg.amount || AppState.formData.serviceFee || 132000;
+    const expertType = AppState.formData.selectedExpertType || '대리입찰';
+    const customerName = AppState.formData.bidderName || '고객';
+
+    // 주문 식별자 생성 (영문/숫자/하이픈만, 6~64자)
+    const orderId = 'BIDTOK_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+
+    // 결제 전 신청 데이터 구성
+    const applicationData = {
+        order_id: orderId,
+        applicant_name: customerName,
+        phone: AppState.formData.phoneNumber || '',
+        email: AppState.formData.email || '',
+        region: AppState.caseData.region || '',
+        court: AppState.caseData.court || '',
+        case_number: AppState.caseData.caseNumber || '',
+        property_number: AppState.caseData.propertyNumber || '',
+        bid_amount: parseInt((AppState.formData.bidAmount || '0').replace(/,/g, '')) || 0,
+        deposit: parseInt((AppState.formData.depositAmount || '0').replace(/,/g, '')) || 0,
+        expert_type: expertType,
+        service_fee: serviceFee,
+        bid_type: AppState.formData.bidType || '개인',
+        status: '결제대기',
+        payment_status: '대기',
+        signature_data: AppState.signatureData || '',
+        bid_date: AppState.caseData.bidDate || '',
+        userId: (window.Auth && Auth.getCurrentUser && Auth.getCurrentUser()?.id) || null
+    };
+
+    // 결제 성공 페이지에서 사용하도록 임시 저장
+    try {
+        sessionStorage.setItem('bidtok_pending_order', JSON.stringify(applicationData));
+    } catch (e) {}
+
+    if (!confirm(`${formatNumber(serviceFee)}원을 결제하시겠습니까?`)) return;
+
+    // 1) 신청 데이터를 '결제대기' 상태로 먼저 저장 (결제 성공 후 상태 업데이트)
+    try {
+        if (window.API && API.applications && API.applications.create) {
+            await API.applications.create(applicationData);
+        }
+    } catch (e) {
+        console.warn('사전 신청 저장 실패(결제는 계속 진행):', e);
+    }
+
+    // 2) 토스페이먼츠 결제창 호출
+    if (typeof TossPayments === 'undefined' || !cfg.clientKey) {
+        alert('결제 모듈을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.');
+        return;
+    }
+
+    try {
+        const tossPayments = TossPayments(cfg.clientKey);
+        await tossPayments.requestPayment('카드', {
+            amount: serviceFee,
+            orderId: orderId,
+            orderName: '대리입찰 신청 (' + (AppState.caseData.caseNumber || '경매사건') + ')',
+            customerName: customerName,
+            customerMobilePhone: (AppState.formData.phoneNumber || '').replace(/[^0-9]/g, '') || undefined,
+            successUrl: cfg.successUrl || (location.origin + '/payment-success.html'),
+            failUrl: cfg.failUrl || (location.origin + '/payment-fail.html'),
         });
+    } catch (err) {
+        // 사용자가 결제창을 닫은 경우 등
+        if (err && err.code === 'USER_CANCEL') {
+            console.log('사용자가 결제를 취소했습니다.');
+        } else {
+            console.error('결제 요청 오류:', err);
+            alert('결제 요청 중 오류가 발생했습니다: ' + (err?.message || '알 수 없는 오류'));
+        }
     }
 }
 

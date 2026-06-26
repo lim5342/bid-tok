@@ -11,3 +11,7 @@ Desktop.ini
 # Node
 node_modules/
 npm-debug.log
+
+# Wrangler local cache
+.wrangler/
+workers/**/.wrangler/
