@@ -428,8 +428,8 @@ const API = {
 
         async create(appData) {
             const data = {
-                ...appData,
-                status: '접수',
+                status: '접수',          // 기본값 (appData.status 가 있으면 아래에서 덮어씀)
+                ...appData,              // 호출측 status(예: '결제대기')를 그대로 유지
                 createdAt: new Date().toISOString()
             };
             return await _smartAddDoc('applications', data);

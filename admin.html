@@ -662,7 +662,7 @@
                         <div class="stat-icon purple"><i class="fas fa-won-sign"></i></div>
                         <div class="stat-body">
                             <div class="stat-num" id="st-revenue">-</div>
-                            <div class="stat-lbl">이번 달 매출</div>
+                            <div class="stat-lbl">이번 달 거래액</div>
                         </div>
                     </div>
                 </div>
@@ -889,11 +889,16 @@
             <div class="section" id="sec-settlements">
                 <div class="section-title"><i class="fas fa-won-sign"></i> 정산 관리</div>
 
+                <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:0.8rem 1.1rem;margin-bottom:1.2rem;font-size:0.85rem;color:#1e40af;line-height:1.6;">
+                    💡 <strong>정산 방식 (A방식)</strong> · 고객이 결제한 <strong>132,000원(VAT 포함) 전액</strong>을 배정된 전문가에게 지급합니다.
+                    플랫폼 중개수수료는 <strong>0원</strong>입니다. 전문가별 입금이 끝나면 <strong>[입금완료]</strong> 버튼을 눌러 처리하세요.
+                </div>
+
                 <!-- 요약 -->
                 <div class="settlement-summary" id="settleSummary">
-                    <div class="sum-box"><div class="num" id="settle-total">-</div><div class="lbl">전체 완료 건</div></div>
-                    <div class="sum-box"><div class="num" id="settle-month">-</div><div class="lbl">이번 달 건</div></div>
-                    <div class="sum-box"><div class="num" id="settle-amount">-</div><div class="lbl">이번 달 매출</div></div>
+                    <div class="sum-box"><div class="num" id="settle-pending-cnt">-</div><div class="lbl">정산 대기 건</div></div>
+                    <div class="sum-box"><div class="num" id="settle-pending-amt" style="color:#ca8a04;">-</div><div class="lbl">지급 예정 금액</div></div>
+                    <div class="sum-box"><div class="num" id="settle-done-amt" style="color:#22c55e;">-</div><div class="lbl">지급 완료 금액</div></div>
                 </div>
 
                 <!-- 월별 필터 -->
@@ -980,11 +985,11 @@
                             </div>
                             <div>
                                 <label style="font-weight:600;color:#444;font-size:0.9rem;display:block;margin-bottom:0.4rem;">부제목 (둘째 줄)</label>
-                                <input id="c_hero_sub2" type="text" placeholder="대리입찰, 이제 무료로 맡기세요" style="width:100%;padding:0.85rem 1rem;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;font-family:inherit;box-sizing:border-box;">
+                                <input id="c_hero_sub2" type="text" placeholder="대리입찰, 이제 전문가에게 맡기세요" style="width:100%;padding:0.85rem 1rem;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;font-family:inherit;box-sizing:border-box;">
                             </div>
                             <div>
                                 <label style="font-weight:600;color:#444;font-size:0.9rem;display:block;margin-bottom:0.4rem;">상단 배지 텍스트</label>
-                                <input id="c_hero_badge" type="text" placeholder="부동산경매 1등 대장TV가 운영하는 무료 대리입찰 플랫폼" style="width:100%;padding:0.85rem 1rem;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;font-family:inherit;box-sizing:border-box;">
+                                <input id="c_hero_badge" type="text" placeholder="부동산경매 1등 대장TV가 운영하는 중개수수료 무료 대리입찰 플랫폼" style="width:100%;padding:0.85rem 1rem;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;font-family:inherit;box-sizing:border-box;">
                             </div>
                         </div>
                         <button onclick="saveContents('hero')" style="margin-top:1.2rem;padding:0.85rem 2rem;border:none;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);color:white;font-size:0.95rem;font-weight:700;cursor:pointer;font-family:inherit;">
@@ -1041,7 +1046,7 @@
                         <div style="display:grid;gap:1rem;">
                             <div>
                                 <label style="font-weight:600;color:#444;font-size:0.9rem;display:block;margin-bottom:0.4rem;">섹션 제목</label>
-                                <input id="c_price_title" type="text" placeholder="정찰제 수수료" style="width:100%;padding:0.85rem 1rem;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;font-family:inherit;box-sizing:border-box;">
+                                <input id="c_price_title" type="text" placeholder="전국 단일가" style="width:100%;padding:0.85rem 1rem;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;font-family:inherit;box-sizing:border-box;">
                             </div>
                             <div>
                                 <label style="font-weight:600;color:#444;font-size:0.9rem;display:block;margin-bottom:0.4rem;">섹션 부제목</label>
@@ -1120,7 +1125,7 @@
                             </div>
                             <div>
                                 <label style="font-weight:600;color:#444;font-size:0.9rem;display:block;margin-bottom:0.4rem;">배너 텍스트</label>
-                                <textarea id="c_banner_text" rows="2" placeholder="예: 🎉 서비스 오픈 기념 — 법무사 매칭 서비스를 무료로 이용하실 수 있습니다." style="width:100%;padding:0.85rem 1rem;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;font-family:inherit;resize:vertical;box-sizing:border-box;"></textarea>
+                                <textarea id="c_banner_text" rows="2" placeholder="예: 🎉 중개수수료 0원 — 의뢰인과 전문가를 무료로 연결해 드립니다." style="width:100%;padding:0.85rem 1rem;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;font-family:inherit;resize:vertical;box-sizing:border-box;"></textarea>
                             </div>
                             <div>
                                 <label style="font-weight:600;color:#444;font-size:0.9rem;display:block;margin-bottom:0.4rem;">배너 배경색</label>
@@ -1837,7 +1842,7 @@ async function loadDashboard() {
         const waiting   = apps.filter(a => !a.expert_name && a.status !== '취소' && a.status !== '완료');
         const revenue   = apps
             .filter(a => (a.created_at || a.createdAt || '').slice(0, 7) === thisMonth && a.payment_status === '결제완료')
-            .reduce((s, a) => s + Number(a.service_fee || 99000), 0);
+            .reduce((s, a) => s + Number(a.service_fee || 132000), 0);
 
         document.getElementById('st-total').textContent   = fmtNum(apps.length);
         document.getElementById('st-pending').textContent = fmtNum(waiting.length);
@@ -1921,10 +1926,10 @@ async function loadDashboard() {
                     <strong style="font-size:1.1rem;color:#ea580c;">${fmtNum(waiting2)}건</strong>
                 </div>
                 <div style="display:flex;justify-content:space-between;align-items:center;padding:0.75rem;background:#f5f3ff;border-radius:10px;">
-                    <span style="font-size:0.9rem;color:#5b21b6;font-weight:600;">💰 이번 달 매출</span>
+                    <span style="font-size:0.9rem;color:#5b21b6;font-weight:600;">💰 이번 달 거래액</span>
                     <strong style="font-size:1.1rem;color:#7c3aed;">${fmtNum(revenue)}원</strong>
                 </div>
-                <div style="font-size:0.78rem;color:#999;text-align:right;">수수료 1건 = 99,000원</div>
+                <div style="font-size:0.78rem;color:#999;text-align:right;">1건 = 132,000원 · 전액 전문가 정산(플랫폼 0원)</div>
             </div>`;
 
         // ── 승인대기 전문가 (미니) ────────────────────
@@ -2207,7 +2212,7 @@ async function openDetail(id) {
             <tr><td>보증금 납부</td><td>${a.deposit_method||'-'}</td></tr>
             <tr><td>감정가</td><td>${fmtNum(a.appraisal_price)}원</td></tr>
             <tr><td>최저입찰가</td><td>${fmtNum(a.min_bid_price)}원</td></tr>
-            <tr><td>수수료</td><td>${fmtNum(a.service_fee||99000)}원</td></tr>
+            <tr><td>수수료</td><td>${fmtNum(a.service_fee||132000)}원</td></tr>
             <tr><td>결제 상태</td><td>${badge(a.payment_status||'결제대기')}</td></tr>
             <tr><td>신청 상태</td><td>${badge(a.status)}</td></tr>
             <tr><td>담당 법무사</td><td>${a.expert_name
@@ -3379,36 +3384,63 @@ async function exportUserCSV() {
 // ═══════════════════════════════════════════════════════
 // 정산 관리
 // ═══════════════════════════════════════════════════════
+// A방식 정산: 고객 결제 132,000원 전액을 배정 전문가에게 지급 (플랫폼 0원)
+const SERVICE_FEE = 132000;
 let settleData = [];
+let settleExpertMap = {};   // expert_id / expert_name → 전문가 정보(계좌 등)
 
 async function loadSettlements() {
     setLoading('settleTableWrap');
     try {
+        // 전문가(계좌정보) 사전 로딩 — 이름/ID 양쪽으로 매핑
+        settleExpertMap = {};
+        try {
+            const exRes = await API.users.getAll('userType=expert');
+            (exRes?.data || []).filter(u => u.userType === 'expert').forEach(ex => {
+                if (ex.id)     settleExpertMap['id:' + ex.id] = ex;
+                if (ex.name)   settleExpertMap['name:' + ex.name] = ex;
+                if (ex.userId) settleExpertMap['name:' + ex.userId] = ex;
+            });
+        } catch (e) { console.warn('전문가 정보 로딩 실패:', e); }
+
         // 결제완료 신청 전체 조회
         const res  = await API.applications.getAll('limit=1000&sort=-createdAt');
         const all  = (res?.data) || [];
-        const paid = all.filter(a => a.payment_status === '결제완료');
+        // 결제가 완료되고 전문가가 배정된 건만 정산 대상
+        const paid = all.filter(a =>
+            (a.payment_status === '결제완료' || a.status === '결제완료' || a.status === '매칭완료' || a.status === '완료')
+            && a.assigned_expert_id
+        );
 
-        // 법무사별 + 월별 집계
+        // 전문가별 + 월별 집계
         const map = {};
         paid.forEach(a => {
-            const expert = a.expert_name || '(미배정)';
-            const month  = (a.created_at || a.createdAt || '').slice(0, 7) || '미확인';
-            const key    = `${expert}__${month}`;
-            if (!map[key]) map[key] = { expert, month, count: 0, amount: 0, apps: [] };
+            const expertName = a.expert_name || '(미배정)';
+            const expertId   = a.assigned_expert_id || '';
+            const month      = (a.created_at || a.createdAt || '').slice(0, 7) || '미확인';
+            const key        = `${expertId}__${month}`;
+            if (!map[key]) map[key] = {
+                expert: expertName, expertId, month,
+                count: 0, amount: 0, apps: [], allSettled: true
+            };
             map[key].count++;
-            map[key].amount += Number(a.service_fee || 99000);
+            map[key].amount += Number(a.service_fee || SERVICE_FEE);
             map[key].apps.push(a);
+            if (a.settlement_status !== '정산완료') map[key].allSettled = false;
         });
 
-        settleData = Object.values(map).sort((a, b) => b.month.localeCompare(a.month) || a.expert.localeCompare(b.expert));
+        settleData = Object.values(map).sort((a, b) =>
+            b.month.localeCompare(a.month) || a.expert.localeCompare(b.expert));
 
-        // 요약
-        const thisMonth = new Date().toISOString().slice(0, 7);
-        const thisData  = settleData.filter(r => r.month === thisMonth);
-        document.getElementById('settle-total').textContent  = paid.length + '건';
-        document.getElementById('settle-month').textContent  = thisData.reduce((s, r) => s + r.count, 0) + '건';
-        document.getElementById('settle-amount').textContent = fmtNum(thisData.reduce((s, r) => s + r.amount, 0)) + '원';
+        // 요약: 정산대기 / 지급예정 / 지급완료
+        let pendingCnt = 0, pendingAmt = 0, doneAmt = 0;
+        settleData.forEach(r => {
+            if (r.allSettled) { doneAmt += r.amount; }
+            else { pendingCnt += r.count; pendingAmt += r.amount; }
+        });
+        document.getElementById('settle-pending-cnt').textContent = pendingCnt + '건';
+        document.getElementById('settle-pending-amt').textContent = fmtNum(pendingAmt) + '원';
+        document.getElementById('settle-done-amt').textContent    = fmtNum(doneAmt) + '원';
 
         // 월 필터 옵션 구성
         const months = [...new Set(settleData.map(r => r.month))].sort((a, b) => b.localeCompare(a));
@@ -3418,9 +3450,18 @@ async function loadSettlements() {
 
         renderSettleTable(settleData);
     } catch(e) {
+        console.error(e);
         document.getElementById('settleTableWrap').innerHTML =
             `<div class="empty-box"><i class="fas fa-exclamation-circle"></i><p>데이터를 불러올 수 없습니다.</p></div>`;
     }
+}
+
+function settleAccountText(row) {
+    const ex = settleExpertMap['id:' + row.expertId] || settleExpertMap['name:' + row.expert];
+    if (ex && ex.bankName) {
+        return `${ex.bankName} ${ex.bankAccount || ''}<br><span style="color:#888;font-size:0.78rem;">예금주: ${ex.bankHolder || ex.name || '-'}</span>`;
+    }
+    return `<span style="color:#ef4444;font-size:0.8rem;">계좌 미등록</span>`;
 }
 
 function renderSettleTable(rows) {
@@ -3432,42 +3473,76 @@ function renderSettleTable(rows) {
     wrap.innerHTML = `
     <table class="data-table">
         <thead><tr>
-            <th>법무사</th><th>정산 월</th><th>처리 건수</th>
-            <th>수수료 합계</th><th>법무사 지급액 (70%)</th><th>플랫폼 수익 (30%)</th><th>상태</th>
+            <th>전문가</th><th>정산 월</th><th>처리 건수</th>
+            <th>지급 금액 (전액)</th><th>입금 계좌</th><th>정산 상태</th><th>처리</th>
         </tr></thead>
         <tbody>
-        ${rows.map(r => `<tr>
+        ${rows.map((r, i) => `<tr>
             <td><strong>${r.expert}</strong></td>
             <td><span style="background:#f0f2f5;padding:0.2rem 0.6rem;border-radius:6px;font-size:0.82rem;">${r.month}</span></td>
-            <td><strong style="color:#667eea;">${r.count}건</strong></td>
-            <td><strong>${fmtNum(r.amount)}원</strong></td>
-            <td style="color:#22c55e;font-weight:600;">${fmtNum(Math.round(r.amount * 0.7))}원</td>
-            <td style="color:#764ba2;font-weight:600;">${fmtNum(Math.round(r.amount * 0.3))}원</td>
-            <td>${badge('정산완료')}</td>
+            <td><strong style="color:#667eea;">${r.count}건</strong> <span style="color:#aaa;font-size:0.78rem;">(× ${fmtNum(SERVICE_FEE)})</span></td>
+            <td><strong style="color:#16a34a;">${fmtNum(r.amount)}원</strong></td>
+            <td style="font-size:0.85rem;">${settleAccountText(r)}</td>
+            <td>${r.allSettled ? badge('정산완료') : badge('정산대기')}</td>
+            <td>${r.allSettled
+                ? `<button onclick="toggleSettle(${i}, false)" class="status-select" style="border-color:#fca5a5;color:#b91c1c;">↩ 취소</button>`
+                : `<button onclick="toggleSettle(${i}, true)" class="status-select" style="background:#16a34a;color:#fff;border-color:#16a34a;"><i class="fas fa-check"></i> 입금완료</button>`}
+            </td>
         </tr>`).join('')}
         </tbody>
     </table>`;
+    // 현재 렌더된 rows 를 보관 (필터 후 인덱스 매핑용)
+    wrap._rows = rows;
+}
+
+// 입금완료 / 취소 토글 — 그룹에 속한 모든 신청건의 settlement_status 업데이트
+async function toggleSettle(idx, markDone) {
+    const wrap = document.getElementById('settleTableWrap');
+    const rows = wrap._rows || settleData;
+    const row  = rows[idx];
+    if (!row) return;
+
+    const newStatus = markDone ? '정산완료' : '정산대기';
+    const confirmMsg = markDone
+        ? `${row.expert} 전문가에게 ${row.month} 정산금 ${fmtNum(row.amount)}원(${row.count}건)을 입금 완료 처리할까요?`
+        : `${row.expert} ${row.month} 정산을 '대기' 상태로 되돌릴까요?`;
+    if (!confirm(confirmMsg)) return;
+
+    try {
+        for (const app of row.apps) {
+            if (!app.id) continue;
+            await API.applications.updateStatus(app.id, app.status, {
+                settlement_status: newStatus,
+                settled_at: markDone ? new Date().toISOString() : ''
+            });
+            app.settlement_status = newStatus;   // 로컬 캐시 동기화
+        }
+        row.allSettled = markDone;
+        showToast(markDone ? '입금완료 처리되었습니다.' : '정산 대기로 변경되었습니다.', 'success');
+        loadSettlements();   // 요약 + 테이블 재계산
+    } catch (e) {
+        console.error(e);
+        showToast('정산 처리 중 오류가 발생했습니다.', 'error');
+    }
 }
 
 function filterSettleTable() {
     const m = document.getElementById('settleMonthFilter').value;
     const filtered = m === 'all' ? settleData : settleData.filter(r => r.month === m);
     renderSettleTable(filtered);
-
-    // 필터된 합계 업데이트
-    if (m !== 'all') {
-        document.getElementById('settle-month').textContent  = filtered.reduce((s, r) => s + r.count, 0) + '건';
-        document.getElementById('settle-amount').textContent = fmtNum(filtered.reduce((s, r) => s + r.amount, 0)) + '원';
-    }
 }
 
 async function exportSettleCSV() {
     if (settleData.length === 0) { showToast('데이터가 없습니다.', 'info'); return; }
-    const header = ['법무사','정산월','처리건수','수수료합계','법무사지급(70%)','플랫폼수익(30%)'];
-    const rows   = settleData.map(r => [
-        r.expert, r.month, r.count, r.amount,
-        Math.round(r.amount * 0.7), Math.round(r.amount * 0.3)
-    ]);
+    const header = ['전문가','정산월','처리건수','지급금액(전액)','입금은행','계좌번호','예금주','정산상태'];
+    const rows   = settleData.map(r => {
+        const ex = settleExpertMap['id:' + r.expertId] || settleExpertMap['name:' + r.expert] || {};
+        return [
+            r.expert, r.month, r.count, r.amount,
+            ex.bankName || '', ex.bankAccount || '', ex.bankHolder || ex.name || '',
+            r.allSettled ? '정산완료' : '정산대기'
+        ];
+    });
     downloadCSV([header, ...rows], `정산내역_${new Date().toISOString().slice(0,10)}`);
     showToast('정산 CSV 다운로드 완료!', 'success');
 }
@@ -3504,8 +3579,8 @@ const CONTENT_DEFAULTS = {
         hero_title1: '법원 갈 시간에',
         hero_title2: '가족과 함께',
         hero_sub1: '쉬운 경매를 위해 대장TV가 직접 만들었습니다',
-        hero_sub2: '대리입찰, 이제 무료로 맡기세요',
-        hero_badge: '부동산경매 1등 대장TV가 운영하는 무료 대리입찰 플랫폼',
+        hero_sub2: '대리입찰, 이제 전문가에게 맡기세요',
+        hero_badge: '부동산경매 1등 대장TV가 운영하는 중개수수료 무료 대리입찰 플랫폼',
     },
     service: {
         how_title: '이용 방법',
@@ -3516,10 +3591,10 @@ const CONTENT_DEFAULTS = {
         step4_title: '결과 수령',     step4_desc: '입찰 당일 문자로 낙찰/패찰 결과를 즉시 안내받습니다',
     },
     pricing: {
-        price_title: '정찰제 수수료',
-        price_sub: '숨겨진 비용 없이 딱 하나의 가격',
-        price_amount: '전국 균일 수수료',
-        price_desc: '법무사가 직접 수수료를 받습니다. 플랫폼 중개 수수료는 무료입니다.',
+        price_title: '전국 단일가',
+        price_sub: '숨겨진 비용 없이 딱 하나의 가격 · 132,000원 (VAT 포함)',
+        price_amount: '132,000원',
+        price_desc: '결제 금액은 전액 배정된 전문가(법무사·공인중개사)에게 정산됩니다. 플랫폼 중개수수료는 0원입니다.',
     },
     footer: {
         footer_company: '대리입찰톡',
@@ -3533,7 +3608,7 @@ const CONTENT_DEFAULTS = {
     },
     banner: {
         banner_show: true,
-        banner_text: '법무사 매칭 서비스 — 무료로 법무사 매칭 서비스를 이용하실 수 있습니다.',
+        banner_text: '중개수수료 0원 — 대리입찰 톡은 의뢰인과 전문가를 무료로 연결해 드립니다. 플랫폼이 가져가는 수수료는 없습니다.',
         banner_color: '#667eea',
     }
 };

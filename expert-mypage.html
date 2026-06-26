@@ -584,7 +584,7 @@
                                 </div>
                                 <div>
                                     <span class="label">수수료</span>
-                                    <span class="value highlight">${formatPrice(item.service_fee || 99000)}원</span>
+                                    <span class="value highlight">${formatPrice(item.service_fee || 132000)}원</span>
                                 </div>
                             </div>
                         </div>
@@ -611,7 +611,7 @@
                     if (!month) return;
                     if (!monthly[month]) monthly[month] = { count: 0, amount: 0 };
                     monthly[month].count++;
-                    monthly[month].amount += Number(app.service_fee || 99000);
+                    monthly[month].amount += Number(app.service_fee || 132000);
                 });
 
                 const months = Object.keys(monthly).sort().reverse();

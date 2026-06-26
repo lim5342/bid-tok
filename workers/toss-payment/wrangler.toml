@@ -1,0 +1,7 @@
+name = "bidtok-toss-payment"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+# 시크릿 키는 코드/설정에 넣지 않고 wrangler secret으로 설정합니다.
+#   wrangler secret put TOSS_SECRET_KEY
+# (테스트: test_sk_... / 운영: live_sk_...)
