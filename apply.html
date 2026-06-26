@@ -491,14 +491,32 @@
             <div class="form-row">
                 <div class="form-group">
                     <label>사건번호 <span class="required">*</span></label>
-                    <input type="text" id="caseNumber" placeholder="예) 2024타경12345">
-                    <div class="hint">법원 경매 사건번호를 입력하세요</div>
+                    <div class="input-btn-group">
+                        <input type="text" id="caseNumber" placeholder="예) 2024타경12345" oninput="onCaseNumberInput()">
+                        <button class="btn-verify" type="button" id="caseLookupBtn" onclick="lookupCase()">
+                            <i class="fas fa-search"></i> 사건 조회
+                        </button>
+                    </div>
+                    <div class="hint">법원 선택 후 사건번호(예: 2024타경12345)를 입력하고 <strong>사건 조회</strong>를 누르면 대법원 법원경매정보에서 실제 물건을 확인할 수 있습니다.</div>
                     <div class="error-msg">사건번호를 입력해주세요.</div>
+                    <!-- 사건 조회 결과 안내 -->
+                    <div id="caseLookupResult" style="display:none; margin-top:0.6rem; padding:0.85rem 1rem; border-radius:10px; font-size:0.86rem; line-height:1.5;"></div>
                 </div>
+                <div class="form-group">
+                    <label>물건번호</label>
+                    <input type="text" id="itemNumber" placeholder="예) 1 (단일 물건은 보통 1)">
+                    <div class="hint">한 사건에 여러 물건이 있을 때 구분하는 번호 (모르면 비워두세요)</div>
+                </div>
+            </div>
+
+            <div class="form-row">
                 <div class="form-group">
                     <label>입찰 기일 <span class="required">*</span></label>
                     <input type="date" id="bidDate" min="">
                     <div class="error-msg">입찰 기일을 선택해주세요.</div>
+                </div>
+                <div class="form-group">
+                    <!-- 레이아웃 정렬용 빈 칸 -->
                 </div>
             </div>
 
@@ -935,6 +953,27 @@ const COURT_DATA = {
     '제주': ['제주지방법원']
 };
 
+// 대법원 법원경매정보 법원사무소코드(cortOfcCd) 매핑 — 사건 조회 링크 생성용
+const COURT_CODE = {
+    '서울중앙지방법원':'B000210','서울동부지방법원':'B000211','서울남부지방법원':'B000215','서울북부지방법원':'B000212','서울서부지방법원':'B000216',
+    '의정부지방법원':'B000213','의정부지방법원 고양지원':'B000231','의정부지방법원 남양주지원':'B214807',
+    '인천지방법원':'B000240','인천지방법원 부천지원':'B000241',
+    '수원지방법원':'B000250','수원지방법원 성남지원':'B000251','수원지방법원 안산지원':'B000254','수원지방법원 안양지원':'B000252','수원지방법원 여주지원':'B000253','수원지방법원 평택지원':'B000255',
+    '춘천지방법원':'B000260','춘천지방법원 강릉지원':'B000261','춘천지방법원 속초지원':'B000263','춘천지방법원 원주지원':'B000262','춘천지방법원 영월지원':'B000264',
+    '대전지방법원':'B000270','대전지방법원 홍성지원':'B000272','대전지방법원 논산지원':'B000274','대전지방법원 서산지원':'B000273','대전지방법원 천안지원':'B000271','대전지방법원 공주지원':'B000275',
+    '청주지방법원':'B000280','청주지방법원 충주지원':'B000281','청주지방법원 제천지원':'B000282','청주지방법원 영동지원':'B000283',
+    '대구지방법원':'B000310','대구지방법원 서부지원':'B000320','대구지방법원 안동지원':'B000311','대구지방법원 경주지원':'B000312','대구지방법원 김천지원':'B000314','대구지방법원 상주지원':'B000315','대구지방법원 의성지원':'B000313','대구지방법원 영덕지원':'B000316','대구지방법원 포항지원':'B000317','대구지방법원 영주지원':'B000318','대구지방법원 울진지원':'B000319',
+    '부산지방법원':'B000410','부산지방법원 동부지원':'B000412','부산지방법원 서부지원':'B000413',
+    '울산지방법원':'B000411',
+    '창원지방법원':'B000420','창원지방법원 마산지원':'B000421','창원지방법원 진주지원':'B000422','창원지방법원 통영지원':'B000424','창원지방법원 밀양지원':'B000423','창원지방법원 거창지원':'B000425',
+    '광주지방법원':'B000510','광주지방법원 목포지원':'B000511','광주지방법원 순천지원':'B000513','광주지방법원 해남지원':'B000514','광주지방법원 장흥지원':'B000512','광주지방법원 강진지원':'B214804',
+    '전주지방법원':'B000520','전주지방법원 군산지원':'B000521','전주지방법원 정읍지원':'B000523','전주지방법원 남원지원':'B000522',
+    '제주지방법원':'B000540'
+};
+
+// 법원경매정보 사건번호별 검색 페이지 (신청자가 직접 물건 확인)
+const COURT_AUCTION_SEARCH_URL = 'https://www.courtauction.go.kr/pgj/index.on?w2xPath=/pgj/ui/pgj100/PGJ153F00.xml';
+
 let currentStep = 1;
 let phoneVerified = false;
 let smsTimerInterval = null;
@@ -1076,6 +1115,88 @@ function clearErrors() {
 }
 
 // ─────────────────────────────────────────────
+// 사건번호 조회/검증 (대법원 법원경매정보 연동)
+// ─────────────────────────────────────────────
+let caseLookupVerified = false;  // 신청자가 사건 조회를 한 번이라도 했는지
+
+// 사건번호 정규화: 다양한 입력을 'YYYY타경NNNNN' 형태로 파싱
+function parseCaseNumber(raw) {
+    if (!raw) return null;
+    // 공백 제거, 전각/혼합 처리
+    let s = raw.replace(/\s/g, '').replace(/[Tt]?경/g, '타경');
+    // 패턴: 4자리연도 + (타경) + 숫자
+    const m = s.match(/(\d{4})\s*타?경?\s*(\d{1,7})/);
+    if (!m) {
+        // '타경' 없이 연도+번호만 있는 경우도 허용
+        const m2 = s.match(/(\d{4})[^\d]{0,3}(\d{1,7})/);
+        if (!m2) return null;
+        return { year: m2[1], serial: m2[2], formatted: m2[1] + '타경' + m2[2] };
+    }
+    return { year: m[1], serial: m[2], formatted: m[1] + '타경' + m[2] };
+}
+
+function onCaseNumberInput() {
+    // 입력이 바뀌면 조회 상태 초기화
+    caseLookupVerified = false;
+    const r = document.getElementById('caseLookupResult');
+    if (r) r.style.display = 'none';
+}
+
+function lookupCase() {
+    const courtName = document.getElementById('courtSelect').value;
+    const raw = document.getElementById('caseNumber').value;
+    const itemNo = (document.getElementById('itemNumber').value || '').trim();
+    const resultBox = document.getElementById('caseLookupResult');
+
+    // 1) 법원 선택 확인
+    if (!courtName) {
+        renderCaseResult('warn', '먼저 <strong>지역과 법원</strong>을 선택해주세요.');
+        return;
+    }
+    // 2) 사건번호 형식 검증
+    const parsed = parseCaseNumber(raw);
+    if (!parsed) {
+        renderCaseResult('error', '사건번호 형식이 올바르지 않습니다. 예) <strong>2024타경12345</strong>');
+        return;
+    }
+    // 입력칸을 정규화된 값으로 보정
+    document.getElementById('caseNumber').value = parsed.formatted;
+
+    const courtCode = COURT_CODE[courtName] || '';
+    // 대법원 법원경매정보 사건번호별 검색 페이지로 이동 (신청자가 직접 물건 확인)
+    // 법원경매정보는 직접 파라미터 링크가 제한적이므로, 검색 페이지를 새 탭으로 열고 입력 안내
+    const url = COURT_AUCTION_SEARCH_URL;
+
+    caseLookupVerified = true;
+
+    const itemTxt = itemNo ? (' · 물건번호 <strong>' + itemNo + '</strong>') : '';
+    renderCaseResult('ok',
+        '✅ 입력하신 사건번호 <strong>' + parsed.formatted + '</strong> (' + courtName + itemTxt + ') 형식이 확인되었습니다.<br>' +
+        '아래 버튼을 눌러 <strong>대법원 법원경매정보</strong>에서 실제 물건(주소·감정가·매각기일)을 직접 확인하세요. ' +
+        '새 창에서 <em>법원 = ' + courtName + '</em>, <em>사건번호 = ' + parsed.year + '타경' + parsed.serial + '</em> 으로 검색하시면 됩니다.<br>' +
+        '<div style="margin-top:0.6rem; display:flex; gap:0.5rem; flex-wrap:wrap;">' +
+          '<a href="' + url + '" target="_blank" rel="noopener" class="btn-verify" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px; padding:0.55rem 1rem;">' +
+            '<i class="fas fa-external-link-alt"></i> 법원경매정보에서 사건 확인' +
+          '</a>' +
+        '</div>' +
+        '<div style="margin-top:0.5rem; font-size:0.8rem; color:#888;">※ 대법원 법원경매정보는 외부 자동 연동(공식 Open API)을 제공하지 않아, 정확한 물건 확인은 위 공식 사이트에서 진행됩니다. 입력하신 정보는 배정 전문가가 교차 확인합니다.</div>'
+    );
+}
+
+function renderCaseResult(type, html) {
+    const box = document.getElementById('caseLookupResult');
+    if (!box) return;
+    const styles = {
+        ok:    'background:#ECFDF5; border:1.5px solid #6EE7B7; color:#065F46;',
+        warn:  'background:#FFFBEB; border:1.5px solid #FCD34D; color:#92400E;',
+        error: 'background:#FEF2F2; border:1.5px solid #FCA5A5; color:#991B1B;'
+    };
+    box.setAttribute('style', 'margin-top:0.6rem; padding:0.85rem 1rem; border-radius:10px; font-size:0.86rem; line-height:1.5; ' + (styles[type] || styles.ok));
+    box.innerHTML = html;
+    box.style.display = 'block';
+}
+
+// ─────────────────────────────────────────────
 // 요약 채우기
 // ─────────────────────────────────────────────
 function fillSummary() {
@@ -1083,7 +1204,7 @@ function fillSummary() {
     const deposit = bidAmt ? (Math.floor(parseNumber(bidAmt) * 0.1)).toLocaleString('ko-KR') + '원' : '-';
     const rows = [
         ['법원', val2('courtSelect')],
-        ['사건번호', val2('caseNumber')],
+        ['사건번호', val2('caseNumber') + (val2('itemNumber') ? ' (물건번호 ' + val2('itemNumber') + ')' : '')],
         ['입찰 기일', val2('bidDate')],
         ['물건 주소', (val2('propertyAddress') + ' ' + val2('propertyAddressDetail')).trim()],
         ['물건 종류', val2('propertyType') || '-'],
@@ -1151,6 +1272,7 @@ async function submitApplication() {
         region: val2('regionSelect'),
         court: val2('courtSelect'),
         case_number: rawCase,
+        item_number: val2('itemNumber'),
         bid_date: val2('bidDate'),
         address: (val2('propertyAddress') + ' ' + val2('propertyAddressDetail')).trim(),
         appraisal_price: parseNumber(val2('appraisalPrice')),

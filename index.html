@@ -1735,9 +1735,12 @@
                 <div class="footer-info">
                     <p><strong>상호명:</strong> <span id="footerCompany">대리입찰톡</span></p>
                     <p><strong>회사:</strong> <span id="footerCorp">대장TV</span></p>
+                    <p><strong>대표자:</strong> <span id="footerCeo">장영준</span></p>
                     <p><strong>주소:</strong> <span id="footerAddress">서울특별시 금천구 가산디지털1로 75-24 901호</span></p>
+                    <p><strong>사업자등록번호:</strong> <span id="footerBizNo">000-00-00000</span></p>
+                    <p><strong>통신판매업신고:</strong> <span id="footerMailOrderNo">제0000-서울금천-0000호</span></p>
                     <p><strong>대표전화:</strong> <a id="footerTelLink" href="tel:02-853-5875" style="color:var(--mint);"><span id="footerTel">02-853-5875</span></a> &nbsp;|&nbsp; <span id="footerHours">평일 09:00~18:00</span></p>
-                    <p><strong>대표 관리자:</strong> <span id="footerCeo">장영준</span> &nbsp;|&nbsp; <strong>이메일:</strong> <a id="footerEmailLink" href="mailto:qkqk5342@naver.com" style="color:var(--mint);"><span id="footerEmail">qkqk5342@naver.com</span></a></p>
+                    <p><strong>이메일:</strong> <a id="footerEmailLink" href="mailto:qkqk5342@naver.com" style="color:var(--mint);"><span id="footerEmail">qkqk5342@naver.com</span></a></p>
                 </div>
                 <div class="footer-links">
                     <a href="terms.html">이용약관</a>
@@ -2020,6 +2023,8 @@
             footer_company: '대리입찰톡',
             footer_corp: '대장TV',
             footer_address: '서울특별시 금천구 가산디지털1로 75-24 901호',
+            footer_biz_no: '000-00-00000',
+            footer_mail_order_no: '제0000-서울금천-0000호',
             footer_tel: '02-853-5875',
             footer_hours: '평일 09:00~18:00',
             footer_ceo: '장영준',
@@ -2069,6 +2074,8 @@
             set('footerTel', d.footer_tel || DEFAULTS.footer_tel);
             set('footerHours', d.footer_hours || DEFAULTS.footer_hours);
             set('footerCeo', d.footer_ceo || DEFAULTS.footer_ceo);
+            set('footerBizNo', d.footer_biz_no || DEFAULTS.footer_biz_no);
+            set('footerMailOrderNo', d.footer_mail_order_no || DEFAULTS.footer_mail_order_no);
             set('footerEmail', d.footer_email || DEFAULTS.footer_email);
             set('footerCopyright', d.footer_copyright || DEFAULTS.footer_copyright);
             setHref('footerTelLink', 'tel:' + (d.footer_tel || DEFAULTS.footer_tel).replace(/-/g,''));
