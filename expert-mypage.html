@@ -445,12 +445,12 @@
                     const remainSec = Math.floor(bidDateMs / 1000);
                     const isUrgent  = remainSec > 0 && remainSec < 900;
                     const timeLabel = remainSec > 0 ? formatTimeRemaining(remainSec) + ' 남음' : '마감';
-                    // 승인 전 공개 필드: 입찰일·신청자이름·물건종류만 표시, 주소/연락처/입찰가는 숨김
+                    // 승인 전 공개 필드: 입찰일·신청자이름·물건종류·물건주소까지 표시 (수임 판단용). 연락처/입찰가는 승인 후 공개.
                     return `
                     <div class="application-card request-card">
                         <div class="card-header">
                             <div>
-                                <span class="case-number">${req.case_number || '-'}</span>
+                                <span class="case-number">${req.case_number || '-'}${req.item_number ? ' (물건 '+req.item_number+')' : ''}</span>
                                 <span class="timer-badge ${isUrgent ? 'urgent' : ''}">
                                     <i class="fas fa-clock"></i> ${timeLabel}
                                 </span>
@@ -460,11 +460,12 @@
                         </div>
                         <div class="card-body">
                             <p><i class="fas fa-university" style="color:#667eea;margin-right:4px;"></i><strong>법원:</strong> ${req.court || '-'}</p>
-                            <p class="client-info"><i class="fas fa-user"></i> 신청자: ${req.applicant_name || '-'}</p>
+                            <p><i class="fas fa-map-marker-alt" style="color:#0f766e;margin-right:4px;"></i><strong>물건주소:</strong> <span style="color:#0f766e;font-weight:600;">${req.address || '-'}</span></p>
                             <p><i class="fas fa-home" style="color:#667eea;margin-right:4px;"></i><strong>물건종류:</strong> ${req.property_type || '-'}</p>
+                            <p class="client-info"><i class="fas fa-user"></i> 신청자: ${req.applicant_name || '-'}</p>
                             <div style="margin-top:0.75rem;padding:0.75rem 1rem;background:#f8fafc;border-radius:10px;border:1.5px dashed #cbd5e1;">
-                                <p style="margin:0 0 0.35rem;font-size:0.82rem;font-weight:700;color:#64748b;"><i class="fas fa-lock" style="color:#94a3b8;"></i> 승인 전 비공개 정보</p>
-                                <p style="margin:0;font-size:0.82rem;color:#94a3b8;">📍 주소 &nbsp;·&nbsp; 📞 연락처 &nbsp;·&nbsp; 💰 입찰가</p>
+                                <p style="margin:0 0 0.35rem;font-size:0.82rem;font-weight:700;color:#64748b;"><i class="fas fa-lock" style="color:#94a3b8;"></i> 승인 후 공개되는 정보</p>
+                                <p style="margin:0;font-size:0.82rem;color:#94a3b8;">📞 연락처 &nbsp;·&nbsp; 💰 입찰가 &nbsp;·&nbsp; 🏦 환급계좌</p>
                                 <p style="margin:0.35rem 0 0;font-size:0.79rem;color:#cbd5e1;">승인 버튼을 누르면 위 정보가 공개됩니다.</p>
                             </div>
                             <p style="color:#999;font-size:0.83rem;margin-top:0.6rem;">
@@ -649,7 +650,7 @@
 
         // ── 수락(승인) ─────────────────────────────────────────────
         async function acceptRequest(id) {
-            if (!confirm('승인하시면 주소·연락처·입찰가가 공개됩니다.\n승인 후 취소 3회 시 계정이 자동 정지됩니다.\n\n이 요청을 승인하시겠습니까?')) return;
+            if (!confirm('승인하시면 신청자 연락처·입찰가·환급계좌가 공개됩니다.\n승인 후 취소 3회 시 계정이 자동 정지됩니다.\n\n이 요청을 승인하시겠습니까?')) return;
             try {
                 const db = getDB();
                 const appDoc = await db.collection('applications').doc(id).get();

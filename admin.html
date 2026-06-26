@@ -586,6 +586,10 @@
                 <i class="fas fa-user-tie"></i> 전문가 승인
                 <span class="nav-badge" id="navBadgeExp" style="display:none;"></span>
             </button>
+            <button class="nav-item" onclick="goto('partners',this)">
+                <i class="fas fa-id-card-clip"></i> 대리인 현황
+                <span class="nav-badge" id="navBadgePartner" style="display:none;"></span>
+            </button>
             <button class="nav-item" onclick="goto('users',this)">
                 <i class="fas fa-users"></i> 회원 관리
             </button>
@@ -805,6 +809,71 @@
                 </div>
 
                 <div id="expertListWrap">
+                    <div style="text-align:center;padding:3rem;color:#ccc;"><i class="fas fa-spinner fa-spin fa-2x"></i></div>
+                </div>
+            </div>
+
+            <!-- ════ 대리인 현황 (전국 등록 카운팅 + 개별 컨택) ════ -->
+            <div class="section" id="sec-partners">
+                <div class="section-title" style="justify-content:space-between; flex-wrap:wrap; gap:0.5rem;">
+                    <span><i class="fas fa-id-card-clip"></i> 대리인 현황 (전국)</span>
+                    <button class="btn-sm btn-blue" onclick="exportPartnersCSV()" style="font-size:0.88rem;padding:0.5rem 1.2rem;">
+                        <i class="fas fa-file-csv"></i> 명단 CSV
+                    </button>
+                </div>
+
+                <!-- 요약 카드 -->
+                <div class="stats-row" style="margin-bottom:1rem;">
+                    <div class="stat-box" style="cursor:pointer;" onclick="setPartnerFilter('all',null)">
+                        <div class="stat-icon blue"><i class="fas fa-users"></i></div>
+                        <div class="stat-body">
+                            <div class="stat-num" id="partner-total-cnt">0</div>
+                            <div class="stat-lbl">전체 등록 대리인</div>
+                        </div>
+                    </div>
+                    <div class="stat-box" style="cursor:pointer;" onclick="setPartnerFilter('active',null)">
+                        <div class="stat-icon green"><i class="fas fa-circle-check"></i></div>
+                        <div class="stat-body">
+                            <div class="stat-num" id="partner-active-cnt">0</div>
+                            <div class="stat-lbl">활동중(승인완료)</div>
+                        </div>
+                    </div>
+                    <div class="stat-box" style="cursor:pointer;" onclick="setPartnerFilter('pending',null)">
+                        <div class="stat-icon orange"><i class="fas fa-hourglass-half"></i></div>
+                        <div class="stat-body">
+                            <div class="stat-num" id="partner-pending-cnt">0</div>
+                            <div class="stat-lbl">승인 대기</div>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon purple"><i class="fas fa-map-location-dot"></i></div>
+                        <div class="stat-body">
+                            <div class="stat-num" id="partner-region-cnt">0</div>
+                            <div class="stat-lbl">활동 지역(법원) 수</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 지역(법원)별 카운팅 — 클릭하면 해당 지역 대리인 명단 노출 -->
+                <div style="background:#fff; border:1px solid #e8ecf3; border-radius:14px; padding:1.2rem 1.4rem; margin-bottom:1rem;">
+                    <div style="font-weight:700; color:#334155; margin-bottom:0.3rem;"><i class="fas fa-scale-balanced" style="color:#4f46e5; margin-right:6px;"></i> 법원(지역)별 등록 대리인 — 클릭하면 명단을 확인하고 개별 컨택할 수 있습니다</div>
+                    <div style="font-size:0.82rem; color:#94a3b8; margin-bottom:0.9rem;">개별 영업/컨택이 필요한 지역을 빠르게 파악하세요. 등록 0명인 법원은 우선 영업 대상입니다.</div>
+                    <div id="partnerRegionGrid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:0.5rem;">
+                        <div style="color:#ccc; padding:1rem;">불러오는 중...</div>
+                    </div>
+                </div>
+
+                <!-- 필터바 -->
+                <div class="filter-bar">
+                    <button class="ftab active" onclick="setPartnerFilter('all',this)">전체</button>
+                    <button class="ftab" onclick="setPartnerFilter('active',this)">활동중</button>
+                    <button class="ftab" onclick="setPartnerFilter('pending',this)">승인대기</button>
+                    <input type="text" id="partnerSearch" placeholder="이름·사무소·전화·법원 검색" oninput="renderPartnerList()"
+                           style="margin-left:auto; padding:0.5rem 0.9rem; border:1.5px solid #e2e8f0; border-radius:8px; font-size:0.88rem; min-width:220px;">
+                </div>
+
+                <!-- 명단 -->
+                <div id="partnerListWrap" style="margin-top:0.8rem;">
                     <div style="text-align:center;padding:3rem;color:#ccc;"><i class="fas fa-spinner fa-spin fa-2x"></i></div>
                 </div>
             </div>
@@ -1764,7 +1833,7 @@ async function importLocalDbFromFile(input) {
 // ═══════════════════════════════════════════════════════
 const SECTION_TITLES = {
     dashboard: '대시보드', applications: '신청 관리',
-    experts: '전문가 승인', users: '회원 관리', settlements: '정산 관리',
+    experts: '전문가 승인', partners: '대리인 현황 (전국)', users: '회원 관리', settlements: '정산 관리',
     myinfo: '내 정보 / 비밀번호 변경', contents: '콘텐츠 관리'
 };
 
@@ -1793,6 +1862,7 @@ function goto(sec, el) {
     if (sec === 'dashboard')    loadDashboard();
     if (sec === 'applications') loadApplications();
     if (sec === 'experts')      { loadExperts(); loadSetupPendingCount(); }
+    if (sec === 'partners')     loadPartners();
     if (sec === 'users')        loadUsers();
     if (sec === 'settlements')  loadSettlements();
     if (sec === 'myinfo')        loadMyInfo();
@@ -2077,7 +2147,7 @@ function renderAppTable(apps) {
             return `<tr data-id="${a.id}" data-status="${a.status || ''}" style="${rowStyle}">
             <td><strong style="color:#667eea;">${a.case_number || '-'}</strong>
                 ${isCancelReq ? '<br><span style="display:inline-block;margin-top:3px;padding:1px 6px;background:#fee2e2;color:#ef4444;border-radius:4px;font-size:0.72rem;font-weight:700;">⚠ 결제취소신청</span>' : ''}</td>
-            <td style="font-size:0.82rem;">${a.region || ''}${a.court ? '<br><span style="color:#999;">'+a.court+'</span>' : ''}</td>
+            <td style="font-size:0.82rem;">${a.region || ''}${a.court ? '<br><span style="color:#999;">'+a.court+'</span>' : ''}${a.address ? '<br><span style="color:#0f766e;font-size:0.76rem;"><i class="fas fa-location-dot"></i> '+a.address+'</span>' : ''}</td>
             <td>${a.applicant_name || '-'}</td>
             <td style="font-size:0.82rem;">${a.phone || '-'}</td>
             <td style="color:#888;font-size:0.82rem;">${fmtDate(a.bid_date)}</td>
@@ -2193,13 +2263,15 @@ async function openDetail(id) {
         const noExpert = !a.expert_name && a.status !== '취소' && a.status !== '완료';
         document.getElementById('modalDetailAssignBtn').style.display = noExpert ? 'block' : 'none';
 
+        const courtAuctionUrl = 'https://www.courtauction.go.kr/pgj/index.on?w2xPath=/pgj/ui/pgj100/PGJ153F00.xml';
         document.getElementById('modalDetailBody').innerHTML = `
         <table class="detail-table">
-            <tr><td>사건번호</td><td><strong style="color:#667eea;">${a.case_number||'-'}</strong></td></tr>
+            <tr><td>사건번호</td><td><strong style="color:#667eea;">${a.case_number||'-'}</strong>${a.item_number ? ` <span style="color:#64748b;">(물건번호 ${a.item_number})</span>` : ''}</td></tr>
             <tr><td>법원</td><td>${a.court||'-'}</td></tr>
             <tr><td>지역</td><td>${a.region||'-'}</td></tr>
-            <tr><td>물건 주소</td><td>${a.address||'-'}</td></tr>
+            <tr><td>물건 주소</td><td><strong style="color:#0f766e;">${a.address||'-'}</strong></td></tr>
             <tr><td>물건 종류</td><td>${a.property_type||'-'}</td></tr>
+            <tr><td>법원경매정보</td><td><a href="${courtAuctionUrl}" target="_blank" rel="noopener" style="color:#1550E8; font-weight:600; text-decoration:none;"><i class="fas fa-external-link-alt"></i> 대법원에서 사건 확인</a> <span style="font-size:0.78rem;color:#94a3b8;">(법원=${a.court||'-'}, 사건번호=${a.case_number||'-'})</span></td></tr>
             <tr><td>신청자</td><td><strong>${a.applicant_name||'-'}</strong></td></tr>
             <tr><td>연락처</td><td>${a.phone||'-'}</td></tr>
             <tr><td>이메일</td><td>${a.email||'-'}</td></tr>
@@ -2489,6 +2561,191 @@ function downloadCSV(rows, filename) {
 // ═══════════════════════════════════════════════════════
 // 전문가 승인
 // ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// 대리인 현황 (전국 등록 카운팅 + 개별 컨택)
+// ═══════════════════════════════════════════════════════
+let allPartners = [];        // 전체 전문가(대리인) 캐시
+let partnerFilter = 'all';   // all | active | pending
+let partnerRegionFilter = ''; // 선택된 법원(지역) 필터
+
+async function loadPartners() {
+    const grid = document.getElementById('partnerRegionGrid');
+    const wrap = document.getElementById('partnerListWrap');
+    if (grid) grid.innerHTML = '<div style="color:#ccc; padding:1rem;">불러오는 중...</div>';
+    setLoading('partnerListWrap');
+    try {
+        const res = await API.users.getAll('userType=expert&limit=500');
+        const all = (res?.data) || [];
+        // 대리인 = userType expert 전체 (승인대기/완료 모두 포함, 거부 제외)
+        allPartners = all.filter(u => u.userType === 'expert' && u.status !== 'rejected');
+        renderPartnerSummary();
+        renderPartnerRegionGrid();
+        renderPartnerList();
+    } catch (e) {
+        if (wrap) wrap.innerHTML = '<div class="empty-box"><i class="fas fa-exclamation-circle"></i><p>대리인 데이터를 불러올 수 없습니다.</p></div>';
+    }
+}
+
+// 대리인의 활동 법원(지역) 목록 추출
+function partnerRegions(p) {
+    let regions = p.serviceRegions || p.service_regions || p.regions || [];
+    if (typeof regions === 'string') regions = regions.split(/[,，、]/).map(s => s.trim()).filter(Boolean);
+    if (!Array.isArray(regions)) regions = [];
+    return regions;
+}
+
+function renderPartnerSummary() {
+    const total = allPartners.length;
+    const active = allPartners.filter(p => p.status === 'active').length;
+    const pending = allPartners.filter(p => p.status === 'pending' || p.status === 'setup_pending').length;
+    // 활동 지역(법원) 고유 개수
+    const regionSet = new Set();
+    allPartners.forEach(p => partnerRegions(p).forEach(r => regionSet.add(r)));
+    const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    set('partner-total-cnt', total);
+    set('partner-active-cnt', active);
+    set('partner-pending-cnt', pending);
+    set('partner-region-cnt', regionSet.size);
+    // 사이드바 뱃지(승인대기 표시)
+    const badge = document.getElementById('navBadgePartner');
+    if (badge) {
+        if (pending > 0) { badge.textContent = pending; badge.style.display = ''; }
+        else badge.style.display = 'none';
+    }
+}
+
+// 법원(지역)별 등록 대리인 카운팅 그리드 — 클릭 시 해당 지역 필터
+function renderPartnerRegionGrid() {
+    const grid = document.getElementById('partnerRegionGrid');
+    if (!grid) return;
+    // 법원별 카운팅
+    const countMap = {};
+    allPartners.forEach(p => {
+        partnerRegions(p).forEach(r => { countMap[r] = (countMap[r] || 0) + 1; });
+    });
+    const entries = Object.entries(countMap).sort((a, b) => b[1] - a[1]);
+    if (entries.length === 0) {
+        grid.innerHTML = '<div style="color:#94a3b8; padding:0.8rem;">아직 활동 법원이 등록된 대리인이 없습니다.</div>';
+        return;
+    }
+    const cards = entries.map(([region, cnt]) => {
+        const sel = (partnerRegionFilter === region);
+        return `<button onclick="filterByPartnerRegion('${region.replace(/'/g, "\\'")}')"
+            style="text-align:left; cursor:pointer; border:1.5px solid ${sel ? '#4f46e5' : '#e8ecf3'}; background:${sel ? '#eef2ff' : '#fff'}; border-radius:10px; padding:0.7rem 0.9rem; transition:all .15s;">
+            <div style="font-size:0.82rem; color:#475569; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${region}</div>
+            <div style="font-size:1.15rem; font-weight:800; color:${sel ? '#4f46e5' : '#1e293b'}; margin-top:2px;">${cnt}<span style="font-size:0.78rem; font-weight:500; color:#94a3b8;"> 명</span></div>
+        </button>`;
+    }).join('');
+    const clearBtn = partnerRegionFilter
+        ? `<button onclick="filterByPartnerRegion('')" style="grid-column:1/-1; cursor:pointer; border:1.5px dashed #cbd5e1; background:#f8fafc; border-radius:10px; padding:0.55rem; color:#64748b; font-size:0.85rem; font-weight:600;"><i class="fas fa-xmark"></i> 지역 필터 해제 (전체 보기)</button>`
+        : '';
+    grid.innerHTML = cards + clearBtn;
+}
+
+function filterByPartnerRegion(region) {
+    partnerRegionFilter = region;
+    renderPartnerRegionGrid();
+    renderPartnerList();
+}
+
+function setPartnerFilter(f, el) {
+    partnerFilter = f;
+    document.querySelectorAll('#sec-partners .filter-bar .ftab').forEach(b => b.classList.remove('active'));
+    if (el) el.classList.add('active');
+    // 통계 카드 클릭으로 진입한 경우 해당 ftab도 강조
+    if (!el) {
+        const idx = { all: 0, active: 1, pending: 2 }[f];
+        const tabs = document.querySelectorAll('#sec-partners .filter-bar .ftab');
+        if (tabs[idx]) tabs[idx].classList.add('active');
+    }
+    renderPartnerList();
+}
+
+function renderPartnerList() {
+    const wrap = document.getElementById('partnerListWrap');
+    if (!wrap) return;
+    const kw = (document.getElementById('partnerSearch')?.value || '').trim().toLowerCase();
+
+    let list = allPartners.slice();
+    // 상태 필터
+    if (partnerFilter === 'active')  list = list.filter(p => p.status === 'active');
+    if (partnerFilter === 'pending') list = list.filter(p => p.status === 'pending' || p.status === 'setup_pending');
+    // 지역 필터
+    if (partnerRegionFilter) list = list.filter(p => partnerRegions(p).includes(partnerRegionFilter));
+    // 검색
+    if (kw) {
+        list = list.filter(p => {
+            const hay = [p.name, p.officeName, p.phone, p.email, partnerRegions(p).join(' ')].join(' ').toLowerCase();
+            return hay.includes(kw);
+        });
+    }
+    // 정렬: 승인대기 우선, 이름순
+    list.sort((a, b) => {
+        const ap = (a.status === 'pending' || a.status === 'setup_pending') ? 0 : 1;
+        const bp = (b.status === 'pending' || b.status === 'setup_pending') ? 0 : 1;
+        if (ap !== bp) return ap - bp;
+        return (a.name || '').localeCompare(b.name || '', 'ko');
+    });
+
+    if (list.length === 0) {
+        wrap.innerHTML = `<div class="empty-box"><i class="fas fa-inbox"></i><p>조건에 맞는 대리인이 없습니다.</p></div>`;
+        return;
+    }
+
+    const headerInfo = partnerRegionFilter
+        ? `<div style="font-size:0.86rem; color:#4f46e5; font-weight:600; margin-bottom:0.6rem;"><i class="fas fa-filter"></i> "${partnerRegionFilter}" 활동 대리인 ${list.length}명</div>`
+        : `<div style="font-size:0.86rem; color:#64748b; margin-bottom:0.6rem;">총 ${list.length}명</div>`;
+
+    const rows = list.map(p => {
+        const regions = partnerRegions(p);
+        const regionTags = regions.length
+            ? regions.slice(0, 6).map(r => `<span style="display:inline-block; font-size:0.74rem; background:#f1f5f9; color:#475569; padding:2px 8px; border-radius:20px; margin:1px;">${r}</span>`).join('') + (regions.length > 6 ? `<span style="font-size:0.74rem; color:#94a3b8;"> +${regions.length - 6}</span>` : '')
+            : '<span style="font-size:0.78rem; color:#cbd5e1;">법원 미지정</span>';
+        const phone = (p.phone || '').replace(/[^0-9]/g, '');
+        const statusBadge = badge(p.status);
+        return `
+        <div style="background:#fff; border:1px solid #e8ecf3; border-radius:12px; padding:1rem 1.2rem; margin-bottom:0.6rem; display:flex; gap:1rem; align-items:flex-start; flex-wrap:wrap;">
+            <div style="width:42px; height:42px; border-radius:50%; background:#eef2ff; color:#4f46e5; display:flex; align-items:center; justify-content:center; flex-shrink:0;"><i class="fas fa-user-tie"></i></div>
+            <div style="flex:1; min-width:200px;">
+                <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                    <strong style="font-size:0.98rem; color:#1e293b;">${p.name || '-'}</strong>
+                    ${p.officeName ? `<span style="font-size:0.8rem; color:#64748b;">${p.officeName}</span>` : ''}
+                    ${statusBadge}
+                </div>
+                <div style="margin-top:4px; font-size:0.82rem; color:#64748b; display:flex; gap:14px; flex-wrap:wrap;">
+                    <span><i class="fas fa-phone" style="margin-right:4px;color:#94a3b8;"></i>${p.phone || '-'}</span>
+                    <span><i class="fas fa-envelope" style="margin-right:4px;color:#94a3b8;"></i>${p.email || '-'}</span>
+                </div>
+                <div style="margin-top:6px;">${regionTags}</div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:6px; flex-shrink:0;">
+                ${phone ? `<a href="tel:${phone}" class="btn-sm" style="background:#059669;color:#fff;text-decoration:none;text-align:center;padding:0.4rem 0.9rem;border-radius:8px;font-size:0.82rem;"><i class="fas fa-phone"></i> 전화</a>` : ''}
+                ${phone ? `<a href="sms:${phone}" class="btn-sm" style="background:#0284c7;color:#fff;text-decoration:none;text-align:center;padding:0.4rem 0.9rem;border-radius:8px;font-size:0.82rem;"><i class="fas fa-comment-sms"></i> 문자</a>` : ''}
+                ${p.email ? `<a href="mailto:${p.email}" class="btn-sm" style="background:#64748b;color:#fff;text-decoration:none;text-align:center;padding:0.4rem 0.9rem;border-radius:8px;font-size:0.82rem;"><i class="fas fa-envelope"></i> 메일</a>` : ''}
+            </div>
+        </div>`;
+    }).join('');
+
+    wrap.innerHTML = headerInfo + rows;
+}
+
+function exportPartnersCSV() {
+    if (!allPartners || allPartners.length === 0) { alert('내보낼 대리인 데이터가 없습니다.'); return; }
+    const header = ['이름', '사무소', '전화', '이메일', '상태', '활동법원'];
+    const rows = allPartners.map(p => [
+        p.name || '', p.officeName || '', p.phone || '', p.email || '',
+        p.status || '', partnerRegions(p).join(' / ')
+    ]);
+    const csv = [header, ...rows].map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = '대리인명단_' + new Date().toISOString().slice(0, 10) + '.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
 async function loadExperts() {
     setLoading('expertListWrap');
     const statusMap = { pending: 'pending', active: 'active', rejected: 'rejected', setup_pending: 'setup_pending' };
