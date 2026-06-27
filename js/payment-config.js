@@ -18,3 +18,14 @@ window.PAYMENT_CONFIG = {
     successUrl: location.origin + '/payment-success.html',
     failUrl: location.origin + '/payment-fail.html',
 };
+
+// ============================================================
+// CODEF 경매사건 조회 설정 (codef-proxy 워커)
+// ★ 배포 후 workerUrl 값을 실제 워커 주소로 교체하세요.
+//   배포: workers/codef-proxy (wrangler deploy)
+//   클라이언트 키(clientId/secret)는 워커 secret에만 보관합니다.
+//   workerUrl이 비어 있으면 사건 조회는 형식 검증 + 대법원 링크로 폴백됩니다.
+// ============================================================
+window.CODEF_CONFIG = {
+    workerUrl: '', // 예) 'https://bidtok-codef-proxy.qkqk5342.workers.dev'
+};

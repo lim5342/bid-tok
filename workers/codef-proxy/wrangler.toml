@@ -1,0 +1,13 @@
+name = "bidtok-codef-proxy"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+# 환경변수(var)
+[vars]
+CODEF_ENV = "production"
+# 경매사건검색 API 경로. CODEF 명세와 다르면 여기서 조정합니다.
+CODEF_AUCTION_PATH = "/v1/kr/public/ck/auction/auction-events"
+
+# 시크릿은 코드/설정에 넣지 않고 wrangler secret으로 설정합니다.
+#   wrangler secret put CODEF_CLIENT_ID
+#   wrangler secret put CODEF_CLIENT_SECRET

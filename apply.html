@@ -129,6 +129,10 @@
             margin: 2rem auto;
             padding: 0 1.5rem 4rem;
         }
+        /* STEP1(사건 조회)은 우측 요약 카드를 위해 더 넓게 */
+        .apply-body.step1-wide { max-width: 1160px; }
+        /* STEP1이 아닌 패널은 본문 폭을 800px로 유지 */
+        .apply-body.step1-wide .step-panel:not(#panel1) { max-width: 800px; margin-left: auto; margin-right: auto; }
 
         .step-panel { display: none; }
         .step-panel.active { display: block; }
@@ -150,6 +154,59 @@
             gap: 0.5rem;
         }
         .apply-card h3 i { color: #1550E8; }
+
+        /* ── STEP1: 폼 + 우측 따라다니는 물건 요약 카드 ── */
+        .step1-layout {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 1.5rem;
+            align-items: start;
+        }
+        .step1-layout > .apply-card { margin-bottom: 0; }
+        .prop-summary {
+            position: sticky;
+            top: 1.5rem;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            overflow: hidden;
+            border: 1px solid #eef0f4;
+        }
+        .prop-summary-head {
+            background: linear-gradient(135deg,#1550E8,#3b6ef0);
+            color: #fff;
+            padding: 0.85rem 1rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .prop-summary-photo {
+            width: 100%; aspect-ratio: 4/3; background: #f1f5f9;
+            display: flex; align-items: center; justify-content: center;
+            color: #cbd5e1; font-size: 2rem; overflow: hidden;
+        }
+        .prop-summary-photo img { width: 100%; height: 100%; object-fit: cover; }
+        .prop-summary-body { padding: 0.9rem 1rem 1.1rem; }
+        .prop-summary-row {
+            display: flex; justify-content: space-between; align-items: baseline;
+            gap: 0.5rem; padding: 0.45rem 0; border-bottom: 1px dashed #eef0f4;
+            font-size: 0.84rem;
+        }
+        .prop-summary-row:last-child { border-bottom: none; }
+        .prop-summary-row .k { color: #64748b; white-space: nowrap; }
+        .prop-summary-row .v { color: #1e293b; font-weight: 700; text-align: right; }
+        .prop-summary-row .v.price { color: #1550E8; }
+        .prop-summary-empty {
+            padding: 1.4rem 1rem; text-align: center; color: #94a3b8;
+            font-size: 0.85rem; line-height: 1.5;
+        }
+        @media (max-width: 900px) {
+            .step1-layout { grid-template-columns: 1fr; }
+            .prop-summary { position: static; }
+        }
+        /* 사건 조회중 로딩 */
+        .case-loading { display:inline-block; width:14px; height:14px; border:2px solid #fff; border-top-color:transparent; border-radius:50%; animation:caseSpin .7s linear infinite; vertical-align:-2px; }
+        @keyframes caseSpin { to { transform: rotate(360deg); } }
 
         /* ── 폼 요소 ── */
         .form-row {
@@ -459,10 +516,11 @@
 </div>
 
 <!-- 컨텐츠 -->
-<div class="apply-body">
+<div class="apply-body step1-wide">
 
     <!-- ══ STEP 1: 사건 조회 ══ -->
     <div class="step-panel active" id="panel1">
+      <div class="step1-layout">
         <div class="apply-card">
             <h3><i class="fas fa-search"></i> 사건 조회 및 정보 입력</h3>
 
@@ -497,7 +555,7 @@
                             <i class="fas fa-search"></i> 사건 조회
                         </button>
                     </div>
-                    <div class="hint">법원 선택 후 사건번호(예: 2024타경12345)를 입력하고 <strong>사건 조회</strong>를 누르면 대법원 법원경매정보에서 실제 물건을 확인할 수 있습니다.</div>
+                    <div class="hint">법원 선택 후 사건번호(예: 2024타경12345)를 입력하고 <strong>사건 조회</strong>를 누르면 물건 사진·감정가·최저입찰가·매각기일이 자동으로 조회됩니다.</div>
                     <div class="error-msg">사건번호를 입력해주세요.</div>
                     <!-- 사건 조회 결과 안내 -->
                     <div id="caseLookupResult" style="display:none; margin-top:0.6rem; padding:0.85rem 1rem; border-radius:10px; font-size:0.86rem; line-height:1.5;"></div>
@@ -558,6 +616,18 @@
                 </div>
             </div>
         </div>
+
+        <!-- 우측 따라다니는 물건 요약 카드 (바토너 스타일) -->
+        <aside class="prop-summary" id="propSummary">
+            <div class="prop-summary-head"><i class="fas fa-building"></i> 물건 요약</div>
+            <div class="prop-summary-photo" id="propSummaryPhoto"><i class="fas fa-image"></i></div>
+            <div class="prop-summary-body" id="propSummaryBody">
+                <div class="prop-summary-empty">
+                    법원과 사건번호를 입력하고<br><strong>사건 조회</strong>를 누르면<br>물건 사진과 정보가 표시됩니다.
+                </div>
+            </div>
+        </aside>
+      </div>
 
         <div class="apply-btn-row">
             <button class="btn-back" onclick="window.location.href='index.html'"><i class="fas fa-arrow-left"></i> 홈으로</button>
@@ -1022,6 +1092,10 @@ function goStep(step) {
     document.getElementById('panel' + currentStep).classList.remove('active');
     document.getElementById('panel' + step).classList.add('active');
 
+    // STEP1(사건 조회)에서만 우측 요약 카드를 위해 본문 폭 확장
+    const body = document.querySelector('.apply-body');
+    if (body) body.classList.toggle('step1-wide', step === 1);
+
     // 스텝 인디케이터 업데이트
     for (let i = 1; i <= 4; i++) {
         const item = document.getElementById('stepItem' + i);
@@ -1142,11 +1216,11 @@ function onCaseNumberInput() {
     if (r) r.style.display = 'none';
 }
 
-function lookupCase() {
+async function lookupCase() {
     const courtName = document.getElementById('courtSelect').value;
     const raw = document.getElementById('caseNumber').value;
     const itemNo = (document.getElementById('itemNumber').value || '').trim();
-    const resultBox = document.getElementById('caseLookupResult');
+    const btn = document.getElementById('caseLookupBtn');
 
     // 1) 법원 선택 확인
     if (!courtName) {
@@ -1159,28 +1233,171 @@ function lookupCase() {
         renderCaseResult('error', '사건번호 형식이 올바르지 않습니다. 예) <strong>2024타경12345</strong>');
         return;
     }
-    // 입력칸을 정규화된 값으로 보정
     document.getElementById('caseNumber').value = parsed.formatted;
-
     const courtCode = COURT_CODE[courtName] || '';
-    // 대법원 법원경매정보 사건번호별 검색 페이지로 이동 (신청자가 직접 물건 확인)
-    // 법원경매정보는 직접 파라미터 링크가 제한적이므로, 검색 페이지를 새 탭으로 열고 입력 안내
-    const url = COURT_AUCTION_SEARCH_URL;
 
-    caseLookupVerified = true;
+    const workerUrl = (window.CODEF_CONFIG && window.CODEF_CONFIG.workerUrl || '').replace(/\/+$/, '');
 
-    const itemTxt = itemNo ? (' · 물건번호 <strong>' + itemNo + '</strong>') : '';
-    renderCaseResult('ok',
-        '✅ 입력하신 사건번호 <strong>' + parsed.formatted + '</strong> (' + courtName + itemTxt + ') 형식이 확인되었습니다.<br>' +
-        '아래 버튼을 눌러 <strong>대법원 법원경매정보</strong>에서 실제 물건(주소·감정가·매각기일)을 직접 확인하세요. ' +
-        '새 창에서 <em>법원 = ' + courtName + '</em>, <em>사건번호 = ' + parsed.year + '타경' + parsed.serial + '</em> 으로 검색하시면 됩니다.<br>' +
-        '<div style="margin-top:0.6rem; display:flex; gap:0.5rem; flex-wrap:wrap;">' +
-          '<a href="' + url + '" target="_blank" rel="noopener" class="btn-verify" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px; padding:0.55rem 1rem;">' +
-            '<i class="fas fa-external-link-alt"></i> 법원경매정보에서 사건 확인' +
-          '</a>' +
-        '</div>' +
-        '<div style="margin-top:0.5rem; font-size:0.8rem; color:#888;">※ 대법원 법원경매정보는 외부 자동 연동(공식 Open API)을 제공하지 않아, 정확한 물건 확인은 위 공식 사이트에서 진행됩니다. 입력하신 정보는 배정 전문가가 교차 확인합니다.</div>'
-    );
+    // CODEF 워커가 설정되어 있지 않으면 기존 폴백(형식검증 + 대법원 링크)
+    if (!workerUrl) {
+        caseLookupVerified = true;
+        const itemTxt = itemNo ? (' · 물건번호 <strong>' + itemNo + '</strong>') : '';
+        renderCaseResult('ok',
+            '✅ 사건번호 <strong>' + parsed.formatted + '</strong> (' + courtName + itemTxt + ') 형식이 확인되었습니다.<br>' +
+            '아래에서 <strong>대법원 법원경매정보</strong>로 실제 물건(주소·감정가·매각기일)을 확인하세요.<br>' +
+            '<div style="margin-top:0.6rem; display:flex; gap:0.5rem; flex-wrap:wrap;">' +
+              '<a href="' + COURT_AUCTION_SEARCH_URL + '" target="_blank" rel="noopener" class="btn-verify" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px; padding:0.55rem 1rem;">' +
+                '<i class="fas fa-external-link-alt"></i> 법원경매정보에서 사건 확인' +
+              '</a>' +
+            '</div>'
+        );
+        return;
+    }
+
+    // ── CODEF 자동 조회 ──
+    const origBtn = btn ? btn.innerHTML : '';
+    if (btn) { btn.disabled = true; btn.innerHTML = '<span class="case-loading"></span> 조회중'; }
+    renderCaseResult('warn', '<i class="fas fa-spinner fa-spin"></i> 법원경매정보에서 사건을 조회하고 있습니다...');
+
+    try {
+        const res = await fetch(workerUrl + '/search', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                court: courtName,
+                courtCode: courtCode,
+                caseNumber: parsed.formatted,
+                caseYear: parsed.year,
+                caseNo: parsed.serial,
+                itemNo: itemNo,
+            }),
+        });
+        const data = await res.json();
+
+        if (!res.ok || data.success === false || !data.normalized) {
+            const msg = (data && (data.message || data.error)) || '해당 사건 정보를 찾을 수 없습니다.';
+            renderCaseResult('warn',
+                '⚠️ ' + msg + '<br>사건번호/법원/물건번호를 다시 확인하시거나, 아래 정보를 직접 입력해주세요.<br>' +
+                '<a href="' + COURT_AUCTION_SEARCH_URL + '" target="_blank" rel="noopener" style="color:#1550E8; font-weight:600;"><i class="fas fa-external-link-alt"></i> 법원경매정보에서 직접 확인</a>'
+            );
+            renderPropSummaryEmpty();
+            caseLookupVerified = true; // 직접 입력 허용
+            return;
+        }
+
+        const n = data.normalized;
+        applyCaseData(n);
+        renderPropSummary(n, courtName, parsed.formatted, itemNo);
+        caseLookupVerified = true;
+        renderCaseResult('ok',
+            '✅ <strong>' + parsed.formatted + '</strong> 사건 정보를 불러왔습니다. 오른쪽 요약과 아래 입력값을 확인해주세요.' +
+            (n.appraisalPrice || n.minBidPrice ? '' : '<br><span style="font-size:0.8rem;color:#888;">일부 항목은 자동으로 채워지지 않았을 수 있어요. 비어 있으면 직접 입력해주세요.</span>')
+        );
+    } catch (e) {
+        renderCaseResult('error',
+            '사건 조회 중 오류가 발생했습니다. 잠시 후 다시 시도하시거나 정보를 직접 입력해주세요.<br>' +
+            '<a href="' + COURT_AUCTION_SEARCH_URL + '" target="_blank" rel="noopener" style="color:#1550E8; font-weight:600;"><i class="fas fa-external-link-alt"></i> 법원경매정보에서 직접 확인</a>'
+        );
+        renderPropSummaryEmpty();
+        caseLookupVerified = true;
+    } finally {
+        if (btn) { btn.disabled = false; btn.innerHTML = origBtn; }
+    }
+}
+
+// CODEF 정규화 데이터를 폼에 자동 채우기
+function applyCaseData(n) {
+    const setV = (id, v) => { const el = document.getElementById(id); if (el && v != null && v !== '') el.value = v; };
+    // 물건번호
+    if (n.itemNo) setV('itemNumber', String(n.itemNo).replace(/[^\d]/g, '') || n.itemNo);
+    // 주소
+    if (n.address) {
+        const addrEl = document.getElementById('propertyAddress');
+        if (addrEl) addrEl.value = n.address;
+    }
+    // 매각기일(YYYYMMDD / YYYY-MM-DD / YYYY.MM.DD → input[type=date])
+    if (n.bidDate) {
+        const dd = String(n.bidDate).replace(/[^\d]/g, '');
+        if (dd.length >= 8) {
+            const iso = dd.slice(0,4) + '-' + dd.slice(4,6) + '-' + dd.slice(6,8);
+            const el = document.getElementById('bidDate');
+            if (el) el.value = iso;
+        }
+    }
+    // 감정가 / 최저매각가
+    const numOnly = (v) => String(v).replace(/[^\d]/g, '');
+    if (n.appraisalPrice) {
+        const el = document.getElementById('appraisalPrice');
+        if (el) { el.value = Number(numOnly(n.appraisalPrice)).toLocaleString(); showKorean('appraisalPrice','appraisalPriceKor'); }
+    }
+    if (n.minBidPrice) {
+        const el = document.getElementById('minBidPrice');
+        if (el) { el.value = Number(numOnly(n.minBidPrice)).toLocaleString(); showKorean('minBidPrice','minBidPriceKor'); }
+    }
+    // 물건 종류 매핑
+    if (n.propertyType) {
+        const sel = document.getElementById('propertyType');
+        if (sel) {
+            const map = [
+                [/아파트/, '아파트'], [/(빌라|연립|다세대)/, '빌라/연립'], [/(단독|다가구)/, '단독/다가구'],
+                [/오피스텔/, '오피스텔'], [/(상가|점포|근린)/, '상가'], [/(토지|대지|임야|전|답)/, '토지'],
+            ];
+            let matched = '기타';
+            for (const [re, label] of map) { if (re.test(n.propertyType)) { matched = label; break; } }
+            sel.value = matched;
+        }
+    }
+}
+
+function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function fmtMoney(v) {
+    const d = String(v == null ? '' : v).replace(/[^\d]/g, '');
+    return d ? Number(d).toLocaleString() + '원' : '-';
+}
+function fmtDate(v) {
+    const d = String(v == null ? '' : v).replace(/[^\d]/g, '');
+    if (d.length >= 8) return d.slice(0,4) + '.' + d.slice(4,6) + '.' + d.slice(6,8);
+    return v || '-';
+}
+
+// 우측 따라다니는 물건 요약 카드 렌더링
+function renderPropSummary(n, courtName, caseFormatted, itemNo) {
+    const photoEl = document.getElementById('propSummaryPhoto');
+    const bodyEl = document.getElementById('propSummaryBody');
+    if (!photoEl || !bodyEl) return;
+
+    if (n.photos && n.photos.length) {
+        photoEl.innerHTML = '<img src="' + escapeHtml(n.photos[0]) + '" alt="물건 사진" ' +
+            'onerror="this.parentNode.innerHTML=\'<i class=&quot;fas fa-image&quot;></i>\'">';
+    } else {
+        photoEl.innerHTML = '<i class="fas fa-image"></i>';
+    }
+
+    const rows = [
+        ['법원', escapeHtml(n.court || courtName)],
+        ['사건번호', escapeHtml(n.caseNo || caseFormatted) + ((n.itemNo || itemNo) ? ' (물건 ' + escapeHtml(n.itemNo || itemNo) + ')' : '')],
+        ['물건종류', escapeHtml(n.propertyType || '-')],
+        ['소재지', escapeHtml(n.address || '-')],
+        ['감정가', fmtMoney(n.appraisalPrice), 'price'],
+        ['최저입찰가', fmtMoney(n.minBidPrice), 'price'],
+        ['입찰보증금', fmtMoney(n.bidDeposit)],
+        ['매각기일', fmtDate(n.bidDate)],
+    ];
+    if (n.failedCount) rows.push(['유찰', escapeHtml(n.failedCount) + '회']);
+    if (n.status) rows.push(['상태', escapeHtml(n.status)]);
+
+    bodyEl.innerHTML = rows.map(([k, v, cls]) =>
+        '<div class="prop-summary-row"><span class="k">' + k + '</span><span class="v ' + (cls || '') + '">' + v + '</span></div>'
+    ).join('');
+}
+
+function renderPropSummaryEmpty() {
+    const photoEl = document.getElementById('propSummaryPhoto');
+    const bodyEl = document.getElementById('propSummaryBody');
+    if (photoEl) photoEl.innerHTML = '<i class="fas fa-image"></i>';
+    if (bodyEl) bodyEl.innerHTML = '<div class="prop-summary-empty">조회된 물건 정보가 없습니다.<br>정보를 직접 입력해주세요.</div>';
 }
 
 function renderCaseResult(type, html) {

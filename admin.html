@@ -2586,6 +2586,32 @@ async function loadPartners() {
     }
 }
 
+// 전국 부동산경매 법원 전체 목록 (대법원 법원경매정보 기준) — apply.html COURT_DATA와 동기화
+const COURT_GROUPS = {
+    '서울': ['서울중앙지방법원','서울동부지방법원','서울남부지방법원','서울북부지방법원','서울서부지방법원'],
+    '인천': ['인천지방법원','인천지방법원 부천지원'],
+    '경기': ['수원지방법원','수원지방법원 성남지원','수원지방법원 안산지원','수원지방법원 안양지원','수원지방법원 여주지원','수원지방법원 평택지원','의정부지방법원','의정부지방법원 고양지원','의정부지방법원 남양주지원'],
+    '부산': ['부산지방법원','부산지방법원 동부지원','부산지방법원 서부지원'],
+    '대구': ['대구지방법원','대구지방법원 서부지원','대구지방법원 안동지원','대구지방법원 경주지원','대구지방법원 김천지원','대구지방법원 상주지원','대구지방법원 의성지원','대구지방법원 영덕지원','대구지방법원 포항지원'],
+    '광주': ['광주지방법원','광주지방법원 목포지원','광주지방법원 순천지원','광주지방법원 해남지원','광주지방법원 장흥지원','광주지방법원 강진지원'],
+    '대전': ['대전지방법원','대전지방법원 홍성지원','대전지방법원 논산지원','대전지방법원 서산지원','대전지방법원 천안지원','대전지방법원 공주지원'],
+    '울산': ['울산지방법원'],
+    '강원': ['춘천지방법원','춘천지방법원 강릉지원','춘천지방법원 속초지원','춘천지방법원 원주지원','춘천지방법원 영월지원'],
+    '충북': ['청주지방법원','청주지방법원 충주지원','청주지방법원 제천지원','청주지방법원 영동지원'],
+    '전북': ['전주지방법원','전주지방법원 군산지원','전주지방법원 정읍지원','전주지방법원 남원지원'],
+    '경북': ['대구지방법원 영주지원','대구지방법원 울진지원'],
+    '경남': ['창원지방법원','창원지방법원 마산지원','창원지방법원 진주지원','창원지방법원 통영지원','창원지방법원 밀양지원','창원지방법원 거창지원'],
+    '제주': ['제주지방법원']
+};
+// 평탄화된 전국 법원 목록 (중복 제거, 순서 유지)
+const ALL_COURTS = (() => {
+    const seen = new Set(); const arr = [];
+    Object.values(COURT_GROUPS).forEach(list => list.forEach(c => {
+        if (!seen.has(c)) { seen.add(c); arr.push(c); }
+    }));
+    return arr;
+})();
+
 // 대리인의 활동 법원(지역) 목록 추출
 function partnerRegions(p) {
     let regions = p.serviceRegions || p.service_regions || p.regions || [];
@@ -2614,7 +2640,8 @@ function renderPartnerSummary() {
     }
 }
 
-// 법원(지역)별 등록 대리인 카운팅 그리드 — 클릭 시 해당 지역 필터
+// 법원(지역)별 등록 대리인 카운팅 그리드 — 전국 법원 전체 표시(0명 포함), 클릭 시 해당 법원 필터
+let partnerRegionShowEmpty = true; // 0명 법원도 표시할지 여부
 function renderPartnerRegionGrid() {
     const grid = document.getElementById('partnerRegionGrid');
     if (!grid) return;
@@ -2623,23 +2650,57 @@ function renderPartnerRegionGrid() {
     allPartners.forEach(p => {
         partnerRegions(p).forEach(r => { countMap[r] = (countMap[r] || 0) + 1; });
     });
-    const entries = Object.entries(countMap).sort((a, b) => b[1] - a[1]);
-    if (entries.length === 0) {
-        grid.innerHTML = '<div style="color:#94a3b8; padding:0.8rem;">아직 활동 법원이 등록된 대리인이 없습니다.</div>';
-        return;
-    }
-    const cards = entries.map(([region, cnt]) => {
-        const sel = (partnerRegionFilter === region);
-        return `<button onclick="filterByPartnerRegion('${region.replace(/'/g, "\\'")}')"
-            style="text-align:left; cursor:pointer; border:1.5px solid ${sel ? '#4f46e5' : '#e8ecf3'}; background:${sel ? '#eef2ff' : '#fff'}; border-radius:10px; padding:0.7rem 0.9rem; transition:all .15s;">
-            <div style="font-size:0.82rem; color:#475569; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${region}</div>
-            <div style="font-size:1.15rem; font-weight:800; color:${sel ? '#4f46e5' : '#1e293b'}; margin-top:2px;">${cnt}<span style="font-size:0.78rem; font-weight:500; color:#94a3b8;"> 명</span></div>
+    // 전국 법원 목록을 기준으로 카운트 결합 (등록된 적 없는 법원은 0명)
+    // 표준 목록에 없는 법원명이 데이터에 있으면 함께 표시
+    const extra = Object.keys(countMap).filter(c => !ALL_COURTS.includes(c));
+    const registeredTotal = ALL_COURTS.filter(c => (countMap[c] || 0) > 0).length + extra.length;
+
+    let html = '';
+    // 상단 컨트롤: 0명 법원 표시 토글 + 필터 해제
+    const toggleLabel = partnerRegionShowEmpty ? '미등록(0명) 법원 숨기기' : '전국 법원 전체 보기';
+    const toggleIcon = partnerRegionShowEmpty ? 'fa-eye-slash' : 'fa-globe';
+    html += `<div style="grid-column:1/-1; display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center; margin-bottom:0.2rem;">
+        <span style="font-size:0.82rem; color:#64748b;">전국 <b style="color:#1e293b;">${ALL_COURTS.length + extra.length}</b>개 법원 · 대리인 등록 <b style="color:#4f46e5;">${registeredTotal}</b>곳</span>
+        <button onclick="togglePartnerRegionEmpty()" style="margin-left:auto; cursor:pointer; border:1.5px solid #e8ecf3; background:#fff; border-radius:8px; padding:0.35rem 0.7rem; color:#64748b; font-size:0.8rem; font-weight:600;"><i class="fas ${toggleIcon}"></i> ${toggleLabel}</button>
+        ${partnerRegionFilter ? `<button onclick="filterByPartnerRegion('')" style="cursor:pointer; border:1.5px dashed #cbd5e1; background:#f8fafc; border-radius:8px; padding:0.35rem 0.7rem; color:#64748b; font-size:0.8rem; font-weight:600;"><i class="fas fa-xmark"></i> 필터 해제</button>` : ''}
+    </div>`;
+
+    const courtCard = (court, cnt) => {
+        const sel = (partnerRegionFilter === court);
+        const has = cnt > 0;
+        const borderC = sel ? '#4f46e5' : (has ? '#c7d2fe' : '#eef0f4');
+        const bgC = sel ? '#eef2ff' : (has ? '#fbfcff' : '#fafbfc');
+        const numC = sel ? '#4f46e5' : (has ? '#1e293b' : '#cbd5e1');
+        return `<button onclick="filterByPartnerRegion('${court.replace(/'/g, "\\'")}')"
+            style="text-align:left; cursor:pointer; border:1.5px solid ${borderC}; background:${bgC}; border-radius:10px; padding:0.6rem 0.75rem; transition:all .15s;">
+            <div style="font-size:0.8rem; color:#475569; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${court}</div>
+            <div style="font-size:1.1rem; font-weight:800; color:${numC}; margin-top:2px;">${cnt}<span style="font-size:0.76rem; font-weight:500; color:#94a3b8;"> 명</span></div>
         </button>`;
-    }).join('');
-    const clearBtn = partnerRegionFilter
-        ? `<button onclick="filterByPartnerRegion('')" style="grid-column:1/-1; cursor:pointer; border:1.5px dashed #cbd5e1; background:#f8fafc; border-radius:10px; padding:0.55rem; color:#64748b; font-size:0.85rem; font-weight:600;"><i class="fas fa-xmark"></i> 지역 필터 해제 (전체 보기)</button>`
-        : '';
-    grid.innerHTML = cards + clearBtn;
+    };
+
+    // 지역(시·도)별로 그룹화하여 표시
+    Object.entries(COURT_GROUPS).forEach(([region, courts]) => {
+        const cards = courts
+            .filter(court => partnerRegionShowEmpty || (countMap[court] || 0) > 0)
+            .map(court => courtCard(court, countMap[court] || 0));
+        if (cards.length === 0) return;
+        const regionTotal = courts.reduce((s, c) => s + (countMap[c] || 0), 0);
+        html += `<div style="grid-column:1/-1; margin-top:0.4rem; font-size:0.8rem; font-weight:700; color:#334155;">${region} <span style="font-weight:500; color:#94a3b8;">· ${regionTotal}명</span></div>`;
+        html += cards.join('');
+    });
+
+    // 표준 목록에 없지만 데이터에 존재하는 법원
+    if (extra.length > 0) {
+        html += `<div style="grid-column:1/-1; margin-top:0.4rem; font-size:0.8rem; font-weight:700; color:#334155;">기타</div>`;
+        html += extra.map(court => courtCard(court, countMap[court] || 0)).join('');
+    }
+
+    grid.innerHTML = html;
+}
+
+function togglePartnerRegionEmpty() {
+    partnerRegionShowEmpty = !partnerRegionShowEmpty;
+    renderPartnerRegionGrid();
 }
 
 function filterByPartnerRegion(region) {
