@@ -351,6 +351,65 @@
             margin-top: 0.3rem;
         }
 
+        /* ── 전문가 유형 선택 (공인중개사 / 법무사) ── */
+        .expert-pick {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        @media (max-width: 600px) {
+            .expert-pick { grid-template-columns: 1fr; }
+        }
+        .expert-opt {
+            position: relative;
+            border: 2px solid #e3e8f0;
+            border-radius: 14px;
+            padding: 1.25rem 1.25rem 1.1rem;
+            cursor: pointer;
+            background: #fff;
+            transition: border-color .18s, box-shadow .18s, transform .12s;
+        }
+        .expert-opt:hover { border-color: #b9c8f0; }
+        .expert-opt.selected {
+            border-color: #1550E8;
+            box-shadow: 0 6px 18px rgba(21,80,232,0.14);
+        }
+        .expert-opt input { position: absolute; opacity: 0; pointer-events: none; }
+        .expert-opt .opt-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .expert-opt .opt-name { font-size: 1.05rem; font-weight: 800; color: #1a1a2e; }
+        .expert-opt .opt-badge {
+            font-size: 0.72rem; font-weight: 700; color: #fff;
+            padding: 2px 8px; border-radius: 6px;
+        }
+        .expert-opt[data-type="lawyer"] .opt-badge { background: #1550E8; }
+        .expert-opt[data-type="realtor"] .opt-badge { background: #475569; }
+        .expert-opt .opt-price {
+            font-size: 1.5rem; font-weight: 800; color: #1550E8; margin-bottom: 0.15rem;
+        }
+        .expert-opt .opt-vat { font-size: 0.78rem; color: #16A34A; font-weight: 600; margin-bottom: 0.6rem; }
+        .expert-opt .opt-feats { list-style: none; padding: 0; margin: 0; }
+        .expert-opt .opt-feats li {
+            font-size: 0.82rem; color: #555; line-height: 1.7; display: flex; gap: 0.35rem; align-items: flex-start;
+        }
+        .expert-opt .opt-feats li i { color: #1550E8; font-size: 0.72rem; margin-top: 0.32rem; }
+        .expert-opt .opt-feats li.note i { color: #f59e0b; }
+        .expert-opt .opt-check {
+            position: absolute; top: 0.9rem; right: 0.9rem;
+            width: 22px; height: 22px; border-radius: 50%;
+            border: 2px solid #cbd5e1; background: #fff;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 0.7rem;
+        }
+        .expert-opt.selected .opt-check { background: #1550E8; border-color: #1550E8; }
+        .expert-opt .opt-head .opt-badge { margin-right: 26px; }
+
         /* ── 확인 요약 ── */
         .summary-table {
             width: 100%;
@@ -830,7 +889,7 @@
                 <strong>제1조 (위임 내용)</strong> 갑은 을에게 아래 경매 물건에 대한 입찰 대리권을 위임합니다.<br>
                 <strong>제2조 (위임 범위)</strong> 을은 갑을 대신하여 지정 법원에 출석, 지정 금액으로 입찰표를 제출합니다.<br>
                 <strong>제3조 (보증금 관리)</strong> 을은 갑으로부터 전달받은 입찰보증금을 안전하게 관리하고, 낙찰 실패 시 즉시 반환합니다.<br>
-                <strong>제4조 (대리입찰 가격 및 정산)</strong> 대리입찰 가격은 전국 단일가 132,000원(VAT 포함)이며, 결제하신 금액은 배정된 전문가에게 직접 정산됩니다. 플랫폼은 중개수수료 0원으로, 별도로 떼는 금액이 없습니다. 공동입찰 또는 법인 입찰의 경우 담당 전문가와 별도 협의 후 비용이 추가될 수 있습니다.<br>
+                <strong>제4조 (대리입찰 가격 및 정산)</strong> 대리입찰 가격은 전문가 유형에 따라 공인중개사 110,000원, 법무사 150,000원(각 VAT 포함)이며, 결제하신 금액은 배정된 전문가에게 직접 정산됩니다. 플랫폼은 중개수수료 0원으로, 별도로 떼는 금액이 없습니다. 공동입찰 또는 법인 입찰의 경우 담당 전문가와 별도 협의 후 비용이 추가될 수 있습니다.<br>
                 <strong>제5조 (책임)</strong> 을은 입찰 대리 중 발생하는 사고에 대해 배상책임보험 한도 내에서 책임집니다.<br>
                 <strong>제6조 (취소)</strong> 입찰 기일 48시간 전까지 취소 신청이 가능합니다.
             </div>
@@ -887,12 +946,56 @@
             </table>
         </div>
 
+        <!-- 전문가 유형 선택 -->
+        <div class="apply-card">
+            <h3><i class="fas fa-user-tie"></i> 대리입찰 전문가 선택</h3>
+            <p style="font-size:0.86rem; color:#666; margin:-0.4rem 0 1rem;">진행하실 전문가 유형을 선택하세요. 요건과 가격이 다릅니다.</p>
+            <div class="expert-pick">
+                <!-- 공인중개사 -->
+                <label class="expert-opt" data-type="realtor" id="optRealtor" onclick="selectExpertType('realtor')">
+                    <input type="radio" name="expertPick" value="realtor">
+                    <div class="opt-check"><i class="fas fa-check"></i></div>
+                    <div class="opt-head">
+                        <span class="opt-name">🏠 공인중개사</span>
+                        <span class="opt-badge">권리분석</span>
+                    </div>
+                    <div class="opt-price">110,000원</div>
+                    <div class="opt-vat">VAT 포함 · 중개수수료 0원</div>
+                    <ul class="opt-feats">
+                        <li><i class="fas fa-check"></i><span>대리 입찰참여</span></li>
+                        <li><i class="fas fa-check"></i><span>부동산 권리분석 상담</span></li>
+                        <li><i class="fas fa-check"></i><span>위임장 등 서류 안내</span></li>
+                        <li class="note"><i class="fas fa-info-circle"></i><span>인감증명서 등 일부 서류 준비 필요</span></li>
+                        <li><i class="fas fa-check"></i><span>입찰 결과 안내</span></li>
+                    </ul>
+                </label>
+                <!-- 법무사 -->
+                <label class="expert-opt selected" data-type="lawyer" id="optLawyer" onclick="selectExpertType('lawyer')">
+                    <input type="radio" name="expertPick" value="lawyer" checked>
+                    <div class="opt-check"><i class="fas fa-check"></i></div>
+                    <div class="opt-head">
+                        <span class="opt-name">⚖️ 법무사</span>
+                        <span class="opt-badge">전자서명</span>
+                    </div>
+                    <div class="opt-price">150,000원</div>
+                    <div class="opt-vat">VAT 포함 · 중개수수료 0원</div>
+                    <ul class="opt-feats">
+                        <li><i class="fas fa-check"></i><span>온라인 전자서명만 (3분 완료)</span></li>
+                        <li><i class="fas fa-check"></i><span>주민센터 방문 불필요</span></li>
+                        <li><i class="fas fa-check"></i><span>인감증명서 불필요</span></li>
+                        <li><i class="fas fa-check"></i><span>대리 입찰참여</span></li>
+                        <li><i class="fas fa-check"></i><span>입찰 결과 안내</span></li>
+                    </ul>
+                </label>
+            </div>
+        </div>
+
         <!-- 수수료 안내 -->
         <div class="fee-notice">
-            <div class="fee-title">💳 대리입찰 가격 <span style="font-size:0.8rem; font-weight:500; color:#16A34A; background:#DCFCE7; padding:2px 8px; border-radius:6px; margin-left:6px;">중개수수료 0원</span></div>
-            <div class="fee-amount">132,000원 <span style="font-size:1rem; font-weight:400; color:#555;">(VAT 포함)</span></div>
-            <div class="fee-desc">✓ 전국 단일가 &nbsp;|&nbsp; ✓ 전문가(법무사·공인중개사) 직접 연결 &nbsp;|&nbsp; ✓ 결제 금액은 전문가에게 직접 정산</div>
-            <div style="margin-top:0.5rem; font-size:0.82rem; color:#888;">플랫폼 중개수수료는 0원이며, 결제하신 132,000원은 전액 배정된 전문가에게 정산됩니다. 공동입찰·법인 입찰은 별도 협의 후 비용이 추가될 수 있습니다.</div>
+            <div class="fee-title">💳 대리입찰 가격 <span id="feeExpertLabel" style="font-size:0.8rem; font-weight:600; color:#1550E8;">(법무사)</span> <span style="font-size:0.8rem; font-weight:500; color:#16A34A; background:#DCFCE7; padding:2px 8px; border-radius:6px; margin-left:6px;">중개수수료 0원</span></div>
+            <div class="fee-amount"><span id="feeAmountText">150,000</span>원 <span style="font-size:1rem; font-weight:400; color:#555;">(VAT 포함)</span></div>
+            <div class="fee-desc">✓ 전국 단일가 &nbsp;|&nbsp; ✓ 전문가 직접 연결 &nbsp;|&nbsp; ✓ 결제 금액은 전문가에게 직접 정산</div>
+            <div style="margin-top:0.5rem; font-size:0.82rem; color:#888;">플랫폼 중개수수료는 0원이며, 결제하신 금액(부가세 포함)은 전액 배정된 전문가에게 정산됩니다. 공동입찰·법인 입찰은 별도 협의 후 비용이 추가될 수 있습니다.</div>
         </div>
 
         <div class="apply-card">
@@ -903,7 +1006,7 @@
                 제1조(목적) 본 약관은 대리입찰 톡(이하 "회사")이 제공하는 대리입찰 서비스의 이용조건 및 절차 등에 관한 사항을 규정함을 목적으로 합니다.<br><br>
                 제2조(서비스 내용) 회사는 신청자의 의뢰를 받아 법무사 또는 매수신청대리인이 법원 경매 입찰에 대리 참여하는 서비스를 제공합니다.<br><br>
                 제3조(책임 범위) 법무사는 배상책임보험에 가입되어 있으며, 보증금 분실 또는 횡령에 대해 보험 한도 내에서 보상합니다. 단, 고객이 제공한 잘못된 정보로 인한 손해는 책임지지 않습니다.<br><br>
-                제4조(대리입찰 가격 및 정산) 대리입찰 가격은 전국 단일가 132,000원(VAT 포함)입니다. 회사는 중개수수료 0원으로 운영되며, 결제하신 금액 전액은 배정된 전문가(법무사 또는 공인중개사)에게 직접 정산됩니다. 단, 공동입찰 또는 법인 입찰의 경우 담당 전문가와 별도 협의 후 비용이 추가될 수 있습니다.<br><br>
+                제4조(대리입찰 가격 및 정산) 대리입찰 가격은 전문가 유형에 따라 공인중개사 110,000원, 법무사 150,000원(각 VAT 포함)이며 전국 단일가입니다. 회사는 중개수수료 0원으로 운영되며, 결제하신 금액 전액은 배정된 전문가(법무사 또는 공인중개사)에게 직접 정산됩니다. 단, 공동입찰 또는 법인 입찰의 경우 담당 전문가와 별도 협의 후 비용이 추가될 수 있습니다.<br><br>
                 제5조(취소) 입찰 기일 48시간 전까지 취소 신청이 가능합니다.
             </div>
             <div class="agree-check">
@@ -927,7 +1030,7 @@
         <div class="apply-btn-row">
             <button class="btn-back" onclick="goStep(3)"><i class="fas fa-arrow-left"></i> 이전</button>
             <button class="btn-submit" onclick="submitApplication()">
-                <i class="fas fa-check-circle"></i> 132,000원 결제하고 신청 완료
+                <i class="fas fa-check-circle"></i> <span id="submitFeeText">150,000</span>원 결제하고 신청 완료
             </button>
         </div>
     </div>
@@ -1117,6 +1220,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (user.phone) document.getElementById('applicantPhone').value = user.phone;
         if (user.email) document.getElementById('applicantEmail').value = user.email;
     }
+
+    // 전문가 유형 기본 선택(법무사) 초기화 → 금액/라벨 동기화
+    selectExpertType('lawyer');
 });
 
 // ─────────────────────────────────────────────
@@ -1578,9 +1684,46 @@ function renderCaseResult(type, html) {
 // ─────────────────────────────────────────────
 // 요약 채우기
 // ─────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// 전문가 유형 선택 (공인중개사 110,000 / 법무사 150,000) — 모두 VAT 포함
+// ─────────────────────────────────────────────
+let selectedExpertType = 'lawyer';
+const EXPERT_INFO = {
+    realtor: { label: '공인중개사', name: '공인중개사' },
+    lawyer:  { label: '법무사',     name: '법무사' },
+};
+function getExpertPrice(type) {
+    const cfg = window.PAYMENT_CONFIG || {};
+    const prices = cfg.prices || { realtor: 110000, lawyer: 150000 };
+    return prices[type] || prices.lawyer || cfg.amount || 150000;
+}
+function selectExpertType(type) {
+    if (!EXPERT_INFO[type]) type = 'lawyer';
+    selectedExpertType = type;
+    // 카드 선택 표시
+    document.querySelectorAll('.expert-opt').forEach(el => {
+        el.classList.toggle('selected', el.getAttribute('data-type') === type);
+    });
+    const radio = document.querySelector('.expert-opt[data-type="' + type + '"] input');
+    if (radio) radio.checked = true;
+    // 금액/라벨 갱신
+    const fee = getExpertPrice(type);
+    const feeStr = fee.toLocaleString('ko-KR');
+    const amtEl = document.getElementById('feeAmountText');
+    const lblEl = document.getElementById('feeExpertLabel');
+    const subEl = document.getElementById('submitFeeText');
+    if (amtEl) amtEl.textContent = feeStr;
+    if (lblEl) lblEl.textContent = '(' + EXPERT_INFO[type].label + ')';
+    if (subEl) subEl.textContent = feeStr;
+    // STEP4 요약 즉시 갱신 (이미 STEP4를 보고 있을 때)
+    if (typeof currentStep !== 'undefined' && currentStep === 4) fillSummary();
+}
+
 function fillSummary() {
     const bidAmt = val2('bidAmount');
     const deposit = bidAmt ? (Math.floor(parseNumber(bidAmt) * 0.1)).toLocaleString('ko-KR') + '원' : '-';
+    const expert = EXPERT_INFO[selectedExpertType] || EXPERT_INFO.lawyer;
+    const fee = getExpertPrice(selectedExpertType);
     const rows = [
         ['법원', val2('courtSelect')],
         ['사건번호', val2('caseNumber') + (val2('itemNumber') ? ' (물건번호 ' + val2('itemNumber') + ')' : '')],
@@ -1595,7 +1738,8 @@ function fillSummary() {
         ['보증금 납부 방법', val2('depositMethod')],
         ['입찰 형태', val2('bidType')],
         ['전자계약 서명', '완료'],
-        ['대리입찰 가격', '132,000원 (VAT 포함)'],
+        ['전문가 유형', expert.label],
+        ['대리입찰 가격', fee.toLocaleString('ko-KR') + '원 (VAT 포함)'],
         ['중개수수료', '0원 (플랫폼이 떼는 돈 없음)'],
     ];
 
@@ -1643,7 +1787,9 @@ async function submitApplication() {
     });
 
     const cfg = window.PAYMENT_CONFIG || {};
-    const serviceFee = cfg.amount || 132000;
+    const expertType = selectedExpertType || 'lawyer';
+    const expertLabel = (EXPERT_INFO[expertType] || EXPERT_INFO.lawyer).label;
+    const serviceFee = getExpertPrice(expertType); // VAT 포함 최종 결제 금액
     const orderId = 'BIDTOK_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
 
     const appData = {
@@ -1671,6 +1817,8 @@ async function submitApplication() {
         bid_type: val2('bidType'),
         joint_members: jointMembers,
         memo: val2('memo'),
+        expert_type: expertType,
+        expert_type_label: expertLabel,
         service_fee: serviceFee,
         payment_status: '대기',
         user_id: user ? (user.userId || user.id) : '',
@@ -1700,7 +1848,7 @@ async function submitApplication() {
         if (typeof TossPayments === 'undefined' || !cfg.clientKey) {
             toast('결제 모듈을 불러오지 못했습니다. 새로고침 후 다시 시도해주세요.', 'error');
             btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-check-circle"></i> 결제하고 신청 완료';
+            btn.innerHTML = '<i class="fas fa-check-circle"></i> ' + serviceFee.toLocaleString('ko-KR') + '원 결제하고 신청 완료';
             return;
         }
 
@@ -1708,7 +1856,7 @@ async function submitApplication() {
         await tossPayments.requestPayment('카드', {
             amount: serviceFee,
             orderId: orderId,
-            orderName: '대리입찰 신청 (' + (appData.court || '') + ' ' + (appData.case_number || '') + ')',
+            orderName: '대리입찰 신청 [' + expertLabel + '] (' + (appData.court || '') + ' ' + (appData.case_number || '') + ')',
             customerName: appData.applicant_name || '고객',
             customerMobilePhone: (appData.phone || '').replace(/[^0-9]/g, '') || undefined,
             successUrl: cfg.successUrl || (location.origin + '/payment-success.html'),
@@ -1725,7 +1873,7 @@ async function submitApplication() {
             toast('처리 중 오류가 발생했습니다: ' + (err.message || ''), 'error');
         }
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-check-circle"></i> 결제하고 신청 완료';
+        btn.innerHTML = '<i class="fas fa-check-circle"></i> ' + serviceFee.toLocaleString('ko-KR') + '원 결제하고 신청 완료';
     }
 }
 
