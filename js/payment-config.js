@@ -38,5 +38,5 @@ window.CODEF_CONFIG = {
 //   jsKey가 비어 있으면 사진 칸에 "법원경매정보 바로가기"만 표시됩니다.
 // ============================================================
 window.KAKAO_CONFIG = {
-    jsKey: '', // 예) 'a1b2c3d4e5f6...'  (REST 키 아님, JavaScript 키)
+    jsKey: 'ce30d78df969c31db163df0778884cc5', // 카카오 JavaScript 키 (도메인 제한 보호)
 };
