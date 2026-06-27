@@ -29,3 +29,14 @@ window.PAYMENT_CONFIG = {
 window.CODEF_CONFIG = {
     workerUrl: 'https://bidtok-codef-proxy.qkqk5342.workers.dev',
 };
+
+// ============================================================
+// 카카오맵 설정 (물건 소재지 → 로드뷰/지도 이미지 표시)
+// ★ jsKey: 카카오 개발자센터 → 내 애플리케이션 → 앱 키 → "JavaScript 키"
+//   https://developers.kakao.com/console/app  (플랫폼>Web에 도메인 등록 필요:
+//   https://bid-tok.kr, https://www.bid-tok.kr, https://lim5342.github.io)
+//   jsKey가 비어 있으면 사진 칸에 "법원경매정보 바로가기"만 표시됩니다.
+// ============================================================
+window.KAKAO_CONFIG = {
+    jsKey: '', // 예) 'a1b2c3d4e5f6...'  (REST 키 아님, JavaScript 키)
+};

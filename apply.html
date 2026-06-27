@@ -183,9 +183,32 @@
         .prop-summary-photo {
             width: 100%; aspect-ratio: 4/3; background: #f1f5f9;
             display: flex; align-items: center; justify-content: center;
-            color: #cbd5e1; font-size: 2rem; overflow: hidden;
+            color: #cbd5e1; font-size: 2rem; overflow: hidden; position: relative;
         }
         .prop-summary-photo img { width: 100%; height: 100%; object-fit: cover; }
+        /* 카카오 로드뷰/지도 컨테이너 */
+        .prop-map-view { width: 100%; height: 100%; }
+        /* 로드뷰/지도 전환 토글 */
+        .prop-map-toggle {
+            position: absolute; top: 8px; right: 8px; z-index: 5;
+            display: flex; gap: 4px; background: rgba(255,255,255,0.92);
+            border-radius: 8px; padding: 3px; box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+        }
+        .prop-map-toggle button {
+            border: none; background: transparent; cursor: pointer;
+            font-size: 0.72rem; font-weight: 600; color: #64748b;
+            padding: 3px 8px; border-radius: 6px;
+        }
+        .prop-map-toggle button.active { background: #1550E8; color: #fff; }
+        .prop-photo-fallback {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 0.5rem; width: 100%; height: 100%; color: #94a3b8; font-size: 0.8rem;
+            text-align: center; padding: 1rem;
+        }
+        .prop-photo-fallback i { font-size: 1.8rem; }
+        .prop-photo-fallback a {
+            font-size: 0.78rem; color: #1550E8; font-weight: 600; text-decoration: none;
+        }
         .prop-summary-body { padding: 0.9rem 1rem 1.1rem; }
         .prop-summary-row {
             display: flex; justify-content: space-between; align-items: baseline;
@@ -623,7 +646,7 @@
             <div class="prop-summary-photo" id="propSummaryPhoto"><i class="fas fa-image"></i></div>
             <div class="prop-summary-body" id="propSummaryBody">
                 <div class="prop-summary-empty">
-                    법원과 사건번호를 입력하고<br><strong>사건 조회</strong>를 누르면<br>물건 사진과 정보가 표시됩니다.
+                    법원과 사건번호를 입력하고<br><strong>사건 조회</strong>를 누르면<br>물건 위치(로드뷰)와 정보가 표시됩니다.
                 </div>
             </div>
         </aside>
@@ -998,6 +1021,23 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <script src="js/localdb.js"></script>
     <script src="js/payment-config.js"></script>
+    <script>
+    // 카카오맵 SDK 동적 로드 (소재지 로드뷰/지도용). jsKey 있을 때만 로드.
+    (function () {
+        var key = (window.KAKAO_CONFIG && window.KAKAO_CONFIG.jsKey || '').trim();
+        if (!key) { window.__kakaoMapReady = false; return; }
+        var s = document.createElement('script');
+        s.src = '//dapi.kakao.com/v2/maps/sdk.js?appkey=' + encodeURIComponent(key) +
+                '&autoload=false&libraries=services';
+        s.onload = function () {
+            if (window.kakao && window.kakao.maps) {
+                window.kakao.maps.load(function () { window.__kakaoMapReady = true; });
+            }
+        };
+        s.onerror = function () { window.__kakaoMapReady = false; };
+        document.head.appendChild(s);
+    })();
+    </script>
     <script src="js/api.js"></script>
 <script src="js/auth.js"></script>
 <script>
@@ -1368,12 +1408,14 @@ function renderPropSummary(n, courtName, caseFormatted, itemNo) {
     const bodyEl = document.getElementById('propSummaryBody');
     if (!photoEl || !bodyEl) return;
 
+    // 대법원 경매사건검색 API에는 물건 사진이 없어, 소재지 주소로 카카오 로드뷰/지도를 표시합니다.
+    // (향후 실제 물건 사진 소스가 연동되면 n.photos 를 우선 사용)
     if (n.photos && n.photos.length) {
-        photoEl.innerHTML = '<img src="' + escapeHtml(n.photos[0]) + '" alt="물건 사진" ' +
-            'onerror="this.parentNode.innerHTML=\'<i class=&quot;fas fa-image&quot;></i>\'">';
+        const addr = (n.address || '').replace(/"/g, '&quot;');
+        photoEl.innerHTML = '<img src="' + escapeHtml(n.photos[0]) + '" alt="물건 사진" data-addr="' + addr + '" ' +
+            'onerror="renderLocationView(document.getElementById(\'propSummaryPhoto\'), this.getAttribute(\'data-addr\')||\'\')">';
     } else {
-        // 대법원 경매사건검색 API에는 물건 사진이 제공되지 않습니다.
-        photoEl.innerHTML = '<i class="fas fa-gavel"></i>';
+        renderLocationView(photoEl, n.address || '');
     }
 
     const depositVal = n.bidDeposit
@@ -1412,6 +1454,104 @@ function renderPropSummaryEmpty() {
     const bodyEl = document.getElementById('propSummaryBody');
     if (photoEl) photoEl.innerHTML = '<i class="fas fa-image"></i>';
     if (bodyEl) bodyEl.innerHTML = '<div class="prop-summary-empty">조회된 물건 정보가 없습니다.<br>정보를 직접 입력해주세요.</div>';
+}
+
+// ─────────────────────────────────────────────
+// 소재지 주소 → 카카오 로드뷰/지도 표시
+//   - 카카오 SDK가 준비되면 주소를 좌표로 변환(geocode)하여 로드뷰 우선,
+//     로드뷰가 없는 지역이면 지도로 폴백.
+//   - jsKey 미설정/로드 실패 시: 법원경매정보 바로가기 안내.
+// ─────────────────────────────────────────────
+function locationFallback(el, address) {
+    const link = COURT_AUCTION_SEARCH_URL;
+    el.innerHTML =
+        '<div class="prop-photo-fallback">' +
+            '<i class="fas fa-map-marker-alt"></i>' +
+            '<div>' + (address ? escapeHtml(address) : '소재지 정보 없음') + '</div>' +
+            '<a href="' + link + '" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> 법원경매정보에서 사진 보기</a>' +
+        '</div>';
+}
+
+function waitKakaoReady(timeoutMs) {
+    return new Promise((resolve) => {
+        const hasKey = !!(window.KAKAO_CONFIG && (window.KAKAO_CONFIG.jsKey || '').trim());
+        if (!hasKey) return resolve(false);
+        if (window.__kakaoMapReady && window.kakao && window.kakao.maps) return resolve(true);
+        const start = Date.now();
+        const t = setInterval(() => {
+            if (window.__kakaoMapReady && window.kakao && window.kakao.maps) { clearInterval(t); resolve(true); }
+            else if (Date.now() - start > (timeoutMs || 4000)) { clearInterval(t); resolve(false); }
+        }, 120);
+    });
+}
+
+async function renderLocationView(el, address) {
+    if (!el) return;
+    if (!address) { locationFallback(el, ''); return; }
+
+    const ready = await waitKakaoReady(4000);
+    if (!ready) { locationFallback(el, address); return; }
+
+    try {
+        const kakao = window.kakao;
+        const geocoder = new kakao.maps.services.Geocoder();
+        // 주소가 지번/도로명 혼합일 수 있어 그대로 검색
+        geocoder.addressSearch(address, function (result, status) {
+            if (status !== kakao.maps.services.Status.OK || !result || !result.length) {
+                locationFallback(el, address);
+                return;
+            }
+            const coords = new kakao.maps.LatLng(parseFloat(result[0].y), parseFloat(result[0].x));
+            buildKakaoView(el, kakao, coords, address);
+        });
+    } catch (e) {
+        locationFallback(el, address);
+    }
+}
+
+function buildKakaoView(el, kakao, coords, address) {
+    // 컨테이너 + 로드뷰/지도 토글 구성
+    el.innerHTML =
+        '<div class="prop-map-toggle">' +
+            '<button type="button" id="propViewRoad" class="active">로드뷰</button>' +
+            '<button type="button" id="propViewMap">지도</button>' +
+        '</div>' +
+        '<div class="prop-map-view" id="propMapView"></div>';
+
+    const container = el.querySelector('#propMapView');
+    const btnRoad = el.querySelector('#propViewRoad');
+    const btnMap = el.querySelector('#propViewMap');
+
+    let mapObj = null, rvObj = null, rvClient = null;
+
+    function showMap() {
+        container.innerHTML = '';
+        mapObj = new kakao.maps.Map(container, { center: coords, level: 3 });
+        const marker = new kakao.maps.Marker({ position: coords });
+        marker.setMap(mapObj);
+        btnMap.classList.add('active'); btnRoad.classList.remove('active');
+    }
+
+    function showRoadview() {
+        container.innerHTML = '';
+        rvObj = new kakao.maps.Roadview(container);
+        rvClient = rvClient || new kakao.maps.RoadviewClient();
+        rvClient.getNearestPanoId(coords, 50, function (panoId) {
+            if (panoId === null) {
+                // 근처 로드뷰가 없으면 지도로 폴백
+                showMap();
+                return;
+            }
+            rvObj.setPanoId(panoId, coords);
+            btnRoad.classList.add('active'); btnMap.classList.remove('active');
+        });
+    }
+
+    btnRoad.addEventListener('click', showRoadview);
+    btnMap.addEventListener('click', showMap);
+
+    // 기본: 로드뷰 우선
+    showRoadview();
 }
 
 function renderCaseResult(type, html) {
