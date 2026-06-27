@@ -1234,19 +1234,27 @@ function clearErrors() {
 let caseLookupVerified = false;  // 신청자가 사건 조회를 한 번이라도 했는지
 
 // 사건번호 정규화: 다양한 입력을 'YYYY타경NNNNN' 형태로 파싱
+// 예) "2024타경53351", "2024 타경 53351", "2024타경53351", "2024-53351" → {year:2024, serial:53351}
 function parseCaseNumber(raw) {
     if (!raw) return null;
-    // 공백 제거, 전각/혼합 처리
-    let s = raw.replace(/\s/g, '').replace(/[Tt]?경/g, '타경');
-    // 패턴: 4자리연도 + (타경) + 숫자
-    const m = s.match(/(\d{4})\s*타?경?\s*(\d{1,7})/);
-    if (!m) {
-        // '타경' 없이 연도+번호만 있는 경우도 허용
-        const m2 = s.match(/(\d{4})[^\d]{0,3}(\d{1,7})/);
-        if (!m2) return null;
-        return { year: m2[1], serial: m2[2], formatted: m2[1] + '타경' + m2[2] };
+    const s = String(raw).replace(/\s/g, '');
+    // 1) 정석 패턴: 4자리연도 + 사건부호(타경/타기/타채 등) + 일련번호
+    //    숫자는 끝까지 모두 잡도록 \d+ (앞서 \d{1,7} 이 53351의 일부만 잡던 버그 수정)
+    let m = s.match(/(\d{4})\s*타[가-힣]*\s*(\d+)/);
+    if (m) {
+        return { year: m[1], serial: m[2], formatted: m[1] + '타경' + m[2] };
     }
-    return { year: m[1], serial: m[2], formatted: m[1] + '타경' + m[2] };
+    // 2) 부호 없이 연도 + 구분자 + 번호 (예: 2024-53351, 2024.53351)
+    m = s.match(/(\d{4})[^\d]{1,3}(\d+)/);
+    if (m) {
+        return { year: m[1], serial: m[2], formatted: m[1] + '타경' + m[2] };
+    }
+    // 3) 숫자만 붙여 입력한 경우 (예: 202453351) → 앞 4자리=연도, 나머지=번호
+    m = s.match(/^(\d{4})(\d{1,7})$/);
+    if (m) {
+        return { year: m[1], serial: m[2], formatted: m[1] + '타경' + m[2] };
+    }
+    return null;
 }
 
 function onCaseNumberInput() {
