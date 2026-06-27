@@ -1372,25 +1372,39 @@ function renderPropSummary(n, courtName, caseFormatted, itemNo) {
         photoEl.innerHTML = '<img src="' + escapeHtml(n.photos[0]) + '" alt="물건 사진" ' +
             'onerror="this.parentNode.innerHTML=\'<i class=&quot;fas fa-image&quot;></i>\'">';
     } else {
-        photoEl.innerHTML = '<i class="fas fa-image"></i>';
+        // 대법원 경매사건검색 API에는 물건 사진이 제공되지 않습니다.
+        photoEl.innerHTML = '<i class="fas fa-gavel"></i>';
     }
+
+    const depositVal = n.bidDeposit
+        ? (fmtMoney(n.bidDeposit) + (n.bidDepositEstimated ? ' <span style="font-size:0.72rem;color:#999;">(최저가 10% 추정)</span>' : ''))
+        : '-';
 
     const rows = [
         ['법원', escapeHtml(n.court || courtName)],
         ['사건번호', escapeHtml(n.caseNo || caseFormatted) + ((n.itemNo || itemNo) ? ' (물건 ' + escapeHtml(n.itemNo || itemNo) + ')' : '')],
+    ];
+    if (n.caseName) rows.push(['사건명', escapeHtml(n.caseName)]);
+    rows.push(
         ['물건종류', escapeHtml(n.propertyType || '-')],
         ['소재지', escapeHtml(n.address || '-')],
         ['감정가', fmtMoney(n.appraisalPrice), 'price'],
         ['최저입찰가', fmtMoney(n.minBidPrice), 'price'],
-        ['입찰보증금', fmtMoney(n.bidDeposit)],
-        ['매각기일', fmtDate(n.bidDate)],
-    ];
+        ['입찰보증금', depositVal],
+        ['매각기일', n.bidDate ? escapeHtml(n.bidDate) : fmtDate(n.bidDateRaw)]
+    );
+    if (n.bidPlace) rows.push(['장소', escapeHtml(n.bidPlace)]);
     if (n.failedCount) rows.push(['유찰', escapeHtml(n.failedCount) + '회']);
-    if (n.status) rows.push(['상태', escapeHtml(n.status)]);
+    if (n.status) rows.push(['진행상태', escapeHtml(n.status)]);
+    if (n.claimAmount) rows.push(['청구금액', fmtMoney(n.claimAmount)]);
 
     bodyEl.innerHTML = rows.map(([k, v, cls]) =>
         '<div class="prop-summary-row"><span class="k">' + k + '</span><span class="v ' + (cls || '') + '">' + v + '</span></div>'
-    ).join('');
+    ).join('') +
+    '<div style="margin-top:0.7rem;font-size:0.72rem;color:#9aa3af;line-height:1.4;">' +
+      '※ 대법원 법원경매정보 기준. 물건 사진은 제공되지 않으며, 입찰보증금은 통상 최저가의 10%입니다. ' +
+      '정확한 정보는 <a href="' + COURT_AUCTION_SEARCH_URL + '" target="_blank" rel="noopener" style="color:#1550E8;">법원경매정보</a>에서 확인하세요.' +
+    '</div>';
 }
 
 function renderPropSummaryEmpty() {
