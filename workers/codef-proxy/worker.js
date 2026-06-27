@@ -139,13 +139,21 @@ function toNum(v) {
 }
 
 // CODEF 경매사건검색(KR_PB_CK_013) 응답 → 프론트 사용 형태로 정규화
-function normalize(data) {
+function normalize(data, itemNo) {
   if (!data || typeof data !== 'object') return null;
   const d = Array.isArray(data) ? (data[0] || {}) : data;
 
-  // 물건(상품) 리스트 — 대표 물건 1건 기준
+  // 물건(상품) 리스트 — 물건번호(itemNo)가 주어지면 해당 물건, 없으면 첫 물건
   const productList = Array.isArray(d.resProductList) ? d.resProductList : [];
-  const product = productList[0] || {};
+  let product = productList[0] || {};
+  if (itemNo != null && String(itemNo).trim() !== '') {
+    const want = String(itemNo).trim().replace(/[^\d]/g, '');
+    const matched = productList.find(p => {
+      const num = String(pick(p, ['resNumber']) || '').replace(/[^\d]/g, '');
+      return num && num === want;
+    });
+    if (matched) product = matched;
+  }
 
   // 소재지: 대표 물건의 상세내역 주소들을 합침
   const detailList = Array.isArray(product.resDetailList) ? product.resDetailList : [];
@@ -163,10 +171,16 @@ function normalize(data) {
 
   // 감정가(평가금액)
   const appraisalPrice = pick(product, ['resValuationAmt']);
+  const apprNum = toNum(appraisalPrice);
 
-  // 기일 리스트(매각기일 위주). 최신(미래/최근) 매각기일 1건과 전체 정규화
+  // 기일 리스트 정규화
+  // ⚠️ CODEF resDateList 는 사건 내 '모든 물건(호실)'의 기일을 한꺼번에 담는다.
+  //    각 물건의 (1차 유찰 + 다음 예정) 기일이 물건 순서대로 나열되며,
+  //    각 물건의 '1차 매각가격 = 그 물건의 감정가' 다.
+  //    → 선택한 물건(itemNo)의 감정가를 앵커로, 그 직후 저감되는 기일만 골라야
+  //      유찰 횟수/최저가가 정확하다.
   const rawDates = Array.isArray(d.resDateList) ? d.resDateList : [];
-  const dateList = rawDates.map(x => ({
+  const dateListAll = rawDates.map(x => ({
     kind: pick(x, ['resKind']),
     date: fmtDateTime(pick(x, ['resDate'])),
     dateRaw: pick(x, ['resDate']),
@@ -175,8 +189,60 @@ function normalize(data) {
     result: pick(x, ['resResultDesc']),
   }));
 
+  // (1) 대표 물건의 매각기일만 추출:
+  //     앵커 = 금액이 감정가와 (오차 0.5%) 일치하는 첫 1차 매각기일.
+  //     앵커 다음부터 '직전의 60~86%(14~40% 저감)'로 이어지면 같은 물건의 다음 기일.
+  //     저감 패턴을 벗어나면 다음 물건의 1차이므로 종료.
+  const allSale = dateListAll.filter(x => /매각기일/.test(x.kind));
+  let saleDates;
+  if (apprNum > 0) {
+    const anchorIdx = allSale.findIndex(x => {
+      const amt = toNum(x.minBidPrice);
+      return amt > 0 && Math.abs(amt - apprNum) <= apprNum * 0.005;
+    });
+    const chain = [];
+    if (anchorIdx >= 0) {
+      chain.push(allSale[anchorIdx]);
+      let prevAmt = toNum(allSale[anchorIdx].minBidPrice);
+      for (let i = anchorIdx + 1; i < allSale.length; i++) {
+        const amt = toNum(allSale[i].minBidPrice);
+        if (!amt) continue;
+        const ratio = amt / prevAmt;
+        if (ratio >= 0.6 && ratio <= 0.86) {  // 14~40% 저감만 인정
+          chain.push(allSale[i]); prevAmt = amt;
+        } else {
+          break; // 저감 패턴이 아니면 다음 물건 시작 → 종료
+        }
+      }
+    }
+    saleDates = chain.length ? chain : allSale;
+  } else {
+    saleDates = allSale;
+  }
+
+  // (2) 같은 날짜+금액 중복 제거
+  const seen = new Set();
+  saleDates = saleDates.filter(x => {
+    const key = (x.dateRaw || '') + '|' + (x.minBidPrice || '');
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  // 화면 표시용 dateList: 위에서 고른 매각기일 + 비매각기일(매각결정기일 등) 함께
+  const seen2 = new Set();
+  const dateList = dateListAll.filter(x => {
+    if (/매각기일/.test(x.kind)) {
+      const inChain = saleDates.some(s => s.dateRaw === x.dateRaw && s.minBidPrice === x.minBidPrice);
+      if (!inChain) return false;
+    }
+    const key = (x.kind || '') + '|' + (x.dateRaw || '') + '|' + (x.minBidPrice || '');
+    if (seen2.has(key)) return false;
+    seen2.add(key);
+    return true;
+  });
+
   // 매각기일 중 대표 1건: 결과가 비어있는(예정) 매각기일 우선, 없으면 마지막 매각기일
-  const saleDates = dateList.filter(x => /매각기일/.test(x.kind));
   let mainSale = saleDates.find(x => !x.result || /^(\s|기일변경)*$/.test(x.result)) ||
                  saleDates[saleDates.length - 1] || dateList[dateList.length - 1] || {};
 
@@ -187,18 +253,32 @@ function normalize(data) {
   const minNum = toNum(minBidPrice) || toNum(appraisalPrice);
   const bidDeposit = minNum ? String(Math.round(minNum * 0.1)) : '';
 
-  // 유찰 횟수: 기일 결과에 '유찰' 포함 건수
+  // 유찰 횟수: 대표 물건 매각기일 결과에 '유찰' 포함 건수
   const failedCount = saleDates.filter(x => /유찰/.test(x.result || '')).length;
 
   // 관련사건 리스트에서 법원명을 보조 추출(상위 data에 법원 필드가 없을 수 있음)
   const involved = Array.isArray(d.resInvolvedCaseList) ? d.resInvolvedCaseList : [];
   const courtFromInvolved = involved.length ? pick(involved[0], ['commCourt']) : '';
 
+  // 사건 내 전체 물건 목록(물건번호 선택용 요약)
+  const items = productList.map(p => {
+    const dl = Array.isArray(p.resDetailList) ? p.resDetailList : [];
+    return {
+      itemNo: pick(p, ['resNumber']),
+      propertyType: pick(p, ['resUseType']),
+      appraisalPrice: pick(p, ['resValuationAmt']),
+      address: (dl.map(x => pick(x, ['resAddress'])).filter(Boolean)[0]) || '',
+      status: pick(p, ['resState']),
+    };
+  });
+
   return {
     court: pick(d, ['commCourt', 'resCourtName', 'courtName']) || courtFromInvolved,
     caseNo: pick(d, ['resCaseNumber']),
     caseName: pick(d, ['resCaseName']),
     itemNo: pick(product, ['resNumber']),
+    items,                                // 사건 내 전체 물건 목록
+    itemCount: items.length,
     address,
     addresses,
     propertyType,
@@ -311,7 +391,7 @@ export default {
       }, 200, cors);
     }
 
-    const normalized = normalize(parsedResp.data);
+    const normalized = normalize(parsedResp.data, itemNo);
     return json({
       success: true,
       normalized,
