@@ -208,10 +208,14 @@ function normalize(data, itemNo) {
         const amt = toNum(allSale[i].minBidPrice);
         if (!amt) continue;
         const ratio = amt / prevAmt;
-        if (ratio >= 0.6 && ratio <= 0.86) {  // 14~40% 저감만 인정
+        if (ratio >= 0.98 && ratio <= 1.001) {
+          // 동일 금액(변경/연기 후 재지정된 같은 회차 기일) → 같은 물건, prevAmt 유지
+          chain.push(allSale[i]);
+        } else if (ratio >= 0.6 && ratio <= 0.86) {
+          // 14~40% 저감(다음 회차) → 같은 물건, prevAmt 갱신
           chain.push(allSale[i]); prevAmt = amt;
         } else {
-          break; // 저감 패턴이 아니면 다음 물건 시작 → 종료
+          break; // 그 외(다른 감정가 = 다른 물건의 1차) → 종료
         }
       }
     }
@@ -242,9 +246,22 @@ function normalize(data, itemNo) {
     return true;
   });
 
-  // 매각기일 중 대표 1건: 결과가 비어있는(예정) 매각기일 우선, 없으면 마지막 매각기일
-  let mainSale = saleDates.find(x => !x.result || /^(\s|기일변경)*$/.test(x.result)) ||
-                 saleDates[saleDates.length - 1] || dateList[dateList.length - 1] || {};
+  // 대표(다음) 매각기일 선정:
+  //   '변경/취소/연기/기일변경/추후지정' 등 입찰이 진행되지 않은 기일은 제외하고,
+  //   결과가 비어있는(아직 진행 전인 = 예정) 매각기일 중 가장 가까운 미래를 대표로 삼는다.
+  const CANCELLED = /(변경|취소|연기|추후|정정|취하|기각|각하)/;
+  const scheduled = saleDates.filter(x => !x.result || /^\s*$/.test(x.result));  // 결과 미정 = 예정
+  // 예정 기일 중 미래(오늘 이후) 우선, 없으면 첫 예정 기일
+  const todayRaw = (() => { const n = new Date(); return `${n.getFullYear()}${String(n.getMonth()+1).padStart(2,'0')}${String(n.getDate()).padStart(2,'0')}`; })();
+  const futureScheduled = scheduled
+    .filter(x => (String(x.dateRaw).slice(0, 8) || '0') >= todayRaw)
+    .sort((a, b) => String(a.dateRaw).localeCompare(String(b.dateRaw)));
+  let mainSale =
+    futureScheduled[0] ||
+    scheduled[scheduled.length - 1] ||
+    // 예정 기일이 전혀 없으면, 변경/취소가 아닌 마지막 매각기일
+    [...saleDates].reverse().find(x => !CANCELLED.test(x.result || '')) ||
+    saleDates[saleDates.length - 1] || {};
 
   // 최저매각가격: 대표 매각기일의 금액(없으면 감정가)
   const minBidPrice = mainSale.minBidPrice || '';
@@ -253,8 +270,19 @@ function normalize(data, itemNo) {
   const minNum = toNum(minBidPrice) || toNum(appraisalPrice);
   const bidDeposit = minNum ? String(Math.round(minNum * 0.1)) : '';
 
-  // 유찰 횟수: 대표 물건 매각기일 결과에 '유찰' 포함 건수
+  // 유찰 횟수: 대표 물건 매각기일 결과에 '유찰' 포함 건수(변경/취소는 제외됨)
   const failedCount = saleDates.filter(x => /유찰/.test(x.result || '')).length;
+
+  // 진행상태 판정: 매각(낙찰)/매각허가 등 완료 여부 → 입찰 가능/불가 표시용
+  const hasSold = saleDates.some(x => /매각|낙찰/.test(x.result || '')) ||
+                  /매각허가|매각결정|배당/.test(pick(product, ['resState']) || '');
+  const hasFuture = !!futureScheduled.length;
+  // saleStatus: 'biddable'(입찰가능) | 'sold'(매각완료) | 'closed'(종결/기타)
+  let saleStatus = 'biddable';
+  if (hasFuture) saleStatus = 'biddable';
+  else if (hasSold) saleStatus = 'sold';
+  else saleStatus = 'closed';
+  const biddable = saleStatus === 'biddable';
 
   // 관련사건 리스트에서 법원명을 보조 추출(상위 data에 법원 필드가 없을 수 있음)
   const involved = Array.isArray(d.resInvolvedCaseList) ? d.resInvolvedCaseList : [];
@@ -290,6 +318,8 @@ function normalize(data, itemNo) {
     bidDateRaw: mainSale.dateRaw || '',
     bidPlace: mainSale.place || '',
     failedCount,
+    saleStatus,                          // 'biddable' | 'sold' | 'closed'
+    biddable,                            // 입찰 참여 가능 여부(예정 매각기일 존재)
     status: pick(product, ['resState']) || pick(d, ['resFinalResult']),
     finalResult: pick(d, ['resFinalResult']),
     claimAmount: pick(d, ['resClaimAmt']),

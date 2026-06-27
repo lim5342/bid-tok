@@ -11,8 +11,16 @@ window.PAYMENT_CONFIG = {
     // 결제 승인/취소 처리 Cloudflare Worker URL (배포 완료)
     workerUrl: 'https://bidtok-toss-payment.qkqk5342.workers.dev',
 
-    // 대리입찰 기본 금액 (VAT 포함)
-    amount: 132000,
+    // 대리입찰 기본 금액 (VAT 포함) — 기본값(법무사) / 전문가 유형별 금액은 prices 참조
+    amount: 150000,
+
+    // 전문가 유형별 대리입찰 금액 (모두 VAT 포함 최종 결제 금액)
+    //  - realtor(공인중개사): 110,000원
+    //  - lawyer(법무사)     : 150,000원
+    prices: {
+        realtor: 110000,
+        lawyer: 150000,
+    },
 
     // 결제 결과 리다이렉트 경로
     successUrl: location.origin + '/payment-success.html',

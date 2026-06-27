@@ -416,6 +416,20 @@
     .recommended-pricing { border-color: var(--mint) !important; }
     .pricing-badge { background: var(--mint) !important; }
 
+    /* 가격 2종(공인중개사/법무사) 카드 구분 */
+    .pricing-grid { align-items: stretch; }
+    .pricing-card--realtor {
+        background: linear-gradient(135deg, #475569 0%, #334155 100%) !important;
+        transform: none !important;
+    }
+    .pricing-card--realtor .pricing-badge { background: #94a3b8 !important; }
+    .pricing-card--lawyer .pricing-badge { background: var(--mint) !important; }
+    .pricing-feature--note { opacity: 0.85; font-size: 1rem !important; }
+    .pricing-feature--note i { color: #fbbf24 !important; }
+    @media (max-width: 768px) {
+        .pricing-card.recommended-pricing { transform: none; }
+    }
+
     /* CTA 민트 오버라이드 */
     .cta-section { background: linear-gradient(135deg, #0D9488, #2DD4BF) !important; }
     </style>
@@ -678,17 +692,51 @@
         <section class="section pricing-section">
             <div class="container">
                 <h2 class="section-title" id="pricingTitle">대리입찰 가격</h2>
-                <p class="section-subtitle" id="pricingSub" style="text-align:center; margin-bottom:2rem;">숨겨진 비용 없이 전국 어디서나 같은 가격</p>
-                <div class="pricing-grid" style="display:flex; justify-content:center; align-items:center;">
-                    <div class="pricing-card recommended-pricing" style="max-width:500px;">
-                        <div class="pricing-badge">전국 동일</div>
-                        <h3 class="pricing-title">📋 대리입찰</h3>
+                <p class="section-subtitle" id="pricingSub" style="text-align:center; margin-bottom:2rem;">전문가 유형을 선택하세요 · 전국 어디서나 같은 가격</p>
+                <div class="pricing-grid" style="max-width:880px;">
+                    <!-- 공인중개사 -->
+                    <div class="pricing-card pricing-card--realtor">
+                        <div class="pricing-badge">공인중개사</div>
+                        <h3 class="pricing-title">🏠 공인중개사 대리입찰</h3>
                         <div class="pricing-amount">
-                            <span class="amount" id="pricingAmount">132,000</span>
+                            <span class="amount">110,000</span>
                             <span class="currency">원</span>
                         </div>
                         <p class="pricing-vat">(VAT 포함)</p>
-                        <p class="pricing-desc" id="pricingDesc">온라인 전자서명 3분 완료</p>
+                        <p class="pricing-desc">부동산 전문가의 권리분석 지원</p>
+                        <div class="pricing-features">
+                            <div class="pricing-feature">
+                                <i class="fas fa-check"></i>
+                                <span>대리 입찰참여</span>
+                            </div>
+                            <div class="pricing-feature">
+                                <i class="fas fa-check"></i>
+                                <span>부동산 권리분석 상담</span>
+                            </div>
+                            <div class="pricing-feature">
+                                <i class="fas fa-check"></i>
+                                <span>위임장 등 서류 안내</span>
+                            </div>
+                            <div class="pricing-feature pricing-feature--note">
+                                <i class="fas fa-info-circle"></i>
+                                <span>인감증명서 등 일부 서류 준비 필요</span>
+                            </div>
+                            <div class="pricing-feature">
+                                <i class="fas fa-check"></i>
+                                <span>입찰 결과 안내</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 법무사 -->
+                    <div class="pricing-card recommended-pricing pricing-card--lawyer">
+                        <div class="pricing-badge">법무사</div>
+                        <h3 class="pricing-title">📋 법무사 대리입찰</h3>
+                        <div class="pricing-amount">
+                            <span class="amount">150,000</span>
+                            <span class="currency">원</span>
+                        </div>
+                        <p class="pricing-vat">(VAT 포함)</p>
+                        <p class="pricing-desc">온라인 전자서명 3분 완료</p>
                         <div class="pricing-features">
                             <div class="pricing-feature">
                                 <i class="fas fa-check"></i>
@@ -1847,13 +1895,13 @@
     const WHY_DATA = {
         price: {
             badge: '💰 단일가',
-            heading: '전국 어디서나<br><em>132,000원</em> 단일가',
+            heading: '전국 어디서나<br><em>공인중개사 11만 · 법무사 15만</em>',
             desc: '자격을 갖춘 전문가가 직접 진행하는 대리입찰.\n숨겨진 수수료, 지역별 차등 없이 전국 동일합니다.',
             points: ['추가 비용 일절 없음', '인증된 전문가가 직접 진행', '결제 즉시 매칭 시작'],
             vcIcon: '💰',
             vcTitle: '투명한 단일 가격',
-            vcBody: '서울·경기부터 제주까지 동일한 132,000원(부가세 포함).\n중개수수료 0원, 전국 전문가 직접 연결.',
-            stats: [{num:'132,000', label:'원 단일가'}, {num:'0', label:'숨겨진 비용'}, {num:'100%', label:'전문가 직접 진행'}]
+            vcBody: '공인중개사 110,000원 · 법무사 150,000원(각 부가세 포함).\n중개수수료 0원, 전국 전문가 직접 연결.',
+            stats: [{num:'110,000', label:'원 공인중개사'}, {num:'150,000', label:'원 법무사'}, {num:'0', label:'숨겨진 비용'}]
         },
         time: {
             badge: '⏰ 대신 입찰',
