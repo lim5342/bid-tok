@@ -27,5 +27,5 @@ window.PAYMENT_CONFIG = {
 //   workerUrl이 비어 있으면 사건 조회는 형식 검증 + 대법원 링크로 폴백됩니다.
 // ============================================================
 window.CODEF_CONFIG = {
-    workerUrl: '', // 예) 'https://bidtok-codef-proxy.qkqk5342.workers.dev'
+    workerUrl: 'https://bidtok-codef-proxy.qkqk5342.workers.dev',
 };

@@ -4,9 +4,13 @@ compatibility_date = "2024-01-01"
 
 # 환경변수(var)
 [vars]
-CODEF_ENV = "production"
-# 경매사건검색 API 경로. CODEF 명세와 다르면 여기서 조정합니다.
-CODEF_AUCTION_PATH = "/v1/kr/public/ck/auction/auction-events"
+# 'sandbox' | 'development' | 'production'
+# 데모(개발) 키 사용 시 development, 운영 전환 시 production 으로 변경
+CODEF_ENV = "development"
+# 경매사건검색 API 경로 (CODEF 명세 KR_PB_CK_013 확인 완료)
+CODEF_AUCTION_PATH = "/v1/kr/public/ck/auction-events/search"
+# 기관코드(대법원 법원경매정보) — 고정값 0004
+CODEF_ORG = "0004"
 
 # 시크릿은 코드/설정에 넣지 않고 wrangler secret으로 설정합니다.
 #   wrangler secret put CODEF_CLIENT_ID
