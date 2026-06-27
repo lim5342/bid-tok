@@ -416,15 +416,22 @@
     .recommended-pricing { border-color: var(--mint) !important; }
     .pricing-badge { background: var(--mint) !important; }
 
-    /* 가격 2종(공인중개사/법무사) 카드 구분 */
+    /* 가격 2종(공인중개사/법무사) 카드 — 동일 크기/동일 색상 */
     .pricing-grid { align-items: stretch; }
-    .pricing-card--realtor {
-        background: linear-gradient(135deg, #475569 0%, #334155 100%) !important;
+    /* 두 카드 모두 같은 파란색 계열, 같은 크기(확대 효과 제거) */
+    .pricing-card--realtor,
+    .pricing-card--lawyer {
+        background: linear-gradient(135deg, #1550E8 0%, #0D3AB8 100%) !important;
         transform: none !important;
+        display: flex;
+        flex-direction: column;
     }
-    .pricing-card--realtor .pricing-badge { background: #94a3b8 !important; }
+    .pricing-card--realtor .pricing-features,
+    .pricing-card--lawyer .pricing-features { flex: 1; }
+    /* 배지 색상은 두 카드 동일(민트) */
+    .pricing-card--realtor .pricing-badge,
     .pricing-card--lawyer .pricing-badge { background: var(--mint) !important; }
-    .pricing-feature--note { opacity: 0.85; font-size: 1rem !important; }
+    .pricing-feature--note { opacity: 0.9; font-size: 1rem !important; }
     .pricing-feature--note i { color: #fbbf24 !important; }
     @media (max-width: 768px) {
         .pricing-card.recommended-pricing { transform: none; }
@@ -703,19 +710,19 @@
                             <span class="currency">원</span>
                         </div>
                         <p class="pricing-vat">(VAT 포함)</p>
-                        <p class="pricing-desc">부동산 전문가의 권리분석 지원</p>
+                        <p class="pricing-desc">매수신청대리인이 직접 진행</p>
                         <div class="pricing-features">
                             <div class="pricing-feature">
                                 <i class="fas fa-check"></i>
-                                <span>대리 입찰참여</span>
+                                <span>매수신청대리인</span>
                             </div>
                             <div class="pricing-feature">
                                 <i class="fas fa-check"></i>
-                                <span>부동산 권리분석 상담</span>
+                                <span>보험 5억 가입 완료</span>
                             </div>
                             <div class="pricing-feature">
                                 <i class="fas fa-check"></i>
-                                <span>위임장 등 서류 안내</span>
+                                <span>부동산 매도 도움</span>
                             </div>
                             <div class="pricing-feature pricing-feature--note">
                                 <i class="fas fa-info-circle"></i>
