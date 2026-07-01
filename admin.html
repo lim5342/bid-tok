@@ -2992,25 +2992,40 @@ function setExpertFilter(status, el) {
     loadExperts();
 }
 
+// 파트너 SMS 발송 (성공/실패를 실제로 확인해서 반환)
+const SMS_PROXY_URL = 'https://bidtok-sms-proxy.qkqk5342.workers.dev';
+async function sendPartnerSms(payload) {
+    if (!payload || !payload.to) {
+        return { ok: false, error: '수신번호(전화번호)가 등록되어 있지 않습니다.' };
+    }
+    try {
+        const res = await fetch(SMS_PROXY_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        let data = {};
+        try { data = await res.json(); } catch (_) {}
+        if (res.ok && data.success) return { ok: true };
+        return { ok: false, error: data.error || ('발송 실패 (HTTP ' + res.status + ')') };
+    } catch (e) {
+        return { ok: false, error: e.message || '네트워크 오류' };
+    }
+}
+
 async function approveExpert(id) {
     if (!confirm('이 법무사를 승인하시겠습니까?\n승인 시 SMS 알림이 발송됩니다.')) return;
     try {
         const expert = await API.users.getById(id);
         await API.users.update(id, { status: 'active', approvedAt: new Date().toISOString() });
-        showToast('✅ 법무사 승인 완료!', 'success');
-        // 승인 SMS 발송
-        if (expert && expert.phone) {
-            const phone = expert.phone.replace(/[^0-9]/g,'');
-            const name = expert.name || '파트너';
-            fetch('https://bidtok-sms-proxy.qkqk5342.workers.dev', {
-                method: 'POST',
-                headers: {'Content-Type':'application/json'},
-                body: JSON.stringify({
-                    type: 'partner_approved',
-                    to: phone,
-                    data: { name }
-                })
-            }).catch(()=>{});
+        // 승인 SMS 발송 (결과 확인)
+        const phone = expert && expert.phone ? expert.phone.replace(/[^0-9]/g,'') : '';
+        const name = (expert && expert.name) || '파트너';
+        const sms = await sendPartnerSms({ type: 'partner_approved', to: phone, data: { name } });
+        if (sms.ok) {
+            showToast('✅ 법무사 승인 완료! SMS 발송됨', 'success');
+        } else {
+            showToast('✅ 승인 완료 (단, SMS 발송 실패: ' + sms.error + ')', 'error');
         }
         fadeRemoveCard('ec_' + id, loadExperts);
     } catch(e) { showToast('처리 실패', 'error'); }
@@ -3021,20 +3036,14 @@ async function quickApprove(id) {
     try {
         const expert = await API.users.getById(id);
         await API.users.update(id, { status: 'active', approvedAt: new Date().toISOString() });
-        showToast('✅ 법무사 승인 완료!', 'success');
-        // 승인 SMS 발송
-        if (expert && expert.phone) {
-            const phone = expert.phone.replace(/[^0-9]/g,'');
-            const name = expert.name || '파트너';
-            fetch('https://bidtok-sms-proxy.qkqk5342.workers.dev', {
-                method: 'POST',
-                headers: {'Content-Type':'application/json'},
-                body: JSON.stringify({
-                    type: 'partner_approved',
-                    to: phone,
-                    data: { name }
-                })
-            }).catch(()=>{});
+        // 승인 SMS 발송 (결과 확인)
+        const phone = expert && expert.phone ? expert.phone.replace(/[^0-9]/g,'') : '';
+        const name = (expert && expert.name) || '파트너';
+        const sms = await sendPartnerSms({ type: 'partner_approved', to: phone, data: { name } });
+        if (sms.ok) {
+            showToast('✅ 법무사 승인 완료! SMS 발송됨', 'success');
+        } else {
+            showToast('✅ 승인 완료 (단, SMS 발송 실패: ' + sms.error + ')', 'error');
         }
         loadDashboard();
     } catch(e) { showToast('처리 실패', 'error'); }
@@ -3047,20 +3056,14 @@ async function rejectExpert(id) {
     try {
         const expert = await API.users.getById(id);
         await API.users.update(id, { status: 'rejected', rejectedAt: new Date().toISOString(), rejectReason: reason.trim() });
-        showToast('거부 처리 완료', 'info');
-        // 거부 SMS 발송
-        if (expert && expert.phone) {
-            const phone = expert.phone.replace(/[^0-9]/g,'');
-            const name = expert.name || '파트너';
-            fetch('https://bidtok-sms-proxy.qkqk5342.workers.dev', {
-                method: 'POST',
-                headers: {'Content-Type':'application/json'},
-                body: JSON.stringify({
-                    type: 'partner_rejected',
-                    to: phone,
-                    data: { name, reason: reason.trim() }
-                })
-            }).catch(()=>{});
+        // 거부 SMS 발송 (결과 확인)
+        const phone = expert && expert.phone ? expert.phone.replace(/[^0-9]/g,'') : '';
+        const name = (expert && expert.name) || '파트너';
+        const sms = await sendPartnerSms({ type: 'partner_rejected', to: phone, data: { name, reason: reason.trim() } });
+        if (sms.ok) {
+            showToast('거부 처리 완료 (SMS 발송됨)', 'info');
+        } else {
+            showToast('거부 처리 완료 (단, SMS 발송 실패: ' + sms.error + ')', 'error');
         }
         fadeRemoveCard('ec_' + id, loadExperts);
     } catch(e) { showToast('처리 실패', 'error'); }

@@ -4,7 +4,8 @@ compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
 
 [vars]
-SENDER = "0285355875"
+# 솔라피에 등록된 발신번호 (02-853-5875). 오타(0285355875, 5 하나 더 붙음) 주의!
+SENDER = "028535875"
 
 # 비밀키는 wrangler secret으로 설정 (아래 명령어로)
 # wrangler secret put SOLAPI_KEY
