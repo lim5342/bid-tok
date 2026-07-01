@@ -12,14 +12,14 @@ window.PAYMENT_CONFIG = {
     workerUrl: 'https://bidtok-toss-payment.qkqk5342.workers.dev',
 
     // 대리입찰 기본 금액 (VAT 포함) — 기본값(법무사) / 전문가 유형별 금액은 prices 참조
-    amount: 150000,
+    amount: 154000,
 
     // 전문가 유형별 대리입찰 금액 (모두 VAT 포함 최종 결제 금액)
-    //  - realtor(공인중개사): 110,000원
-    //  - lawyer(법무사)     : 150,000원
+    //  - realtor(공인중개사): 132,000원
+    //  - lawyer(법무사)     : 154,000원
     prices: {
-        realtor: 110000,
-        lawyer: 150000,
+        realtor: 132000,
+        lawyer: 154000,
     },
 
     // 결제 결과 리다이렉트 경로
