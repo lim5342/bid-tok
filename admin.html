@@ -959,7 +959,7 @@
                 <div class="section-title"><i class="fas fa-won-sign"></i> 정산 관리</div>
 
                 <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:0.8rem 1.1rem;margin-bottom:1.2rem;font-size:0.85rem;color:#1e40af;line-height:1.6;">
-                    💡 <strong>정산 방식 (A방식)</strong> · 고객이 결제한 <strong>132,000원(VAT 포함) 전액</strong>을 배정된 전문가에게 지급합니다.
+                    💡 <strong>정산 방식 (A방식)</strong> · 고객이 결제한 <strong>금액(공인중개사 132,000원 / 법무사 154,000원, VAT 포함) 전액</strong>을 배정된 전문가에게 지급합니다.
                     플랫폼 중개수수료는 <strong>0원</strong>입니다. 전문가별 입금이 끝나면 <strong>[입금완료]</strong> 버튼을 눌러 처리하세요.
                 </div>
 
@@ -3705,7 +3705,9 @@ async function exportUserCSV() {
 // ═══════════════════════════════════════════════════════
 // 정산 관리
 // ═══════════════════════════════════════════════════════
-// A방식 정산: 고객 결제 132,000원 전액을 배정 전문가에게 지급 (플랫폼 0원)
+// A방식 정산: 고객 결제 금액 전액을 배정 전문가에게 지급 (플랫폼 0원)
+// 유형별 금액(공인중개사 132,000 / 법무사 154,000)은 각 신청건 service_fee 사용.
+// SERVICE_FEE는 service_fee가 없는 레거시 데이터의 폴백값(공인중개사 기준).
 const SERVICE_FEE = 132000;
 let settleData = [];
 let settleExpertMap = {};   // expert_id / expert_name → 전문가 정보(계좌 등)
@@ -3912,10 +3914,10 @@ const CONTENT_DEFAULTS = {
         step4_title: '결과 수령',     step4_desc: '입찰 당일 문자로 낙찰/패찰 결과를 즉시 안내받습니다',
     },
     pricing: {
-        price_title: '전국 단일가',
-        price_sub: '숨겨진 비용 없이 딱 하나의 가격 · 132,000원 (VAT 포함)',
-        price_amount: '132,000원',
-        price_desc: '결제 금액은 전액 배정된 전문가(법무사·공인중개사)에게 정산됩니다. 플랫폼 중개수수료는 0원입니다.',
+        price_title: '전문가 유형별 단일가',
+        price_sub: '공인중개사 132,000원 / 법무사 154,000원 (각 VAT 포함)',
+        price_amount: '132,000원 / 154,000원',
+        price_desc: '결제 금액은 전액 배정된 전문가(공인중개사·법무사)에게 정산됩니다. 플랫폼 중개수수료는 0원입니다.',
     },
     footer: {
         footer_company: '대리입찰톡',
