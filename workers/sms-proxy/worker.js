@@ -90,6 +90,23 @@ export default {
         const name = (data && data.name) ? data.name : '파트너';
         const reason = (data && data.reason) ? data.reason : '';
         text = `[대리입찰톡] ${name}님, 파트너 신청 심사 결과를 안내드립니다.\n아쉽게도 이번 심사에서는 승인이 어렵습니다.${reason ? '\n사유: ' + reason : ''}\n문의: 02-853-5875`;
+      } else if (type === 'expert_assigned') {
+        // 전문가에게: 새 사건 배정 알림
+        const d = data || {};
+        const name = d.name || '전문가';
+        text = `[대리입찰톡] ${name}님, 새로운 대리입찰 사건이 배정되었습니다.\n` +
+               `${d.court ? '법원: ' + d.court + '\n' : ''}` +
+               `${d.caseNumber ? '사건: ' + d.caseNumber + '\n' : ''}` +
+               `${d.bidDate ? '입찰일: ' + d.bidDate + '\n' : ''}` +
+               `마이페이지에서 상세 내용을 확인해주세요.\n▶ https://bid-tok.kr/expert-mypage.html`;
+      } else if (type === 'client_assigned') {
+        // 신청자(고객)에게: 담당 전문가 배정 완료 알림
+        const d = data || {};
+        const name = d.name || '고객';
+        text = `[대리입찰톡] ${name}님, 담당 전문가 배정이 완료되었습니다! 🎉\n` +
+               `${d.expertName ? '담당: ' + d.expertName + ' 전문가\n' : ''}` +
+               `${d.appId ? '신청번호: ' + d.appId + '\n' : ''}` +
+               `진행 상황은 마이페이지에서 확인하실 수 있습니다.\n▶ https://bid-tok.kr/mypage.html`;
       } else if (code) {
         // 기본 인증번호 발송
         text = `[대리입찰톡] 인증번호 [${code}]를 입력해주세요. (5분 이내 입력)`;
