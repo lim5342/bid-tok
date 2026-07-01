@@ -8,9 +8,169 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/additional.css">
+    <!-- ══════════ 토스 스타일 디자인 (메인 랜딩 전용) ══════════ -->
+    <style id="toss-style">
+    :root{
+      --ts-blue:#3182F6; --ts-blue-dark:#1B64DA; --ts-blue-weak:#E8F3FF;
+      --ts-bg-gray:#F2F4F6; --ts-title:#191F28; --ts-body:#4E5968;
+      --ts-sub:#8B95A1; --ts-line:#E5E8EB;
+      --ts-shadow:0 4px 16px rgba(0,0,0,.06);
+    }
+    /* 메인 랜딩(.toss)에만 Pretendard 적용 */
+    .toss, .toss *{font-family:'Pretendard','Noto Sans KR',-apple-system,sans-serif;}
+    .toss{color:var(--ts-body);}
+    .toss .ts-container{max-width:1100px;margin:0 auto;padding:0 24px;}
+    .toss section{padding:88px 0;}
+    .toss .ts-gray{background:var(--ts-bg-gray);}
+    .toss h1,.toss h2,.toss h3,.toss h4{color:var(--ts-title);letter-spacing:-0.03em;}
+
+    /* ── 버튼 ── */
+    .toss .ts-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      border:none;cursor:pointer;border-radius:12px;font-weight:700;font-size:16px;
+      padding:14px 24px;transition:background .2s,transform .1s;text-decoration:none;line-height:1;}
+    .toss .ts-btn-blue{background:var(--ts-blue);color:#fff;position:relative;overflow:hidden;}
+    .toss .ts-btn-blue:hover{background:var(--ts-blue-dark);}
+    .toss .ts-btn-blue:active{transform:scale(.98);}
+    .toss .ts-btn-line{background:#fff;color:var(--ts-body);border:1px solid var(--ts-line);}
+    .toss .ts-btn-line:hover{background:var(--ts-bg-gray);}
+    .toss .ts-btn-lg{padding:16px 30px;font-size:17px;}
+    /* 버튼 shine */
+    .toss .ts-btn-blue::after{content:'';position:absolute;top:0;left:-120%;width:60%;height:100%;
+      background:linear-gradient(120deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.35) 50%,rgba(255,255,255,0) 100%);
+      transform:skewX(-20deg);animation:tsShine 4.5s ease-in-out infinite;}
+    @keyframes tsShine{0%{left:-120%;}22%{left:130%;}100%{left:130%;}}
+
+    /* ── 히어로 ── */
+    .toss .ts-hero{background:#fff;padding:96px 0 100px;overflow:hidden;}
+    .toss .ts-hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;}
+    .toss .ts-badge{display:inline-flex;align-items:center;gap:8px;background:var(--ts-blue-weak);
+      color:var(--ts-blue-dark);border-radius:999px;padding:8px 16px;font-size:13px;font-weight:700;margin-bottom:28px;}
+    .toss .ts-hero h1{font-size:clamp(38px,5vw,56px);font-weight:800;line-height:1.2;margin:0 0 24px;}
+    .toss .ts-hero h1 .accent{color:var(--ts-blue);}
+    .toss .ts-hero .ts-sub{font-size:19px;color:var(--ts-body);margin:0 0 40px;line-height:1.6;}
+    .toss .ts-hero-btns{display:flex;gap:12px;flex-wrap:wrap;}
+    .toss .ts-hero-img-wrap{position:relative;}
+    .toss .ts-hero-img{width:100%;height:auto;display:block;position:relative;z-index:1;animation:tsFloat 5s ease-in-out infinite;}
+    .toss .ts-hero-img-wrap::before{content:'';position:absolute;inset:8% 6%;z-index:0;
+      background:radial-gradient(circle at 50% 45%,var(--ts-blue-weak) 0%,rgba(232,243,255,0) 70%);border-radius:50%;}
+    @keyframes tsFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-14px);}}
+    .toss .ts-sparkle{position:absolute;z-index:2;border-radius:50%;
+      background:radial-gradient(circle,#fff 0%,var(--ts-blue) 60%,rgba(49,130,246,0) 100%);
+      box-shadow:0 0 8px rgba(49,130,246,.6);opacity:0;animation:tsTwinkle 3.4s ease-in-out infinite;}
+    .toss .ts-sparkle.s1{width:12px;height:12px;top:14%;left:44%;animation-delay:0s;}
+    .toss .ts-sparkle.s2{width:8px;height:8px;top:30%;left:70%;animation-delay:.9s;}
+    .toss .ts-sparkle.s3{width:10px;height:10px;top:62%;left:24%;animation-delay:1.7s;}
+    .toss .ts-sparkle.s4{width:7px;height:7px;top:20%;left:18%;animation-delay:2.4s;}
+    @keyframes tsTwinkle{0%,100%{opacity:0;transform:scale(.4);}45%,60%{opacity:1;transform:scale(1);}}
+
+    /* ── 섹션 헤더 ── */
+    .toss .ts-sec-head{text-align:center;margin-bottom:56px;}
+    .toss .ts-sec-head .ts-tag{color:var(--ts-blue);font-weight:700;font-size:15px;margin-bottom:12px;display:block;}
+    .toss .ts-sec-head h2{font-size:clamp(28px,4vw,40px);font-weight:800;margin:0 0 14px;}
+    .toss .ts-sec-head p{font-size:18px;color:var(--ts-sub);margin:0;}
+
+    /* ── WHY 카드 ── */
+    .toss .ts-why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+    .toss .ts-card{background:#fff;border:1px solid var(--ts-line);border-radius:20px;padding:36px 28px;transition:transform .2s,box-shadow .2s;}
+    .toss .ts-card:hover{transform:translateY(-4px);box-shadow:var(--ts-shadow);}
+    .toss .ts-ico{width:52px;height:52px;border-radius:14px;background:var(--ts-blue-weak);
+      display:flex;align-items:center;justify-content:center;margin-bottom:22px;color:var(--ts-blue);}
+    .toss .ts-ico svg{width:26px;height:26px;}
+    .toss .ts-card h3{font-size:20px;font-weight:700;margin:0 0 12px;}
+    .toss .ts-card p{font-size:15px;color:var(--ts-body);line-height:1.6;margin:0;}
+
+    /* ── 이용방법 스텝 ── */
+    .toss .ts-stepper{display:flex;justify-content:space-between;gap:16px;position:relative;max-width:900px;margin:0 auto;}
+    .toss .ts-stepper::before{content:'';position:absolute;top:26px;left:11%;right:11%;height:2px;background:var(--ts-line);z-index:0;}
+    .toss .ts-step{position:relative;z-index:1;text-align:center;flex:1;}
+    .toss .ts-step-num{width:52px;height:52px;border-radius:50%;background:var(--ts-blue);color:#fff;
+      font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;box-shadow:0 4px 12px rgba(49,130,246,.3);}
+    .toss .ts-step h4{font-size:17px;font-weight:700;margin:0 0 8px;}
+    .toss .ts-step p{font-size:14px;color:var(--ts-sub);line-height:1.55;margin:0;}
+
+    /* ── 후기 ── */
+    .toss .ts-reviews{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+    .toss .ts-review{background:#fff;border:1px solid var(--ts-line);border-radius:16px;padding:28px;}
+    .toss .ts-review .ts-stars{color:var(--ts-blue);font-size:15px;margin-bottom:14px;letter-spacing:2px;}
+    .toss .ts-review p{font-size:15px;color:var(--ts-body);line-height:1.65;margin:0 0 18px;}
+    .toss .ts-review .ts-author{font-size:14px;font-weight:700;color:var(--ts-title);}
+
+    /* ── 요금 ── */
+    .toss .ts-pricing{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;max-width:820px;margin:0 auto;}
+    .toss .ts-price-card{background:#fff;border:1px solid var(--ts-line);border-radius:20px;padding:36px 32px;position:relative;}
+    .toss .ts-price-card.reco{border:2px solid var(--ts-blue);}
+    .toss .ts-price-reco-badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);
+      background:var(--ts-blue);color:#fff;font-size:13px;font-weight:700;padding:5px 16px;border-radius:999px;}
+    .toss .ts-price-cat{font-size:14px;color:var(--ts-sub);font-weight:600;margin-bottom:6px;}
+    .toss .ts-price-name{font-size:20px;font-weight:700;margin:0 0 18px;}
+    .toss .ts-price-amt{font-size:38px;font-weight:800;color:var(--ts-title);}
+    .toss .ts-price-amt .won{font-size:18px;font-weight:600;color:var(--ts-body);margin-left:4px;}
+    .toss .ts-price-vat{font-size:13px;color:var(--ts-sub);margin:6px 0 4px;}
+    .toss .ts-price-desc{font-size:14px;color:var(--ts-body);margin:0 0 22px;}
+    .toss .ts-price-feats{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px;}
+    .toss .ts-price-feats li{display:flex;align-items:center;gap:10px;font-size:15px;color:var(--ts-body);}
+    .toss .ts-price-feats li svg{width:18px;height:18px;color:var(--ts-blue);flex-shrink:0;}
+    .toss .ts-price-feats li.note{color:var(--ts-sub);}
+    .toss .ts-price-feats li.note svg{color:var(--ts-sub);}
+
+    /* ── FAQ ── */
+    .toss .ts-faq{max-width:760px;margin:0 auto;}
+    .toss .ts-faq-item{border-bottom:1px solid var(--ts-line);}
+    .toss .ts-faq-q{width:100%;background:none;border:none;cursor:pointer;text-align:left;
+      display:flex;justify-content:space-between;align-items:center;gap:16px;
+      padding:24px 4px;font-size:17px;font-weight:600;color:var(--ts-title);font-family:inherit;}
+    .toss .ts-faq-q svg{width:20px;height:20px;color:var(--ts-sub);transition:transform .25s;flex-shrink:0;}
+    .toss .ts-faq-item.open .ts-faq-q svg{transform:rotate(180deg);}
+    .toss .ts-faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease;}
+    .toss .ts-faq-item.open .ts-faq-a{max-height:220px;}
+    .toss .ts-faq-a p{font-size:15px;color:var(--ts-body);line-height:1.7;margin:0;padding:0 4px 24px;}
+
+    /* ── 전문가 모집 배너 ── */
+    .toss .ts-recruit{background:var(--ts-title);border-radius:20px;padding:48px;text-align:center;margin-top:48px;}
+    .toss .ts-recruit p{font-size:15px;color:#B0B8C1;margin:0 0 8px;}
+    .toss .ts-recruit h3{font-size:24px;color:#fff;font-weight:700;margin:0 0 24px;}
+
+    /* ── CTA ── */
+    .toss .ts-cta{background:var(--ts-blue-weak);text-align:center;}
+    .toss .ts-cta h2{font-size:clamp(26px,4vw,36px);font-weight:800;margin:0 0 12px;}
+    .toss .ts-cta p{font-size:18px;color:var(--ts-body);margin:0 0 32px;}
+
+    /* ── 스크롤 리빌 ── */
+    .toss .reveal{opacity:0;transform:translateY(28px);
+      transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1);will-change:opacity,transform;}
+    .toss .reveal.is-visible{opacity:1;transform:none;}
+    .toss .reveal-delay{transition-delay:.15s;}
+    .toss .reveal-stagger>*{opacity:0;transform:translateY(28px);
+      transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1);}
+    .toss .reveal-stagger.is-visible>*{opacity:1;transform:none;}
+    .toss .reveal-stagger.is-visible>*:nth-child(1){transition-delay:.05s;}
+    .toss .reveal-stagger.is-visible>*:nth-child(2){transition-delay:.15s;}
+    .toss .reveal-stagger.is-visible>*:nth-child(3){transition-delay:.25s;}
+    .toss .reveal-stagger.is-visible>*:nth-child(4){transition-delay:.35s;}
+    .toss .reveal-stagger.is-visible>*:nth-child(5){transition-delay:.45s;}
+
+    /* ── 반응형 ── */
+    @media(max-width:768px){
+      .toss section{padding:60px 0;}
+      .toss .ts-hero{padding:64px 0 72px;}
+      .toss .ts-hero-inner{grid-template-columns:1fr;gap:32px;text-align:center;}
+      .toss .ts-hero-btns{justify-content:center;}
+      .toss .ts-hero-img-wrap{order:-1;max-width:400px;margin:0 auto;}
+      .toss .ts-why-grid,.toss .ts-reviews,.toss .ts-pricing{grid-template-columns:1fr;}
+      .toss .ts-stepper{flex-direction:column;gap:28px;}
+      .toss .ts-stepper::before{display:none;}
+      .toss .ts-recruit{padding:36px 24px;}
+    }
+    @media(prefers-reduced-motion:reduce){
+      .toss .reveal,.toss .reveal-stagger>*{opacity:1;transform:none;transition:none;}
+      .toss .ts-hero-img,.toss .ts-btn-blue::after,.toss .ts-sparkle{animation:none;}
+    }
+    </style>
     <style>
     /* ── 새 디자인 오버라이드 ── */
     :root {
@@ -442,33 +602,33 @@
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar" id="navbar">
+    <!-- Navigation (토스 스타일) -->
+    <nav class="navbar toss" id="navbar" style="background:#fff;border-bottom:1px solid var(--ts-line);box-shadow:none;">
         <div class="container nav-container">
-            <div class="nav-logo">
-                <i class="fas fa-comment-dots"></i>
+            <div class="nav-logo" style="color:var(--ts-title);font-weight:800;">
+                <i class="fas fa-comment-dots" style="color:var(--ts-blue);"></i>
                 <span>대리입찰 톡</span>
-                <span class="logo-sub">by 대명TV</span>
+                <span class="logo-sub" style="color:var(--ts-sub);">by 대장TV</span>
             </div>
             <ul class="nav-menu" id="navMenu">
-                <li><a href="#why">서비스 소개</a></li>
-                <li><a href="guide.html"><i class="fas fa-book-open" style="margin-right:4px; color:var(--mint);"></i>이용가이드</a></li>
-                <li><a href="safety.html"><i class="fas fa-shield-alt" style="margin-right:4px; color:var(--mint);"></i>안전장치</a></li>
-                <li><a href="#support">고객지원</a></li>
+                <li><a href="#why" style="color:var(--ts-body);">서비스 소개</a></li>
+                <li><a href="guide.html" style="color:var(--ts-body);">이용가이드</a></li>
+                <li><a href="safety.html" style="color:var(--ts-body);">안전장치</a></li>
+                <li><a href="#support" style="color:var(--ts-body);">고객지원</a></li>
             </ul>
             <div class="nav-actions">
                 <!-- 비로그인 시 -->
                 <div id="loginActions" style="display: flex; align-items: center; gap: 0.5rem;">
-                    <button class="btn btn-outline" onclick="window.location.href='login.html'" id="loginBtn">로그인</button>
-                    <button class="btn-signup-new" onclick="window.location.href='signup.html'">회원가입</button>
+                    <button class="ts-btn ts-btn-line" onclick="window.location.href='login.html'" id="loginBtn" style="padding:9px 18px;font-size:15px;">로그인</button>
+                    <button class="ts-btn ts-btn-blue" onclick="window.location.href='signup.html'" style="padding:9px 18px;font-size:15px;">회원가입</button>
                 </div>
                 
                 <!-- 로그인 시 -->
                 <div id="userInfo" style="display: none; align-items: center; gap: 0.75rem;">
-                    <span id="userTypeLabel" style="padding: 0.25rem 0.7rem; background: var(--mint-light); color: var(--mint-dark); border-radius: 20px; font-size: 0.8rem; font-weight: 700;"></span>
-                    <span id="userName" style="font-weight: 600; font-size:.9rem;"></span>
-                    <button class="btn btn-outline" onclick="goToMypage()" style="font-size:.85rem; padding:.4rem .9rem;">마이페이지</button>
-                    <button class="btn btn-outline" onclick="handleLogout()" style="font-size:.85rem; padding:.4rem .9rem;">로그아웃</button>
+                    <span id="userTypeLabel" style="padding: 0.25rem 0.7rem; background: var(--ts-blue-weak); color: var(--ts-blue-dark); border-radius: 20px; font-size: 0.8rem; font-weight: 700;"></span>
+                    <span id="userName" style="font-weight: 600; font-size:.9rem; color:var(--ts-title);"></span>
+                    <button class="ts-btn ts-btn-line" onclick="goToMypage()" style="font-size:.85rem; padding:.5rem .9rem;">마이페이지</button>
+                    <button class="ts-btn ts-btn-line" onclick="handleLogout()" style="font-size:.85rem; padding:.5rem .9rem;">로그아웃</button>
                 </div>
 
                 <!-- JS 연동용 숨김 버튼 -->
@@ -486,7 +646,7 @@
     <!-- ── 서비스 안내 배너 ── -->
     <div id="betaBanner" style="
         position:fixed; top:60px; left:0; right:0; z-index:90;
-        background:linear-gradient(90deg,#0D9488,#2DD4BF);
+        background:linear-gradient(90deg,#1B64DA,#3182F6);
         color:#fff; text-align:center;
         padding:9px 48px 9px 24px;
         font-size:0.82rem; font-weight:600;
@@ -504,85 +664,88 @@
     <div id="betaBannerSpacer" style="height:38px;"></div>
 
     <!-- Main Page -->
-    <div id="mainPage" class="page active">
-        <!-- Hero Section (새 디자인) -->
-        <section class="hero-new">
-            <div>
-                <!-- 대장TV 배지 -->
-                <div style="display:inline-flex;align-items:center;gap:8px;background:#fff;border:2px solid #0D9488;border-radius:50px;padding:6px 16px;margin-bottom:1.2rem;box-shadow:0 2px 12px rgba(13,148,136,0.12);">
-                    <span style="font-size:1.1rem;">📺</span>
-                    <span id="heroBadge" style="font-size:0.82rem;font-weight:700;color:#0D9488;">부동산경매 1등 <strong>대장TV</strong>가 운영하는 중개수수료 무료 대리입찰 플랫폼</span>
-                </div>
-                <h1 id="heroTitle">법원 갈 시간에<br><span class="accent" id="heroTitle2">가족과 함께</span></h1>
-                <p class="subtitle" id="heroSub">쉬운 경매를 위해 대장TV가 직접 만들었습니다<br>대리입찰, 이제 전문가에게 맡기세요</p>
-                <div class="hero-btn-wrap">
-                    <button class="btn-mint" id="heroApplyBtn" onclick="location.href='apply.html'">지금 신청하기</button>
-                    <button class="btn-outline-gray" onclick="location.href='partner.html'">대리인 신청</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- WHY 섹션 (대리입찰 톡 스타일 대형 2-컬럼) -->
-        <section class="why-section" id="why">
-            <div class="container">
-                <!-- 상단 헤더 -->
-                <div class="why-section-header">
-                    <span class="eyebrow">WHY 대리입찰 톡</span>
-                    <h2>왜 대리입찰 톡을<br>선택해야 할까요?</h2>
-                    <p>경매 전문 법무사·공인중개사가 직접 진행하는 대리입찰 서비스</p>
-                </div>
-                <!-- 탭 메뉴 -->
-                <div class="why-tabs">
-                    <button class="why-tab active" data-tab="price">💰 단일가</button>
-                    <button class="why-tab" data-tab="time">⏰ 대신 입찰</button>
-                    <button class="why-tab" data-tab="distance">🗺️ 모든법원</button>
-                    <button class="why-tab" data-tab="worker">⚡ 3분 완성</button>
-                    <button class="why-tab" data-tab="safe">🛡️ 안심 보증금</button>
-                </div>
-                <!-- 2-컬럼 콘텐츠 -->
-                <div class="why-content" id="whyContent">
-                    <!-- 좌측 텍스트 -->
-                    <div class="why-text-col" id="whyTextCol">
-                        <!-- JS로 렌더 -->
-                    </div>
-                    <!-- 우측 비주얼 -->
-                    <div class="why-visual-col">
-                        <div class="why-visual-blob"></div>
-                        <div class="why-visual-card" id="whyVisualCard">
-                            <!-- JS로 렌더 -->
+    <div id="mainPage" class="page active toss">
+        <!-- Hero Section (토스 스타일 2컬럼 + 이미지) -->
+        <section class="ts-hero">
+            <div class="ts-container">
+                <div class="ts-hero-inner">
+                    <div class="ts-hero-copy reveal">
+                        <div class="ts-badge">
+                            <i data-lucide="badge-check" style="width:16px;height:16px;"></i>
+                            <span id="heroBadge">부동산경매 1등 대장TV가 운영하는 중개수수료 무료 대리입찰 플랫폼</span>
+                        </div>
+                        <h1 id="heroTitle">법원 갈 시간에<br><span class="accent" id="heroTitle2">가족과 함께</span></h1>
+                        <p class="ts-sub" id="heroSub">소비자는 앉아서 간편하게 신청,<br>전문가가 대신 법원에 가서 입찰합니다</p>
+                        <div class="ts-hero-btns">
+                            <button class="ts-btn ts-btn-blue ts-btn-lg" id="heroApplyBtn" onclick="location.href='apply.html'">지금 신청하기</button>
+                            <button class="ts-btn ts-btn-line ts-btn-lg" onclick="location.href='partner.html'">대리인 신청</button>
                         </div>
                     </div>
-                </div>
-                <!-- 진행 바 -->
-                <div class="why-progress-bar">
-                    <div class="why-progress-fill" id="whyProgressFill"></div>
+                    <div class="ts-hero-img-wrap reveal reveal-delay">
+                        <img class="ts-hero-img" src="assets/hero-proxy.png" alt="소비자는 집에서 간편하게 신청하고, 전문가가 대신 법원에 가서 입찰하는 대리입찰 서비스">
+                        <span class="ts-sparkle s1"></span>
+                        <span class="ts-sparkle s2"></span>
+                        <span class="ts-sparkle s3"></span>
+                        <span class="ts-sparkle s4"></span>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- 이용 방법 -->
-        <section class="how-section" id="service">
-            <div class="container">
-                <h2 id="howTitle">이용 방법</h2>
-                <p class="sub" id="howSub">딱 4단계로 완료됩니다</p>
-                <div class="how-steps">
-                    <div class="how-step">
-                        <div class="how-num">1</div>
+        <!-- WHY 섹션 (토스 스타일 3카드) -->
+        <section class="ts-gray" id="why">
+            <div class="ts-container">
+                <div class="ts-sec-head reveal">
+                    <span class="ts-tag">WHY 대리입찰 톡</span>
+                    <h2>왜 대리입찰 톡일까요?</h2>
+                    <p>중개수수료 0원, 전국 어디서나 같은 가격으로</p>
+                </div>
+                <div class="ts-why-grid reveal reveal-stagger">
+                    <div class="ts-card">
+                        <div class="ts-ico"><i data-lucide="wallet"></i></div>
+                        <h3>투명한 단일 가격</h3>
+                        <p>공인중개사 132,000원 · 법무사 154,000원(각 부가세 포함). 중개수수료 0원, 전국 전문가 직접 연결.</p>
+                    </div>
+                    <div class="ts-card">
+                        <div class="ts-ico"><i data-lucide="clock"></i></div>
+                        <h3>법원 갈 필요 없음</h3>
+                        <p>연차 내고 법원 갈 필요 없이, 인증된 전문가가 직접 법원에 출석해 대리 입찰합니다.</p>
+                    </div>
+                    <div class="ts-card">
+                        <div class="ts-ico"><i data-lucide="shield-check"></i></div>
+                        <h3>보증금 5억 보장</h3>
+                        <p>전문 매수신청대리인의 배상책임보험 가입으로 입찰보증금은 최대 5억 원까지 안전하게 보장됩니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 이용 방법 (토스 스텝 인디케이터) -->
+        <section id="service">
+            <div class="ts-container">
+                <div class="ts-sec-head reveal">
+                    <span class="ts-tag">HOW IT WORKS</span>
+                    <h2 id="howTitle">이용 방법</h2>
+                    <p id="howSub">딱 4단계로 완료됩니다</p>
+                </div>
+                <div class="ts-stepper reveal reveal-stagger">
+                    <div class="ts-step">
+                        <div class="ts-step-num">1</div>
                         <h4 id="step1Title">사건번호 입력</h4>
                         <p id="step1Desc">대법원 경매 사건번호를 입력하면 자동으로 정보를 불러옵니다</p>
                     </div>
-                    <div class="how-step">
-                        <div class="how-num">2</div>
+                    <div class="ts-step">
+                        <div class="ts-step-num">2</div>
                         <h4 id="step2Title">입찰가 결정</h4>
                         <p id="step2Desc">원하는 입찰 금액과 보증금 납부 방법을 선택합니다</p>
                     </div>
-                    <div class="how-step">
-                        <div class="how-num">3</div>
+                    <div class="ts-step">
+                        <div class="ts-step-num">3</div>
                         <h4 id="step3Title">전자서명</h4>
                         <p id="step3Desc">온라인 전자서명으로 위임장 작성. 인감증명서 불필요</p>
                     </div>
-                    <div class="how-step">
-                        <div class="how-num done">✓</div>
+                    <div class="ts-step">
+                        <div class="ts-step-num">4</div>
                         <h4 id="step4Title">결과 수령</h4>
                         <p id="step4Desc">입찰 당일 문자로 낙찰/패찰 결과를 즉시 안내받습니다</p>
                     </div>
@@ -661,172 +824,116 @@
             </div>
         </section>
 
-        <!-- Reviews Section -->
-        <section class="section reviews-section">
-            <div class="container">
-                <h2 class="section-title">실제 이용자 후기</h2>
-                <div class="reviews-slider">
-                    <div class="review-card">
-                        <div class="review-stars">⭐⭐⭐⭐⭐</div>
-                        <p class="review-text">"한두 푼도 아닌 입찰보증금을 믿고 맡길 수 있어 안심입니다. 신뢰할 수 있는 서비스인 것 같아 계속 이용할 의사 있습니다."</p>
-                        <p class="review-author">전문투자자 A</p>
+        <!-- Reviews Section (토스 스타일) -->
+        <section class="ts-gray">
+            <div class="ts-container">
+                <div class="ts-sec-head reveal">
+                    <span class="ts-tag">REVIEWS</span>
+                    <h2>실제 이용자 후기</h2>
+                    <p>대리입찰 톡을 경험한 분들의 이야기</p>
+                </div>
+                <div class="ts-reviews reveal reveal-stagger">
+                    <div class="ts-review">
+                        <div class="ts-stars">★★★★★</div>
+                        <p>"한두 푼도 아닌 입찰보증금을 믿고 맡길 수 있어 안심입니다. 신뢰할 수 있는 서비스인 것 같아 계속 이용할 의사 있습니다."</p>
+                        <div class="ts-author">전문투자자 A</div>
                     </div>
-                    <div class="review-card">
-                        <div class="review-stars">⭐⭐⭐⭐⭐</div>
-                        <p class="review-text">"직장인이다 보니 주중에 연차를 내는 게 부담스러웠는데, 대리입찰 톡 덕분에 연차 걱정 없이 경매 참여할 수 있습니다."</p>
-                        <p class="review-author">직장인 B</p>
+                    <div class="ts-review">
+                        <div class="ts-stars">★★★★★</div>
+                        <p>"직장인이다 보니 주중에 연차를 내는 게 부담스러웠는데, 대리입찰 톡 덕분에 연차 걱정 없이 경매 참여할 수 있습니다."</p>
+                        <div class="ts-author">직장인 B</div>
                     </div>
-                    <div class="review-card">
-                        <div class="review-stars">⭐⭐⭐⭐⭐</div>
-                        <p class="review-text">"서비스 신청 웹페이지도 직관적이고, 절차 안내도 명확합니다. 처음 이용하는데도 불편함 없이 3분 만에 신청 완료했네요."</p>
-                        <p class="review-author">전문직 C</p>
-                    </div>
-                    <div class="review-card">
-                        <div class="review-stars">⭐⭐⭐⭐⭐</div>
-                        <p class="review-text">"다른 곳은 서류를 인쇄하고 스캔하고 우편으로 보내야 했는데, 대리입찰 톡은 모든 서류가 온라인에서 한 번에 해결되는 점이 최고입니다."</p>
-                        <p class="review-author">프리랜서 D</p>
-                    </div>
-                    <div class="review-card">
-                        <div class="review-stars">⭐⭐⭐⭐⭐</div>
-                        <p class="review-text">"입찰가 입력 시 실수할 수 있는 부분을 미리 경고해 주어서, 이런 부분에서는 직접입찰보다 더 안심이 되어 좋았어요."</p>
-                        <p class="review-author">초보투자자 E</p>
+                    <div class="ts-review">
+                        <div class="ts-stars">★★★★★</div>
+                        <p>"서비스 신청 웹페이지도 직관적이고, 절차 안내도 명확합니다. 처음 이용하는데도 불편함 없이 3분 만에 신청 완료했네요."</p>
+                        <div class="ts-author">전문직 C</div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Pricing Section -->
-        <section class="section pricing-section">
-            <div class="container">
-                <h2 class="section-title" id="pricingTitle">대리입찰 가격</h2>
-                <p class="section-subtitle" id="pricingSub" style="text-align:center; margin-bottom:2rem;">전문가 유형을 선택하세요 · 전국 어디서나 같은 가격</p>
-                <div class="pricing-grid" style="max-width:880px;">
+        <!-- Pricing Section (토스 스타일) -->
+        <section>
+            <div class="ts-container">
+                <div class="ts-sec-head reveal">
+                    <span class="ts-tag">PRICING</span>
+                    <h2 id="pricingTitle">대리입찰 가격</h2>
+                    <p id="pricingSub">전문가 유형을 선택하세요 · 전국 어디서나 같은 가격</p>
+                </div>
+                <div class="ts-pricing reveal reveal-stagger">
                     <!-- 공인중개사 -->
-                    <div class="pricing-card pricing-card--realtor">
-                        <div class="pricing-badge">공인중개사</div>
-                        <h3 class="pricing-title">🏠 공인중개사 대리입찰</h3>
-                        <div class="pricing-amount">
-                            <span class="amount">132,000</span>
-                            <span class="currency">원</span>
-                        </div>
-                        <p class="pricing-vat">(VAT 포함)</p>
-                        <p class="pricing-desc">매수신청대리인이 직접 진행</p>
-                        <div class="pricing-features">
-                            <div class="pricing-feature">
-                                <i class="fas fa-check"></i>
-                                <span>매수신청대리인</span>
-                            </div>
-                            <div class="pricing-feature">
-                                <i class="fas fa-check"></i>
-                                <span>보험 5억 가입 완료</span>
-                            </div>
-                            <div class="pricing-feature pricing-feature--note">
-                                <i class="fas fa-info-circle"></i>
-                                <span>인감증명서 등 일부 서류 준비 필요</span>
-                            </div>
-                            <div class="pricing-feature">
-                                <i class="fas fa-check"></i>
-                                <span>입찰 결과 안내</span>
-                            </div>
-                        </div>
+                    <div class="ts-price-card">
+                        <div class="ts-price-cat">공인중개사</div>
+                        <div class="ts-price-name">공인중개사 대리입찰</div>
+                        <div class="ts-price-amt">132,000<span class="won">원</span></div>
+                        <p class="ts-price-vat">(VAT 포함)</p>
+                        <p class="ts-price-desc">매수신청대리인이 직접 진행</p>
+                        <ul class="ts-price-feats">
+                            <li><i data-lucide="check"></i> 매수신청대리인</li>
+                            <li><i data-lucide="check"></i> 보험 5억 가입 완료</li>
+                            <li class="note"><i data-lucide="info"></i> 인감증명서 등 일부 서류 준비 필요</li>
+                            <li><i data-lucide="check"></i> 입찰 결과 안내</li>
+                        </ul>
                     </div>
                     <!-- 법무사 -->
-                    <div class="pricing-card recommended-pricing pricing-card--lawyer">
-                        <div class="pricing-badge">법무사</div>
-                        <h3 class="pricing-title">📋 법무사 대리입찰</h3>
-                        <div class="pricing-amount">
-                            <span class="amount">154,000</span>
-                            <span class="currency">원</span>
-                        </div>
-                        <p class="pricing-vat">(VAT 포함)</p>
-                        <p class="pricing-desc">온라인 전자서명 3분 완료</p>
-                        <div class="pricing-features">
-                            <div class="pricing-feature">
-                                <i class="fas fa-check"></i>
-                                <span>온라인 전자서명만 (3분)</span>
-                            </div>
-                            <div class="pricing-feature">
-                                <i class="fas fa-check"></i>
-                                <span>주민센터 방문 불필요</span>
-                            </div>
-                            <div class="pricing-feature">
-                                <i class="fas fa-check"></i>
-                                <span>인감증명서 불필요</span>
-                            </div>
-                            <div class="pricing-feature">
-                                <i class="fas fa-check"></i>
-                                <span>대리 입찰참여</span>
-                            </div>
-                            <div class="pricing-feature">
-                                <i class="fas fa-check"></i>
-                                <span>입찰 결과 안내</span>
-                            </div>
-                        </div>
+                    <div class="ts-price-card reco">
+                        <div class="ts-price-reco-badge">추천</div>
+                        <div class="ts-price-cat">법무사</div>
+                        <div class="ts-price-name">법무사 대리입찰</div>
+                        <div class="ts-price-amt">154,000<span class="won">원</span></div>
+                        <p class="ts-price-vat">(VAT 포함)</p>
+                        <p class="ts-price-desc">온라인 전자서명 3분 완료</p>
+                        <ul class="ts-price-feats">
+                            <li><i data-lucide="check"></i> 온라인 전자서명만 (3분)</li>
+                            <li><i data-lucide="check"></i> 주민센터 방문 불필요</li>
+                            <li><i data-lucide="check"></i> 인감증명서 불필요</li>
+                            <li><i data-lucide="check"></i> 대리 입찰참여</li>
+                            <li><i data-lucide="check"></i> 입찰 결과 안내</li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- FAQ Section -->
-        <section id="support" class="section faq-section">
-            <div class="container">
-                <h2 class="section-title">자주 묻는 질문</h2>
-                <div class="faq-list">
-                    <div class="faq-item">
-                        <button class="faq-question">
-                            <span>Q. 보증금은 안전한가요?</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="faq-answer">
-                            <p>전문 매수신청대리인의 배상책임보험이 가입되어 있어 보증금은 100% 안전합니다. 최대 5억 원까지 보장됩니다.</p>
-                        </div>
+        <!-- FAQ Section (토스 스타일) -->
+        <section id="support" class="ts-gray">
+            <div class="ts-container">
+                <div class="ts-sec-head reveal">
+                    <span class="ts-tag">FAQ</span>
+                    <h2>자주 묻는 질문</h2>
+                    <p>궁금한 점을 확인해 보세요</p>
+                </div>
+                <div class="ts-faq reveal">
+                    <div class="ts-faq-item">
+                        <button class="ts-faq-q">보증금은 안전한가요? <i data-lucide="chevron-down"></i></button>
+                        <div class="ts-faq-a"><p>전문 매수신청대리인의 배상책임보험이 가입되어 있어 보증금은 100% 안전합니다. 최대 5억 원까지 보장됩니다.</p></div>
                     </div>
-                    <div class="faq-item">
-                        <button class="faq-question">
-                            <span>Q. 전국 어디서나 신청 가능한가요?</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="faq-answer">
-                            <p>네, 전국 모든 법원의 경매 사건에 대해 대리입찰 서비스를 제공합니다. 서울에서 부산 물건도, 제주에서 강원도 물건도 가능합니다.</p>
-                        </div>
+                    <div class="ts-faq-item">
+                        <button class="ts-faq-q">전국 어디서나 신청 가능한가요? <i data-lucide="chevron-down"></i></button>
+                        <div class="ts-faq-a"><p>네, 전국 모든 법원의 경매 사건에 대해 대리입찰 서비스를 제공합니다. 서울에서 부산 물건도, 제주에서 강원도 물건도 가능합니다.</p></div>
                     </div>
-                    <div class="faq-item">
-                        <button class="faq-question">
-                            <span>Q. 입찰 당일 연락은 어떻게 받나요?</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="faq-answer">
-                            <p>입찰 완료 후 즉시 문자 메시지로 결과를 안내해 드립니다. 낙찰 여부와 함께 다음 절차에 대한 상세 안내가 포함됩니다.</p>
-                        </div>
+                    <div class="ts-faq-item">
+                        <button class="ts-faq-q">입찰 당일 연락은 어떻게 받나요? <i data-lucide="chevron-down"></i></button>
+                        <div class="ts-faq-a"><p>입찰 완료 후 즉시 문자 메시지로 결과를 안내해 드립니다. 낙찰 여부와 함께 다음 절차에 대한 상세 안내가 포함됩니다.</p></div>
                     </div>
-                    <div class="faq-item">
-                        <button class="faq-question">
-                            <span>Q. 낙찰되면 추가 비용이 있나요?</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="faq-answer">
-                            <p>대리입찰 수수료 외 추가 비용은 없습니다. 낙찰 이후 소유권 이전 등기 등의 절차는 별도로 협의 가능합니다.</p>
-                        </div>
+                    <div class="ts-faq-item">
+                        <button class="ts-faq-q">낙찰되면 추가 비용이 있나요? <i data-lucide="chevron-down"></i></button>
+                        <div class="ts-faq-a"><p>대리입찰 수수료 외 추가 비용은 없습니다. 낙찰 이후 소유권 이전 등기 등의 절차는 별도로 협의 가능합니다.</p></div>
                     </div>
-                    <div class="faq-item">
-                        <button class="faq-question">
-                            <span>Q. 신청 취소는 가능한가요?</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="faq-answer">
-                            <p>매각기일 전날까지 취소 시 전액 환불됩니다. 단, 매각기일 당일 취소는 환불이 불가능합니다.</p>
-                        </div>
+                    <div class="ts-faq-item">
+                        <button class="ts-faq-q">신청 취소는 가능한가요? <i data-lucide="chevron-down"></i></button>
+                        <div class="ts-faq-a"><p>매각기일 전날까지 취소 시 전액 환불됩니다. 단, 매각기일 당일 취소는 환불이 불가능합니다.</p></div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- CTA Section -->
-        <section class="section cta-section" id="support">
-            <div class="container">
+        <!-- CTA Section (토스 스타일) -->
+        <section class="ts-cta">
+            <div class="ts-container reveal">
                 <h2>지금 바로 대리입찰을 신청하세요</h2>
                 <p>3분이면 충분합니다</p>
-                <button class="btn-mint" id="ctaApplyBtn" onclick="location.href='apply.html'" style="font-size:1.1rem; padding:1rem 2.5rem;">대리입찰 신청하기</button>
+                <button class="ts-btn ts-btn-blue ts-btn-lg" id="ctaApplyBtn" onclick="location.href='apply.html'">대리입찰 신청하기</button>
             </div>
         </section>
     </div>
@@ -1763,18 +1870,20 @@
     <footer class="footer">
         <div class="container">
             <!-- 대장TV 소개 배너 -->
-            <div style="background:linear-gradient(135deg,rgba(13,148,136,0.12),rgba(102,126,234,0.10));border:1px solid rgba(13,148,136,0.2);border-radius:14px;padding:1.2rem 1.5rem;margin-bottom:1.5rem;display:flex;flex-wrap:wrap;align-items:center;gap:1rem;">
-                <div style="font-size:2rem;">📺</div>
+            <div style="background:linear-gradient(135deg,rgba(49,130,246,0.12),rgba(49,130,246,0.06));border:1px solid rgba(49,130,246,0.22);border-radius:16px;padding:1.4rem 1.6rem;margin-bottom:1.8rem;display:flex;flex-wrap:wrap;align-items:center;gap:1rem;">
+                <div style="width:44px;height:44px;border-radius:12px;background:rgba(49,130,246,0.18);display:flex;align-items:center;justify-content:center;color:#5B9DFF;">
+                    <i class="fas fa-tv" style="font-size:1.2rem;"></i>
+                </div>
                 <div style="flex:1;min-width:200px;">
                     <div style="font-size:0.95rem;font-weight:800;color:#fff;margin-bottom:4px;">
-                        부동산경매 1등 <span style="color:#2DD4BF;">대장TV</span>가 운영하는 중개수수료 무료 대리입찰 플랫폼
+                        부동산경매 1등 <span style="color:#5B9DFF;">대장TV</span>가 운영하는 중개수수료 무료 대리입찰 플랫폼
                     </div>
                     <div style="font-size:0.8rem;color:rgba(255,255,255,0.7);line-height:1.6;">
                         쉬운 경매 문화를 만들기 위해 대장TV가 직접 기획·운영합니다.
-                        중개수수료 없이 의뢰인과 전문가를 연결해 드리며, 봉사와 나눔의 가치를 실천합니다. 🤝
+                        중개수수료 없이 의뢰인과 전문가를 연결해 드리며, 봉사와 나눔의 가치를 실천합니다.
                     </div>
                 </div>
-                <a href="https://www.youtube.com/@ksj" target="_blank" style="background:#0D9488;color:#fff;padding:0.5rem 1.1rem;border-radius:50px;font-size:0.82rem;font-weight:700;text-decoration:none;white-space:nowrap;">
+                <a href="https://www.youtube.com/@ksj" target="_blank" style="background:#3182F6;color:#fff;padding:0.55rem 1.2rem;border-radius:12px;font-size:0.82rem;font-weight:700;text-decoration:none;white-space:nowrap;">
                     대장TV 바로가기 →
                 </a>
             </div>
@@ -1790,8 +1899,8 @@
                     <p><strong>주소:</strong> <span id="footerAddress">서울특별시 금천구 가산디지털1로 75-24 901호</span></p>
                     <p><strong>사업자등록번호:</strong> <span id="footerBizNo">000-00-00000</span></p>
                     <p><strong>통신판매업신고:</strong> <span id="footerMailOrderNo">제0000-서울금천-0000호</span></p>
-                    <p><strong>대표전화:</strong> <a id="footerTelLink" href="tel:02-853-5875" style="color:var(--mint);"><span id="footerTel">02-853-5875</span></a> &nbsp;|&nbsp; <span id="footerHours">평일 09:00~18:00</span></p>
-                    <p><strong>이메일:</strong> <a id="footerEmailLink" href="mailto:qkqk5342@naver.com" style="color:var(--mint);"><span id="footerEmail">qkqk5342@naver.com</span></a></p>
+                    <p><strong>대표전화:</strong> <a id="footerTelLink" href="tel:02-853-5875" style="color:#5B9DFF;"><span id="footerTel">02-853-5875</span></a> &nbsp;|&nbsp; <span id="footerHours">평일 09:00~18:00</span></p>
+                    <p><strong>이메일:</strong> <a id="footerEmailLink" href="mailto:qkqk5342@naver.com" style="color:#5B9DFF;"><span id="footerEmail">qkqk5342@naver.com</span></a></p>
                 </div>
                 <div class="footer-links">
                     <a href="terms.html">이용약관</a>
@@ -2016,6 +2125,7 @@
     }
 
     function startWhyRolling() {
+        if (!document.querySelector('.why-tab')) return; // 토스 리디자인: WHY 탭 제거됨 → no-op
         whyAutoTimer = setInterval(function() {
             if (whyPaused) return;
             const active = document.querySelector('.why-tab.active');
@@ -2045,10 +2155,48 @@
             });
         });
 
-        // 초기 렌더 및 자동 롤링
+        // 초기 렌더 및 자동 롤링 (토스 리디자인 후 WHY 탭이 없으면 내부에서 안전하게 no-op)
         activateTab('price');
         startWhyRolling();
     });
+    </script>
+
+    <!-- ── 토스 스타일 랜딩: 아이콘 · 스크롤 리빌 · FAQ ── -->
+    <script>
+    (function(){
+        function initToss(){
+            // Lucide 라인 아이콘 렌더링
+            if (window.lucide && typeof lucide.createIcons === 'function') {
+                try { lucide.createIcons(); } catch(e) {}
+            }
+            // FAQ 토글
+            document.querySelectorAll('.ts-faq-q').forEach(function(btn){
+                btn.addEventListener('click', function(){
+                    btn.parentElement.classList.toggle('open');
+                });
+            });
+            // 스크롤 리빌 (뷰포트에 들어오면 나타남)
+            var reveals = document.querySelectorAll('.toss .reveal');
+            if (!('IntersectionObserver' in window)) {
+                reveals.forEach(function(el){ el.classList.add('is-visible'); });
+                return;
+            }
+            var io = new IntersectionObserver(function(entries){
+                entries.forEach(function(entry){
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        io.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+            reveals.forEach(function(el){ io.observe(el); });
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initToss);
+        } else {
+            initToss();
+        }
+    })();
     </script>
 
     <!-- ── 홈페이지 콘텐츠 동적 로드 (Firestore siteContents/main) ── -->
@@ -2058,8 +2206,8 @@
         const DEFAULTS = {
             hero_title1: '법원 갈 시간에',
             hero_title2: '가족과 함께',
-            hero_sub1: '쉬운 경매를 위해 대장TV가 직접 만들었습니다',
-            hero_sub2: '대리입찰, 이제 전문가에게 맡기세요',
+            hero_sub1: '소비자는 앉아서 간편하게 신청,',
+            hero_sub2: '전문가가 대신 법원에 가서 입찰합니다',
             hero_badge: '부동산경매 1등 대장TV가 운영하는 중개수수료 무료 대리입찰 플랫폼',
             how_title: '이용 방법',
             how_sub: '딱 4단계로 완료됩니다',
@@ -2083,7 +2231,7 @@
             footer_copyright: '© 2026 대리입찰 톡 (대장TV). All rights reserved.',
             banner_show: true,
             banner_text: '<strong>중개수수료 0원</strong> — 대리입찰 톡은 의뢰인과 전문가를 <strong>무료로 연결</strong>해 드립니다. 플랫폼이 가져가는 수수료는 없습니다.',
-            banner_color: '#667eea',
+            banner_color: 'linear-gradient(90deg,#1B64DA,#3182F6)',
         };
 
         function applyContent(d) {

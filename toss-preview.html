@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>대리입찰 톡 — 토스 스타일 리디자인 시안 (미리보기)</title>
+
+<!-- Pretendard -->
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<!-- Lucide 라인 아이콘 -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+/* ============================================================
+   토스(Toss) 스타일 디자인 토큰
+   - 배경 순백 / 섹션 구분 연회색 #F2F4F6
+   - 포인트 컬러: 토스블루 #3182F6 (버튼·링크·강조에만)
+   - 제목 #191F28 / 본문 #4E5968 / 보조 #8B95A1
+   ============================================================ */
+:root{
+  --blue:#3182F6;
+  --blue-dark:#1B64DA;
+  --blue-weak:#E8F3FF;
+  --bg:#FFFFFF;
+  --bg-gray:#F2F4F6;
+  --title:#191F28;
+  --body:#4E5968;
+  --sub:#8B95A1;
+  --line:#E5E8EB;
+  --shadow:0 2px 8px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Pretendard',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--body);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  letter-spacing:-0.02em;
+}
+.container{max-width:1080px;margin:0 auto;padding:0 24px;}
+section{padding:96px 0;}
+h1,h2,h3,h4{color:var(--title);line-height:1.35;letter-spacing:-0.03em;}
+a{text-decoration:none;color:inherit;}
+i[data-lucide]{stroke-width:1.75;}
+
+/* 미리보기 안내 바 */
+.preview-note{
+  background:var(--title);color:#fff;text-align:center;
+  font-size:13px;padding:10px 16px;font-weight:500;letter-spacing:-0.01em;
+}
+.preview-note b{color:#7EB2FF;}
+
+/* ── 내비게이션 ── */
+.nav{
+  position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.85);
+  backdrop-filter:saturate(180%) blur(12px);
+  border-bottom:1px solid var(--line);
+}
+.nav-inner{height:64px;display:flex;align-items:center;justify-content:space-between;}
+.logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:18px;color:var(--title);}
+.logo .dot{color:var(--blue);display:flex;}
+.logo .by{font-size:12px;color:var(--sub);font-weight:500;margin-left:2px;}
+.nav-menu{display:flex;gap:32px;list-style:none;}
+.nav-menu a{font-size:15px;color:var(--body);font-weight:500;transition:color .15s;}
+.nav-menu a:hover{color:var(--blue);}
+.nav-actions{display:flex;gap:8px;align-items:center;}
+.btn{
+  font-family:inherit;font-weight:600;cursor:pointer;border:none;
+  border-radius:12px;transition:background .15s, transform .1s;letter-spacing:-0.02em;
+}
+.btn:active{transform:scale(0.98);}
+.btn-ghost{background:transparent;color:var(--body);padding:9px 16px;font-size:15px;}
+.btn-ghost:hover{background:var(--bg-gray);}
+.btn-line{background:#fff;color:var(--title);border:1px solid var(--line);padding:9px 18px;font-size:15px;}
+.btn-line:hover{background:var(--bg-gray);}
+.btn-blue{background:var(--blue);color:#fff;padding:9px 20px;font-size:15px;}
+.btn-blue:hover{background:var(--blue-dark);}
+.btn-lg{padding:16px 32px;font-size:17px;border-radius:14px;}
+
+/* ── 히어로 (좌 텍스트 / 우 이미지 2컬럼) ── */
+.hero{background:#fff;padding:96px 0 100px;overflow:hidden;}
+.hero-inner{
+  display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;
+}
+.hero-copy{text-align:left;}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--blue-weak);color:var(--blue-dark);
+  border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600;margin-bottom:28px;
+}
+.hero h1{
+  font-size:clamp(38px,5vw,56px);font-weight:800;color:var(--title);
+  line-height:1.2;margin-bottom:24px;letter-spacing:-0.04em;
+}
+.hero h1 .accent{color:var(--blue);}
+.hero .sub{font-size:19px;color:var(--body);margin-bottom:40px;line-height:1.6;}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;}
+.hero-img-wrap{position:relative;}
+.hero-img{
+  width:100%;height:auto;display:block;
+  animation:float 5s ease-in-out infinite;
+}
+/* 이미지 뒤 은은한 블루 원형 배경 */
+.hero-img-wrap::before{
+  content:'';position:absolute;inset:8% 6%;z-index:0;
+  background:radial-gradient(circle at 50% 45%, var(--blue-weak) 0%, rgba(232,243,255,0) 70%);
+  border-radius:50%;
+}
+.hero-img{position:relative;z-index:1;}
+@keyframes float{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-14px);}
+}
+
+/* ── 섹션 헤더 공통 ── */
+.sec-head{text-align:center;margin-bottom:56px;}
+.sec-head .tag{color:var(--blue);font-weight:700;font-size:15px;margin-bottom:12px;display:block;}
+.sec-head h2{font-size:clamp(28px,4vw,40px);font-weight:800;margin-bottom:14px;}
+.sec-head p{font-size:18px;color:var(--sub);}
+.gray{background:var(--bg-gray);}
+
+/* ── WHY (강점) ── */
+.why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+.why-card{
+  background:#fff;border:1px solid var(--line);border-radius:20px;
+  padding:36px 28px;transition:transform .2s, box-shadow .2s;
+}
+.why-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);}
+.icon-box{
+  width:52px;height:52px;border-radius:14px;background:var(--blue-weak);
+  display:flex;align-items:center;justify-content:center;color:var(--blue);margin-bottom:20px;
+}
+.why-card h3{font-size:20px;font-weight:700;margin-bottom:10px;}
+.why-card p{font-size:15px;color:var(--body);line-height:1.6;}
+
+/* ── 신청 4단계 (스텝 인디케이터) ── */
+.stepper{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  max-width:840px;margin:0 auto;position:relative;
+}
+.stepper::before{
+  content:'';position:absolute;top:22px;left:11%;right:11%;height:2px;
+  background:var(--line);z-index:0;
+}
+.step{position:relative;z-index:1;text-align:center;width:22%;}
+.step .num{
+  width:46px;height:46px;border-radius:50%;background:var(--blue);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:17px;
+  margin:0 auto 18px;box-shadow:0 0 0 6px #fff;
+}
+.step h4{font-size:17px;font-weight:700;margin-bottom:8px;}
+.step p{font-size:14px;color:var(--sub);line-height:1.5;}
+
+/* ── 전문가 카드 ── */
+.experts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+.expert-card{
+  background:#fff;border:1px solid var(--line);border-radius:16px;padding:28px;
+  transition:transform .2s, box-shadow .2s;
+}
+.expert-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);}
+.expert-top{display:flex;align-items:center;gap:14px;margin-bottom:18px;}
+.avatar{
+  width:52px;height:52px;border-radius:50%;background:var(--blue-weak);color:var(--blue);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.expert-top h3{font-size:18px;font-weight:700;margin-bottom:6px;}
+.type-badge{font-size:12px;font-weight:600;padding:3px 10px;border-radius:6px;background:var(--bg-gray);color:var(--body);}
+.expert-meta{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--body);margin-bottom:8px;}
+.expert-meta i{color:var(--sub);}
+.expert-intro{font-size:14px;color:var(--sub);margin-top:14px;line-height:1.6;}
+
+/* 전문가 신청 배너 */
+.recruit{
+  margin-top:48px;background:var(--title);border-radius:20px;
+  padding:48px;text-align:center;color:#fff;
+}
+.recruit p{font-size:15px;color:#B0B8C1;margin-bottom:8px;}
+.recruit h3{font-size:24px;color:#fff;font-weight:700;margin-bottom:24px;}
+
+/* ── 후기 ── */
+.reviews{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+.review-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:28px;}
+.stars{display:flex;gap:2px;color:var(--blue);margin-bottom:16px;}
+.stars i{width:18px;height:18px;fill:var(--blue);}
+.review-text{font-size:15px;color:var(--body);line-height:1.7;margin-bottom:18px;}
+.review-author{font-size:14px;color:var(--sub);font-weight:600;}
+
+/* ── 가격 ── */
+.pricing-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;max-width:820px;margin:0 auto;}
+.price-card{
+  background:#fff;border:1px solid var(--line);border-radius:20px;padding:40px 32px;position:relative;
+  transition:transform .2s, box-shadow .2s;
+}
+.price-card.recommend{border:2px solid var(--blue);}
+.price-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);}
+.price-tag{
+  position:absolute;top:-13px;left:50%;transform:translateX(-50%);
+  background:var(--blue);color:#fff;font-size:13px;font-weight:700;
+  padding:5px 16px;border-radius:999px;
+}
+.price-type{font-size:16px;font-weight:600;color:var(--body);margin-bottom:6px;}
+.price-title{font-size:20px;font-weight:700;margin-bottom:18px;}
+.price-amount{font-size:40px;font-weight:800;color:var(--title);letter-spacing:-0.04em;}
+.price-amount .won{font-size:20px;font-weight:600;color:var(--body);margin-left:4px;}
+.price-vat{font-size:14px;color:var(--sub);margin:6px 0 4px;}
+.price-desc{font-size:15px;color:var(--body);margin-bottom:24px;}
+.price-feats{list-style:none;display:flex;flex-direction:column;gap:14px;}
+.price-feats li{display:flex;align-items:flex-start;gap:10px;font-size:15px;color:var(--body);}
+.price-feats li i{color:var(--blue);flex-shrink:0;margin-top:2px;}
+.price-feats li.note i{color:var(--sub);}
+.price-feats li.note{color:var(--sub);}
+
+/* ── FAQ ── */
+.faq-list{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:12px;}
+.faq-item{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+.faq-q{
+  width:100%;background:none;border:none;font-family:inherit;cursor:pointer;
+  padding:22px 24px;display:flex;align-items:center;justify-content:space-between;
+  font-size:17px;font-weight:600;color:var(--title);text-align:left;letter-spacing:-0.02em;
+}
+.faq-q i{color:var(--sub);transition:transform .2s;flex-shrink:0;}
+.faq-item.open .faq-q i{transform:rotate(180deg);color:var(--blue);}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .25s ease;}
+.faq-a p{padding:0 24px 22px;font-size:15px;color:var(--body);line-height:1.7;}
+.faq-item.open .faq-a{max-height:220px;}
+
+/* ── CTA ── */
+.cta{background:var(--blue-weak);text-align:center;}
+.cta h2{font-size:clamp(28px,4vw,40px);font-weight:800;margin-bottom:14px;}
+.cta p{font-size:18px;color:var(--body);margin-bottom:36px;}
+
+/* ── 푸터 ── */
+.footer{background:var(--bg-gray);padding:48px 0;text-align:center;}
+.footer p{font-size:14px;color:var(--sub);}
+
+/* 반응형 */
+/* ── 스크롤 리빌 애니메이션 (뷰포트에 들어오면 나타남) ── */
+.reveal{
+  opacity:0;transform:translateY(28px);
+  transition:opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1);
+  will-change:opacity,transform;
+}
+.reveal.is-visible{opacity:1;transform:none;}
+.reveal-delay{transition-delay:.15s;}
+/* 카드 그리드는 순차적으로 등장 */
+.reveal-stagger > *{
+  opacity:0;transform:translateY(28px);
+  transition:opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1);
+}
+.reveal-stagger.is-visible > *{opacity:1;transform:none;}
+.reveal-stagger.is-visible > *:nth-child(1){transition-delay:.05s;}
+.reveal-stagger.is-visible > *:nth-child(2){transition-delay:.15s;}
+.reveal-stagger.is-visible > *:nth-child(3){transition-delay:.25s;}
+.reveal-stagger.is-visible > *:nth-child(4){transition-delay:.35s;}
+.reveal-stagger.is-visible > *:nth-child(5){transition-delay:.45s;}
+
+/* ── 은은한 반짝임(shine) 효과 ── */
+/* 파란 버튼 위로 지나가는 부드러운 하이라이트 */
+.btn-blue{position:relative;overflow:hidden;}
+.btn-blue::after{
+  content:'';position:absolute;top:0;left:-120%;width:60%;height:100%;
+  background:linear-gradient(120deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.35) 50%, rgba(255,255,255,0) 100%);
+  transform:skewX(-20deg);
+  animation:shine 4.5s ease-in-out infinite;
+}
+@keyframes shine{
+  0%{left:-120%;}
+  22%{left:130%;}
+  100%{left:130%;}
+}
+/* 히어로 이미지 위 반짝이는 스파클 점들 */
+.hero-img-wrap .sparkle{
+  position:absolute;z-index:2;border-radius:50%;
+  background:radial-gradient(circle, #fff 0%, var(--blue) 60%, rgba(49,130,246,0) 100%);
+  box-shadow:0 0 8px rgba(49,130,246,.6);
+  opacity:0;animation:twinkle 3.4s ease-in-out infinite;
+}
+.hero-img-wrap .sparkle.s1{width:12px;height:12px;top:14%;left:44%;animation-delay:0s;}
+.hero-img-wrap .sparkle.s2{width:8px;height:8px;top:30%;left:70%;animation-delay:.9s;}
+.hero-img-wrap .sparkle.s3{width:10px;height:10px;top:62%;left:24%;animation-delay:1.7s;}
+.hero-img-wrap .sparkle.s4{width:7px;height:7px;top:20%;left:18%;animation-delay:2.4s;}
+@keyframes twinkle{
+  0%,100%{opacity:0;transform:scale(.4);}
+  45%,60%{opacity:1;transform:scale(1);}
+}
+/* 접근성: 모션 최소화 설정 시 애니메이션 비활성화 */
+@media(prefers-reduced-motion:reduce){
+  .reveal,.reveal-stagger>*{opacity:1;transform:none;transition:none;}
+  .hero-img,.btn-blue::after,.hero-img-wrap .sparkle{animation:none;}
+}
+
+@media(max-width:768px){
+  section{padding:64px 0;}
+  .nav-menu{display:none;}
+  .hero-inner{grid-template-columns:1fr;gap:32px;text-align:center;}
+  .hero-copy{text-align:center;}
+  .hero-btns{justify-content:center;}
+  .hero-img-wrap{order:-1;max-width:420px;margin:0 auto;}
+  .why-grid,.experts-grid,.reviews{grid-template-columns:1fr;}
+  .pricing-grid{grid-template-columns:1fr;}
+  .stepper{flex-direction:column;gap:32px;align-items:center;}
+  .stepper::before{display:none;}
+  .step{width:100%;max-width:280px;}
+}
+</style>
+</head>
+<body>
+
+<div class="preview-note">🎨 이 페이지는 <b>토스 스타일 리디자인 시안(미리보기)</b>입니다 · 실제 사이트(index.html)는 변경되지 않았습니다</div>
+
+<!-- 내비 -->
+<nav class="nav">
+  <div class="container nav-inner">
+    <div class="logo">
+      <span class="dot"><i data-lucide="message-circle"></i></span>
+      대리입찰 톡 <span class="by">by 대장TV</span>
+    </div>
+    <ul class="nav-menu">
+      <li><a href="#why">서비스 소개</a></li>
+      <li><a href="#service">이용가이드</a></li>
+      <li><a href="#safety">안전장치</a></li>
+      <li><a href="#support">고객지원</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="btn btn-line">로그인</button>
+      <button class="btn btn-blue">회원가입</button>
+    </div>
+  </div>
+</nav>
+
+<!-- 히어로 -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-copy reveal">
+        <div class="badge">
+          <i data-lucide="badge-check" style="width:16px;height:16px;"></i>
+          부동산경매 1등 대장TV가 운영하는 중개수수료 무료 대리입찰 플랫폼
+        </div>
+        <h1>법원 갈 시간에<br><span class="accent">가족과 함께</span></h1>
+        <p class="sub">소비자는 앉아서 간편하게 신청,<br>전문가가 대신 법원에 가서 입찰합니다</p>
+        <div class="hero-btns">
+          <button class="btn btn-blue btn-lg">지금 신청하기</button>
+          <button class="btn btn-line btn-lg">대리인 신청</button>
+        </div>
+      </div>
+      <div class="hero-img-wrap reveal reveal-delay">
+        <img class="hero-img" src="assets/hero-proxy.png" alt="소비자는 집에서 간편하게 신청하고, 전문가가 대신 법원에 가서 입찰하는 대리입찰 서비스">
+        <span class="sparkle s1"></span>
+        <span class="sparkle s2"></span>
+        <span class="sparkle s3"></span>
+        <span class="sparkle s4"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section class="gray" id="why">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="tag">WHY 대리입찰 톡</span>
+      <h2>왜 대리입찰 톡일까요?</h2>
+      <p>중개수수료 0원, 전국 어디서나 같은 가격으로</p>
+    </div>
+    <div class="why-grid reveal reveal-stagger">
+      <div class="why-card">
+        <div class="icon-box"><i data-lucide="wallet"></i></div>
+        <h3>투명한 단일 가격</h3>
+        <p>공인중개사 132,000원 · 법무사 154,000원(각 부가세 포함). 중개수수료 0원, 전국 전문가 직접 연결.</p>
+      </div>
+      <div class="why-card">
+        <div class="icon-box"><i data-lucide="clock"></i></div>
+        <h3>법원 갈 필요 없음</h3>
+        <p>연차 내고 법원 갈 필요 없이, 인증된 전문가가 직접 법원에 출석해 대리 입찰합니다.</p>
+      </div>
+      <div class="why-card">
+        <div class="icon-box"><i data-lucide="shield-check"></i></div>
+        <h3>보증금 5억 보장</h3>
+        <p>전문 매수신청대리인의 배상책임보험 가입으로 입찰보증금은 최대 5억 원까지 안전하게 보장됩니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 이용 방법 (4단계 스텝 인디케이터) -->
+<section id="service">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="tag">HOW IT WORKS</span>
+      <h2>이용 방법</h2>
+      <p>딱 4단계로 완료됩니다</p>
+    </div>
+    <div class="stepper reveal reveal-stagger">
+      <div class="step">
+        <div class="num">1</div>
+        <h4>사건조회</h4>
+        <p>대법원 경매 사건번호를 입력하면 자동으로 정보를 불러옵니다</p>
+      </div>
+      <div class="step">
+        <div class="num">2</div>
+        <h4>입찰정보</h4>
+        <p>원하는 입찰 금액과 보증금 납부 방법을 선택합니다</p>
+      </div>
+      <div class="step">
+        <div class="num">3</div>
+        <h4>전자계약</h4>
+        <p>온라인 전자서명으로 위임장 작성. 인감증명서 불필요</p>
+      </div>
+      <div class="step">
+        <div class="num">4</div>
+        <h4>결제</h4>
+        <p>결제 후 전문가 매칭 시작. 결과는 문자로 즉시 안내</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 전문가 -->
+<section class="gray" id="safety">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="tag">EXPERTS</span>
+      <h2>인증된 전문가가 함께합니다</h2>
+      <p>자격을 갖춘 법무사·매수신청대리인이 직접 진행</p>
+    </div>
+    <div class="experts-grid reveal reveal-stagger">
+      <div class="expert-card">
+        <div class="expert-top">
+          <div class="avatar"><i data-lucide="scale"></i></div>
+          <div>
+            <h3>김법무</h3>
+            <span class="type-badge">법무사</span>
+          </div>
+        </div>
+        <div class="expert-meta"><i data-lucide="star" style="width:16px;height:16px;"></i> 4.8 (247건)</div>
+        <div class="expert-meta"><i data-lucide="map-pin" style="width:16px;height:16px;"></i> 서울, 경기, 인천</div>
+        <p class="expert-intro">15년 경력 법무사입니다. 부동산 경매 전문.</p>
+      </div>
+      <div class="expert-card">
+        <div class="expert-top">
+          <div class="avatar"><i data-lucide="briefcase"></i></div>
+          <div>
+            <h3>이대리</h3>
+            <span class="type-badge">매수신청대리인</span>
+          </div>
+        </div>
+        <div class="expert-meta"><i data-lucide="star" style="width:16px;height:16px;"></i> 4.6 (189건)</div>
+        <div class="expert-meta"><i data-lucide="map-pin" style="width:16px;height:16px;"></i> 경기, 서울</div>
+        <p class="expert-intro">빠르고 정확한 대리 입찰 서비스를 제공합니다.</p>
+      </div>
+      <div class="expert-card">
+        <div class="expert-top">
+          <div class="avatar"><i data-lucide="scale"></i></div>
+          <div>
+            <h3>박법률</h3>
+            <span class="type-badge">법무사</span>
+          </div>
+        </div>
+        <div class="expert-meta"><i data-lucide="star" style="width:16px;height:16px;"></i> 4.9 (312건)</div>
+        <div class="expert-meta"><i data-lucide="map-pin" style="width:16px;height:16px;"></i> 부산, 경남, 울산</div>
+        <p class="expert-intro">부산·경남 지역 경매 전문 법무사</p>
+      </div>
+    </div>
+    <div class="recruit reveal">
+      <p>매수신청대리인 또는 법무사이신가요?</p>
+      <h3>대리입찰 톡 전문가로 활동하세요</h3>
+      <button class="btn btn-blue btn-lg">대리인 신청하기</button>
+    </div>
+  </div>
+</section>
+
+<!-- 후기 -->
+<section id="reviews">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="tag">REVIEWS</span>
+      <h2>실제 이용자 후기</h2>
+    </div>
+    <div class="reviews reveal reveal-stagger">
+      <div class="review-card">
+        <div class="stars"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i></div>
+        <p class="review-text">"한두 푼도 아닌 입찰보증금을 믿고 맡길 수 있어 안심입니다. 신뢰할 수 있는 서비스인 것 같아 계속 이용할 의사 있습니다."</p>
+        <p class="review-author">전문투자자 A</p>
+      </div>
+      <div class="review-card">
+        <div class="stars"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i></div>
+        <p class="review-text">"직장인이다 보니 주중에 연차를 내는 게 부담스러웠는데, 대리입찰 톡 덕분에 연차 걱정 없이 경매 참여할 수 있습니다."</p>
+        <p class="review-author">직장인 B</p>
+      </div>
+      <div class="review-card">
+        <div class="stars"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i></div>
+        <p class="review-text">"서비스 신청 웹페이지도 직관적이고, 절차 안내도 명확합니다. 처음 이용하는데도 불편함 없이 3분 만에 신청 완료했네요."</p>
+        <p class="review-author">전문직 C</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 가격 -->
+<section class="gray" id="pricing">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="tag">PRICING</span>
+      <h2>대리입찰 가격</h2>
+      <p>전문가 유형을 선택하세요 · 전국 어디서나 같은 가격</p>
+    </div>
+    <div class="pricing-grid reveal reveal-stagger">
+      <div class="price-card">
+        <div class="price-type">공인중개사</div>
+        <div class="price-title">공인중개사 대리입찰</div>
+        <div class="price-amount">132,000<span class="won">원</span></div>
+        <div class="price-vat">(VAT 포함)</div>
+        <div class="price-desc">매수신청대리인이 직접 진행</div>
+        <ul class="price-feats">
+          <li><i data-lucide="check" style="width:18px;height:18px;"></i> 매수신청대리인</li>
+          <li><i data-lucide="check" style="width:18px;height:18px;"></i> 보험 5억 가입 완료</li>
+          <li class="note"><i data-lucide="info" style="width:18px;height:18px;"></i> 인감증명서 등 일부 서류 준비 필요</li>
+          <li><i data-lucide="check" style="width:18px;height:18px;"></i> 입찰 결과 안내</li>
+        </ul>
+      </div>
+      <div class="price-card recommend">
+        <div class="price-tag">추천</div>
+        <div class="price-type">법무사</div>
+        <div class="price-title">법무사 대리입찰</div>
+        <div class="price-amount">154,000<span class="won">원</span></div>
+        <div class="price-vat">(VAT 포함)</div>
+        <div class="price-desc">온라인 전자서명 3분 완료</div>
+        <ul class="price-feats">
+          <li><i data-lucide="check" style="width:18px;height:18px;"></i> 온라인 전자서명만 (3분)</li>
+          <li><i data-lucide="check" style="width:18px;height:18px;"></i> 주민센터 방문 불필요</li>
+          <li><i data-lucide="check" style="width:18px;height:18px;"></i> 인감증명서 불필요</li>
+          <li><i data-lucide="check" style="width:18px;height:18px;"></i> 대리 입찰참여</li>
+          <li><i data-lucide="check" style="width:18px;height:18px;"></i> 입찰 결과 안내</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="support">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="tag">FAQ</span>
+      <h2>자주 묻는 질문</h2>
+    </div>
+    <div class="faq-list reveal reveal-stagger">
+      <div class="faq-item">
+        <button class="faq-q">보증금은 안전한가요? <i data-lucide="chevron-down"></i></button>
+        <div class="faq-a"><p>전문 매수신청대리인의 배상책임보험이 가입되어 있어 보증금은 100% 안전합니다. 최대 5억 원까지 보장됩니다.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">전국 어디서나 신청 가능한가요? <i data-lucide="chevron-down"></i></button>
+        <div class="faq-a"><p>네, 전국 모든 법원의 경매 사건에 대해 대리입찰 서비스를 제공합니다. 서울에서 부산 물건도, 제주에서 강원도 물건도 가능합니다.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">입찰 당일 연락은 어떻게 받나요? <i data-lucide="chevron-down"></i></button>
+        <div class="faq-a"><p>입찰 완료 후 즉시 문자 메시지로 결과를 안내해 드립니다. 낙찰 여부와 함께 다음 절차에 대한 상세 안내가 포함됩니다.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">낙찰되면 추가 비용이 있나요? <i data-lucide="chevron-down"></i></button>
+        <div class="faq-a"><p>대리입찰 수수료 외 추가 비용은 없습니다. 낙찰 이후 소유권 이전 등기 등의 절차는 별도로 협의 가능합니다.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">신청 취소는 가능한가요? <i data-lucide="chevron-down"></i></button>
+        <div class="faq-a"><p>매각기일 전날까지 취소 시 전액 환불됩니다. 단, 매각기일 당일 취소는 환불이 불가능합니다.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <div class="container reveal">
+    <h2>지금 바로 대리입찰을 신청하세요</h2>
+    <p>3분이면 충분합니다</p>
+    <button class="btn btn-blue btn-lg">대리입찰 신청하기</button>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <p>대리입찰 톡 by 대장TV · 중개수수료 0원 대리입찰 연결 플랫폼</p>
+  </div>
+</footer>
+
+<script>
+  // Lucide 아이콘 렌더링
+  lucide.createIcons();
+  // FAQ 토글
+  document.querySelectorAll('.faq-q').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      btn.parentElement.classList.toggle('open');
+    });
+  });
+
+  // 스크롤 리빌: 뷰포트에 들어오면 나타남
+  (function(){
+    var reveals = document.querySelectorAll('.reveal');
+    if(!('IntersectionObserver' in window)){
+      reveals.forEach(function(el){ el.classList.add('is-visible'); });
+      return;
+    }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+    reveals.forEach(function(el){ io.observe(el); });
+  })();
+</script>
+</body>
+</html>

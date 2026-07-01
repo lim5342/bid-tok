@@ -5,72 +5,68 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>이용 가이드 - 대리입찰 톡</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
     :root {
-        --mint: #2DD4BF;
-        --mint-dark: #0D9488;
-        --mint-light: #CCFBF1;
-        --mint-bg: #F0FFFE;
-        --text-dark: #111827;
-        --text-gray: #6B7280;
-        --text-light: #9CA3AF;
-        --bg: #FAFAFA;
-        --border: #E5E7EB;
-        --sidebar-w: 240px;
-        --blue: #3B82F6;
-        --purple: #8B5CF6;
-        --amber: #F59E0B;
-        --red: #EF4444;
-        --green: #10B981;
+        --ts-blue: #3182F6;
+        --ts-blue-dark: #1B64DA;
+        --ts-blue-weak: #E8F3FF;
+        --ts-bg-gray: #F2F4F6;
+        --ts-title: #191F28;
+        --ts-body: #4E5968;
+        --ts-sub: #8B95A1;
+        --ts-line: #E5E8EB;
+        --ts-shadow: 0 4px 16px rgba(0,0,0,.06);
+        --ts-warn: #F04452;
+        --sidebar-w: 260px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
-        font-family: 'Noto Sans KR', sans-serif;
+        font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
         background: #fff;
-        color: var(--text-dark);
-        line-height: 1.7;
-        font-size: 15px;
+        color: var(--ts-body);
+        line-height: 1.65;
+        font-size: 16px;
+        -webkit-font-smoothing: antialiased;
     }
 
     /* ── 상단 네비 ── */
     .g-nav {
         position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-        height: 56px;
+        height: 60px;
         background: #fff;
-        border-bottom: 1px solid var(--border);
+        border-bottom: 1px solid var(--ts-line);
         display: flex; align-items: center; padding: 0 24px;
         gap: 16px;
     }
     .g-nav-logo {
         display: flex; align-items: center; gap: 8px;
-        font-weight: 800; font-size: 1.05rem; color: var(--text-dark);
+        font-weight: 700; font-size: 1.1rem; color: var(--ts-title);
         text-decoration: none;
     }
-    .g-nav-logo span.dot { color: var(--mint); }
+    .g-nav-logo i { color: var(--ts-blue); width: 20px; height: 20px; }
     .g-nav-badge {
-        background: var(--mint-light); color: var(--mint-dark);
-        font-size: 0.72rem; font-weight: 700;
-        padding: 2px 10px; border-radius: 20px;
+        background: var(--ts-blue-weak); color: var(--ts-blue-dark);
+        font-size: 0.78rem; font-weight: 700;
+        padding: 4px 12px; border-radius: 20px;
     }
-    .g-nav-right { margin-left: auto; display: flex; gap: 8px; }
+    .g-nav-right { margin-left: auto; display: flex; gap: 6px; align-items: center; }
     .g-nav-right a {
-        font-size: 0.85rem; color: var(--text-gray); text-decoration: none;
-        padding: 6px 14px; border-radius: 8px; transition: background 0.15s;
+        font-size: 0.9rem; color: var(--ts-body); text-decoration: none; font-weight: 600;
+        padding: 8px 14px; border-radius: 8px; transition: background 0.15s;
     }
-    .g-nav-right a:hover { background: var(--bg); color: var(--mint-dark); }
+    .g-nav-right a:hover { background: var(--ts-bg-gray); color: var(--ts-blue); }
     .g-nav-right a.active {
-        background: var(--mint-light); color: var(--mint-dark); font-weight: 600;
+        background: var(--ts-blue); color: #fff; font-weight: 700;
     }
 
     /* ── 레이아웃 ── */
     .guide-wrap {
         display: flex;
-        margin-top: 56px;
-        min-height: calc(100vh - 56px);
+        margin-top: 60px;
+        min-height: calc(100vh - 60px);
     }
 
     /* ── 사이드바 TOC ── */
@@ -78,354 +74,382 @@
         width: var(--sidebar-w);
         flex-shrink: 0;
         position: sticky;
-        top: 56px;
-        height: calc(100vh - 56px);
+        top: 60px;
+        height: calc(100vh - 60px);
         overflow-y: auto;
-        padding: 28px 0 40px;
-        border-right: 1px solid var(--border);
-        background: #FAFAFA;
+        padding: 32px 0 40px;
+        border-right: 1px solid var(--ts-line);
+        background: #fff;
     }
     .sidebar-title {
-        font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em;
-        color: var(--text-light); text-transform: uppercase;
-        padding: 0 20px 12px;
+        font-size: 0.78rem; font-weight: 700; letter-spacing: 0.04em;
+        color: var(--ts-sub);
+        padding: 0 24px 14px;
     }
     .toc-list { list-style: none; }
     .toc-list li a {
-        display: flex; align-items: center; gap: 8px;
-        padding: 7px 20px;
-        font-size: 0.855rem; color: var(--text-gray);
+        display: flex; align-items: center; gap: 10px;
+        padding: 9px 24px;
+        font-size: 0.92rem; color: var(--ts-body); font-weight: 500;
         text-decoration: none;
-        border-left: 2px solid transparent;
+        border-left: 3px solid transparent;
         transition: all 0.15s;
         line-height: 1.4;
     }
-    .toc-list li a:hover { color: var(--mint-dark); background: var(--mint-light); }
+    .toc-list li a:hover { color: var(--ts-blue); background: var(--ts-blue-weak); }
     .toc-list li a.active {
-        color: var(--mint-dark); font-weight: 700;
-        border-left-color: var(--mint);
-        background: var(--mint-light);
+        color: var(--ts-blue); font-weight: 700;
+        border-left-color: var(--ts-blue);
+        background: var(--ts-blue-weak);
     }
-    .toc-list li a .toc-icon { font-size: 0.8rem; opacity: 0.7; }
-    .toc-divider { height: 1px; background: var(--border); margin: 10px 20px; }
+    .toc-list li a .toc-icon { width: 16px; height: 16px; opacity: 0.8; flex-shrink: 0; }
+    .toc-divider { height: 1px; background: var(--ts-line); margin: 12px 24px; }
 
     /* ── 메인 컨텐츠 ── */
     .guide-body {
         flex: 1;
-        max-width: 780px;
-        padding: 48px 56px 80px;
+        max-width: 820px;
+        padding: 56px 64px 96px;
         margin: 0 auto;
     }
 
     /* 페이지 헤더 */
     .page-header {
-        margin-bottom: 48px;
-        padding-bottom: 32px;
-        border-bottom: 1px solid var(--border);
+        margin-bottom: 56px;
+        padding-bottom: 40px;
+        border-bottom: 1px solid var(--ts-line);
     }
-    .page-header .page-emoji {
-        font-size: 3rem; margin-bottom: 12px; display: block;
+    .page-header .page-icon {
+        width: 64px; height: 64px; border-radius: 18px;
+        background: var(--ts-blue-weak); color: var(--ts-blue);
+        display: flex; align-items: center; justify-content: center;
+        margin-bottom: 20px;
     }
+    .page-header .page-icon i { width: 32px; height: 32px; }
     .page-header h1 {
-        font-size: 2rem; font-weight: 800; color: var(--text-dark);
-        line-height: 1.3; margin-bottom: 10px;
+        font-size: 2.2rem; font-weight: 700; color: var(--ts-title);
+        line-height: 1.3; margin-bottom: 14px; letter-spacing: -0.02em;
     }
     .page-header p {
-        font-size: 1rem; color: var(--text-gray); line-height: 1.6;
+        font-size: 1.05rem; color: var(--ts-body); line-height: 1.6;
     }
     .page-header .update-info {
-        margin-top: 14px;
-        font-size: 0.82rem; color: var(--text-light);
-        display: flex; align-items: center; gap: 12px;
+        margin-top: 20px;
+        font-size: 0.88rem; color: var(--ts-sub);
+        display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
     }
     .page-header .update-info span {
-        display: flex; align-items: center; gap: 4px;
+        display: flex; align-items: center; gap: 6px;
     }
+    .page-header .update-info i { width: 15px; height: 15px; }
 
     /* 섹션 */
     .guide-section {
-        margin-bottom: 60px;
-        scroll-margin-top: 80px;
+        margin-bottom: 64px;
+        scroll-margin-top: 84px;
     }
     .section-header {
-        display: flex; align-items: center; gap: 12px;
-        margin-bottom: 20px;
+        display: flex; align-items: center; gap: 14px;
+        margin-bottom: 24px;
         cursor: pointer;
         user-select: none;
     }
-    .section-header:hover .section-title { color: var(--mint-dark); }
+    .section-header:hover .section-title { color: var(--ts-blue); }
     .section-icon {
-        width: 36px; height: 36px; border-radius: 10px;
+        width: 44px; height: 44px; border-radius: 12px;
         display: flex; align-items: center; justify-content: center;
-        font-size: 1.05rem; flex-shrink: 0;
+        flex-shrink: 0; background: var(--ts-blue-weak); color: var(--ts-blue);
     }
+    .section-icon i { width: 22px; height: 22px; }
     .section-title {
-        font-size: 1.25rem; font-weight: 800; color: var(--text-dark);
-        flex: 1;
+        font-size: 1.45rem; font-weight: 700; color: var(--ts-title);
+        flex: 1; letter-spacing: -0.01em;
         transition: color 0.15s;
     }
     .section-toggle {
-        color: var(--text-light); font-size: 0.85rem;
+        color: var(--ts-sub);
         transition: transform 0.2s;
+        display: flex; align-items: center;
     }
+    .section-toggle i { width: 20px; height: 20px; }
     .section-toggle.open { transform: rotate(90deg); }
     .section-body { display: block; }
     .section-body.hidden { display: none; }
 
-    /* 스텝 뱃지 */
-    .step-badge {
-        display: inline-flex; align-items: center; gap: 6px;
-        background: var(--mint); color: #fff;
-        font-size: 0.72rem; font-weight: 700;
-        padding: 3px 10px; border-radius: 20px;
-        margin-bottom: 8px;
-    }
+    p { color: var(--ts-body); }
+    strong { color: var(--ts-title); font-weight: 700; }
 
     /* 콜아웃 블록 */
     .callout {
-        display: flex; gap: 12px; align-items: flex-start;
-        padding: 14px 18px;
-        border-radius: 10px;
-        margin: 16px 0;
-        font-size: 0.9rem;
+        display: flex; gap: 14px; align-items: flex-start;
+        padding: 18px 20px;
+        border-radius: 14px;
+        margin: 18px 0;
+        font-size: 0.98rem;
         line-height: 1.65;
+        background: var(--ts-bg-gray);
+        border: 1px solid var(--ts-line);
     }
-    .callout-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
-    .callout.info { background: #EFF6FF; border-left: 3px solid var(--blue); }
-    .callout.info .callout-icon { color: var(--blue); }
-    .callout.warn { background: #FFFBEB; border-left: 3px solid var(--amber); }
-    .callout.warn .callout-icon { color: var(--amber); }
-    .callout.success { background: #F0FDF4; border-left: 3px solid var(--green); }
-    .callout.success .callout-icon { color: var(--green); }
-    .callout.danger { background: #FEF2F2; border-left: 3px solid var(--red); }
-    .callout.danger .callout-icon { color: var(--red); }
-    .callout.purple { background: #F5F3FF; border-left: 3px solid var(--purple); }
-    .callout.purple .callout-icon { color: var(--purple); }
+    .callout-icon { flex-shrink: 0; margin-top: 2px; color: var(--ts-blue); }
+    .callout-icon i { width: 22px; height: 22px; }
+    .callout.info { background: var(--ts-blue-weak); border-color: rgba(49,130,246,.2); }
+    .callout.info .callout-icon { color: var(--ts-blue); }
+    .callout.warn { background: #FFF4E6; border-color: #FFE0B2; }
+    .callout.warn .callout-icon { color: #F59E0B; }
+    .callout.success { background: var(--ts-blue-weak); border-color: rgba(49,130,246,.2); }
+    .callout.success .callout-icon { color: var(--ts-blue); }
+    .callout.danger { background: #FFF0F1; border-color: #FFD5D9; }
+    .callout.danger .callout-icon { color: var(--ts-warn); }
+    .callout.purple { background: var(--ts-blue-weak); border-color: rgba(49,130,246,.2); }
+    .callout.purple .callout-icon { color: var(--ts-blue); }
+    .callout a { color: var(--ts-blue-dark); font-weight: 600; }
 
     /* 스텝 플로우 카드 */
     .flow-steps {
-        display: flex; flex-direction: column; gap: 0;
-        margin: 20px 0;
+        display: flex; flex-direction: column; gap: 12px;
+        margin: 24px 0;
     }
     .flow-step {
         display: flex; gap: 16px; align-items: flex-start;
-        padding: 18px 0;
-        border-bottom: 1px dashed var(--border);
-        position: relative;
+        padding: 20px 22px;
+        background: #fff;
+        border: 1px solid var(--ts-line);
+        border-radius: 16px;
+        box-shadow: var(--ts-shadow);
+        transition: transform .2s, box-shadow .2s;
     }
-    .flow-step:last-child { border-bottom: none; }
+    .flow-step:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(49,130,246,.1); }
     .flow-num {
-        width: 32px; height: 32px; border-radius: 50%;
-        background: var(--mint); color: #fff;
+        width: 36px; height: 36px; border-radius: 12px;
+        background: var(--ts-blue-weak); color: var(--ts-blue);
         display: flex; align-items: center; justify-content: center;
-        font-size: 0.85rem; font-weight: 800;
-        flex-shrink: 0; margin-top: 2px;
+        font-size: 0.95rem; font-weight: 700;
+        flex-shrink: 0;
     }
     .flow-content h4 {
-        font-size: 0.95rem; font-weight: 700; color: var(--text-dark);
-        margin-bottom: 4px;
+        font-size: 1.05rem; font-weight: 700; color: var(--ts-title);
+        margin-bottom: 6px; letter-spacing: -0.01em;
     }
     .flow-content p {
-        font-size: 0.875rem; color: var(--text-gray); line-height: 1.6;
+        font-size: 0.95rem; color: var(--ts-body); line-height: 1.6;
     }
     .flow-content .flow-tag {
-        display: inline-block; margin-top: 6px;
-        font-size: 0.75rem; font-weight: 600;
-        padding: 2px 8px; border-radius: 4px;
-        background: var(--mint-light); color: var(--mint-dark);
+        display: inline-block; margin-top: 10px;
+        font-size: 0.82rem; font-weight: 600;
+        padding: 4px 12px; border-radius: 8px;
+        background: var(--ts-blue-weak); color: var(--ts-blue-dark);
     }
 
     /* 정보 테이블 */
     .info-table {
         width: 100%; border-collapse: collapse;
-        margin: 16px 0;
-        font-size: 0.88rem;
+        margin: 20px 0;
+        font-size: 0.95rem;
+        border: 1px solid var(--ts-line);
+        border-radius: 14px;
+        overflow: hidden;
     }
     .info-table th {
-        background: var(--bg);
-        padding: 10px 14px;
+        background: var(--ts-bg-gray);
+        padding: 14px 16px;
         text-align: left;
         font-weight: 700;
-        color: var(--text-dark);
-        border-bottom: 2px solid var(--border);
-        font-size: 0.82rem;
+        color: var(--ts-title);
+        border-bottom: 1px solid var(--ts-line);
+        font-size: 0.9rem;
     }
     .info-table td {
-        padding: 10px 14px;
-        border-bottom: 1px solid var(--border);
-        color: var(--text-gray);
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--ts-line);
+        color: var(--ts-body);
         vertical-align: top;
     }
     .info-table tr:last-child td { border-bottom: none; }
-    .info-table tr:hover td { background: #FAFAFA; }
+    .info-table tr:hover td { background: #FAFBFC; }
 
     /* 요금 카드 */
     .price-cards {
-        display: grid; grid-template-columns: 1fr 1fr;
-        gap: 16px; margin: 20px 0;
+        display: grid; grid-template-columns: 1fr 1fr 1fr;
+        gap: 16px; margin: 24px 0;
     }
     .price-card {
-        border: 2px solid var(--border);
-        border-radius: 14px;
-        padding: 20px;
+        border: 1px solid var(--ts-line);
+        border-radius: 18px;
+        padding: 28px 24px;
         text-align: center;
-        transition: border-color 0.15s, box-shadow 0.15s;
+        background: #fff;
+        transition: transform .2s, box-shadow 0.2s;
     }
-    .price-card:hover { border-color: var(--mint); box-shadow: 0 4px 16px rgba(45,212,191,0.12); }
-    .price-card.featured { border-color: var(--mint); background: var(--mint-bg); }
+    .price-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(49,130,246,.1); }
+    .price-card.featured { border-color: var(--ts-blue); background: var(--ts-blue-weak); position: relative; }
     .price-card .pc-label {
-        font-size: 0.78rem; font-weight: 700;
-        color: var(--text-gray); text-transform: uppercase;
-        letter-spacing: 0.05em; margin-bottom: 8px;
+        font-size: 0.9rem; font-weight: 700;
+        color: var(--ts-body);
+        margin-bottom: 12px;
     }
     .price-card .pc-price {
-        font-size: 1.6rem; font-weight: 800; color: var(--text-dark);
-        margin-bottom: 4px;
+        font-size: 1.7rem; font-weight: 700; color: var(--ts-title);
+        margin-bottom: 8px; letter-spacing: -0.02em;
     }
-    .price-card .pc-price span { font-size: 0.9rem; font-weight: 500; color: var(--text-gray); }
-    .price-card .pc-desc { font-size: 0.82rem; color: var(--text-gray); line-height: 1.5; }
+    .price-card .pc-price span { font-size: 0.95rem; font-weight: 500; color: var(--ts-body); }
+    .price-card .pc-desc { font-size: 0.88rem; color: var(--ts-body); line-height: 1.5; }
     .price-tag {
-        display: inline-block; background: var(--mint); color: #fff;
-        font-size: 0.7rem; font-weight: 700; padding: 1px 8px;
-        border-radius: 20px; margin-bottom: 8px;
+        display: inline-block; background: var(--ts-blue); color: #fff;
+        font-size: 0.78rem; font-weight: 700; padding: 3px 12px;
+        border-radius: 20px; margin-bottom: 10px;
     }
 
     /* FAQ 아코디언 */
-    .faq-list { margin: 16px 0; }
+    .faq-list { margin: 20px 0; }
     .faq-item {
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        margin-bottom: 8px;
+        border: 1px solid var(--ts-line);
+        border-radius: 14px;
+        margin-bottom: 10px;
         overflow: hidden;
         transition: box-shadow 0.15s;
     }
-    .faq-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .faq-item:hover { box-shadow: var(--ts-shadow); }
     .faq-q {
-        display: flex; align-items: center; gap: 10px;
-        padding: 14px 18px;
+        display: flex; align-items: center; gap: 12px;
+        padding: 18px 20px;
         cursor: pointer;
-        font-size: 0.92rem; font-weight: 600;
-        color: var(--text-dark);
+        font-size: 1rem; font-weight: 600;
+        color: var(--ts-title);
         background: #fff;
         transition: background 0.15s;
     }
-    .faq-q:hover { background: #FAFAFA; }
+    .faq-q:hover { background: #FAFBFC; }
     .faq-q .q-icon {
-        width: 24px; height: 24px; border-radius: 50%;
-        background: var(--mint-light); color: var(--mint-dark);
+        width: 28px; height: 28px; border-radius: 8px;
+        background: var(--ts-blue-weak); color: var(--ts-blue);
         display: flex; align-items: center; justify-content: center;
-        font-size: 0.8rem; font-weight: 800; flex-shrink: 0;
+        font-size: 0.85rem; font-weight: 700; flex-shrink: 0;
     }
     .faq-q .q-arrow {
-        margin-left: auto; color: var(--text-light);
-        transition: transform 0.2s;
+        margin-left: auto; color: var(--ts-sub);
+        transition: transform 0.2s; display: flex; align-items: center;
     }
+    .faq-q .q-arrow i { width: 18px; height: 18px; }
     .faq-q.open .q-arrow { transform: rotate(180deg); }
     .faq-a {
         display: none;
-        padding: 14px 18px 14px 52px;
-        font-size: 0.88rem; color: var(--text-gray);
+        padding: 16px 20px 18px 60px;
+        font-size: 0.95rem; color: var(--ts-body);
         line-height: 1.7;
-        background: #FAFAFA;
-        border-top: 1px solid var(--border);
+        background: var(--ts-bg-gray);
+        border-top: 1px solid var(--ts-line);
     }
     .faq-a.open { display: block; }
-    .faq-a strong { color: var(--text-dark); }
+    .faq-a strong { color: var(--ts-title); }
 
     /* 체크리스트 */
-    .checklist { list-style: none; margin: 14px 0; }
+    .checklist { list-style: none; margin: 18px 0; }
     .checklist li {
-        display: flex; align-items: flex-start; gap: 10px;
-        padding: 6px 0;
-        font-size: 0.9rem; color: var(--text-gray);
+        display: flex; align-items: flex-start; gap: 12px;
+        padding: 8px 0;
+        font-size: 0.97rem; color: var(--ts-body);
     }
     .checklist li .chk-icon {
-        width: 20px; height: 20px; border-radius: 50%;
-        background: var(--mint); color: #fff;
+        width: 22px; height: 22px; border-radius: 7px;
+        background: var(--ts-blue-weak); color: var(--ts-blue);
         display: flex; align-items: center; justify-content: center;
-        font-size: 0.7rem; flex-shrink: 0; margin-top: 1px;
+        flex-shrink: 0; margin-top: 1px;
     }
-    .checklist li .chk-icon.warn { background: var(--amber); }
-    .checklist li .chk-icon.info { background: var(--blue); }
+    .checklist li .chk-icon i { width: 14px; height: 14px; }
+    .checklist li .chk-icon.warn { background: #FFF4E6; color: #F59E0B; }
+    .checklist li .chk-icon.info { background: var(--ts-blue-weak); color: var(--ts-blue); }
 
     /* 인라인 태그 */
-    .tag { display: inline-block; padding: 1px 8px; border-radius: 4px;
-           font-size: 0.78rem; font-weight: 700; }
-    .tag-mint { background: var(--mint-light); color: var(--mint-dark); }
-    .tag-red { background: #FEE2E2; color: #B91C1C; }
-    .tag-blue { background: #DBEAFE; color: #1D4ED8; }
-    .tag-amber { background: #FEF3C7; color: #92400E; }
-    .tag-green { background: #D1FAE5; color: #065F46; }
-    .tag-purple { background: #EDE9FE; color: #5B21B6; }
+    .tag { display: inline-block; padding: 3px 10px; border-radius: 7px;
+           font-size: 0.82rem; font-weight: 700; }
+    .tag-mint { background: var(--ts-blue-weak); color: var(--ts-blue-dark); }
+    .tag-red { background: #FFF0F1; color: var(--ts-warn); }
+    .tag-blue { background: var(--ts-blue-weak); color: var(--ts-blue-dark); }
+    .tag-amber { background: #FFF4E6; color: #B45309; }
+    .tag-green { background: var(--ts-blue-weak); color: var(--ts-blue-dark); }
+    .tag-purple { background: var(--ts-blue-weak); color: var(--ts-blue-dark); }
 
     /* 구분선 */
-    .section-divider { height: 1px; background: var(--border); margin: 40px 0; }
+    .section-divider { height: 1px; background: var(--ts-line); margin: 48px 0; }
 
     /* 연락처 카드 */
     .contact-cards {
         display: grid; grid-template-columns: 1fr 1fr;
-        gap: 14px; margin: 20px 0;
+        gap: 14px; margin: 24px 0;
     }
     .contact-card {
-        border: 1px solid var(--border); border-radius: 12px;
-        padding: 18px 20px;
-        display: flex; align-items: center; gap: 14px;
+        border: 1px solid var(--ts-line); border-radius: 16px;
+        padding: 20px 22px;
+        display: flex; align-items: center; gap: 16px;
         text-decoration: none;
+        background: #fff;
         transition: all 0.15s;
     }
-    .contact-card:hover { border-color: var(--mint); background: var(--mint-bg); }
+    .contact-card:hover { border-color: var(--ts-blue); box-shadow: var(--ts-shadow); }
     .contact-card .cc-icon {
-        width: 44px; height: 44px; border-radius: 12px;
+        width: 48px; height: 48px; border-radius: 14px;
         display: flex; align-items: center; justify-content: center;
-        font-size: 1.25rem; flex-shrink: 0;
+        flex-shrink: 0; background: var(--ts-blue-weak); color: var(--ts-blue);
     }
-    .contact-card .cc-label { font-size: 0.78rem; color: var(--text-light); margin-bottom: 2px; }
-    .contact-card .cc-value { font-size: 0.95rem; font-weight: 700; color: var(--text-dark); }
+    .contact-card .cc-icon i { width: 22px; height: 22px; }
+    .contact-card .cc-label { font-size: 0.82rem; color: var(--ts-sub); margin-bottom: 2px; }
+    .contact-card .cc-value { font-size: 1rem; font-weight: 700; color: var(--ts-title); }
 
-    /* 상단 CTA 배너 */
+    /* CTA 배너 */
     .cta-banner {
-        background: linear-gradient(135deg, var(--mint-dark), var(--mint));
-        border-radius: 16px;
-        padding: 28px 32px;
-        margin: 32px 0;
+        background: var(--ts-blue);
+        border-radius: 20px;
+        padding: 32px;
+        margin: 36px 0;
         color: #fff;
         display: flex; align-items: center; gap: 20px;
     }
-    .cta-banner .cta-text h3 { font-size: 1.1rem; font-weight: 800; margin-bottom: 4px; }
-    .cta-banner .cta-text p { font-size: 0.875rem; opacity: 0.85; }
+    .cta-banner .cta-icon {
+        width: 52px; height: 52px; border-radius: 14px;
+        background: rgba(255,255,255,.18);
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+    }
+    .cta-banner .cta-icon i { width: 26px; height: 26px; color: #fff; }
+    .cta-banner .cta-text h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 4px; letter-spacing: -0.01em; }
+    .cta-banner .cta-text p { font-size: 0.95rem; opacity: 0.92; }
     .cta-banner .cta-btn {
         margin-left: auto; flex-shrink: 0;
-        background: #fff; color: var(--mint-dark);
-        border: none; padding: 10px 22px;
-        border-radius: 8px; font-weight: 700; font-size: 0.9rem;
+        background: #fff; color: var(--ts-blue-dark);
+        border: none; padding: 13px 26px;
+        border-radius: 12px; font-weight: 700; font-size: 0.98rem;
         cursor: pointer; text-decoration: none;
-        transition: opacity 0.15s;
+        transition: transform 0.15s;
         white-space: nowrap;
+        display: inline-flex; align-items: center; gap: 6px;
     }
-    .cta-banner .cta-btn:hover { opacity: 0.9; }
+    .cta-banner .cta-btn i { width: 16px; height: 16px; }
+    .cta-banner .cta-btn:hover { transform: translateY(-2px); }
 
     /* 모바일 */
+    @media (max-width: 900px) {
+        .price-cards { grid-template-columns: 1fr; }
+    }
     @media (max-width: 768px) {
         .guide-sidebar { display: none; }
-        .guide-body { padding: 28px 20px 60px; }
-        .price-cards { grid-template-columns: 1fr; }
+        .guide-body { padding: 32px 20px 64px; }
         .contact-cards { grid-template-columns: 1fr; }
-        .cta-banner { flex-direction: column; }
-        .cta-banner .cta-btn { margin-left: 0; width: 100%; text-align: center; }
-        .page-header h1 { font-size: 1.55rem; }
+        .cta-banner { flex-direction: column; text-align: center; }
+        .cta-banner .cta-btn { margin-left: 0; width: 100%; justify-content: center; }
+        .page-header h1 { font-size: 1.7rem; }
     }
 
     /* 스크롤바 */
-    .guide-sidebar::-webkit-scrollbar { width: 4px; }
-    .guide-sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    .guide-sidebar::-webkit-scrollbar { width: 5px; }
+    .guide-sidebar::-webkit-scrollbar-thumb { background: var(--ts-line); border-radius: 4px; }
 
     /* 프로그레스 바 */
     .progress-bar {
-        position: fixed; top: 56px; left: 0; right: 0; z-index: 99;
-        height: 3px; background: var(--border);
+        position: fixed; top: 60px; left: 0; right: 0; z-index: 99;
+        height: 3px; background: var(--ts-bg-gray);
     }
     .progress-fill {
-        height: 100%; background: var(--mint);
+        height: 100%; background: var(--ts-blue);
         width: 0%; transition: width 0.1s;
     }
 
@@ -433,12 +457,13 @@
     .mobile-toc-btn {
         display: none;
         position: fixed; bottom: 24px; right: 20px; z-index: 200;
-        width: 48px; height: 48px; border-radius: 50%;
-        background: var(--mint); color: #fff;
-        border: none; font-size: 1.1rem;
-        box-shadow: 0 4px 16px rgba(45,212,191,0.4);
+        width: 52px; height: 52px; border-radius: 16px;
+        background: var(--ts-blue); color: #fff;
+        border: none;
+        box-shadow: 0 4px 16px rgba(49,130,246,.4);
         cursor: pointer;
     }
+    .mobile-toc-btn i { width: 22px; height: 22px; }
     @media (max-width: 768px) { .mobile-toc-btn { display: flex; align-items: center; justify-content: center; } }
     </style>
 </head>
@@ -447,8 +472,8 @@
 <!-- 네비 -->
 <nav class="g-nav">
     <a href="index.html" class="g-nav-logo">
-        <i class="fas fa-gavel" style="color:var(--mint);"></i>
-        대리입찰 톡<span class="dot">.</span>
+        <i data-lucide="gavel"></i>
+        대리입찰 톡
     </a>
     <span class="g-nav-badge">이용 가이드</span>
     <div class="g-nav-right">
@@ -468,19 +493,19 @@
     <aside class="guide-sidebar" id="guideSidebar">
         <div class="sidebar-title">목차</div>
         <ul class="toc-list" id="tocList">
-            <li><a href="#intro" class="toc-link" data-sec="intro"><i class="fas fa-flag toc-icon"></i> 대리입찰 톡이란?</a></li>
-            <li><a href="#step1" class="toc-link" data-sec="step1"><i class="fas fa-file-alt toc-icon"></i> STEP 1. 신청하기</a></li>
-            <li><a href="#step2" class="toc-link" data-sec="step2"><i class="fas fa-handshake toc-icon"></i> STEP 2. 전문가 매칭 신청</a></li>
-            <li><a href="#step3" class="toc-link" data-sec="step3"><i class="fas fa-handshake toc-icon"></i> STEP 3. 법무사 매칭</a></li>
-            <li><a href="#step4" class="toc-link" data-sec="step4"><i class="fas fa-file-signature toc-icon"></i> STEP 4. 서류 준비</a></li>
-            <li><a href="#step5" class="toc-link" data-sec="step5"><i class="fas fa-gavel toc-icon"></i> STEP 5. 입찰 당일</a></li>
-            <li><a href="#step6" class="toc-link" data-sec="step6"><i class="fas fa-trophy toc-icon"></i> STEP 6. 결과 확인</a></li>
+            <li><a href="#intro" class="toc-link" data-sec="intro"><i data-lucide="flag" class="toc-icon"></i> 대리입찰 톡이란?</a></li>
+            <li><a href="#step1" class="toc-link" data-sec="step1"><i data-lucide="file-text" class="toc-icon"></i> STEP 1. 신청하기</a></li>
+            <li><a href="#step2" class="toc-link" data-sec="step2"><i data-lucide="handshake" class="toc-icon"></i> STEP 2. 전문가 매칭 신청</a></li>
+            <li><a href="#step3" class="toc-link" data-sec="step3"><i data-lucide="users" class="toc-icon"></i> STEP 3. 법무사 매칭</a></li>
+            <li><a href="#step4" class="toc-link" data-sec="step4"><i data-lucide="file-signature" class="toc-icon"></i> STEP 4. 서류 준비</a></li>
+            <li><a href="#step5" class="toc-link" data-sec="step5"><i data-lucide="gavel" class="toc-icon"></i> STEP 5. 입찰 당일</a></li>
+            <li><a href="#step6" class="toc-link" data-sec="step6"><i data-lucide="trophy" class="toc-icon"></i> STEP 6. 결과 확인</a></li>
             <div class="toc-divider"></div>
-            <li><a href="#pricing" class="toc-link" data-sec="pricing"><i class="fas fa-won-sign toc-icon"></i> 이용 요금</a></li>
-            <li><a href="#cancel" class="toc-link" data-sec="cancel"><i class="fas fa-undo toc-icon"></i> 취소·환불</a></li>
+            <li><a href="#pricing" class="toc-link" data-sec="pricing"><i data-lucide="wallet" class="toc-icon"></i> 이용 요금</a></li>
+            <li><a href="#cancel" class="toc-link" data-sec="cancel"><i data-lucide="rotate-ccw" class="toc-icon"></i> 취소·환불</a></li>
             <div class="toc-divider"></div>
-            <li><a href="#faq" class="toc-link" data-sec="faq"><i class="fas fa-question-circle toc-icon"></i> 자주 묻는 질문</a></li>
-            <li><a href="#contact" class="toc-link" data-sec="contact"><i class="fas fa-headset toc-icon"></i> 고객센터</a></li>
+            <li><a href="#faq" class="toc-link" data-sec="faq"><i data-lucide="help-circle" class="toc-icon"></i> 자주 묻는 질문</a></li>
+            <li><a href="#contact" class="toc-link" data-sec="contact"><i data-lucide="headset" class="toc-icon"></i> 고객센터</a></li>
         </ul>
     </aside>
 
@@ -489,41 +514,41 @@
 
         <!-- 페이지 헤더 -->
         <div class="page-header">
-            <span class="page-emoji">🏠</span>
+            <div class="page-icon"><i data-lucide="home"></i></div>
             <h1>대리입찰 톡 이용 가이드</h1>
             <p>경매 대리입찰 신청부터 결과 확인까지, 전 과정을 쉽게 안내해 드립니다.<br>
                처음이신가요? 아래 순서대로 따라오시면 됩니다.</p>
             <div class="update-info">
-                <span><i class="fas fa-clock"></i> 최종 업데이트: 2025년 5월</span>
-                <span><i class="fas fa-eye"></i> 읽는 시간: 약 5분</span>
+                <span><i data-lucide="clock"></i> 최종 업데이트: 2025년 5월</span>
+                <span><i data-lucide="eye"></i> 읽는 시간: 약 5분</span>
             </div>
         </div>
 
         <!-- CTA 배너 -->
         <div class="cta-banner">
-            <div class="cta-emoji" style="font-size:2rem;">⚡</div>
+            <div class="cta-icon"><i data-lucide="zap"></i></div>
             <div class="cta-text">
                 <h3>지금 바로 대리입찰 신청하기</h3>
                 <p>사건번호만 있으면 2분 안에 신청 완료! 전국 경매 법원 커버</p>
             </div>
-            <a href="apply.html" class="cta-btn"><i class="fas fa-arrow-right" style="margin-right:6px;"></i>신청하기</a>
+            <a href="apply.html" class="cta-btn">신청하기 <i data-lucide="arrow-right"></i></a>
         </div>
 
         <!-- ── 섹션 0: 대리입찰 톡이란? ── -->
         <section class="guide-section" id="intro">
             <div class="section-header" onclick="toggleSection(this)">
-                <div class="section-icon" style="background:#EFF6FF;">🏢</div>
+                <div class="section-icon"><i data-lucide="building-2"></i></div>
                 <h2 class="section-title">대리입찰 톡이란?</h2>
-                <i class="fas fa-chevron-right section-toggle open"></i>
+                <span class="section-toggle open"><i data-lucide="chevron-right"></i></span>
             </div>
             <div class="section-body">
                 <div class="callout info">
-                    <i class="fas fa-info-circle callout-icon"></i>
+                    <span class="callout-icon"><i data-lucide="info"></i></span>
                     <div>
                         <strong>대리입찰 톡</strong>은 <strong>경매 대리입찰 연결 플랫폼</strong>입니다.<br>
                         직접 법원에 가지 않아도 인증된 법무사·공인중개사가 대신 입찰해 드립니다.<br>
                         복잡한 서류 준비, 입찰 당일 줄서기, 법원 방문 — 모두 대신 해결해 드립니다.<br>
-                        <strong style="color:#0D9488;">✓ 플랫폼 중개수수료는 0원 — 대리입찰 비용(공인중개사 132,000원 / 법무사 154,000원, VAT 포함)은 배정된 전문가가 직접 받습니다.</strong>
+                        <strong style="color:var(--ts-blue-dark);">플랫폼 중개수수료는 0원 — 대리입찰 비용(공인중개사 132,000원 / 법무사 154,000원, VAT 포함)은 배정된 전문가가 직접 받습니다.</strong>
                     </div>
                 </div>
 
@@ -531,35 +556,35 @@
                     <div class="flow-step">
                         <div class="flow-num">1</div>
                         <div class="flow-content">
-                            <h4>🔍 사건번호로 간편 신청</h4>
+                            <h4>사건번호로 간편 신청</h4>
                             <p>낙찰가, 법원, 입찰일을 입력하면 신청 완료!</p>
                         </div>
                     </div>
                     <div class="flow-step">
                         <div class="flow-num">2</div>
                         <div class="flow-content">
-                            <h4>🤝 인증 법무사 자동 매칭</h4>
+                            <h4>인증 법무사 자동 매칭</h4>
                             <p>대리입찰 톡 인증 법무사·공인중개사가 빠르게 배정됩니다</p>
                         </div>
                     </div>
                     <div class="flow-step">
                         <div class="flow-num">3</div>
                         <div class="flow-content">
-                            <h4>📋 서류 안내 & 방문 조율</h4>
+                            <h4>서류 안내 & 방문 조율</h4>
                             <p>담당자가 필요 서류를 안내하고 위임장 작성을 도와드립니다</p>
                         </div>
                     </div>
                     <div class="flow-step">
                         <div class="flow-num">4</div>
                         <div class="flow-content">
-                            <h4>🎉 입찰 완료 & 결과 통보</h4>
+                            <h4>입찰 완료 & 결과 통보</h4>
                             <p>입찰 완료 후 낙찰/패찰 결과를 마이페이지에서 바로 확인</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="callout success">
-                    <i class="fas fa-shield-alt callout-icon"></i>
+                    <span class="callout-icon"><i data-lucide="shield-check"></i></span>
                     <div>
                         <strong>안심 보장</strong> — 인증된 법무사·공인중개사만 활동하며,
                         보증금은 신청자 명의로 직접 납부합니다. 입찰 결과는 실시간으로 안내드립니다.
@@ -573,32 +598,32 @@
         <!-- ── STEP 1: 신청하기 ── -->
         <section class="guide-section" id="step1">
             <div class="section-header" onclick="toggleSection(this)">
-                <div class="section-icon" style="background:#F0FDF4;">📝</div>
+                <div class="section-icon"><i data-lucide="file-text"></i></div>
                 <h2 class="section-title">STEP 1. 신청하기</h2>
-                <i class="fas fa-chevron-right section-toggle open"></i>
+                <span class="section-toggle open"><i data-lucide="chevron-right"></i></span>
             </div>
             <div class="section-body">
                 <div class="callout info">
-                    <i class="fas fa-lightbulb callout-icon"></i>
-                    <div>신청 전, 아래 정보를 미리 준비해 두세요. 법원 경매 정보 조회 사이트(<a href="https://www.courtauction.go.kr" target="_blank" style="color:var(--mint-dark);">대법원 경매정보</a>)에서 확인할 수 있습니다.</div>
+                    <span class="callout-icon"><i data-lucide="lightbulb"></i></span>
+                    <div>신청 전, 아래 정보를 미리 준비해 두세요. 법원 경매 정보 조회 사이트(<a href="https://www.courtauction.go.kr" target="_blank">대법원 경매정보</a>)에서 확인할 수 있습니다.</div>
                 </div>
 
                 <table class="info-table">
                     <thead><tr><th>항목</th><th>내용</th><th>비고</th></tr></thead>
                     <tbody>
-                        <tr><td><strong>사건번호</strong></td><td>예) 서울중앙지방법원 2024타경12345</td><td class="tag tag-red">필수</td></tr>
-                        <tr><td><strong>입찰 희망가 (낙찰가)</strong></td><td>입찰하실 금액 (최저입찰가 이상)</td><td class="tag tag-red">필수</td></tr>
-                        <tr><td><strong>입찰일</strong></td><td>법원 입찰 기일</td><td class="tag tag-red">필수</td></tr>
-                        <tr><td><strong>법원명</strong></td><td>해당 경매 진행 법원</td><td class="tag tag-red">필수</td></tr>
-                        <tr><td><strong>연락처</strong></td><td>법무사 연락용 휴대폰 번호</td><td class="tag tag-red">필수</td></tr>
-                        <tr><td><strong>주소 (물건지)</strong></td><td>경매 부동산 주소</td><td class="tag tag-amber">권장</td></tr>
+                        <tr><td><strong>사건번호</strong></td><td>예) 서울중앙지방법원 2024타경12345</td><td><span class="tag tag-red">필수</span></td></tr>
+                        <tr><td><strong>입찰 희망가 (낙찰가)</strong></td><td>입찰하실 금액 (최저입찰가 이상)</td><td><span class="tag tag-red">필수</span></td></tr>
+                        <tr><td><strong>입찰일</strong></td><td>법원 입찰 기일</td><td><span class="tag tag-red">필수</span></td></tr>
+                        <tr><td><strong>법원명</strong></td><td>해당 경매 진행 법원</td><td><span class="tag tag-red">필수</span></td></tr>
+                        <tr><td><strong>연락처</strong></td><td>법무사 연락용 휴대폰 번호</td><td><span class="tag tag-red">필수</span></td></tr>
+                        <tr><td><strong>주소 (물건지)</strong></td><td>경매 부동산 주소</td><td><span class="tag tag-amber">권장</span></td></tr>
                     </tbody>
                 </table>
 
                 <div class="callout warn">
-                    <i class="fas fa-exclamation-triangle callout-icon"></i>
+                    <span class="callout-icon"><i data-lucide="alert-triangle"></i></span>
                     <div>
-                        <strong>⚠️ 낙찰가 비공개 정책</strong><br>
+                        <strong>낙찰가 비공개 정책</strong><br>
                         신청하신 낙찰 희망가는 <strong>법무사가 승인 전까지 비공개</strong>입니다.
                         법무사가 요청을 수락하면 담당 법무사에게만 공개됩니다.
                         이는 신청자의 개인재산 정보 보호를 위한 조치입니다.
@@ -606,26 +631,26 @@
                 </div>
 
                 <div class="callout success">
-                    <i class="fas fa-mouse-pointer callout-icon"></i>
+                    <span class="callout-icon"><i data-lucide="mouse-pointer-click"></i></span>
                     <div>
                         <strong>신청 방법:</strong>
-                        <a href="apply.html" style="color:var(--mint-dark); font-weight:700;">apply.html</a> 접속 → 
+                        <a href="apply.html">apply.html</a> 접속 →
                         정보 입력 → 전문가 유형 선택 후 결제 → 전문가 매칭 시작!
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- ── STEP 2: 법무사 매칭 신청 ── -->
+        <!-- ── STEP 2: 전문가 매칭 신청 ── -->
         <section class="guide-section" id="step2">
             <div class="section-header" onclick="toggleSection(this)">
-                <div class="section-icon" style="background:#F0FDF4;">🤝</div>
+                <div class="section-icon"><i data-lucide="handshake"></i></div>
                 <h2 class="section-title">STEP 2. 전문가 매칭 신청</h2>
-                <i class="fas fa-chevron-right section-toggle open"></i>
+                <span class="section-toggle open"><i data-lucide="chevron-right"></i></span>
             </div>
             <div class="section-body">
                 <div class="callout success">
-                    <i class="fas fa-gift callout-icon"></i>
+                    <span class="callout-icon"><i data-lucide="gift"></i></span>
                     <div>
                         <strong>대리입찰 가격은 공인중개사 132,000원 / 법무사 154,000원(VAT 포함)입니다.</strong><br>
                         플랫폼 중개수수료는 0원이며, 결제하신 금액 전액은 배정된 전문가(법무사·공인중개사)에게 직접 정산됩니다.
@@ -633,18 +658,18 @@
                 </div>
 
                 <ul class="checklist">
-                    <li><div class="chk-icon"><i class="fas fa-check" style="font-size:0.65rem;"></i></div> 결제 즉시 전문가 매칭 시작</li>
-                    <li><div class="chk-icon"><i class="fas fa-check" style="font-size:0.65rem;"></i></div> 신청 완료 후 마이페이지에서 진행 상황 확인 가능</li>
-                    <li><div class="chk-icon"><i class="fas fa-check" style="font-size:0.65rem;"></i></div> 플랫폼은 중개수수료 0원 · 결제금 전액 전문가에게 직접 정산</li>
-                    <li><div class="chk-icon info"><i class="fas fa-info" style="font-size:0.65rem;"></i></div> 문의사항은 고객센터로 연락주세요</li>
+                    <li><div class="chk-icon"><i data-lucide="check"></i></div> 결제 즉시 전문가 매칭 시작</li>
+                    <li><div class="chk-icon"><i data-lucide="check"></i></div> 신청 완료 후 마이페이지에서 진행 상황 확인 가능</li>
+                    <li><div class="chk-icon"><i data-lucide="check"></i></div> 플랫폼은 중개수수료 0원 · 결제금 전액 전문가에게 직접 정산</li>
+                    <li><div class="chk-icon info"><i data-lucide="info"></i></div> 문의사항은 고객센터로 연락주세요</li>
                 </ul>
 
                 <div class="callout warn">
-                    <i class="fas fa-shield-alt callout-icon"></i>
+                    <span class="callout-icon"><i data-lucide="shield"></i></span>
                     <div>
                         <strong>보증금은 별도입니다.</strong><br>
                         보증금은 입찰 당일 신청자 본인 명의 통장에서 직접 납부하시거나 현금으로 지참하셔야 합니다.
-                        <br><small style="color:var(--text-light);">※ 보증금은 통상 최저매각가격의 10%이며, 패찰 시 당일 현장 반환됩니다.</small>
+                        <br><small style="color:var(--ts-sub);">※ 보증금은 통상 최저매각가격의 10%이며, 패찰 시 당일 현장 반환됩니다.</small>
                     </div>
                 </div>
             </div>
@@ -653,13 +678,13 @@
         <!-- ── STEP 3: 법무사 매칭 ── -->
         <section class="guide-section" id="step3">
             <div class="section-header" onclick="toggleSection(this)">
-                <div class="section-icon" style="background:#F5F3FF;">🤝</div>
+                <div class="section-icon"><i data-lucide="users"></i></div>
                 <h2 class="section-title">STEP 3. 법무사 매칭</h2>
-                <i class="fas fa-chevron-right section-toggle open"></i>
+                <span class="section-toggle open"><i data-lucide="chevron-right"></i></span>
             </div>
             <div class="section-body">
                 <div class="callout purple">
-                    <i class="fas fa-bolt callout-icon"></i>
+                    <span class="callout-icon"><i data-lucide="zap"></i></span>
                     <div>
                         신청 완료 후 대리입찰 톡에 등록된 법무사들에게 요청이 전달됩니다.
                         <strong>빠르게 수락한 법무사가 우선 배정</strong>되는 선착순 시스템입니다.
@@ -668,7 +693,7 @@
 
                 <div class="flow-steps">
                     <div class="flow-step">
-                        <div class="flow-num" style="background:var(--blue);">①</div>
+                        <div class="flow-num">1</div>
                         <div class="flow-content">
                             <h4>요청 전송</h4>
                             <p>신청 완료 후 전국 인증 법무사에게 요청이 전달됩니다</p>
@@ -676,25 +701,25 @@
                         </div>
                     </div>
                     <div class="flow-step">
-                        <div class="flow-num" style="background:var(--amber);">②</div>
+                        <div class="flow-num">2</div>
                         <div class="flow-content">
                             <h4>법무사 수락 (선착순)</h4>
                             <p>가장 빠르게 수락한 법무사에게 자동 배정됩니다</p>
-                            <span class="flow-tag" style="background:#FEF3C7;color:#92400E;">낙찰가: 수락 전 비공개 🔒</span>
+                            <span class="flow-tag">낙찰가: 수락 전 비공개</span>
                         </div>
                     </div>
                     <div class="flow-step">
-                        <div class="flow-num" style="background:var(--green);">③</div>
+                        <div class="flow-num">3</div>
                         <div class="flow-content">
                             <h4>승인 완료 & 낙찰가 공개</h4>
                             <p>담당 법무사에게 낙찰 희망가가 공개되며 연락이 시작됩니다</p>
-                            <span class="flow-tag" style="background:#D1FAE5;color:#065F46;">낙찰가 공개 🔓 → 법무사만</span>
+                            <span class="flow-tag">낙찰가 공개 → 법무사만</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="callout danger">
-                    <i class="fas fa-ban callout-icon"></i>
+                    <span class="callout-icon"><i data-lucide="ban"></i></span>
                     <div>
                         <strong>법무사 계정 정지 정책</strong><br>
                         법무사가 수락 후 정당한 사유 없이 <strong>3회 이상 취소</strong>할 경우 계정이 자동 정지됩니다.
@@ -708,13 +733,13 @@
         <!-- ── STEP 4: 서류 준비 ── -->
         <section class="guide-section" id="step4">
             <div class="section-header" onclick="toggleSection(this)">
-                <div class="section-icon" style="background:#FFFBEB;">📋</div>
+                <div class="section-icon"><i data-lucide="clipboard-list"></i></div>
                 <h2 class="section-title">STEP 4. 서류 준비</h2>
-                <i class="fas fa-chevron-right section-toggle open"></i>
+                <span class="section-toggle open"><i data-lucide="chevron-right"></i></span>
             </div>
             <div class="section-body">
                 <div class="callout info">
-                    <i class="fas fa-user callout-icon"></i>
+                    <span class="callout-icon"><i data-lucide="user"></i></span>
                     <div>법무사 매칭 후 담당자가 연락하여 필요 서류를 안내합니다. 아래는 일반적으로 필요한 서류입니다.</div>
                 </div>
 
@@ -722,7 +747,7 @@
                     <thead><tr><th>서류</th><th>발급처</th><th>유효기간</th></tr></thead>
                     <tbody>
                         <tr>
-                            <td><strong>신분증 사본</strong><br><small style="color:var(--text-light);">주민등록증 or 운전면허증</small></td>
+                            <td><strong>신분증 사본</strong><br><small style="color:var(--ts-sub);">주민등록증 or 운전면허증</small></td>
                             <td>본인 지참</td>
                             <td><span class="tag tag-red">필수</span></td>
                         </tr>
@@ -732,12 +757,12 @@
                             <td>3개월 이내</td>
                         </tr>
                         <tr>
-                            <td><strong>위임장</strong><br><small style="color:var(--text-light);">담당 법무사가 양식 제공</small></td>
+                            <td><strong>위임장</strong><br><small style="color:var(--ts-sub);">담당 법무사가 양식 제공</small></td>
                             <td>법무사 제공</td>
                             <td><span class="tag tag-red">필수</span></td>
                         </tr>
                         <tr>
-                            <td><strong>입찰보증금</strong><br><small style="color:var(--text-light);">최저입찰가의 10% (현금 또는 자기앞수표)</small></td>
+                            <td><strong>입찰보증금</strong><br><small style="color:var(--ts-sub);">최저입찰가의 10% (현금 또는 자기앞수표)</small></td>
                             <td>은행</td>
                             <td>입찰 당일</td>
                         </tr>
@@ -750,7 +775,7 @@
                 </table>
 
                 <div class="callout warn">
-                    <i class="fas fa-clock callout-icon"></i>
+                    <span class="callout-icon"><i data-lucide="clock"></i></span>
                     <div>
                         <strong>서류 제출 마감</strong><br>
                         모든 서류는 입찰일 <strong>최소 1일 전</strong>까지 법무사에게 전달해야 합니다.
@@ -763,40 +788,40 @@
         <!-- ── STEP 5: 입찰 당일 ── -->
         <section class="guide-section" id="step5">
             <div class="section-header" onclick="toggleSection(this)">
-                <div class="section-icon" style="background:#FEF2F2;">⚖️</div>
+                <div class="section-icon"><i data-lucide="gavel"></i></div>
                 <h2 class="section-title">STEP 5. 입찰 당일</h2>
-                <i class="fas fa-chevron-right section-toggle open"></i>
+                <span class="section-toggle open"><i data-lucide="chevron-right"></i></span>
             </div>
             <div class="section-body">
                 <div class="callout success">
-                    <i class="fas fa-check-circle callout-icon"></i>
+                    <span class="callout-icon"><i data-lucide="check-circle"></i></span>
                     <div>입찰 당일에는 <strong>별도로 법원을 방문하지 않으셔도 됩니다.</strong> 담당 법무사가 모든 입찰 절차를 대행합니다.</div>
                 </div>
 
                 <div class="flow-steps">
                     <div class="flow-step">
-                        <div class="flow-num" style="background:#6B7280;">AM</div>
+                        <div class="flow-num"><i data-lucide="sunrise" style="width:18px;height:18px;"></i></div>
                         <div class="flow-content">
                             <h4>법무사 법원 방문</h4>
                             <p>담당 법무사가 해당 경매 법원에 입찰 서류와 보증금을 지참하여 방문합니다</p>
                         </div>
                     </div>
                     <div class="flow-step">
-                        <div class="flow-num" style="background:var(--blue);">①</div>
+                        <div class="flow-num">1</div>
                         <div class="flow-content">
                             <h4>입찰표 작성 및 제출</h4>
                             <p>위임장과 신청자 정보를 바탕으로 입찰표를 작성하고 접수합니다</p>
                         </div>
                     </div>
                     <div class="flow-step">
-                        <div class="flow-num" style="background:var(--purple);">②</div>
+                        <div class="flow-num">2</div>
                         <div class="flow-content">
                             <h4>개찰 대기</h4>
                             <p>입찰 종료 후 법원에서 개찰(결과 발표)이 진행됩니다</p>
                         </div>
                     </div>
                     <div class="flow-step">
-                        <div class="flow-num" style="background:var(--green);">③</div>
+                        <div class="flow-num">3</div>
                         <div class="flow-content">
                             <h4>결과 즉시 통보</h4>
                             <p>낙찰 또는 패찰 결과를 법무사가 즉시 연락드리고 마이페이지에 업데이트됩니다</p>
@@ -809,22 +834,22 @@
         <!-- ── STEP 6: 결과 확인 ── -->
         <section class="guide-section" id="step6">
             <div class="section-header" onclick="toggleSection(this)">
-                <div class="section-icon" style="background:#F0FDF4;">🏆</div>
+                <div class="section-icon"><i data-lucide="trophy"></i></div>
                 <h2 class="section-title">STEP 6. 결과 확인 (낙찰 / 패찰)</h2>
-                <i class="fas fa-chevron-right section-toggle open"></i>
+                <span class="section-toggle open"><i data-lucide="chevron-right"></i></span>
             </div>
             <div class="section-body">
 
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">
                     <div class="callout success" style="flex-direction:column;">
-                        <div style="font-size:1.5rem;margin-bottom:8px;">🎉</div>
-                        <strong style="font-size:1rem;color:#065F46;">낙찰!</strong>
-                        <p style="margin-top:6px;font-size:0.85rem;">마이페이지에서 확인하고<br>담당 법무사와 잔금 납부 일정을 협의하세요.</p>
+                        <span class="callout-icon"><i data-lucide="party-popper"></i></span>
+                        <strong style="font-size:1.05rem;color:var(--ts-blue-dark);">낙찰!</strong>
+                        <p style="margin-top:6px;font-size:0.92rem;">마이페이지에서 확인하고<br>담당 법무사와 잔금 납부 일정을 협의하세요.</p>
                     </div>
-                    <div class="callout" style="background:#F9FAFB;border-left:3px solid #9CA3AF;flex-direction:column;">
-                        <div style="font-size:1.5rem;margin-bottom:8px;">😔</div>
-                        <strong style="font-size:1rem;color:#374151;">패찰</strong>
-                        <p style="margin-top:6px;font-size:0.85rem;">보증금은 당일 현장에서 반환됩니다.<br>다음 입찰에 다시 도전해 보세요!</p>
+                    <div class="callout" style="flex-direction:column;">
+                        <span class="callout-icon" style="color:var(--ts-sub);"><i data-lucide="frown"></i></span>
+                        <strong style="font-size:1.05rem;color:var(--ts-title);">패찰</strong>
+                        <p style="margin-top:6px;font-size:0.92rem;">보증금은 당일 현장에서 반환됩니다.<br>다음 입찰에 다시 도전해 보세요!</p>
                     </div>
                 </div>
 
@@ -839,10 +864,10 @@
                 </table>
 
                 <div class="callout info">
-                    <i class="fas fa-map-marker-alt callout-icon"></i>
+                    <span class="callout-icon"><i data-lucide="map-pin"></i></span>
                     <div>
                         <strong>마이페이지에서 결과 확인</strong><br>
-                        로그인 후 <a href="mypage.html" style="color:var(--mint-dark);font-weight:700;">마이페이지</a>에서 실시간으로 신청 상태와 낙찰/패찰 결과를 확인하실 수 있습니다.
+                        로그인 후 <a href="mypage.html">마이페이지</a>에서 실시간으로 신청 상태와 낙찰/패찰 결과를 확인하실 수 있습니다.
                     </div>
                 </div>
             </div>
@@ -853,25 +878,25 @@
         <!-- ── 이용 요금 ── -->
         <section class="guide-section" id="pricing">
             <div class="section-header" onclick="toggleSection(this)">
-                <div class="section-icon" style="background:#FFFBEB;">💰</div>
+                <div class="section-icon"><i data-lucide="wallet"></i></div>
                 <h2 class="section-title">이용 요금</h2>
-                <i class="fas fa-chevron-right section-toggle open"></i>
+                <span class="section-toggle open"><i data-lucide="chevron-right"></i></span>
             </div>
             <div class="section-body">
                 <div class="callout info">
-                    <i class="fas fa-info-circle callout-icon"></i>
+                    <span class="callout-icon"><i data-lucide="info"></i></span>
                     <div>서비스 이용료는 대리입찰 대행 서비스 비용입니다. 입찰 보증금은 별도이며 신청자 본인이 준비하셔야 합니다.</div>
                 </div>
 
                 <div class="price-cards">
                     <div class="price-card">
-                        <div class="pc-label">🏠 공인중개사</div>
+                        <div class="pc-label">공인중개사</div>
                         <div class="pc-price">132,000<span>원</span></div>
                         <div class="pc-desc">VAT 포함 · 중개수수료 0원<br>매수신청대리인이 직접 진행</div>
                     </div>
                     <div class="price-card featured">
                         <div class="price-tag">추천</div>
-                        <div class="pc-label">📋 법무사</div>
+                        <div class="pc-label">법무사</div>
                         <div class="pc-price">154,000<span>원</span></div>
                         <div class="pc-desc">VAT 포함 · 중개수수료 0원<br>온라인 전자서명 3분 완료</div>
                     </div>
@@ -883,10 +908,10 @@
                 </div>
 
                 <ul class="checklist">
-                    <li><div class="chk-icon"><i class="fas fa-check" style="font-size:0.65rem;"></i></div> 플랫폼 중개수수료 0원 · 대리입찰 비용 전액을 배정된 전문가가 직접 수령</li>
-                    <li><div class="chk-icon"><i class="fas fa-check" style="font-size:0.65rem;"></i></div> 낙찰 여부와 관계없이 서비스 이용료는 동일하게 적용</li>
-                    <li><div class="chk-icon warn"><i class="fas fa-exclamation" style="font-size:0.65rem;"></i></div> 매칭 완료 후에는 취소 시 취소 정책이 적용됩니다</li>
-                    <li><div class="chk-icon info"><i class="fas fa-info" style="font-size:0.65rem;"></i></div> 세금계산서 발행 요청 가능 (고객센터 문의)</li>
+                    <li><div class="chk-icon"><i data-lucide="check"></i></div> 플랫폼 중개수수료 0원 · 대리입찰 비용 전액을 배정된 전문가가 직접 수령</li>
+                    <li><div class="chk-icon"><i data-lucide="check"></i></div> 낙찰 여부와 관계없이 서비스 이용료는 동일하게 적용</li>
+                    <li><div class="chk-icon warn"><i data-lucide="alert-circle"></i></div> 매칭 완료 후에는 취소 시 취소 정책이 적용됩니다</li>
+                    <li><div class="chk-icon info"><i data-lucide="info"></i></div> 세금계산서 발행 요청 가능 (고객센터 문의)</li>
                 </ul>
             </div>
         </section>
@@ -894,9 +919,9 @@
         <!-- ── 취소 정책 ── -->
         <section class="guide-section" id="cancel">
             <div class="section-header" onclick="toggleSection(this)">
-                <div class="section-icon" style="background:#FEF2F2;">↩️</div>
+                <div class="section-icon"><i data-lucide="rotate-ccw"></i></div>
                 <h2 class="section-title">취소 정책</h2>
-                <i class="fas fa-chevron-right section-toggle open"></i>
+                <span class="section-toggle open"><i data-lucide="chevron-right"></i></span>
             </div>
             <div class="section-body">
                 <table class="info-table">
@@ -926,7 +951,7 @@
                 </table>
 
                 <div class="callout warn">
-                    <i class="fas fa-exclamation-triangle callout-icon"></i>
+                    <span class="callout-icon"><i data-lucide="alert-triangle"></i></span>
                     <div>
                         <strong>취소 신청 방법</strong><br>
                         마이페이지 → 해당 신청 건 → <strong>"신청 취소"</strong> 버튼 클릭<br>
@@ -935,7 +960,7 @@
                 </div>
 
                 <div class="callout danger">
-                    <i class="fas fa-ban callout-icon"></i>
+                    <span class="callout-icon"><i data-lucide="ban"></i></span>
                     <div>
                         <strong>보증금은 매칭 서비스와 연관없습니다</strong><br>
                         보증금은 법원에서 직접 관리하며 대리입찰 톡을 통해 환불되지 않습니다.
@@ -950,9 +975,9 @@
         <!-- ── FAQ ── -->
         <section class="guide-section" id="faq">
             <div class="section-header" onclick="toggleSection(this)">
-                <div class="section-icon" style="background:#EDE9FE;">❓</div>
+                <div class="section-icon"><i data-lucide="help-circle"></i></div>
                 <h2 class="section-title">자주 묻는 질문 (FAQ)</h2>
-                <i class="fas fa-chevron-right section-toggle open"></i>
+                <span class="section-toggle open"><i data-lucide="chevron-right"></i></span>
             </div>
             <div class="section-body">
                 <div class="faq-list">
@@ -961,7 +986,7 @@
                         <div class="faq-q" onclick="toggleFaq(this)">
                             <div class="q-icon">Q</div>
                             대리입찰이 법적으로 합법인가요?
-                            <i class="fas fa-chevron-down q-arrow"></i>
+                            <span class="q-arrow"><i data-lucide="chevron-down"></i></span>
                         </div>
                         <div class="faq-a">
                             <strong>네, 합법입니다.</strong> 민사집행법 제68조에 따라 위임장을 통한 대리입찰은 법적으로 허용됩니다.
@@ -973,7 +998,7 @@
                         <div class="faq-q" onclick="toggleFaq(this)">
                             <div class="q-icon">Q</div>
                             법무사는 얼마나 걸려 배정되나요?
-                            <i class="fas fa-chevron-down q-arrow"></i>
+                            <span class="q-arrow"><i data-lucide="chevron-down"></i></span>
                         </div>
                         <div class="faq-a">
                             신청 완료 후 보통 <strong>수 분에서 수 시간 내</strong>에 배정됩니다. 지역·법원에 따라 다를 수 있으며,
@@ -986,7 +1011,7 @@
                         <div class="faq-q" onclick="toggleFaq(this)">
                             <div class="q-icon">Q</div>
                             낙찰가를 법무사가 임의로 변경할 수 있나요?
-                            <i class="fas fa-chevron-down q-arrow"></i>
+                            <span class="q-arrow"><i data-lucide="chevron-down"></i></span>
                         </div>
                         <div class="faq-a">
                             <strong>절대 불가능합니다.</strong> 신청 시 입력한 낙찰 희망가 그대로 입찰표에 기재됩니다.
@@ -998,7 +1023,7 @@
                         <div class="faq-q" onclick="toggleFaq(this)">
                             <div class="q-icon">Q</div>
                             보증금은 어떻게 준비하나요?
-                            <i class="fas fa-chevron-down q-arrow"></i>
+                            <span class="q-arrow"><i data-lucide="chevron-down"></i></span>
                         </div>
                         <div class="faq-a">
                             보증금은 최저매각가격의 <strong>10%</strong>이며 현금(자기앞수표)으로 준비합니다.
@@ -1012,7 +1037,7 @@
                         <div class="faq-q" onclick="toggleFaq(this)">
                             <div class="q-icon">Q</div>
                             전국 어디서나 신청할 수 있나요?
-                            <i class="fas fa-chevron-down q-arrow"></i>
+                            <span class="q-arrow"><i data-lucide="chevron-down"></i></span>
                         </div>
                         <div class="faq-a">
                             <strong>네, 전국 모든 경매 법원</strong>에서 가능합니다. 단, 일부 도서산간 지역 법원은
@@ -1024,7 +1049,7 @@
                         <div class="faq-q" onclick="toggleFaq(this)">
                             <div class="q-icon">Q</div>
                             낙찰 후 잔금 납부는 어떻게 하나요?
-                            <i class="fas fa-chevron-down q-arrow"></i>
+                            <span class="q-arrow"><i data-lucide="chevron-down"></i></span>
                         </div>
                         <div class="faq-a">
                             낙찰 확정 후 담당 법무사가 잔금 납부 일정, 방법, 서류 등을 상세히 안내해 드립니다.
@@ -1037,7 +1062,7 @@
                         <div class="faq-q" onclick="toggleFaq(this)">
                             <div class="q-icon">Q</div>
                             법인도 신청할 수 있나요?
-                            <i class="fas fa-chevron-down q-arrow"></i>
+                            <span class="q-arrow"><i data-lucide="chevron-down"></i></span>
                         </div>
                         <div class="faq-a">
                             <strong>가능합니다.</strong> 법인 신청 시 법인인감증명서, 법인등기부등본, 사용인감계(필요 시)가 추가로 필요합니다.
@@ -1049,7 +1074,7 @@
                         <div class="faq-q" onclick="toggleFaq(this)">
                             <div class="q-icon">Q</div>
                             취하면 취소는 언제 되나요?
-                            <i class="fas fa-chevron-down q-arrow"></i>
+                            <span class="q-arrow"><i data-lucide="chevron-down"></i></span>
                         </div>
                         <div class="faq-a">
                             마이페이지에서 취소 신청 후 관리자 검토를 거쳐 취소 처리됩니다. 서류 준비 전이라면 취소가 가능합니다.
@@ -1064,76 +1089,68 @@
         <!-- ── 고객센터 ── -->
         <section class="guide-section" id="contact">
             <div class="section-header" onclick="toggleSection(this)">
-                <div class="section-icon" style="background:#F0FDF4;">📞</div>
+                <div class="section-icon"><i data-lucide="headset"></i></div>
                 <h2 class="section-title">고객센터</h2>
-                <i class="fas fa-chevron-right section-toggle open"></i>
+                <span class="section-toggle open"><i data-lucide="chevron-right"></i></span>
             </div>
             <div class="section-body">
                 <div class="callout success">
-                    <i class="fas fa-headset callout-icon"></i>
+                    <span class="callout-icon"><i data-lucide="headset"></i></span>
                     <div>궁금하신 점은 언제든지 연락주세요. 친절하게 안내해 드리겠습니다.</div>
                 </div>
 
                 <div class="contact-cards">
                     <a href="tel:02-853-5875" class="contact-card">
-                        <div class="cc-icon" style="background:#EFF6FF;color:var(--blue);">
-                            <i class="fas fa-phone"></i>
-                        </div>
+                        <div class="cc-icon"><i data-lucide="phone"></i></div>
                         <div>
                             <div class="cc-label">전화 상담</div>
                             <div class="cc-value">02-853-5875</div>
                         </div>
                     </a>
                     <a href="https://open.kakao.com/o/bid-tok" target="_blank" class="contact-card">
-                        <div class="cc-icon" style="background:#FEF3C7;color:#92400E;">
-                            <i class="fas fa-comment"></i>
-                        </div>
+                        <div class="cc-icon"><i data-lucide="message-circle"></i></div>
                         <div>
                             <div class="cc-label">카카오톡 채팅</div>
                             <div class="cc-value">대리입찰 톡 채널</div>
                         </div>
                     </a>
                     <a href="mailto:qkqk5342@naver.com" class="contact-card">
-                        <div class="cc-icon" style="background:#F5F3FF;color:var(--purple);">
-                            <i class="fas fa-envelope"></i>
-                        </div>
+                        <div class="cc-icon"><i data-lucide="mail"></i></div>
                         <div>
                             <div class="cc-label">이메일</div>
                             <div class="cc-value">qkqk5342@naver.com</div>
                         </div>
                     </a>
                     <div class="contact-card" style="cursor:default;">
-                        <div class="cc-icon" style="background:#F0FDF4;color:var(--green);">
-                            <i class="fas fa-clock"></i>
-                        </div>
+                        <div class="cc-icon"><i data-lucide="clock"></i></div>
                         <div>
                             <div class="cc-label">운영 시간</div>
-                            <div class="cc-value" style="font-size:0.85rem;">평일 09:00–18:00</div>
+                            <div class="cc-value" style="font-size:0.92rem;">평일 09:00–18:00</div>
                         </div>
                     </div>
                 </div>
 
-                <div class="callout info" style="margin-top:20px;">
-                    <i class="fas fa-building callout-icon"></i>
+                <div class="callout info" style="margin-top:24px;">
+                    <span class="callout-icon"><i data-lucide="building"></i></span>
                     <div>
                         <strong>회사 정보</strong><br>
                         상호명: 대리입찰톡 - 대장TV &nbsp;|&nbsp; 운영사: (주)원스타프로비<br>
                         주소: 서울특별시 금천구 가산디지털1로 75-24 901호<br>
-                        대표전화: <a href="tel:02-853-5875" style="color:#1550E8;">02-853-5875</a> &nbsp;|&nbsp; 평일 09:00~18:00<br>
-                        대표 관리자: 장영준 &nbsp;|&nbsp; 이메일: <a href="mailto:qkqk5342@naver.com" style="color:#1550E8;">qkqk5342@naver.com</a>
+                        대표전화: <a href="tel:02-853-5875">02-853-5875</a> &nbsp;|&nbsp; 평일 09:00~18:00<br>
+                        대표 관리자: 장영준 &nbsp;|&nbsp; 이메일: <a href="mailto:qkqk5342@naver.com">qkqk5342@naver.com</a>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- 하단 CTA -->
-        <div class="cta-banner" style="margin-top:40px;">
-            <div style="font-size:2rem;">🚀</div>
+        <div class="cta-banner" style="margin-top:48px;">
+            <div class="cta-icon"><i data-lucide="rocket"></i></div>
             <div class="cta-text">
                 <h3>지금 바로 대리입찰 신청하세요!</h3>
                 <p>사건번호만 있으면 OK · 전국 인증 법무사 즉시 배정</p>
             </div>
-            <a href="apply.html" class="cta-btn">신청하기 →</a>
+            <a href="apply.html" class="cta-btn">신청하기 <i data-lucide="arrow-right"></i></a>
         </div>
 
     </main>
@@ -1141,10 +1158,13 @@
 
 <!-- 모바일 TOC 버튼 -->
 <button class="mobile-toc-btn" onclick="toggleMobileToc()" title="목차">
-    <i class="fas fa-list"></i>
+    <i data-lucide="list"></i>
 </button>
 
 <script>
+// Lucide 아이콘 렌더링
+if (window.lucide) lucide.createIcons();
+
 // ── 섹션 접기/펼치기 ──
 function toggleSection(header) {
     const body = header.nextElementSibling;
@@ -1201,7 +1221,7 @@ function toggleMobileToc() {
     const isVisible = sidebar.style.display === 'block';
     sidebar.style.cssText = isVisible
         ? ''
-        : 'display:block;position:fixed;top:56px;left:0;bottom:0;z-index:150;background:#fafafa;width:80%;max-width:280px;box-shadow:4px 0 20px rgba(0,0,0,.12);';
+        : 'display:block;position:fixed;top:60px;left:0;bottom:0;z-index:150;background:#fff;width:80%;max-width:300px;box-shadow:4px 0 20px rgba(0,0,0,.12);';
     if (!isVisible) {
         const overlay = document.createElement('div');
         overlay.id = 'tocOverlay';
