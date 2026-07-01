@@ -4,9 +4,9 @@
 // ★ 시크릿 키는 절대 여기에 넣지 않습니다 (Cloudflare Worker에만 보관).
 // ============================================================
 window.PAYMENT_CONFIG = {
-    // 토스페이먼츠 클라이언트 키 (공개 가능) — (주)원스타프로비 개별연동 키
+    // 토스페이먼츠 클라이언트 키 (공개 가능) — (주)원스타프로비 / MID onesby1 (라이브)
     // 테스트: test_ck_... / 운영: live_ck_...
-    clientKey: 'test_ck_oEjb0gm23Pw75kkppyk48pGwBJn5',
+    clientKey: 'live_ck_Ba5PzR0ArnwyyeEQ90Yz8vmYnNeD',
 
     // 결제 승인/취소 처리 Cloudflare Worker URL (배포 완료)
     workerUrl: 'https://bidtok-toss-payment.qkqk5342.workers.dev',
