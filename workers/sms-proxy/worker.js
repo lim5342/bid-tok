@@ -3,6 +3,21 @@
 // 환경변수: SOLAPI_KEY, SOLAPI_SECRET, SENDER
 // ─────────────────────────────────────────────
 
+// 솔라피 HMAC-SHA256 인증 헤더 생성
+async function solapiAuthHeader(apiKey, apiSecret) {
+  const date = new Date().toISOString();
+  const salt = crypto.randomUUID().replace(/-/g, '');
+  const sigString = date + salt;
+  const encoder = new TextEncoder();
+  const cryptoKey = await crypto.subtle.importKey(
+    'raw', encoder.encode(apiSecret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+  );
+  const sigBuffer = await crypto.subtle.sign('HMAC', cryptoKey, encoder.encode(sigString));
+  const signature = Array.from(new Uint8Array(sigBuffer))
+    .map(b => b.toString(16).padStart(2, '0')).join('');
+  return `HMAC-SHA256 apiKey=${apiKey}, date=${date}, salt=${salt}, signature=${signature}`;
+}
+
 export default {
   async fetch(request, env) {
     // CORS 허용
@@ -14,6 +29,39 @@ export default {
 
     if (request.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
+    }
+
+    // 진단용: 등록된 발신번호 목록 조회 (GET /?diag=senders)
+    if (request.method === 'GET') {
+      const url = new URL(request.url);
+      if (url.searchParams.get('diag') === 'senders') {
+        try {
+          const auth = await solapiAuthHeader(env.SOLAPI_KEY, env.SOLAPI_SECRET);
+          const res = await fetch('https://api.solapi.com/senderid/v1/numbers', {
+            headers: { 'Authorization': auth }
+          });
+          const data = await res.json();
+          const list = (data.senderIds || data.list || data).length !== undefined
+            ? (data.senderIds || data.list || data)
+            : data;
+          const numbers = Array.isArray(list)
+            ? list.map(x => x.phoneNumber || x.number || x)
+            : list;
+          return new Response(JSON.stringify({
+            configured_SENDER: env.SENDER || '(none)',
+            registered_numbers: numbers,
+          }, null, 2), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        } catch (e) {
+          return new Response(JSON.stringify({ error: e.message }), {
+            status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+      }
+      return new Response(JSON.stringify({
+        ok: true, service: 'bidtok-sms-proxy',
+        sender: env.SENDER || '(none)',
+        key_configured: !!env.SOLAPI_KEY && !!env.SOLAPI_SECRET,
+      }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
     if (request.method !== 'POST') {
@@ -100,7 +148,11 @@ export default {
         });
       } else {
         console.error('솔라피 오류:', JSON.stringify(result));
-        return new Response(JSON.stringify({ error: result.errorMessage || 'SMS 발송 실패' }), {
+        return new Response(JSON.stringify({
+          error: result.errorMessage || 'SMS 발송 실패',
+          code: result.errorCode || result.statusCode || null,
+          detail: result,
+        }), {
           status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         });
       }
