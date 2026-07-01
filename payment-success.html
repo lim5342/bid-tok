@@ -60,7 +60,7 @@
     <div id="successView" style="display:none;">
         <div class="icon-wrap">🎉</div>
         <h1>결제 & 신청 완료!</h1>
-        <p>대리입찰 서비스 수수료 <strong style="color:#1550E8;">132,000원</strong> 결제가 완료되었습니다.</p>
+        <p>대리입찰 서비스 수수료 <strong style="color:#1550E8;"><span id="paidAmountText">-</span>원</strong> 결제가 완료되었습니다.</p>
 
         <div class="app-id" id="appIdBadge">신청번호: -</div>
 
@@ -81,9 +81,9 @@
         </div>
 
         <div class="info-box">
-            ✅ 결제금액: <strong>132,000원</strong><br>
+            ✅ 결제금액: <strong><span id="paidAmountText2">-</span>원</strong><br>
             📋 신청번호: <strong id="appIdText">-</strong><br>
-            📱 배정 완료 시 카카오톡 / 이메일 알림 발송<br>
+            📱 배정 완료 시 SMS / 카카오톡 알림 발송<br>
             🔒 입찰 기일 48시간 전까지 취소 시 전액 환불
         </div>
 
@@ -91,7 +91,7 @@
         <div class="steps">
             <div class="step-item">
                 <div class="step-num done"><i class="fas fa-check" style="font-size:0.7rem;"></i></div>
-                <div class="step-text"><strong>결제 완료</strong><small>132,000원 결제 성공</small></div>
+                <div class="step-text"><strong>결제 완료</strong><small><span id="paidAmountText3">-</span>원 결제 성공</small></div>
             </div>
             <div class="step-item">
                 <div class="step-num" id="stepMatchNum">2</div>
@@ -231,6 +231,14 @@ document.addEventListener('DOMContentLoaded', async function() {
         document.getElementById('appIdBadge').textContent = '신청번호: ' + shortId;
         document.getElementById('appIdText').textContent  = shortId;
 
+        // ── 실제 결제 금액 표시 (토스에서 결제된 금액 그대로) ──
+        const paidAmount = Number(amount) || 0;
+        const paidText = paidAmount.toLocaleString('ko-KR');
+        ['paidAmountText', 'paidAmountText2', 'paidAmountText3'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = paidText;
+        });
+
         document.getElementById('loadingView').style.display = 'none';
         document.getElementById('successView').style.display = 'block';
 
@@ -250,68 +258,118 @@ function showError(msg) {
 }
 
 // ══════════════════════════════════════════════════════
-// 지역별 법무사 자동 매칭 (C방식 — 지역 우선, 없으면 전국 랜덤)
+// 전문가 유형 정규화 (realtor/lawyer 코드 · 한글 라벨 모두 대응)
+//   → 'realtor'(공인중개사) | 'lawyer'(법무사) | '' (불명)
+// ══════════════════════════════════════════════════════
+function normalizeExpertType(v) {
+    if (!v) return '';
+    const s = String(v).toLowerCase().trim();
+    if (s === 'realtor' || s.includes('공인중개') || s.includes('매수신청') || s.includes('중개'))
+        return 'realtor';
+    if (s === 'lawyer' || s.includes('법무'))
+        return 'lawyer';
+    return '';
+}
+
+// 신청 건의 전문가 유형
+function getAppExpertType(app) {
+    return normalizeExpertType(app.expert_type || app.expertType || '');
+}
+
+// 전문가(회원)의 유형
+function getUserExpertType(u) {
+    return normalizeExpertType(u.expertType || u.expert_type || '');
+}
+
+// ══════════════════════════════════════════════════════
+// 전문가 자동 매칭
+//   ★ 규칙:
+//     1) userType === 'expert' (의뢰인 제외)
+//     2) status === 'active'  (관리자 승인 완료된 전문가만!)
+//     3) 신청 유형과 전문가 유형 일치 (공인중개사↔공인중개사 / 법무사↔법무사)
+//     4) 지역 우선 → 없으면 전국, 로드밸런싱
 // ══════════════════════════════════════════════════════
 async function autoMatchExpert(appId) {
     try {
         const app = await API.applications.getById(appId);
         if (!app) return;
 
-        const region = app.region || '';
-        let matched  = null;
+        const region   = app.region || '';
+        const wantType = getAppExpertType(app);   // 'realtor' | 'lawyer' | ''
+        let matched    = null;
 
-        // ① 해당 지역 법무사 조회
+        // ── 전체 사용자에서 "승인된 전문가"만 추출 (getAll은 필터를 무시하므로 JS에서 필터) ──
+        const res = await API.users.getAll();
+        const allUsers = res?.data || [];
+
+        let approvedExperts = allUsers.filter(u =>
+            u.userType === 'expert' && u.status === 'active'
+        );
+
+        // ── 유형 일치 필터 (신청 유형이 명확할 때만) ──
+        if (wantType) {
+            const typeMatched = approvedExperts.filter(u => {
+                const ut = getUserExpertType(u);
+                // 전문가에 유형 정보가 없으면(레거시 데이터) 배정 후보에서 제외해
+                // 잘못된 유형 배정을 막는다.
+                return ut === wantType;
+            });
+            // 유형이 일치하는 승인 전문가가 있으면 그들만 후보로 사용.
+            // (없으면 배정하지 않고 관리자 수동 배정 대기)
+            approvedExperts = typeMatched;
+        }
+
+        if (approvedExperts.length === 0) {
+            console.warn('배정 가능한 승인 전문가가 없습니다. 관리자 수동 배정 대기.',
+                { wantType, region });
+            return;   // 승인 전문가 없음 → 배정하지 않음 (잘못된 배정 방지)
+        }
+
+        // ① 지역 우선
         if (region) {
-            const res = await API.users.getAll(
-                `userType=expert&status=active&limit=50`
-            );
-            const allExperts = res?.data || [];
-
-            // serviceRegions 필드에 region 포함 여부로 필터
-            const regional = allExperts.filter(e => {
+            const regional = approvedExperts.filter(e => {
                 const regs = Array.isArray(e.serviceRegions)
                     ? e.serviceRegions
                     : [e.serviceRegions || ''];
                 return regs.some(r => r && r.includes(region));
             });
-
             if (regional.length > 0) {
-                // 로드밸런싱: 현재 배정 건수가 가장 적은 법무사 우선
                 matched = await pickLeastBusy(regional);
             }
         }
 
-        // ② 지역 법무사 없으면 전국 전체에서 랜덤 배정
+        // ② 지역 전문가 없으면 유형 일치 승인 전문가 전체에서 로드밸런싱
         if (!matched) {
-            const res    = await API.users.getAll('userType=expert&status=active&limit=50');
-            const all    = res?.data || [];
-            if (all.length > 0) {
-                matched = await pickLeastBusy(all);
-            }
+            matched = await pickLeastBusy(approvedExperts);
         }
 
         if (matched) {
             await assignAndNotify(appId, app, matched);
         }
     } catch(e) {
-        console.error('법무사 자동 매칭 오류:', e);
+        console.error('전문가 자동 매칭 오류:', e);
     }
 }
 
-// 배정 건수가 가장 적은 법무사 선택
+// 배정 건수가 가장 적은 전문가 선택 (로드밸런싱)
 async function pickLeastBusy(experts) {
-    // 각 법무사의 현재 배정 건수 조회
-    const counts = await Promise.all(
-        experts.map(async ex => {
-            try {
-                const res = await API.applications.getAll(
-                    `assigned_expert_id=${ex.id}&status=매칭완료&limit=1000`
-                );
-                return { expert: ex, count: res?.data?.length || 0 };
-            } catch { return { expert: ex, count: 0 }; }
-        })
-    );
-    // 건수 가장 적은 법무사 반환
+    if (!experts || experts.length === 0) return null;
+    if (experts.length === 1) return experts[0];
+
+    // 전체 신청 1회 조회 후 배정 건수 집계 (getAll은 필터를 무시하므로 JS에서 카운트)
+    let allApps = [];
+    try {
+        const res = await API.applications.getAll();
+        allApps = res?.data || [];
+    } catch (_) {}
+
+    const counts = experts.map(ex => {
+        const count = allApps.filter(a =>
+            a.assigned_expert_id === ex.id && a.status === '매칭완료'
+        ).length;
+        return { expert: ex, count };
+    });
+    // 건수 가장 적은 전문가 반환
     counts.sort((a, b) => a.count - b.count);
     return counts[0]?.expert || experts[0];
 }
@@ -334,8 +392,61 @@ async function assignAndNotify(appId, app, expert) {
     if (stepNum) { stepNum.classList.add('done'); stepNum.innerHTML = '<i class="fas fa-check" style="font-size:0.7rem;"></i>'; }
     if (stepTxt) stepTxt.textContent = name + ' 전문가 배정 완료';
 
-    // 이메일 알림
+    // ── SMS 알림 발송 (전문가 + 신청자) ──
+    await sendAssignmentSms(app, expert, name);
+
+    // 이메일 알림 (EmailJS 설정된 경우)
     await sendEmailNotification(app, expert);
+}
+
+// ══════════════════════════════════════════════════════
+// 배정 SMS 발송 (전문가 + 신청자 양쪽)
+// ══════════════════════════════════════════════════════
+const SMS_PROXY_URL = 'https://bidtok-sms-proxy.qkqk5342.workers.dev';
+async function sendSms(payload) {
+    try {
+        const res = await fetch(SMS_PROXY_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json().catch(() => ({}));
+        return res.ok && data.success;
+    } catch (e) {
+        console.warn('SMS 발송 실패:', e);
+        return false;
+    }
+}
+
+async function sendAssignmentSms(app, expert, expertName) {
+    const appShortId = (app.id || '').toString().slice(-8).toUpperCase();
+    const common = {
+        appId:      appShortId,
+        court:      app.court || '',
+        caseNumber: app.case_number || '',
+        bidDate:    app.bid_date || '',
+        expertName: expertName || '',
+    };
+
+    // ① 전문가에게 새 사건 배정 알림
+    const expertPhone = (expert.phone || expert.kakaoPhone || '').replace(/[^0-9]/g, '');
+    if (expertPhone) {
+        await sendSms({
+            type: 'expert_assigned',
+            to: expertPhone,
+            data: { ...common, name: expert.name || expert.userId || '전문가' }
+        });
+    }
+
+    // ② 신청자(고객)에게 배정 완료 알림
+    const clientPhone = (app.phone || '').replace(/[^0-9]/g, '');
+    if (clientPhone) {
+        await sendSms({
+            type: 'client_assigned',
+            to: clientPhone,
+            data: { ...common, name: app.applicant_name || '고객' }
+        });
+    }
 }
 
 // ══════════════════════════════════════════════════════
@@ -368,7 +479,7 @@ async function sendEmailNotification(app, expert) {
         deposit_method:   app.deposit_method || '',
         bid_type:         app.bid_type || '단독',
         memo:             app.memo || '없음',
-        service_fee:      '132,000원',
+        service_fee:      (Number(app.service_fee || 0)).toLocaleString('ko-KR') + '원',
         assigned_at:      new Date().toLocaleString('ko-KR'),
         mypage_url:       'https://lim5342.github.io/bid-tok/expert-mypage.html',
     };
