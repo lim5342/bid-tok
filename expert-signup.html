@@ -280,6 +280,24 @@
         .profile-type-btn.selected { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
         .profile-type-btn i { display: block; font-size: 1.6rem; margin-bottom: 6px; }
 
+        /* ── 자격 유형 선택 ── */
+        .expert-type-row {
+            display: flex; gap: 12px; margin-bottom: 8px;
+        }
+        .expert-type-btn {
+            flex: 1; padding: 18px 14px;
+            border: 2px solid var(--gray-200); border-radius: 12px;
+            background: #fff; cursor: pointer;
+            text-align: center; transition: all 0.15s;
+        }
+        .expert-type-btn:hover { border-color: var(--primary); }
+        .expert-type-btn.selected { border-color: var(--primary); background: var(--primary-light); box-shadow: 0 0 0 3px rgba(49,130,246,0.12); }
+        .expert-type-btn i { display: block; font-size: 1.7rem; margin-bottom: 8px; color: var(--gray-400); }
+        .expert-type-btn.selected i { color: var(--primary); }
+        .expert-type-btn .et-title { display:block; font-size: 0.98rem; font-weight: 700; color: var(--gray-700); }
+        .expert-type-btn.selected .et-title { color: var(--primary); }
+        .expert-type-btn .et-desc { display:block; font-size: 0.76rem; color: var(--gray-500); margin-top: 3px; line-height: 1.35; }
+
         .profile-preview-wrap {
             display: flex; flex-direction: column; align-items: center; gap: 12px;
         }
@@ -420,8 +438,8 @@
             <i class="fas fa-gavel"></i>
             <span>대리입찰 톡</span>
         </a>
-        <h1>파트너 신청하기</h1>
-        <p>매수신청대리인으로 등록된 법무사만 신청 가능합니다</p>
+        <h1>매수신청대리인 파트너 신청</h1>
+        <p>매수신청대리인으로 등록된 <strong>법무사 · 공인중개사</strong> 모두 환영합니다</p>
     </div>
 
     <!-- 스텝 진행바 -->
@@ -440,7 +458,7 @@
             </div>
             <div class="card-body">
                 <div class="notice-box">
-                    📌 매수신청대리인으로 해당 법원에 등록을 마친 유자격자만 등록이 가능합니다.<br>
+                    📌 <strong>매수신청대리인 등록</strong>을 마친 <strong>법무사 또는 공인중개사</strong>라면 누구나 신청 가능합니다.<br>
                     📌 보안과 서비스 품질관리를 위해 <strong>합동사무실 활동은 제한</strong>됩니다.
                 </div>
 
@@ -568,6 +586,24 @@
             </div>
             <div class="card-body">
 
+                <!-- 자격 유형 선택 -->
+                <div class="form-group">
+                    <label>자격 유형 <span class="req">*</span></label>
+                    <div class="expert-type-row">
+                        <div class="expert-type-btn" id="etBtnLawyer" onclick="selectExpertType('lawyer')">
+                            <i class="fas fa-scale-balanced"></i>
+                            <span class="et-title">법무사</span>
+                            <span class="et-desc">매수신청대리인 등록 법무사</span>
+                        </div>
+                        <div class="expert-type-btn" id="etBtnRealtor" onclick="selectExpertType('realtor')">
+                            <i class="fas fa-building"></i>
+                            <span class="et-title">공인중개사</span>
+                            <span class="et-desc">매수신청대리인 등록 공인중개사</span>
+                        </div>
+                    </div>
+                    <small>법무사 · 공인중개사 모두 매수신청대리인으로 활동할 수 있습니다.</small>
+                </div>
+
                 <!-- 이름 -->
                 <div class="form-group">
                     <label>담당자 성함 <span class="req">*</span></label>
@@ -577,7 +613,7 @@
                 <!-- 사무소 상호명 -->
                 <div class="form-group">
                     <label>사무소 / 사무실 상호명 <span class="req">*</span></label>
-                    <input type="text" id="officeName" placeholder="예: 홍길동 법무사사무소">
+                    <input type="text" id="officeName" placeholder="예: 홍길동 법무사사무소 / OO 공인중개사사무소">
                 </div>
 
                 <!-- 사무소 주소 -->
@@ -594,15 +630,16 @@
 
                 <!-- 등록번호 -->
                 <div class="form-group">
-                    <label>법무사 등록번호 <span class="req">*</span></label>
+                    <label id="licenseNumberLabel">자격 등록번호 <span class="req">*</span></label>
                     <input type="text" id="licenseNumber" placeholder="예: 제12345호">
+                    <small id="licenseNumberHint">위에서 선택한 자격 유형의 등록번호를 입력해주세요.</small>
                 </div>
 
                 <!-- 경력/한줄 소개 -->
                 <div class="form-group">
                     <label>경력 / 한줄 소개 <span class="opt">(선택)</span></label>
-                    <textarea id="introduce" rows="3" placeholder="예: 경매 전문 법무사 8년 경력, 수도권 전 법원 활동 가능"></textarea>
-                    <small>고객이 법무사 선택 시 표시됩니다 (100자 이내 권장)</small>
+                    <textarea id="introduce" rows="3" placeholder="예: 경매 전문 8년 경력, 수도권 전 법원 활동 가능"></textarea>
+                    <small>고객이 전문가 선택 시 표시됩니다 (100자 이내 권장)</small>
                 </div>
 
                 <!-- 연락처 -->
@@ -732,7 +769,7 @@
                     <!-- 매수신청대리인등록증 -->
                     <div class="upload-item" id="uploadBox1">
                         <div class="upload-item-head">
-                            <span class="upload-item-label">매수신청대리인 등록증 <span class="req">*</span></span>
+                            <span class="upload-item-label" id="doc1Label">매수신청대리인 등록증 <span class="req">*</span></span>
                             <span class="upload-item-meta">JPG·PNG·PDF · 10MB</span>
                         </div>
                         <div class="upload-input-row">
@@ -747,7 +784,7 @@
                     <!-- 공제증서 -->
                     <div class="upload-item" id="uploadBox2">
                         <div class="upload-item-head">
-                            <span class="upload-item-label">공제증서 <span class="req">*</span></span>
+                            <span class="upload-item-label" id="doc2Label">공제증서 <span class="req">*</span></span>
                             <span class="upload-item-meta">JPG·PNG·PDF · 10MB</span>
                         </div>
                         <div class="upload-input-row">
@@ -759,10 +796,10 @@
                         <input type="file" id="doc2" accept=".jpg,.jpeg,.png,.pdf" onchange="onFileSelect(this,'doc2')">
                     </div>
 
-                    <!-- 부동산사무실등록증 -->
+                    <!-- 자격증 (법무사 자격증 / 공인중개사 자격증) -->
                     <div class="upload-item" id="uploadBox3">
                         <div class="upload-item-head">
-                            <span class="upload-item-label">부동산 사무실 등록증 <span class="req">*</span></span>
+                            <span class="upload-item-label" id="doc3Label">자격증 사본 <span class="req">*</span></span>
                             <span class="upload-item-meta">JPG·PNG·PDF · 10MB</span>
                         </div>
                         <div class="upload-input-row">
@@ -777,7 +814,7 @@
                     <!-- 사업자등록증 -->
                     <div class="upload-item" id="uploadBox4">
                         <div class="upload-item-head">
-                            <span class="upload-item-label">사업자 등록증 <span class="req">*</span></span>
+                            <span class="upload-item-label" id="doc4Label">사업자 등록증 <span class="req">*</span></span>
                             <span class="upload-item-meta">JPG·PNG·PDF · 10MB</span>
                         </div>
                         <div class="upload-input-row">
@@ -894,7 +931,7 @@
                         <h3>📋 승인 절차 안내</h3>
                         <ol>
                             <li>제출하신 서류를 운영팀이 검토합니다</li>
-                            <li>법무사 등록번호 및 자격 확인</li>
+                            <li>자격 등록번호 및 매수신청대리인 자격 확인</li>
                             <li>승인 완료 후 등록 연락처로 SMS 알림 발송</li>
                             <li>로그인 후 매칭 서비스 이용 시작</li>
                         </ol>
@@ -944,6 +981,29 @@ let verifyTimerInterval = null;
 let profileType = 'photo'; // 'photo' | 'logo'
 let profileFile = null;
 let docFiles = { doc1: null, doc2: null, doc3: null, doc4: null };
+let expertType = ''; // 'lawyer' | 'realtor' — 매수신청대리인 자격 유형
+
+// 자격 유형별 라벨 매핑
+const EXPERT_TYPE_LABELS = {
+    lawyer: {
+        licenseLabel: '법무사 등록번호',
+        licenseHint: '법무사 등록번호를 입력해주세요.',
+        licensePlaceholder: '예: 제12345호',
+        doc1: '매수신청대리인 등록증',
+        doc2: '공제증서(손해배상책임보험)',
+        doc3: '법무사 자격증 사본',
+        doc4: '사업자 등록증'
+    },
+    realtor: {
+        licenseLabel: '공인중개사 등록번호(중개사무소 개설등록번호)',
+        licenseHint: '공인중개사 자격/개설등록번호를 입력해주세요.',
+        licensePlaceholder: '예: 제12345호',
+        doc1: '매수신청대리인 등록증',
+        doc2: '공제증서(손해배상책임보험)',
+        doc3: '공인중개사 자격증 사본',
+        doc4: '중개사무소 등록증'
+    }
+};
 
 // 전국 법원 목록
 const COURTS = {
@@ -1114,10 +1174,11 @@ function validateStep(step) {
         if (!emailChecked) return '이메일 중복 확인을 해주세요.';
     }
     if (step === 3) {
+        if (!expertType) return '자격 유형(법무사 / 공인중개사)을 선택해주세요.';
         if (!document.getElementById('name').value.trim()) return '담당자 성함을 입력해주세요.';
         if (!document.getElementById('officeName').value.trim()) return '사무소 상호명을 입력해주세요.';
         if (!document.getElementById('officeAddress').value.trim()) return '사무소 주소를 검색해주세요. (주소 검색 버튼 클릭)';
-        if (!document.getElementById('licenseNumber').value.trim()) return '법무사 등록번호를 입력해주세요.';
+        if (!document.getElementById('licenseNumber').value.trim()) return (expertType === 'realtor' ? '공인중개사 등록번호를 입력해주세요.' : '법무사 등록번호를 입력해주세요.');
         if (!phoneVerified) return '휴대폰 인증을 완료해주세요.';
         if (!document.getElementById('refSource').value) return '대리입찰 톡을 알게 된 경로를 선택해주세요.';
     }
@@ -1125,10 +1186,11 @@ function validateStep(step) {
         if (getSelectedCourts().length === 0) return '활동 희망 법원을 1곳 이상 선택해주세요.';
     }
     if (step === 5) {
-        if (!docFiles.doc1) return '매수신청대리인 등록증을 업로드해주세요.';
-        if (!docFiles.doc2) return '공제증서를 업로드해주세요.';
-        if (!docFiles.doc3) return '부동산 사무실 등록증을 업로드해주세요.';
-        if (!docFiles.doc4) return '사업자 등록증을 업로드해주세요.';
+        const L = EXPERT_TYPE_LABELS[expertType] || EXPERT_TYPE_LABELS.lawyer;
+        if (!docFiles.doc1) return (L.doc1 + '을(를) 업로드해주세요.');
+        if (!docFiles.doc2) return (L.doc2 + '을(를) 업로드해주세요.');
+        if (!docFiles.doc3) return (L.doc3 + '을(를) 업로드해주세요.');
+        if (!docFiles.doc4) return (L.doc4 + '을(를) 업로드해주세요.');
     }
     if (step === 6) {
         if (!document.getElementById('bankName').value) return '은행을 선택해주세요.';
@@ -1351,6 +1413,32 @@ function confirmVerify() {
 }
 
 // ══════════════════════════════════════════════
+// 자격 유형 선택 (법무사 / 공인중개사)
+// ══════════════════════════════════════════════
+function selectExpertType(type) {
+    expertType = type;
+    document.getElementById('etBtnLawyer').classList.toggle('selected', type === 'lawyer');
+    document.getElementById('etBtnRealtor').classList.toggle('selected', type === 'realtor');
+
+    const L = EXPERT_TYPE_LABELS[type];
+    if (!L) return;
+
+    // 등록번호 라벨/힌트/placeholder 갱신
+    const licenseLabel = document.getElementById('licenseNumberLabel');
+    if (licenseLabel) licenseLabel.innerHTML = L.licenseLabel + ' <span class="req">*</span>';
+    const licenseHint = document.getElementById('licenseNumberHint');
+    if (licenseHint) licenseHint.textContent = L.licenseHint;
+    const licenseInput = document.getElementById('licenseNumber');
+    if (licenseInput) licenseInput.placeholder = L.licensePlaceholder;
+
+    // 서류 라벨 갱신
+    ['doc1','doc2','doc3','doc4'].forEach(function(d){
+        const el = document.getElementById(d + 'Label');
+        if (el) el.innerHTML = L[d] + ' <span class="req">*</span>';
+    });
+}
+
+// ══════════════════════════════════════════════
 // 파일 업로드
 // ══════════════════════════════════════════════
 function triggerUpload(id) {
@@ -1472,6 +1560,8 @@ async function submitSignup() {
             officeAddress: fullAddress,
             officeZip: document.getElementById('officeZip').value.trim(),
             licenseNumber: document.getElementById('licenseNumber').value.trim(),
+            expertType: expertType, // 'lawyer' | 'realtor'
+            expertTypeLabel: (expertType === 'realtor' ? '공인중개사' : '법무사'),
             introduce: document.getElementById('introduce').value.trim(),
             phone,
             kakaoPhone: kakaoPhone || phone,
