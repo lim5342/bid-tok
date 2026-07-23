@@ -60,6 +60,11 @@ const Auth = {
                     licenseNumber: user.licenseNumber || '',
                     officeAddress: user.officeAddress || '',
                     status: user.status,
+                    // 전문가 매칭에 필요한 필드 (활동법원·유형)
+                    expertType: user.expertType || '',
+                    expertTypeLabel: user.expertTypeLabel || '',
+                    serviceRegions: user.serviceRegions || [],
+                    selectedCourts: user.selectedCourts || [],
                     createdAt: user.createdAt
                 };
                 this.setCurrentUser(sessionUser);
