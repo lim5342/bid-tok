@@ -325,6 +325,32 @@ async function _smartDeleteDoc(collection, docId) {
 }
 
 // ============================================================
+// 인증 서버(auth-proxy) 연동 헬퍼
+// ★ AUTH_CONFIG.workerUrl 이 설정돼 있으면 서버 방식, 아니면 레거시
+// ============================================================
+function _authWorkerUrl() {
+    return (window.AUTH_CONFIG && window.AUTH_CONFIG.workerUrl) ? window.AUTH_CONFIG.workerUrl.replace(/\/+$/, '') : '';
+}
+function _useAuthServer() {
+    return !!_authWorkerUrl();
+}
+async function _authPost(path, payload) {
+    const base = _authWorkerUrl();
+    const res = await fetch(base + path, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload || {}),
+        signal: AbortSignal.timeout(12000),
+    });
+    let data = {};
+    try { data = await res.json(); } catch (e) {}
+    if (!res.ok && data.success === undefined) {
+        throw new Error(data.message || `서버 오류(${res.status})`);
+    }
+    return data;
+}
+
+// ============================================================
 // API 객체
 // ============================================================
 const API = {
@@ -351,11 +377,19 @@ const API = {
         },
 
         async isUserIdTaken(userId) {
+            if (_useAuthServer()) {
+                const r = await _authPost('/check-id', { userId });
+                return r.available === false;
+            }
             const user = await API.users.findByUserId(userId);
             return user !== null;
         },
 
         async isEmailTaken(email) {
+            if (_useAuthServer()) {
+                const r = await _authPost('/check-email', { email });
+                return r.available === false;
+            }
             const user = await API.users.findByEmail(email);
             return user !== null;
         },
@@ -366,12 +400,44 @@ const API = {
         },
 
         async create(userData) {
+            // 비밀번호가 포함된 신규 회원 생성은 서버에서 해싱 저장
+            if (_useAuthServer() && userData && userData.password) {
+                const r = await _authPost('/signup', { userData });
+                if (!r.success) throw new Error(r.message || '회원가입에 실패했습니다.');
+                return r.user;
+            }
             const data = {
                 ...userData,
                 createdAt: new Date().toISOString(),
                 status: userData.status || (userData.userType === 'expert' ? 'pending' : 'active')
             };
             return await _smartAddDoc('users', data);
+        },
+
+        // 현재 비밀번호를 알고 변경 (마이페이지 등)
+        async changePassword(userId, currentPassword, newPassword) {
+            if (_useAuthServer()) {
+                const r = await _authPost('/change-password', { userId, currentPassword, newPassword });
+                if (!r.success) throw new Error(r.message || '비밀번호 변경에 실패했습니다.');
+                return true;
+            }
+            const user = await API.users.findByUserId(userId);
+            if (!user) throw new Error('사용자를 찾을 수 없습니다.');
+            await _smartUpdateDoc('users', user.id, { password: newPassword, updatedAt: new Date().toISOString() });
+            return true;
+        },
+
+        // 휴대폰 본인인증 후 비밀번호 재설정 (비번찾기·전문가 초기설정)
+        async resetPassword(userId, phone, newPassword, extra) {
+            if (_useAuthServer()) {
+                const r = await _authPost('/reset-password', { userId, phone, newPassword, extra: extra || {} });
+                if (!r.success) throw new Error(r.message || '비밀번호 재설정에 실패했습니다.');
+                return true;
+            }
+            const user = await API.users.findByUserId(userId);
+            if (!user) throw new Error('사용자를 찾을 수 없습니다.');
+            await _smartUpdateDoc('users', user.id, { password: newPassword, tempPassword: false, ...(extra || {}), updatedAt: new Date().toISOString() });
+            return true;
         },
 
         async update(id, updates) {
@@ -386,11 +452,16 @@ const API = {
 
         async authenticate(userId, password, userType) {
             try {
+                if (_useAuthServer()) {
+                    const r = await _authPost('/login', { userId, password, userType });
+                    return r.success ? { success: true, user: r.user } : { success: false, message: r.message };
+                }
                 const user = await API.users.findByUserId(userId);
                 if (!user) return { success: false, message: '존재하지 않는 아이디입니다.' };
                 if (user.userType !== userType) return { success: false, message: '회원 유형이 일치하지 않습니다.' };
                 if (user.password !== password) return { success: false, message: '비밀번호가 올바르지 않습니다.' };
-                if (user.status === 'pending') return { success: false, message: '관리자 승인 대기 중입니다.' };
+                // 승인 대기(pending)·재승인 대기(re_review) 전문가도 로그인은 허용하고,
+                // 마이페이지에서 "승인 대기" 화면만 보여준다.
                 if (user.status === 'setup_pending') return { success: false, message: '계정 설정이 완료되지 않았습니다.' };
                 if (user.status === 'blocked') return { success: false, message: '이용이 제한된 계정입니다.' };
                 if (user.status === 'withdrawn') return { success: false, message: '탈퇴한 계정입니다.' };
