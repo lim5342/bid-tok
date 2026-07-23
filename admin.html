@@ -1553,7 +1553,13 @@ function fmtDate(d) {
 }
 function fmtDateTime(d) {
     if (!d) return '-';
-    return String(d).slice(0, 16).replace('T', ' ');
+    const dt = new Date(d);
+    if (isNaN(dt.getTime())) return String(d).slice(0, 16).replace('T', ' ');
+    // UTC로 저장된 시간을 한국시간(KST)으로 표시
+    return new Intl.DateTimeFormat('sv-SE', {
+        timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', hour12: false
+    }).format(dt);
 }
 function badge(status) {
     const labelMap = {
@@ -2929,7 +2935,7 @@ function renderExpertList(experts) {
                         ${docPreviewHtml(ex.insuranceDoc, '🛡️ 공제증서')}
                         ${docPreviewHtml(ex.officeDoc, '📜 자격증 사본')}
                         ${docPreviewHtml(ex.bizRegDoc, '🏢 사업자/중개사무소 등록증')}
-                        ${docPreviewHtml(ex.businessRegDoc, '📄 사업자등록증(공인중개사)')}
+                        ${docPreviewHtml(ex.businessRegDoc, '📄 사업자/사무소 등록증')}
                     </div>
                 </div>
             </div>

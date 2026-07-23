@@ -743,15 +743,14 @@
             modal.style.display = 'flex';
 
             try {
-                // expert_id로 법무사 정보 조회
+                // 배정된 전문가 정보 조회 (assigned_expert_id 우선 — doc id / userId 모두 대응)
                 let expert = null;
-                const expertId = app.expert_id || app.expertId;
+                const expertId = app.assigned_expert_id || app.expert_id || app.expertId;
                 if (expertId) {
-                    expert = await API.users.getById(expertId);
-                }
-                // expert_id 없으면 이름으로 fallback
-                if (!expert && (app.expert_name || app.expertName)) {
-                    // 그냥 신청서에 있는 정보만 활용
+                    try { expert = await API.users.getById(expertId); } catch(e) {}
+                    if (!expert && API.users.findByUserId) {
+                        try { expert = await API.users.findByUserId(expertId); } catch(e) {}
+                    }
                 }
 
                 const name    = expert?.name    || app.expert_name || app.expertName || '-';
@@ -759,6 +758,11 @@
                 const email   = expert?.email   || app.expert_email || '';
                 const office  = expert?.officeAddress || '';
                 const license = expert?.licenseNumber || '';
+                // 전문가 유형 라벨 (법무사 / 공인중개사)
+                const _t = String(expert?.expertType || app.expert_type || '').toLowerCase();
+                const typeLabel = expert?.expertTypeLabel
+                    || (_t.includes('realtor') || _t.includes('중개') ? '공인중개사'
+                        : _t.includes('lawyer') || _t.includes('법무') ? '법무사' : '전문가');
                 const profileUrl  = expert?.profileUrl  || '';
                 const profileType = expert?.profileType || '';
                 const isLogo = profileType === 'logo';
@@ -779,7 +783,7 @@
                         <div class="expert-profile-info" style="flex:1;">
                             <h4>${name}</h4>
                             <div class="badge-row">
-                                <span class="badge-partner">⚖️ 바토너</span>
+                                <span class="badge-partner">⚖️ ${typeLabel}</span>
                                 ${expert?.insuranceInfo ? '<span class="badge-insured">✅ 보증보험</span>' : ''}
                             </div>
                             ${license ? `<p style="font-size:0.8rem;color:#666;margin:0;">등록번호: ${license}</p>` : ''}

@@ -492,7 +492,7 @@
                         <input type="checkbox" id="t4" class="terms-chk">
                         <label for="t4"><span class="req-tag">[필수]</span> 합동사무실 활동 제한 확인
                             <small style="display:block;color:var(--gray-400);margin-top:2px;">
-                                동일사건 수임방지 및 정보 보안을 위해 여러 대리인이 소속된 합동사무실의 경우 바토너 활동에 제한이 있습니다.
+                                동일사건 수임방지 및 정보 보안을 위해 여러 대리인이 소속된 합동사무실의 경우 대리입찰톡 활동에 제한이 있습니다. (사무소당 1인만 등록 가능)
                             </small>
                         </label>
                     </div>
@@ -1007,7 +1007,8 @@ const EXPERT_TYPE_LABELS = {
         doc1: '매수신청대리인 등록증',
         doc2: '공제증서(손해배상책임보험)',
         doc3: '법무사 자격증 사본',
-        doc4: '사업자 등록증'
+        doc4: '사업자 등록증',
+        doc5: '법무사 사무소 등록증'
     },
     realtor: {
         licenseLabel: '공인중개사 등록번호(중개사무소 개설등록번호)',
@@ -1207,7 +1208,7 @@ function validateStep(step) {
         if (!docFiles.doc2) return (L.doc2 + '을(를) 업로드해주세요.');
         if (!docFiles.doc3) return (L.doc3 + '을(를) 업로드해주세요.');
         if (!docFiles.doc4) return (L.doc4 + '을(를) 업로드해주세요.');
-        if (expertType === 'realtor' && !docFiles.doc5) return ((L.doc5 || '사업자 등록증') + '을(를) 업로드해주세요.');
+        if (!docFiles.doc5) return ((L.doc5 || '추가 서류') + '을(를) 업로드해주세요.');
     }
     if (step === 6) {
         if (!document.getElementById('bankName').value) return '은행을 선택해주세요.';
@@ -1454,19 +1455,12 @@ function selectExpertType(type) {
         if (el) el.innerHTML = L[d] + ' <span class="req">*</span>';
     });
 
-    // 5번째 서류(사업자등록증)는 공인중개사만 노출
+    // 5번째 서류 — 유형별 라벨 (법무사: 사무소등록증 / 공인중개사: 사업자등록증)
     const box5 = document.getElementById('uploadBox5');
     if (box5) {
-        if (type === 'realtor') {
-            box5.style.display = '';
-            const el5 = document.getElementById('doc5Label');
-            if (el5) el5.innerHTML = (L.doc5 || '사업자 등록증') + ' <span class="req">*</span>';
-        } else {
-            box5.style.display = 'none';
-            docFiles.doc5 = null;
-            const n5 = document.getElementById('doc5Name');
-            if (n5) n5.textContent = '선택된 파일 없음';
-        }
+        box5.style.display = '';
+        const el5 = document.getElementById('doc5Label');
+        if (el5) el5.innerHTML = (L.doc5 || '추가 서류') + ' <span class="req">*</span>';
     }
 }
 

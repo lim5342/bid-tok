@@ -33,7 +33,7 @@
                 </div>
                 <h3 id="profileName">법무사</h3>
                 <p id="profileEmail">expert@example.com</p>
-                <span class="expert-badge">⚖️ 법무사</span>
+                <span class="expert-badge" id="expertBadge">⚖️ 전문가</span>
             </div>
             
             <nav class="sidebar-menu">
@@ -262,7 +262,7 @@
         }
 
         // 사용자 정보 로드
-        const user = Auth.getCurrentUser();
+        let user = Auth.getCurrentUser();
 
         // ── 승인 대기 / 재승인 대기 안내 배너 ────────────────────────
         //  status !== 'active' 이면 의뢰 수임 불가. 상단에 안내 표시.
@@ -275,6 +275,18 @@
                 : '⏳ <strong>승인 대기 중입니다.</strong> 운영팀 서류 검토 후 활성화되며, 승인 완료 시 새 의뢰를 수임하실 수 있습니다. 문의: 02-853-5875';
             document.body.prepend(banner);
         }
+
+        // 전문가 유형 배지 (법무사 / 공인중개사)
+        function applyExpertBadge(u) {
+            const badge = document.getElementById('expertBadge');
+            if (!badge) return;
+            const t = String(u.expertType || u.expertTypeLabel || '').toLowerCase();
+            const label = u.expertTypeLabel
+                || (t.includes('realtor') || t.includes('중개') ? '공인중개사'
+                    : t.includes('lawyer') || t.includes('법무') ? '법무사' : '전문가');
+            badge.textContent = '⚖️ ' + label;
+        }
+        applyExpertBadge(user);
 
         document.getElementById('userName').textContent = user.name;
         document.getElementById('profileName').textContent = user.name;
@@ -462,6 +474,21 @@
             const listContainer = document.getElementById('requestsList');
             setLoading('requestsList');
             try {
+                // 최신 전문가 정보 동기화 (활동법원·유형·승인상태) — 세션에 없을 수 있어 DB에서 보강
+                try {
+                    let fresh = null;
+                    try { fresh = await API.users.getById(user.id); } catch(e) {}
+                    if (!fresh && API.users.findByUserId) { try { fresh = await API.users.findByUserId(user.userId); } catch(e) {} }
+                    if (fresh) {
+                        user.serviceRegions  = fresh.serviceRegions  || user.serviceRegions;
+                        user.selectedCourts  = fresh.selectedCourts  || user.selectedCourts;
+                        user.expertType      = fresh.expertType      || user.expertType;
+                        user.expertTypeLabel = fresh.expertTypeLabel || user.expertTypeLabel;
+                        user.status          = fresh.status          || user.status;
+                        user.phone           = fresh.phone           || user.phone;
+                    }
+                } catch(e) { console.warn('전문가 정보 동기화 실패:', e); }
+                applyExpertBadge(user);
                 // ── 브로드캐스트 + 선착순 방식 ────────────────────────────
                 //  ① 나에게 이미 배정된 요청(매칭완료/매칭중)
                 //  ② 내 활동법원의 "미배정" 의뢰 전체 (승인된 전문가 + 유형 일치일 때만)
