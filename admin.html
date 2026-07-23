@@ -2331,12 +2331,17 @@ async function openAssign(appId) {
             return;
         }
 
-        // ★ selectedCourts 배열로 법원 정확 매칭 (serviceRegions 지역 fallback)
+        // ★ 활동법원 매칭 (selectedCourts + serviceRegions 병합, 법원명 정규화)
+        //   신청서 "○○지방법원" ↔ 전문가 "○○지법" 표기 통일 후 비교
+        const _normCourt = v => String(v || '').replace(/지방법원/g, '지법').replace(/\s+/g, ' ').trim();
         const courtMatch = experts.filter(e => {
-            const courts  = Array.isArray(e.selectedCourts)  ? e.selectedCourts  : [];
-            const regions = Array.isArray(e.serviceRegions)  ? e.serviceRegions  : [e.serviceRegions || ''];
-            if (court  && courts.some(c  => c === court || court.includes(c) || c.includes(court))) return true;
-            if (region && regions.some(r => r && r.includes(region))) return true;
+            const courts = [
+                ...(Array.isArray(e.selectedCourts) ? e.selectedCourts : []),
+                ...(Array.isArray(e.serviceRegions) ? e.serviceRegions : (e.serviceRegions ? [e.serviceRegions] : []))
+            ].map(_normCourt).filter(Boolean);
+            const c = _normCourt(court);
+            if (c && courts.some(x => x === c || x.includes(c) || c.includes(x))) return true;
+            if (region && courts.some(r => r && r.includes(region))) return true;
             return false;
         });
         const outMatch = experts.filter(e => !courtMatch.includes(e));
@@ -2862,7 +2867,7 @@ function renderExpertList(experts) {
             </div>`;
         }
 
-        const docCount = [ex.licenseDoc, ex.insuranceDoc, ex.officeDoc, ex.bizRegDoc].filter(Boolean).length;
+        const docCount = [ex.licenseDoc, ex.insuranceDoc, ex.officeDoc, ex.bizRegDoc, ex.businessRegDoc].filter(Boolean).length;
 
         return `
     <div class="expert-card" id="ec_${ex.id}">
@@ -2915,15 +2920,16 @@ function renderExpertList(experts) {
             <!-- 첨부 서류 (토글) -->
             <div class="doc-section doc-open" id="docs_${ex.id}">
                 <div class="doc-section-head" onclick="toggleDocSection('${ex.id}')">
-                    <span class="doc-title"><i class="fas fa-paperclip"></i> 첨부 서류 <span style="background:${docCount===4?'#dcfce7':'#fff7ed'};color:${docCount===4?'#16a34a':'#f97316'};padding:1px 8px;border-radius:20px;font-size:0.7rem;">${docCount}/4 업로드</span></span>
+                    <span class="doc-title"><i class="fas fa-paperclip"></i> 첨부 서류 <span style="background:${docCount>=4?'#dcfce7':'#fff7ed'};color:${docCount>=4?'#16a34a':'#f97316'};padding:1px 8px;border-radius:20px;font-size:0.7rem;">${docCount}개 업로드</span></span>
                     <i class="fas fa-chevron-up doc-toggle-icon"></i>
                 </div>
                 <div class="doc-section-body">
                     <div class="doc-grid">
                         ${docPreviewHtml(ex.licenseDoc, '📋 대리인등록증')}
                         ${docPreviewHtml(ex.insuranceDoc, '🛡️ 공제증서')}
-                        ${docPreviewHtml(ex.officeDoc, '🏢 사무실등록증')}
-                        ${docPreviewHtml(ex.bizRegDoc, '📄 사업자등록증')}
+                        ${docPreviewHtml(ex.officeDoc, '📜 자격증 사본')}
+                        ${docPreviewHtml(ex.bizRegDoc, '🏢 사업자/중개사무소 등록증')}
+                        ${docPreviewHtml(ex.businessRegDoc, '📄 사업자등록증(공인중개사)')}
                     </div>
                 </div>
             </div>

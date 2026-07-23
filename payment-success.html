@@ -282,72 +282,74 @@ function getUserExpertType(u) {
 }
 
 // ══════════════════════════════════════════════════════
-// 전문가 자동 매칭
-//   ★ 규칙:
-//     1) userType === 'expert' (의뢰인 제외)
-//     2) status === 'active'  (관리자 승인 완료된 전문가만!)
-//     3) 신청 유형과 전문가 유형 일치 (공인중개사↔공인중개사 / 법무사↔법무사)
-//     4) 지역 우선 → 없으면 전국, 로드밸런싱
+// 결제 후 매칭 처리 (v2 — 자동배정 폐지)
+//   ★ 변경 이유(2026-07): 활동 법원 밖·날짜 불가 전문가에게
+//      자동배정되는 오배정 사고 방지. 이제 자동으로 배정하지 않고
+//      '매칭중' 상태로 두어, 관리자 배정 또는 (구축 예정)
+//      전문가 선착순 수락으로만 매칭한다.
 // ══════════════════════════════════════════════════════
+// 전문가 활동법원 목록 (serviceRegions + selectedCourts 병합)
+function getExpertCourts(u) {
+    const a = Array.isArray(u.selectedCourts) ? u.selectedCourts : [];
+    const b = Array.isArray(u.serviceRegions) ? u.serviceRegions : (u.serviceRegions ? [u.serviceRegions] : []);
+    return [...new Set([...a, ...b].filter(Boolean))];
+}
+// 법원명 정규화: 신청서 "○○지방법원" ↔ 전문가 "○○지법" 표기 통일
+function normCourtP(v) {
+    return String(v || '').replace(/지방법원/g, '지법').replace(/\s+/g, ' ').trim();
+}
+// 신청 법원 ∈ 전문가 활동법원 (정규화 후 비교)
+function courtMatchP(appCourt, courts) {
+    if (!appCourt || !courts || courts.length === 0) return false;
+    const c = normCourtP(appCourt);
+    return courts.some(mc => { const m = normCourtP(mc); return m && (m === c || m.includes(c) || c.includes(m)); });
+}
+
 async function autoMatchExpert(appId) {
     try {
         const app = await API.applications.getById(appId);
         if (!app) return;
 
-        const region   = app.region || '';
-        const wantType = getAppExpertType(app);   // 'realtor' | 'lawyer' | ''
-        let matched    = null;
+        // 자동배정하지 않음. '매칭중'으로 표시하여 선착순 수락 대기.
+        await API.applications.updateStatus(appId, '매칭중', {
+            match_stage: 'awaiting_accept',
+            updatedAt: new Date().toISOString()
+        });
+        console.log('[매칭] 자동배정 없이 매칭중 상태로 대기 (선착순 수락).');
 
-        // ── 전체 사용자에서 "승인된 전문가"만 추출 (getAll은 필터를 무시하므로 JS에서 필터) ──
-        const res = await API.users.getAll();
-        const allUsers = res?.data || [];
-
-        let approvedExperts = allUsers.filter(u =>
-            u.userType === 'expert' && u.status === 'active'
-        );
-
-        // ── 유형 일치 필터 (신청 유형이 명확할 때만) ──
-        if (wantType) {
-            const typeMatched = approvedExperts.filter(u => {
-                const ut = getUserExpertType(u);
-                // 전문가에 유형 정보가 없으면(레거시 데이터) 배정 후보에서 제외해
-                // 잘못된 유형 배정을 막는다.
-                return ut === wantType;
+        // ── 자격 맞는 전문가(승인+활동법원+유형)에게 새 의뢰 문자 알림 ──
+        try {
+            const res = await API.users.getAll();
+            const experts = (res?.data || []).filter(u => u.userType === 'expert' && u.status === 'active');
+            const wantType = getAppExpertType(app);
+            const court = app.court || '';
+            const eligible = experts.filter(u => {
+                const typeOk = !wantType || getUserExpertType(u) === wantType;
+                return typeOk && courtMatchP(court, getExpertCourts(u));
             });
-            // 유형이 일치하는 승인 전문가가 있으면 그들만 후보로 사용.
-            // (없으면 배정하지 않고 관리자 수동 배정 대기)
-            approvedExperts = typeMatched;
-        }
+            const SMS_URL = 'https://bidtok-sms-proxy.qkqk5342.workers.dev';
+            await Promise.all(eligible.map(ex => ex.phone ? fetch(SMS_URL, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: 'expert_new_request', to: ex.phone,
+                    data: { name: ex.name, court, caseNumber: app.case_number, bidDate: app.bid_date } })
+            }).catch(() => {}) : Promise.resolve()));
+            console.log(`[매칭] 자격 전문가 ${eligible.length}명에게 새 의뢰 알림 발송`);
 
-        if (approvedExperts.length === 0) {
-            console.warn('배정 가능한 승인 전문가가 없습니다. 관리자 수동 배정 대기.',
-                { wantType, region });
-            return;   // 승인 전문가 없음 → 배정하지 않음 (잘못된 배정 방지)
-        }
-
-        // ① 지역 우선
-        if (region) {
-            const regional = approvedExperts.filter(e => {
-                const regs = Array.isArray(e.serviceRegions)
-                    ? e.serviceRegions
-                    : [e.serviceRegions || ''];
-                return regs.some(r => r && r.includes(region));
-            });
-            if (regional.length > 0) {
-                matched = await pickLeastBusy(regional);
+            // 자격 전문가가 없으면 관리자에게 알림(직접 섭외용)
+            if (eligible.length === 0) {
+                const ADMIN_PHONES = ['01083445342'];  // 관리자 알림 수신 번호
+                await Promise.all(ADMIN_PHONES.map(p => fetch(SMS_URL, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: 'expert_new_request', to: p,
+                        data: { name: '관리자', court, caseNumber: app.case_number, bidDate: app.bid_date } })
+                }).catch(() => {})));
+                console.log('[매칭] 자격 전문가 없음 → 관리자 알림 발송');
             }
-        }
-
-        // ② 지역 전문가 없으면 유형 일치 승인 전문가 전체에서 로드밸런싱
-        if (!matched) {
-            matched = await pickLeastBusy(approvedExperts);
-        }
-
-        if (matched) {
-            await assignAndNotify(appId, app, matched);
+        } catch(notifyErr) {
+            console.warn('전문가 알림 발송 실패:', notifyErr);
         }
     } catch(e) {
-        console.error('전문가 자동 매칭 오류:', e);
+        console.error('매칭 처리 오류:', e);
     }
 }
 

@@ -263,6 +263,19 @@
 
         // 사용자 정보 로드
         const user = Auth.getCurrentUser();
+
+        // ── 승인 대기 / 재승인 대기 안내 배너 ────────────────────────
+        //  status !== 'active' 이면 의뢰 수임 불가. 상단에 안내 표시.
+        if (user.userType === 'expert' && user.status !== 'active' && !IS_ADMIN_AS) {
+            const isReReview = user.status === 're_review';
+            const banner = document.createElement('div');
+            banner.style.cssText = 'position:sticky;top:0;z-index:50;background:#fffbeb;border-bottom:2px solid #fcd34d;color:#92400e;padding:0.9rem 1.2rem;font-size:0.9rem;line-height:1.6;text-align:center;';
+            banner.innerHTML = isReReview
+                ? '🔎 <strong>재승인 검토 중입니다.</strong> 정보 변경으로 재확인이 진행 중이며, 완료 전까지 새 의뢰 수임이 제한됩니다. 문의: 02-853-5875'
+                : '⏳ <strong>승인 대기 중입니다.</strong> 운영팀 서류 검토 후 활성화되며, 승인 완료 시 새 의뢰를 수임하실 수 있습니다. 문의: 02-853-5875';
+            document.body.prepend(banner);
+        }
+
         document.getElementById('userName').textContent = user.name;
         document.getElementById('profileName').textContent = user.name;
         document.getElementById('profileEmail').textContent = user.email;
@@ -340,7 +353,9 @@
                 '제주지법'
             ]
         };
-        const savedCourts = Array.isArray(user.selectedCourts) ? user.selectedCourts : [];
+        const savedCourts = (Array.isArray(user.selectedCourts) && user.selectedCourts.length)
+            ? user.selectedCourts
+            : (Array.isArray(user.serviceRegions) ? user.serviceRegions : (user.serviceRegions ? [user.serviceRegions] : []));
         const courtWrap = document.getElementById('courtEditWrap');
         if (courtWrap) {
             let html = '';
@@ -405,15 +420,78 @@
                 '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>불러오는 중...</p></div>';
         }
 
-        // ── 배정 요청 로드 (매칭완료 + 매칭중 모두 포함) ────────────
+        // ── 매칭 자격 판정 헬퍼 ─────────────────────────────────────
+        // 전문가의 활동법원 목록 (가입 serviceRegions + 마이페이지 selectedCourts 둘 다 인식)
+        function getMyCourts(u) {
+            const a = Array.isArray(u.selectedCourts) ? u.selectedCourts : [];
+            const b = Array.isArray(u.serviceRegions) ? u.serviceRegions : (u.serviceRegions ? [u.serviceRegions] : []);
+            return [...new Set([...a, ...b].filter(Boolean))];
+        }
+        // 전문가 유형 정규화 (realtor/lawyer)
+        function normType(v) {
+            if (!v) return '';
+            const s = String(v).toLowerCase().trim();
+            if (s === 'realtor' || s.includes('공인중개') || s.includes('매수신청') || s.includes('중개')) return 'realtor';
+            if (s === 'lawyer'  || s.includes('법무')) return 'lawyer';
+            return '';
+        }
+        // 법원명 정규화: 신청서는 "○○지방법원", 전문가는 "○○지법"으로 표기가 달라
+        //  통일해야 매칭됨. (예: 수원지방법원 ↔ 수원지법)
+        function normCourt(v) {
+            return String(v || '').replace(/지방법원/g, '지법').replace(/\s+/g, ' ').trim();
+        }
+        // 신청 법원이 내 활동법원에 포함되는지 (정규화 후 양방향 포함 매칭)
+        function courtMatch(appCourt, myCourts) {
+            if (!appCourt || !myCourts || myCourts.length === 0) return false;
+            const c = normCourt(appCourt);
+            return myCourts.some(mc => {
+                const m = normCourt(mc);
+                return m && (m === c || m.includes(c) || c.includes(m));
+            });
+        }
+        // 신청 유형과 전문가 유형 일치 (유형 불명확한 신청은 통과시켜 누락 방지)
+        function typeMatch(appType, myType) {
+            const at = normType(appType);
+            if (!at) return true;      // 신청 유형 불명 → 유형 필터 미적용
+            if (!myType) return false; // 전문가 유형 불명 → 후보 제외
+            return at === myType;
+        }
+
+        // ── 배정 요청 로드 (① 내 배정 + ② 활동법원 미배정 의뢰) ──────
         async function loadRequests() {
             const listContainer = document.getElementById('requestsList');
             setLoading('requestsList');
             try {
-                // 매칭완료(관리자 배정) + 매칭중(법무사 직접 배정 대기) 모두 가져옴
-                const allData = await API.applications.getByExpertId(user.userId || user.id);
-                // 배정 요청 = 매칭완료 또는 매칭중 상태
-                const data = allData.filter(a => a.status === '매칭완료' || a.status === '매칭중');
+                // ── 브로드캐스트 + 선착순 방식 ────────────────────────────
+                //  ① 나에게 이미 배정된 요청(매칭완료/매칭중)
+                //  ② 내 활동법원의 "미배정" 의뢰 전체 (승인된 전문가 + 유형 일치일 때만)
+                const myId      = user.userId || user.id;
+                const myCourts  = getMyCourts(user);
+                const myType    = normType(user.expertType || user.expertTypeLabel);
+                const iAmActive = (user.status === 'active');
+
+                const res = await API.applications.getAll();
+                const allApps = res?.data || [];
+
+                const assignedToMe = allApps.filter(a =>
+                    (a.assigned_expert_id === myId) &&
+                    ['매칭완료', '매칭중', '접수'].includes(a.status));
+
+                // 미배정 공개 의뢰 (선착순 대상)
+                const openPool = !iAmActive ? [] : allApps.filter(a => {
+                    if (a.assigned_expert_id) return false;                 // 이미 누가 가져감
+                    if (!['매칭중', '결제완료', '접수'].includes(a.status)) return false;
+                    if (a.rejectedExpert === myId) return false;            // 내가 거절한 건 제외
+                    if (!courtMatch(a.court, myCourts)) return false;       // 활동법원 일치
+                    if (!typeMatch(a.expert_type || a.expertType, myType)) return false; // 유형 일치
+                    return true;
+                });
+
+                // 합치기(중복 제거)
+                const seen = new Set();
+                const data = [...assignedToMe, ...openPool].filter(a => {
+                    if (seen.has(a.id)) return false; seen.add(a.id); return true;
+                });
                 document.getElementById('pendingCount').textContent = data.length;
 
                 if (data.length === 0) {
@@ -650,17 +728,31 @@
 
         // ── 수락(승인) ─────────────────────────────────────────────
         async function acceptRequest(id) {
+            // 승인 전 자격 재확인
+            if (user.status !== 'active') {
+                alert('아직 승인 대기 중인 계정입니다.\n관리자 승인 완료 후 의뢰를 수임하실 수 있습니다.');
+                return;
+            }
             if (!confirm('승인하시면 신청자 연락처·입찰가·환급계좌가 공개됩니다.\n승인 후 취소 3회 시 계정이 자동 정지됩니다.\n\n이 요청을 승인하시겠습니까?')) return;
+            const myId = user.userId || user.id;
             try {
-                const db = getDB();
-                const appDoc = await db.collection('applications').doc(id).get();
-                const appData = appDoc.data();
+                // ── 선착순 잠금: 최신 상태 재조회 후 미배정일 때만 수임 ──
+                const latest = await API.applications.getById(id);
+                if (!latest) { alert('의뢰 정보를 찾을 수 없습니다.'); loadRequests(); return; }
+                if (latest.assigned_expert_id && latest.assigned_expert_id !== myId) {
+                    alert('이미 다른 전문가가 수임한 사건입니다.\n목록을 새로고침합니다.');
+                    loadRequests();
+                    return;
+                }
+                const appData = latest;
 
-                // ★ 핵심 수정: assigned_expert_id + expert_name 필드명 통일
+                // ★ 필드명 통일 + 선착순 수임 확정
                 await API.applications.updateStatus(id, '진행중', {
                     acceptedAt:          new Date().toISOString(),
-                    assigned_expert_id:  user.userId || user.id,   // 필드명 통일
-                    expert_name:         user.name,                 // 필드명 통일
+                    matched_at:          new Date().toISOString(),
+                    assigned_expert_id:  myId,
+                    expert_name:         user.name,
+                    expert_phone:        user.phone || '',
                     bid_amount_revealed: true
                 });
 
@@ -1010,7 +1102,8 @@
                 name:          document.getElementById('profileNameInput').value,
                 phone:         document.getElementById('profilePhone').value,
                 officeAddress: document.getElementById('officeAddress').value,
-                selectedCourts
+                selectedCourts,
+                serviceRegions: selectedCourts   // 매칭에서 양쪽 필드 모두 인식되도록 동기화
             };
             // 관리자 모드: 추가 필드 수정
             if (IS_ADMIN_AS) {
