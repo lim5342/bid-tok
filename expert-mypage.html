@@ -1085,8 +1085,8 @@
         // ★ 메뉴 클릭·로그아웃·모달닫기 (onclick 에서 호출되므로 반드시 전역 노출)
         window.showSection            = showSection;
         window.handleLogout           = handleLogout;
-        window.handleWithdraw         = handleWithdraw;
         window.closeExpertDetailModal = closeExpertDetailModal;
+        // (handleWithdraw 는 아래에서 window.handleWithdraw = async function... 으로 이미 노출됨)
 
         // 거절 모달 이벤트 (DOMContentLoaded)
         //  (결과 모달 X·라디오·확정 버튼은 위에서 직접 onclick/onchange 로 처리 — 안정적)
