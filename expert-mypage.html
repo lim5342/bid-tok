@@ -380,11 +380,11 @@
                 html += `<div style="margin-bottom:0.85rem;"><p style="font-size:0.78rem;font-weight:700;color:#667eea;margin:0 0 0.4rem;">${region}</p><div style="display:flex;flex-wrap:wrap;gap:0.35rem;">`;
                 courts.forEach(court => {
                     const checked = savedCourts.includes(court) ? 'checked' : '';
-                    html += `<label style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border:1.5px solid ${checked?'#667eea':'#e0e0e0'};border-radius:20px;font-size:0.78rem;cursor:pointer;background:${checked?'#eff6ff':'#fff'};transition:all 0.15s;"
+                    html += `<div onclick="toggleCourt(this)" style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border:1.5px solid ${checked?'#667eea':'#e0e0e0'};border-radius:20px;font-size:0.78rem;cursor:pointer;background:${checked?'#eff6ff':'#fff'};transition:all 0.15s;user-select:none;"
                         id="cl_${encodeURIComponent(court)}">
-                        <input type="checkbox" name="selectedCourts" value="${court}" ${checked} style="display:none;" onchange="updateCourtLabel(this)">
+                        <input type="checkbox" name="selectedCourts" value="${court}" ${checked} style="display:none;">
                         ${court}
-                    </label>`;
+                    </div>`;
                 });
                 html += '</div></div>';
             });
@@ -959,6 +959,60 @@
         // 구버전 updateStatus 호환
         function updateStatus(id) { openResultModal(id); }
 
+        // ── 결과 모달: 직접 onclick 방식 (안정적) ───────────────────
+        window.closeResultModal = function() {
+            const m = document.getElementById('resultModal');
+            if (m) m.style.display = 'none';
+        };
+        window.enableResultSubmit = function() {
+            const btn = document.getElementById('resultSubmitBtn');
+            if (!btn) return;
+            btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer';
+        };
+        window.submitResult = async function() {
+            const modal    = document.getElementById('resultModal');
+            const id       = modal.dataset.appId;
+            const selected = document.querySelector('input[name="bidResult"]:checked');
+            if (!selected) { alert('낙찰 또는 패찰을 선택해주세요.'); return; }
+            const isSuccess   = selected.value === 'success';
+            const finalStatus = isSuccess ? '낙찰' : '사건종료';
+            const btn = document.getElementById('resultSubmitBtn');
+            btn.disabled = true; btn.textContent = '처리 중...';
+            try {
+                const appData = await _smartGetDoc('applications', id) || {};
+                await API.applications.updateStatus(id, finalStatus, {
+                    completedAt:  new Date().toISOString(),
+                    closedAt:     new Date().toISOString(),
+                    result:       isSuccess ? 'success' : 'fail',
+                    closedBy:     user.userId || user.id,
+                    closedByName: user.name
+                });
+                if (appData && appData.phone) {
+                    sendKakaoNotif(isSuccess ? 'bid_won' : 'bid_lost', appData.phone, {
+                        appId:       id.slice(-8).toUpperCase(),
+                        name:        appData.applicant_name || '',
+                        court:       appData.court          || '',
+                        caseNumber:  appData.case_number    || '',
+                        bidDate:     appData.bid_date       || '',
+                        bidAmount:   appData.bid_amount     || 0,
+                        expertName:  user.name              || '',
+                        expertPhone: user.phone             || '',
+                        result:      isSuccess ? '낙찰' : '패찰',
+                    });
+                }
+                modal.style.display = 'none';
+                showExpertToast(
+                    isSuccess ? '🎉 낙찰! 사건이 종료되었습니다.' : '📋 패찰. 사건이 종료되었습니다.',
+                    isSuccess ? 'success' : 'info'
+                );
+                loadOngoing();
+                loadCompleted();
+            } catch (err) {
+                alert('처리 중 오류가 발생했습니다.');
+                btn.disabled = false; btn.textContent = '사건종료 확정';
+            }
+        };
+
         // ── 토스트 알림 ───────────────────────────────────────
         function showExpertToast(message, type) {
             const colors = { success: '#10B981', error: '#ef4444', info: '#1550E8' };
@@ -1034,72 +1088,9 @@
         window.handleWithdraw         = handleWithdraw;
         window.closeExpertDetailModal = closeExpertDetailModal;
 
-        // 결과 모달 + 거절 모달 이벤트 (DOMContentLoaded)
+        // 거절 모달 이벤트 (DOMContentLoaded)
+        //  (결과 모달 X·라디오·확정 버튼은 위에서 직접 onclick/onchange 로 처리 — 안정적)
         document.addEventListener('DOMContentLoaded', function() {
-            // 결과 라디오 → 버튼 활성화
-            document.querySelectorAll('input[name="bidResult"]').forEach(radio => {
-                radio.addEventListener('change', function() {
-                    const btn = document.getElementById('resultSubmitBtn');
-                    btn.disabled = false;
-                    btn.style.opacity = '1';
-                    btn.style.cursor = 'pointer';
-                });
-            });
-
-            // 사건종료 확정 버튼
-            document.getElementById('resultSubmitBtn').addEventListener('click', async function() {
-                const modal    = document.getElementById('resultModal');
-                const id       = modal.dataset.appId;
-                const selected = document.querySelector('input[name="bidResult"]:checked');
-                if (!selected) return;
-                const isSuccess   = selected.value === 'success';
-                const finalStatus = isSuccess ? '낙찰' : '사건종료';
-                this.disabled     = true;
-                this.textContent  = '처리 중...';
-                try {
-                    const appData = await _smartGetDoc('applications', id) || {};
-
-                    await API.applications.updateStatus(id, finalStatus, {
-                        completedAt:  new Date().toISOString(),
-                        closedAt:     new Date().toISOString(),
-                        result:       isSuccess ? 'success' : 'fail',
-                        closedBy:     user.userId || user.id,
-                        closedByName: user.name
-                    });
-
-                    if (appData && appData.phone) {
-                        sendKakaoNotif(isSuccess ? 'bid_won' : 'bid_lost', appData.phone, {
-                            appId:       id.slice(-8).toUpperCase(),
-                            name:        appData.applicant_name || '',
-                            court:       appData.court          || '',
-                            caseNumber:  appData.case_number    || '',
-                            bidDate:     appData.bid_date       || '',
-                            bidAmount:   appData.bid_amount     || 0,
-                            expertName:  user.name              || '',
-                            expertPhone: user.phone             || '',
-                            result:      isSuccess ? '낙찰' : '패찰',
-                        });
-                    }
-
-                    modal.style.display = 'none';
-                    showExpertToast(
-                        isSuccess ? '🎉 낙찰! 사건이 종료되었습니다.' : '📋 패찰. 사건이 종료되었습니다.',
-                        isSuccess ? 'success' : 'info'
-                    );
-                    loadOngoing();
-                    loadCompleted();
-                } catch (err) {
-                    alert('처리 중 오류가 발생했습니다.');
-                } finally {
-                    this.disabled    = false;
-                    this.textContent = '사건종료 확정';
-                }
-            });
-
-            document.getElementById('resultModalClose').addEventListener('click', function() {
-                document.getElementById('resultModal').style.display = 'none';
-            });
-
             // 거절 모달 라디오 → 기타 텍스트 영역 표시 + 버튼 활성화
             document.querySelectorAll('input[name="rejectReason"]').forEach(function(r) {
                 r.addEventListener('change', function() {
@@ -1113,7 +1104,16 @@
             });
         });
 
-        // ── 법원 라벨 색상 업데이트 ───────────────────────────
+        // ── 활동법원 칩 토글 (클릭 시 선택/해제) ───────────────
+        window.toggleCourt = function(el) {
+            const cb = el.querySelector('input[type="checkbox"]');
+            if (!cb) return;
+            cb.checked = !cb.checked;
+            if (cb.checked) { el.style.borderColor = '#667eea'; el.style.background = '#eff6ff'; }
+            else            { el.style.borderColor = '#e0e0e0'; el.style.background = '#fff'; }
+        };
+
+        // ── 법원 라벨 색상 업데이트 (구버전 호환) ───────────────
         window.updateCourtLabel = function(checkbox) {
             const label = checkbox.closest('label');
             if (!label) return;
@@ -1424,27 +1424,27 @@
         <div class="result-modal-box">
             <div class="result-modal-header">
                 <h3><i class="fas fa-gavel" style="color:#1550E8;margin-right:0.5rem;"></i>사건종료 – 결과 입력</h3>
-                <button id="resultModalClose" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#999;line-height:1;">&times;</button>
+                <button id="resultModalClose" onclick="closeResultModal()" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#999;line-height:1;">&times;</button>
             </div>
             <div class="result-modal-body">
                 <p style="font-size:0.88rem;color:#888;margin-bottom:1.25rem;">이번 입찰 결과를 선택해주세요.</p>
                 <div class="result-options">
                     <div class="result-option">
-                        <input type="radio" name="bidResult" id="resultSuccess" value="success">
+                        <input type="radio" name="bidResult" id="resultSuccess" value="success" onchange="enableResultSubmit()">
                         <label for="resultSuccess">
                             <span class="result-icon">🎉</span>
                             <span class="result-text">낙찰</span>
                         </label>
                     </div>
                     <div class="result-option">
-                        <input type="radio" name="bidResult" id="resultFail" value="fail">
+                        <input type="radio" name="bidResult" id="resultFail" value="fail" onchange="enableResultSubmit()">
                         <label for="resultFail">
                             <span class="result-icon">📋</span>
                             <span class="result-text">패찰</span>
                         </label>
                     </div>
                 </div>
-                <button id="resultSubmitBtn" class="btn btn-primary"
+                <button id="resultSubmitBtn" class="btn btn-primary" onclick="submitResult()"
                     style="width:100%;padding:0.9rem;font-size:1rem;opacity:0.5;cursor:not-allowed;"
                     disabled>사건종료 확정</button>
             </div>
