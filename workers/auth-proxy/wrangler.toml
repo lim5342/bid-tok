@@ -1,0 +1,10 @@
+name = "bidtok-auth-proxy"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+# ── 시크릿 등록 (값은 코드/설정에 넣지 않는다) ─────────────
+#   wrangler secret put FIREBASE_SA        ← 서비스 계정 JSON 전체 붙여넣기
+#   wrangler secret put ADMIN_MIGRATE_KEY  ← 일괄 마이그레이션 보호용 임의 문자열
+#
+# 배포:
+#   cd workers/auth-proxy && npx wrangler deploy

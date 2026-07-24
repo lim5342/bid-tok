@@ -117,13 +117,14 @@
     <div id="errorView" style="display:none;">
         <div class="icon-wrap">❌</div>
         <h1>결제 확인 실패</h1>
-        <p>결제 정보 확인 중 오류가 발생했습니다.<br>고객센터로 문의해주세요.</p>
+        <p>결제 처리 중 오류가 발생했습니다.<br><strong>이미 결제가 되었을 수 있으니, 먼저 '내 신청 확인'에서 확인해 주세요.</strong><br>중복 결제 방지를 위해 바로 다시 결제하지 마시고, 문제가 계속되면 고객센터로 문의해주세요.</p>
         <p style="font-size:0.88rem;background:#f0f4ff;padding:0.75rem 1rem;border-radius:10px;color:#1550E8;">
             📞 <strong>02-853-5875</strong> &nbsp;|&nbsp; 평일 09:00~18:00
         </p>
         <div class="btn-wrap">
-            <a href="apply.html" class="btn btn-outline"><i class="fas fa-redo"></i> 다시 신청</a>
-            <a href="index.html" class="btn btn-primary"><i class="fas fa-home"></i> 홈으로</a>
+            <a href="mypage.html" class="btn btn-primary"><i class="fas fa-clipboard-list"></i> 내 신청 확인</a>
+            <a href="javascript:history.back()" class="btn btn-outline"><i class="fas fa-redo"></i> 결제 다시 시도</a>
+            <a href="index.html" class="btn btn-outline"><i class="fas fa-home"></i> 홈으로</a>
         </div>
     </div>
 </div>
@@ -180,11 +181,18 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         if (!confirmRes.ok || confirmData.success === false) {
             const msg = confirmData.message || confirmData.error || '결제 승인에 실패했습니다.';
-            console.error('결제 승인 실패:', confirmData);
-            showError(msg);
-            return;
+            // "이미 처리된 결제"는 실제로는 결제가 성공한 상태(승인 중복 호출).
+            // 실패로 보지 않고 성공 흐름으로 계속 진행한다.
+            const alreadyDone = /이미\s*처리|처리된\s*결제|already|ALREADY_PROCESSED|중복/i.test(msg);
+            if (!alreadyDone) {
+                console.error('결제 승인 실패:', confirmData);
+                showError(msg);
+                return;
+            }
+            console.warn('이미 처리된 결제 → 성공으로 간주하고 진행');
+        } else {
+            console.log('✅ 결제 승인 완료:', confirmData);
         }
-        console.log('✅ 결제 승인 완료:', confirmData);
 
         // ── 2. orderId로 신청 건 찾아 상태 업데이트 ───────
         setStep('신청 정보 저장 중...');

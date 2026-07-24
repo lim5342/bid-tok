@@ -107,6 +107,15 @@ export default {
                `${d.expertName ? '담당: ' + d.expertName + ' 전문가\n' : ''}` +
                `${d.appId ? '신청번호: ' + d.appId + '\n' : ''}` +
                `진행 상황은 마이페이지에서 확인하실 수 있습니다.\n▶ https://bid-tok.kr/mypage.html`;
+      } else if (type === 'expert_new_request') {
+        // 전문가에게: 내 활동법원에 새 의뢰 도착 (선착순 수락 안내)
+        const d = data || {};
+        const name = d.name || '전문가';
+        text = `[대리입찰톡] ${name}님, 활동 법원에 새로운 대리입찰 의뢰가 도착했습니다.\n` +
+               `${d.court ? '법원: ' + d.court + '\n' : ''}` +
+               `${d.caseNumber ? '사건: ' + d.caseNumber + '\n' : ''}` +
+               `${d.bidDate ? '입찰일: ' + d.bidDate + '\n' : ''}` +
+               `먼저 수락하시는 전문가에게 배정됩니다. 지금 확인하세요.\n▶ https://bid-tok.kr/expert-mypage.html`;
       } else if (code) {
         // 기본 인증번호 발송
         text = `[대리입찰톡] 인증번호 [${code}]를 입력해주세요. (5분 이내 입력)`;

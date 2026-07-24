@@ -469,6 +469,7 @@
    전역 상태
 ═══════════════════════════════════════════ */
 let expertUser = null;   // Firestore 사용자 문서
+let setupTokenGlobal = null;  // 초대 토큰(설정 저장 시 사용)
 let currentStep = 0;     // 1, 2, 3
 
 /* ═══════════════════════════════════════════
@@ -477,6 +478,7 @@ let currentStep = 0;     // 1, 2, 3
 document.addEventListener('DOMContentLoaded', async () => {
     const params = new URLSearchParams(location.search);
     const token  = params.get('token');
+    setupTokenGlobal = token;
 
     if (!token) {
         showError('링크가 올바르지 않습니다', '유효한 초대 링크가 아닙니다.<br>관리자에게 다시 링크 발급을 요청해주세요.');
@@ -484,7 +486,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
-        const user = await API.users.findBySetupToken(token);
+        let user;
+        if (window.AUTH_CONFIG && window.AUTH_CONFIG.workerUrl) {
+            const base = window.AUTH_CONFIG.workerUrl.replace(/\/+$/, '');
+            const r = await fetch(base + '/setup-lookup', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token })
+            }).then(x => x.json());
+            user = r.success ? r.user : null;
+        } else {
+            user = await API.users.findBySetupToken(token);
+        }
 
         if (!user) {
             showError('유효하지 않은 링크', '초대 링크를 찾을 수 없습니다.<br>이미 사용되었거나 잘못된 링크일 수 있습니다.');
@@ -743,9 +755,7 @@ async function submitSetup() {
 
         const serviceRegions = serviceRegStr.split(/[,，、]/).map(s => s.trim()).filter(Boolean);
 
-        const updates = {
-            userId,
-            password:        pw,       // ⚠️ 실제 서비스에서는 반드시 해싱 필요
+        const profileFields = {
             officeName,
             officeAddress,
             licenseNumber:   licenseNum || expertUser.licenseNumber || '',
@@ -757,7 +767,18 @@ async function submitSetup() {
             setupCompletedAt:   new Date().toISOString(),
         };
 
-        await API.users.update(expertUser.id, updates);
+        if (window.AUTH_CONFIG && window.AUTH_CONFIG.workerUrl) {
+            // 서버 방식: 비밀번호 해싱 저장 + 프로필 갱신 (토큰 기반)
+            const base = window.AUTH_CONFIG.workerUrl.replace(/\/+$/, '');
+            const r = await fetch(base + '/complete-setup', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token: setupTokenGlobal, userId, password: pw, profile: profileFields })
+            }).then(x => x.json());
+            if (!r.success) throw new Error(r.message || '설정 저장에 실패했습니다.');
+        } else {
+            // 레거시: 평문 저장
+            await API.users.update(expertUser.id, { userId, password: pw, ...profileFields });
+        }
 
         // 완료 화면
         hideAll();

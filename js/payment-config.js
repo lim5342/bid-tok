@@ -48,3 +48,16 @@ window.CODEF_CONFIG = {
 window.KAKAO_CONFIG = {
     jsKey: 'ce30d78df969c31db163df0778884cc5', // 카카오 JavaScript 키 (도메인 제한 보호)
 };
+
+// ============================================================
+// 인증(로그인/회원가입) 서버 워커 설정 (auth-proxy)
+// ★ 보안 강화: 로그인/회원가입/비밀번호 처리를 서버에서 수행하고
+//   Firestore 규칙을 잠그기 위한 설정입니다.
+//   - workerUrl 이 "비어 있으면" → 기존(브라우저 직접) 방식으로 동작 (변화 없음)
+//   - workerUrl 을 채우면       → 서버(auth-proxy) 방식으로 전환
+//   배포: workers/auth-proxy (npx wrangler deploy) 후 아래 주소를 채우세요.
+//   예: 'https://bidtok-auth-proxy.qkqk5342.workers.dev'
+// ============================================================
+window.AUTH_CONFIG = {
+    workerUrl: '',   // ← 배포 후 여기에 auth-proxy 워커 주소 입력
+};

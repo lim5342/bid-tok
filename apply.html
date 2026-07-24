@@ -631,8 +631,8 @@
             <div class="form-row">
                 <div class="form-group">
                     <label>사건번호 <span class="required">*</span></label>
-                    <input type="text" id="caseNumber" placeholder="예) 2024타경12345">
-                    <div class="hint">대법원 경매정보에서 확인한 사건번호를 입력하세요. (예: 2024타경12345)</div>
+                    <input type="text" id="caseNumber" placeholder="예) 2024타경12345 (또는 2024-12345)" onblur="formatCaseNumber(this)">
+                    <div class="hint">숫자만 넣어도 됩니다. 예) <strong>2024-12345</strong> 또는 <strong>202412345</strong> → 자동으로 <strong>2024타경12345</strong>로 변환됩니다.</div>
                     <div class="error-msg">사건번호를 입력해주세요.</div>
                     <!-- (사건 조회 결과 안내 자리 — 현재 미사용) -->
                     <div id="caseLookupResult" style="display:none; margin-top:0.6rem; padding:0.85rem 1rem; border-radius:10px; font-size:0.86rem; line-height:1.5;"></div>
@@ -648,9 +648,9 @@
                 <div class="form-group">
                     <label>입찰 기일 <span class="required">*</span></label>
                     <input type="date" id="bidDate" min="" onchange="checkBidDateWindow()">
-                    <small style="display:block;margin-top:0.35rem;color:#888;font-size:0.82rem;">※ 입찰 기일 <strong>3일 전</strong>까지만 신청 가능합니다.</small>
+                    <small style="display:block;margin-top:0.35rem;color:#888;font-size:0.82rem;">※ 입찰 기일 <strong>영업일 기준 2일 전</strong>까지만 신청 가능합니다.</small>
                     <div id="bidDateWarn" style="display:none;margin-top:0.5rem;padding:0.75rem 0.9rem;background:#fff4f4;border:1.5px solid #f5b5b5;border-radius:10px;color:#c0392b;font-size:0.86rem;line-height:1.6;">
-                        ⚠️ 입찰 기일이 <strong>3일 이내</strong>라 온라인 신청이 어렵습니다.<br>
+                        ⚠️ 입찰 기일이 <strong>영업일 기준 2일 이내</strong>라 온라인 신청이 어렵습니다.<br>
                         급한 건은 대표번호 <a href="tel:02-853-5875" style="color:#c0392b;font-weight:700;">02-853-5875</a> 로 전화 주시면 도와드리겠습니다.
                     </div>
                     <div class="error-msg">입찰 기일을 선택해주세요.</div>
@@ -836,14 +836,14 @@
                 <div class="form-group">
                     <label>입찰 보증금 납부 방법 <span class="required">*</span></label>
                     <select id="depositMethod">
-                        <option value="계좌이체">법무사님께 직접 이체</option>
+                        <option value="계좌이체">담당 전문가께 직접 이체</option>
                     </select>
                     <div class="error-msg">납부 방법을 선택해주세요.</div>
                     <!-- 안내 박스 -->
                     <div style="margin-top:0.75rem; background:#f0f7ff; border:1.5px solid #c7d7fd; border-radius:10px; padding:0.9rem 1.1rem; font-size:0.82rem; color:#444; line-height:1.8;">
                         <div style="font-weight:700; color:#1550E8; margin-bottom:0.35rem;"><i class="fas fa-shield-alt" style="margin-right:0.4rem;"></i>안전한 보증금 관리 안내</div>
-                        <div>✅ 보증금은 담당 법무사님께 <strong>직접 이체</strong>하시면 됩니다.</div>
-                        <div>✅ 담당 법무사는 <strong>5억 원 배상책임보험</strong>에 가입되어 있어 안전합니다.</div>
+                        <div>✅ 보증금은 배정된 담당 전문가(법무사·공인중개사)께 <strong>직접 이체</strong>하시면 됩니다.</div>
+                        <div>✅ 담당 전문가는 <strong>5억 원 배상책임보험</strong>에 가입되어 있어 안전합니다.</div>
                         <div>✅ 낙찰 실패(패찰) 시 보증금은 <strong>즉시 전액 반환</strong>됩니다.</div>
                     </div>
                 </div>
@@ -873,7 +873,7 @@
                         <i class="fas fa-plus-circle"></i> 공동입찰자 추가하기 (최대 3명)
                     </button>
                     <div id="jointLimitMsg" style="display:none; margin-top:0.5rem; background:#fff3cd; border:1px solid #ffc107; border-radius:8px; padding:0.7rem 1rem; font-size:0.82rem; color:#856404;">
-                        <i class="fas fa-exclamation-triangle"></i> 3명을 초과하는 공동입찰은 <strong>법무사님께 직접 연락</strong>하여 별도 협의해주세요.
+                        <i class="fas fa-exclamation-triangle"></i> 3명을 초과하는 공동입찰은 <strong>담당 전문가께 직접 연락</strong>하여 별도 협의해주세요.
                     </div>
                 </div>
             </div>
@@ -1207,10 +1207,9 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
 
-    // 입찰 기일 3일 전까지만 신청 가능 (당일·임박 신청은 혼선·환불 방지 위해 차단)
+    // 입찰 기일 영업일 기준 2일 전까지만 신청 가능 (당일·임박 신청은 혼선·환불 방지 위해 차단)
     const bidDateInput = document.getElementById('bidDate');
-    const minBidDate = new Date();
-    minBidDate.setDate(minBidDate.getDate() + 3);
+    const minBidDate = addBusinessDays(new Date(), 2);
     bidDateInput.min = minBidDate.toISOString().split('T')[0];
 
     // 로그인 사용자 정보 자동 입력 (이름은 직접 입력)
@@ -1263,14 +1262,39 @@ function goStep(step) {
 // ─────────────────────────────────────────────
 // 유효성 검사
 // ─────────────────────────────────────────────
-// 입찰 기일이 3일 이내인지 확인 → 경고 박스 표시, 신청 가능 여부 반환
+// 사건번호 자동 '타경' 변환: "2024-12345" / "202412345" → "2024타경12345"
+function formatCaseNumber(input) {
+    let v = (input.value || '').trim();
+    if (!v) return;
+    // 이미 '타경'이 있으면 연도+번호만 정리
+    let m = v.replace(/\s/g, '').match(/(\d{4})타?경(\d+)/);
+    if (m) { input.value = m[1] + '타경' + m[2]; return; }
+    // 숫자(및 하이픈)만 입력한 경우
+    let cleaned = v.replace(/[^0-9-]/g, '');
+    let m2 = cleaned.match(/^(\d{4})-?(\d{1,})$/);
+    if (m2) { input.value = m2[1] + '타경' + m2[2]; }
+}
+
+// 영업일(주말 제외) n일 뒤 날짜
+function addBusinessDays(from, n) {
+    const d = new Date(from); d.setHours(0,0,0,0);
+    let added = 0;
+    while (added < n) {
+        d.setDate(d.getDate() + 1);
+        const day = d.getDay();
+        if (day !== 0 && day !== 6) added++;   // 0=일, 6=토 제외
+    }
+    return d;
+}
+
+// 입찰 기일이 영업일 기준 2일 이내인지 확인 → 경고 박스 표시, 신청 가능 여부 반환
 function checkBidDateWindow() {
     const el = document.getElementById('bidDate');
     const warn = document.getElementById('bidDateWarn');
     const v = el ? el.value : '';
     if (!v) { if (warn) warn.style.display = 'none'; return true; }
     const bd = new Date(v + 'T00:00:00');
-    const limit = new Date(); limit.setHours(0,0,0,0); limit.setDate(limit.getDate() + 3);
+    const limit = addBusinessDays(new Date(), 2);   // 영업일 기준 2일 뒤
     const tooClose = bd < limit;
     if (warn) warn.style.display = tooClose ? 'block' : 'none';
     return !tooClose;
@@ -1287,7 +1311,7 @@ function validateStep(step) {
         if (!val('bidDate'))      { showError('bidDate');      ok = false; }
         else if (!checkBidDateWindow()) {
             // 입찰 기일 3일 이내 → 대표번호 안내 후 진행 차단
-            toast('입찰 기일 3일 이내는 온라인 신청이 어렵습니다. 대표번호(02-853-5875)로 문의해주세요.', 'error');
+            toast('입찰 기일 영업일 기준 2일 이내는 온라인 신청이 어렵습니다. 대표번호(02-853-5875)로 문의해주세요.', 'error');
             ok = false;
         }
         if (!val('propertyAddress')) { showError('propertyAddress'); ok = false; }
@@ -2010,10 +2034,20 @@ function showKorean(inputId, outId) {
 
 function updateBidPreview() {
     updateDepositAmount();
-    const raw = document.getElementById('bidAmount').value.replace(/[^0-9]/g, '');
+    const input   = document.getElementById('bidAmount');
+    const raw     = input.value.replace(/[^0-9]/g, '');
     const preview = document.getElementById('bidAmountPreview');
-    if (!raw) { preview.textContent = ''; return; }
-    preview.textContent = '= ' + toKoreanAmount(Number(raw));
+    const group   = input.closest('.form-group');
+    if (!raw) {
+        preview.textContent = '';
+        preview.style.color = '#1550E8';
+        return;
+    }
+    // 유효 입력 → 빨간 에러 제거 + 초록 확인 표시
+    if (group) group.classList.remove('has-error');
+    input.classList.remove('error');
+    preview.innerHTML = '<i class="fas fa-check-circle"></i> = ' + toKoreanAmount(Number(raw)) + ' <span style="font-weight:600;">입력 완료</span>';
+    preview.style.color = '#16a34a';
 }
 
 // ─────────────────────────────────────────────
@@ -2268,7 +2302,8 @@ function showPropertyLocation() {
     const photoEl = document.getElementById('propSummaryPhoto');
     const bodyEl  = document.getElementById('propSummaryBody');
     if (!base) return;
-    if (photoEl) renderLocationView(photoEl, full);
+    // 지도는 도로명 주소(base)만으로 좌표변환 — 동/호수까지 넣으면 변환 실패로 지도가 사라짐
+    if (photoEl) renderLocationView(photoEl, base);
     if (bodyEl) {
         bodyEl.innerHTML =
             '<div style="padding:0.5rem 0.25rem;font-size:0.88rem;line-height:1.6;">' +

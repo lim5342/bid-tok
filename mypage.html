@@ -445,9 +445,18 @@
         // ── 취소/삭제 가능 여부 판단 ─────────────────────────────
         // 입찰 전날 오후 5시 이후: 취소 불가 → 법무사 직접 연락
         function canDeleteApp(app) {
-            const deletableStatuses = ['접수', '매칭중', '취소'];
+            // 결제대기(중간에 멈춘 미결제 건)도 삭제 가능
+            const deletableStatuses = ['결제대기', '접수', '매칭중', '취소'];
             if (!deletableStatuses.includes(app.status)) return false;
+            // 단, 이미 전문가가 배정된 건은 함부로 삭제 못 하게(취소요청으로 처리)
+            if (app.assigned_expert_id && app.status !== '취소') return false;
             return true;
+        }
+        // 결제 취소 요청 가능 여부 (결제완료 + 아직 낙찰/완료/취소 아님)
+        function canRequestCancel(app) {
+            if (app.payment_cancel_requested) return false;
+            if (app.payment_status !== '결제완료') return false;
+            return !['취소', '낙찰', '완료', '유찰'].includes(app.status);
         }
 
         function isCancelLocked(app) {
@@ -540,6 +549,16 @@
                 // 법무사 정보 확인 버튼 (매칭 후)
                 if (matched) {
                     footerBtns += `<button class="btn btn-sm btn-expert" onclick="viewExpertInfo('${app.id}')"><i class="fas fa-user-tie"></i> 법무사 정보</button>`;
+                }
+
+                // 결제대기(미결제) → 결제 완료하기 버튼
+                if (app.status === '결제대기' && !app.assigned_expert_id) {
+                    footerBtns += `<button class="btn btn-sm" style="background:#1550E8;color:#fff;" onclick="resumePayment('${app.id}')"><i class="fas fa-credit-card"></i> 결제 완료하기</button>`;
+                }
+
+                // 결제 취소 요청 버튼 (결제완료 + 낙찰/완료 전)
+                if (canRequestCancel(app)) {
+                    footerBtns += `<button class="btn btn-sm" style="background:#fff7ed;color:#ea580c;border:1px solid #fed7aa !important;" onclick="requestPaymentCancel('${app.id}')"><i class="fas fa-rotate-left"></i> 결제 취소 요청</button>`;
                 }
 
                 // 삭제 버튼 (삭제 가능한 상태일 때만)
@@ -705,6 +724,66 @@
             document.getElementById('deleteConfirmModal').style.display = 'flex';
         }
         window.deleteApplication = deleteApplication;
+
+        // ── 결제대기 건 재결제 (중간에 멈춘 결제 이어서 하기) ──────────
+        function _loadScriptOnce(src) {
+            return new Promise((resolve, reject) => {
+                if ([...document.scripts].some(s => s.src && s.src.includes(src))) return resolve();
+                const s = document.createElement('script');
+                s.src = src; s.onload = resolve; s.onerror = reject;
+                document.head.appendChild(s);
+            });
+        }
+        async function resumePayment(id) {
+            const app = allApplications.find(a => a.id === id);
+            if (!app) return;
+            try {
+                if (typeof TossPayments === 'undefined') await _loadScriptOnce('https://js.tosspayments.com/v1/payment');
+                if (!window.PAYMENT_CONFIG) await _loadScriptOnce('js/payment-config.js');
+            } catch (e) {}
+            const cfg = window.PAYMENT_CONFIG || {};
+            if (typeof TossPayments === 'undefined' || !cfg.clientKey) {
+                alert('결제 모듈을 불러오지 못했습니다.\n새로고침 후 다시 시도해주세요.');
+                return;
+            }
+            const amount  = Number(app.service_fee) || cfg.amount || 154000;
+            const label   = app.expert_type_label || (app.expert_type === 'realtor' ? '공인중개사' : '법무사');
+            // 중복 방지를 위해 새 주문번호 발급 후 저장
+            const newOrderId = 'BIDTOK_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+            try { await API.applications.updateStatus(id, '결제대기', { order_id: newOrderId }); } catch (e) {}
+            const toss = TossPayments(cfg.clientKey);
+            await toss.requestPayment('카드', {
+                amount, orderId: newOrderId,
+                orderName: '대리입찰 신청 [' + label + '] (' + (app.court || '') + ' ' + (app.case_number || '') + ')',
+                customerName: app.applicant_name || '고객',
+                customerMobilePhone: (app.phone || '').replace(/[^0-9]/g, '') || undefined,
+                successUrl: cfg.successUrl || (location.origin + '/payment-success.html'),
+                failUrl:    cfg.failUrl    || (location.origin + '/payment-fail.html'),
+            });
+        }
+        window.resumePayment = resumePayment;
+
+        // ── 결제 취소 요청 (결제완료 건 → 관리자 확인 후 환불) ──────────
+        async function requestPaymentCancel(id) {
+            const app = allApplications.find(a => a.id === id);
+            if (!app) return;
+            if (!confirm('결제 취소를 요청하시겠습니까?\n\n관리자 확인 후 카드 결제가 취소(환불)됩니다.\n※ 이미 입찰이 진행된 경우에는 환불이 어려울 수 있습니다.')) return;
+            try {
+                await API.applications.updateStatus(id, app.status, {
+                    payment_cancel_requested: true,
+                    payment_status: '취소신청',
+                    payment_cancel_requested_at: new Date().toISOString()
+                });
+                alert('결제 취소 요청이 접수되었습니다.\n관리자 확인 후 처리되며, 진행 상황은 마이페이지에서 확인하실 수 있습니다.');
+                const idx = allApplications.findIndex(a => a.id === id);
+                if (idx >= 0) { allApplications[idx].payment_cancel_requested = true; allApplications[idx].payment_status = '취소신청'; }
+                renderApplications(allApplications);
+            } catch (e) {
+                console.error('취소요청 오류:', e);
+                alert('요청 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+            }
+        }
+        window.requestPaymentCancel = requestPaymentCancel;
 
         async function confirmDeleteApplication() {
             if (!_deleteTargetId) return;

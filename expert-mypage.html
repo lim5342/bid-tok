@@ -388,8 +388,14 @@
 
         // 섹션 전환
         function showSection(section, el) {
+            _currentSection = section;
+            // 배정요청 탭 클릭 시 빨간 점 제거
+            if (section === 'requests') {
+                const dot = document.querySelector('.req-dot');
+                if (dot) dot.remove();
+            }
             // 메뉴 활성화 (클릭된 a 태그 또는 가장 가까운 .menu-item 찾기)
-            const clickedItem = el ? el.closest('.menu-item') || el : event.currentTarget;
+            const clickedItem = el ? el.closest('.menu-item') || el : (typeof event !== 'undefined' ? event.currentTarget : null);
             document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
             if (clickedItem) clickedItem.classList.add('active');
 
@@ -786,9 +792,9 @@
                     bid_amount_revealed: true
                 });
 
-                // 고객에게 법무사 배정완료 알림
+                // 고객에게 "담당 전문가 배정 완료" 알림
                 if (appData && appData.phone) {
-                    sendKakaoNotif('expert_assigned', appData.phone, {
+                    const notifData = {
                         appId:       id.slice(-8).toUpperCase(),
                         name:        appData.applicant_name || '',
                         court:       appData.court          || '',
@@ -796,12 +802,22 @@
                         bidDate:     appData.bid_date       || '',
                         expertName:  user.name              || '',
                         expertPhone: user.phone             || '',
-                    });
+                    };
+                    // ① 문자(SMS) — 지금 바로 발송 (카카오 심사 완료 전까지 문자로 안내)
+                    fetch('https://bidtok-sms-proxy.qkqk5342.workers.dev', {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ type: 'client_assigned', to: appData.phone, data: notifData })
+                    }).catch(() => {});
+                    // ② 카카오 알림톡 — 심사 통과 후 자동 발송
+                    sendKakaoNotif('client_assigned', appData.phone, notifData);
                 }
 
-                showExpertToast('✅ 승인 완료! 신청자에게 알림이 발송됩니다.', 'success');
+                showExpertToast('✅ 수임 완료! 신청자에게 문자 알림이 발송되었습니다.', 'success');
                 loadRequests();
                 loadOngoing();
+                // 수임 직후 '진행 중' 탭으로 자동 이동 (신청이 사라진 것처럼 보이지 않게)
+                const ongoingMenu = document.querySelector('.menu-item[onclick*="ongoing"]');
+                showSection('ongoing', ongoingMenu);
             } catch (err) {
                 console.error(err);
                 alert('처리 중 오류가 발생했습니다.');
@@ -1203,17 +1219,7 @@
             }
         }
 
-        // 탭 전환 시 _currentSection 갱신 + 뱃지 제거
-        const _origShowSection = showSection;
-        function showSection(section, el) {
-            _currentSection = section;
-            // 배정요청 탭 클릭 시 빨간 점 제거
-            if (section === 'requests') {
-                const dot = document.querySelector('.req-dot');
-                if (dot) dot.remove();
-            }
-            _origShowSection(section, el);
-        }
+        // (showSection 은 위에서 _currentSection 갱신·뱃지 제거까지 처리함 — 중복 정의 제거)
 
         // 폴링 시작 (60초 간격)
         function startPolling() {

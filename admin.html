@@ -596,6 +596,9 @@
             <button class="nav-item" onclick="goto('myinfo',this)">
                 <i class="fas fa-key"></i> 내 정보
             </button>
+            <button class="nav-item" onclick="goto('sales',this)">
+                <i class="fas fa-chart-line"></i> 매출 관리
+            </button>
             <button class="nav-item" onclick="goto('settlements',this)">
                 <i class="fas fa-won-sign"></i> 정산 관리
             </button>
@@ -982,6 +985,39 @@
 
                 <div class="panel" style="padding:0; overflow:hidden;">
                     <div class="overflow-wrap" id="settleTableWrap">
+                        <div style="text-align:center;padding:3rem;color:#ccc;"><i class="fas fa-spinner fa-spin fa-2x"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ════ 매출 관리 (신청자 결제) ════ -->
+            <div class="section" id="sec-sales">
+                <div class="section-title"><i class="fas fa-chart-line"></i> 매출 관리 (신청자 결제)</div>
+
+                <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:0.8rem 1.1rem;margin-bottom:1.2rem;font-size:0.85rem;color:#166534;line-height:1.6;">
+                    💡 신청자가 결제한 금액(공인중개사 132,000원 / 법무사 154,000원, VAT 포함)의 합계입니다. <strong>취소·환불 건은 붉게 표시</strong>되며 매출에서 제외됩니다.
+                </div>
+
+                <!-- 요약 -->
+                <div class="settlement-summary">
+                    <div class="sum-box"><div class="num" id="sales-total" style="color:#16a34a;">-</div><div class="lbl">총 매출 (결제완료)</div></div>
+                    <div class="sum-box"><div class="num" id="sales-month" style="color:#2563eb;">-</div><div class="lbl">이번달 매출</div></div>
+                    <div class="sum-box"><div class="num" id="sales-refund" style="color:#ef4444;">-</div><div class="lbl">취소·환불 금액</div></div>
+                    <div class="sum-box"><div class="num" id="sales-count">-</div><div class="lbl">결제 건수</div></div>
+                </div>
+
+                <!-- 월별 필터 -->
+                <div class="toolbar">
+                    <select id="salesMonthFilter" onchange="renderSalesTable()" style="padding:0.65rem 1rem; border:2px solid #e0e0e0; border-radius:10px; font-size:0.88rem; font-family:inherit;">
+                        <option value="all">전체 기간</option>
+                    </select>
+                    <button class="btn-excel" onclick="exportSalesCSV()">
+                        <i class="fas fa-file-csv"></i> 매출 CSV
+                    </button>
+                </div>
+
+                <div class="panel" style="padding:0; overflow:hidden;">
+                    <div class="overflow-wrap" id="salesTableWrap">
                         <div style="text-align:center;padding:3rem;color:#ccc;"><i class="fas fa-spinner fa-spin fa-2x"></i></div>
                     </div>
                 </div>
@@ -1838,7 +1874,8 @@ async function importLocalDbFromFile(input) {
 // ═══════════════════════════════════════════════════════
 const SECTION_TITLES = {
     dashboard: '대시보드', applications: '신청 관리',
-    experts: '전문가 승인', partners: '대리인 현황 (전국)', users: '회원 관리', settlements: '정산 관리',
+    experts: '전문가 승인', partners: '대리인 현황 (전국)', users: '회원 관리',
+    sales: '매출 관리', settlements: '정산 관리',
     myinfo: '내 정보 / 비밀번호 변경', contents: '콘텐츠 관리'
 };
 
@@ -1869,6 +1906,7 @@ function goto(sec, el) {
     if (sec === 'experts')      { loadExperts(); loadSetupPendingCount(); }
     if (sec === 'partners')     loadPartners();
     if (sec === 'users')        loadUsers();
+    if (sec === 'sales')        loadSales();
     if (sec === 'settlements')  loadSettlements();
     if (sec === 'myinfo')        loadMyInfo();
     if (sec === 'contents')      loadContents();
@@ -2902,7 +2940,7 @@ function renderExpertList(experts) {
         </div>
 
         <!-- ── 접힐 수 있는 본문 ── -->
-        <div class="expert-card-collapsible" id="ecb_${ex.id}" style="max-height:2000px;">
+        <div class="expert-card-collapsible" id="ecb_${ex.id}" style="max-height:20000px;">
         <div class="expert-card-body">
 
             <!-- 기본 정보 그리드 -->
@@ -2952,6 +2990,8 @@ function renderExpertList(experts) {
             ${ex.adminMemo ? `<div style="margin-top:0.6rem;background:#fefce8;border-radius:8px;padding:0.75rem;font-size:0.82rem;color:#854d0e;">📝 메모: ${ex.adminMemo}</div>` : ''}
             ${ex.rejectReason ? `<div style="margin-top:0.6rem;background:#fef2f2;border-radius:8px;padding:0.75rem;font-size:0.82rem;color:#ef4444;">❌ 거부 사유: ${ex.rejectReason}</div>` : ''}
         </div>
+        </div><!-- /collapsible -->
+        <!-- 액션 버튼: 접기 영역 밖에 두어 항상 보이게 (잘림/브라우저 문제 방지) -->
         <div class="expert-card-foot">
             <!-- 공통: 항상 표시 -->
             <button class="btn-sm btn-blue" onclick="openExpertEditModal('${ex.id}')"><i class="fas fa-edit"></i> 정보 수정</button>
@@ -2972,7 +3012,6 @@ function renderExpertList(experts) {
                 <button class="btn-sm btn-blue" onclick="reApproveExpert('${ex.id}')"><i class="fas fa-redo"></i> 재승인</button>
             ` : ''}
         </div>
-        </div><!-- /collapsible -->
     </div>`;
     }).join('');
 }
@@ -2985,7 +3024,7 @@ function toggleExpertCard(id) {
     const isCollapsed = card.classList.contains('collapsed');
     if (isCollapsed) {
         card.classList.remove('collapsed');
-        body.style.maxHeight = '2000px';
+        body.style.maxHeight = '20000px';
     } else {
         card.classList.add('collapsed');
         body.style.maxHeight = '0';
@@ -3876,6 +3915,103 @@ async function exportUserCSV() {
 const SERVICE_FEE = 132000;
 let settleData = [];
 let settleExpertMap = {};   // expert_id / expert_name → 전문가 정보(계좌 등)
+
+// ═══════════════════════════════════════════════════════
+// 매출 관리 (신청자 결제 내역)
+// ═══════════════════════════════════════════════════════
+let salesData = [];
+function _isRefund(a) { return /취소|환불/.test(a.payment_status || '') || a.status === '취소'; }
+function _isPaidSales(a) { return a.payment_status === '결제완료'; }
+function _salesMonth(a) { return String(a.paid_at || a.created_at || a.createdAt || '').slice(0, 7); }
+function _salesFee(a) { return Number(a.service_fee || 0); }
+
+async function loadSales() {
+    setLoading('salesTableWrap');
+    try {
+        const res = await API.applications.getAll('limit=1000&sort=-createdAt');
+        const all = (res?.data) || [];
+
+        // 총매출 = 결제완료이면서 취소되지 않은 건 (취소건은 매출에서 제외)
+        const paid    = all.filter(a => _isPaidSales(a) && !_isRefund(a));
+        const refunds = all.filter(a => _isRefund(a) && (a.paid_at || a.payment_key)); // 결제됐다가 취소된 건
+        const thisMonth = new Date().toISOString().slice(0, 7);
+
+        const total     = paid.reduce((s, a) => s + _salesFee(a), 0);
+        const month     = paid.filter(a => _salesMonth(a) === thisMonth).reduce((s, a) => s + _salesFee(a), 0);
+        const refundAmt = refunds.reduce((s, a) => s + _salesFee(a), 0);
+
+        document.getElementById('sales-total').textContent  = fmtNum(total) + '원';
+        document.getElementById('sales-month').textContent  = fmtNum(month) + '원';
+        document.getElementById('sales-refund').textContent = fmtNum(refundAmt) + '원';
+        document.getElementById('sales-count').textContent  = paid.length + '건';
+
+        // 표 데이터: 결제완료 + 취소(환불)된 결제 건
+        salesData = all.filter(a => _isPaidSales(a) || (_isRefund(a) && (a.paid_at || a.payment_key)))
+            .sort((a, b) => String(b.paid_at || b.created_at || b.createdAt || '')
+                .localeCompare(String(a.paid_at || a.created_at || a.createdAt || '')));
+
+        // 월 필터 옵션
+        const months = [...new Set(salesData.map(_salesMonth).filter(Boolean))].sort((a, b) => b.localeCompare(a));
+        const sel = document.getElementById('salesMonthFilter');
+        sel.innerHTML = '<option value="all">전체 기간</option>' + months.map(m => `<option value="${m}">${m}</option>`).join('');
+
+        renderSalesTable();
+    } catch (e) {
+        console.error(e);
+        document.getElementById('salesTableWrap').innerHTML =
+            `<div class="empty-box"><i class="fas fa-exclamation-circle"></i><p>데이터를 불러올 수 없습니다.</p></div>`;
+    }
+}
+
+function renderSalesTable() {
+    const sel = document.getElementById('salesMonthFilter');
+    const m = sel ? sel.value : 'all';
+    const rows = salesData.filter(a => m === 'all' || _salesMonth(a) === m);
+    const wrap = document.getElementById('salesTableWrap');
+    if (!rows.length) {
+        wrap.innerHTML = `<div class="empty-box"><i class="fas fa-receipt"></i><p>매출 내역이 없습니다.</p></div>`;
+        return;
+    }
+    wrap.innerHTML = `
+    <table class="data-table">
+        <thead><tr>
+            <th>결제일</th><th>신청자</th><th>법원 / 사건번호</th><th>유형</th><th>금액</th><th>상태</th>
+        </tr></thead>
+        <tbody>
+        ${rows.map(a => {
+            const refunded = _isRefund(a);
+            const amt = _salesFee(a);
+            const typeLabel = a.expert_type_label || (a.expert_type === 'realtor' ? '공인중개사' : a.expert_type === 'lawyer' ? '법무사' : '-');
+            return `<tr${refunded ? ' style="background:#fef2f2;"' : ''}>
+                <td style="font-size:0.82rem;color:#666;">${fmtDateTime(a.paid_at || a.created_at || a.createdAt)}</td>
+                <td><strong>${a.applicant_name || '-'}</strong><br><span style="font-size:0.78rem;color:#888;">${a.phone || ''}</span></td>
+                <td style="font-size:0.82rem;">${a.court || '-'}<br><span style="color:#888;">${a.case_number || ''}</span></td>
+                <td style="font-size:0.82rem;">${typeLabel}</td>
+                <td style="font-weight:700;color:${refunded ? '#ef4444' : '#16a34a'};">${refunded ? '-' : ''}${fmtNum(amt)}원</td>
+                <td>${refunded ? '<span class="status-badge badge-취소">취소·환불</span>' : '<span class="status-badge badge-결제완료">결제완료</span>'}</td>
+            </tr>`;
+        }).join('')}
+        </tbody>
+    </table>`;
+}
+
+function exportSalesCSV() {
+    if (!salesData.length) { showToast('내보낼 매출 내역이 없습니다.', 'error'); return; }
+    const head = ['결제일', '신청자', '연락처', '법원', '사건번호', '유형', '금액', '상태'];
+    const lines = [head.join(',')].concat(salesData.map(a => {
+        const refunded = _isRefund(a);
+        const typeLabel = a.expert_type_label || (a.expert_type === 'realtor' ? '공인중개사' : a.expert_type === 'lawyer' ? '법무사' : '');
+        return [
+            fmtDateTime(a.paid_at || a.created_at || a.createdAt), a.applicant_name || '', a.phone || '',
+            a.court || '', a.case_number || '', typeLabel, _salesFee(a), refunded ? '취소·환불' : '결제완료'
+        ].map(x => `"${String(x).replace(/"/g, '""')}"`).join(',');
+    }));
+    const blob = new Blob(['﻿' + lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `매출내역_${new Date().toISOString().slice(0,10)}.csv`; a.click();
+    URL.revokeObjectURL(url);
+}
 
 async function loadSettlements() {
     setLoading('settleTableWrap');
