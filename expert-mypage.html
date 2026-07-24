@@ -243,6 +243,11 @@
             return;
         }
 
+        // ── 상태 변수 (showSection 등에서 쓰므로 최상단에서 미리 선언) ──
+        let _pollInterval   = null;
+        let _lastReqCount   = 0;   // 이전 의뢰 수 기억 (새 의뢰 감지용)
+        let _currentSection = 'requests'; // 현재 보고 있는 탭
+
         // ── 카카오/SMS 알림톡 발송 (expert-mypage) ───────────────
         const KAKAO_WORKER_URL = 'https://bidtok-kakao-proxy.qkqk5342.workers.dev';
         async function sendKakaoNotif(type, to, data) {
@@ -1180,9 +1185,7 @@
         });
 
         // ── 1분 폴링: 배정 요청 자동 갱신 ────────────────────────
-        let _pollInterval   = null;
-        let _lastReqCount   = 0;   // 이전 의뢰 수 기억 (새 의뢰 감지용)
-        let _currentSection = 'requests'; // 현재 보고 있는 탭
+        // (_pollInterval / _lastReqCount / _currentSection 은 상단에서 미리 선언함)
 
         async function pollNewRequests() {
             try {
