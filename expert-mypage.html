@@ -1023,6 +1023,11 @@
         window.cancelAfterAccept = cancelAfterAccept;
         window.viewDetail        = viewDetail;
         window.updateStatus      = updateStatus;
+        // ★ 메뉴 클릭·로그아웃·모달닫기 (onclick 에서 호출되므로 반드시 전역 노출)
+        window.showSection            = showSection;
+        window.handleLogout           = handleLogout;
+        window.handleWithdraw         = handleWithdraw;
+        window.closeExpertDetailModal = closeExpertDetailModal;
 
         // 결과 모달 + 거절 모달 이벤트 (DOMContentLoaded)
         document.addEventListener('DOMContentLoaded', function() {
