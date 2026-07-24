@@ -507,7 +507,10 @@
                 // 미배정 공개 의뢰 (선착순 대상)
                 const openPool = !iAmActive ? [] : allApps.filter(a => {
                     if (a.assigned_expert_id) return false;                 // 이미 누가 가져감
-                    if (!['매칭중', '결제완료', '접수'].includes(a.status)) return false;
+                    // ★ 결제 완료된 의뢰만 노출 (미결제=결제대기 의뢰는 제외)
+                    const isPaid = a.payment_status === '결제완료' || a.payment_status === '무료매칭' || !!a.paid_at;
+                    if (!isPaid && a.status !== '매칭중') return false;
+                    if (!['매칭중', '결제완료', '접수'].includes(a.status)) return false; // 열린 상태만
                     if (a.rejectedExpert === myId) return false;            // 내가 거절한 건 제외
                     if (!courtMatch(a.court, myCourts)) return false;       // 활동법원 일치
                     if (!typeMatch(a.expert_type || a.expertType, myType)) return false; // 유형 일치
