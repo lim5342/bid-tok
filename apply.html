@@ -631,15 +631,10 @@
             <div class="form-row">
                 <div class="form-group">
                     <label>사건번호 <span class="required">*</span></label>
-                    <div class="input-btn-group">
-                        <input type="text" id="caseNumber" placeholder="예) 2024타경12345" oninput="onCaseNumberInput()">
-                        <button class="btn-verify" type="button" id="caseLookupBtn" onclick="lookupCase()">
-                            <i class="fas fa-search"></i> 사건 조회
-                        </button>
-                    </div>
-                    <div class="hint">법원 선택 후 사건번호(예: 2024타경12345)를 입력하고 <strong>사건 조회</strong>를 누르면 물건 사진·감정가·최저입찰가·매각기일이 자동으로 조회됩니다.</div>
+                    <input type="text" id="caseNumber" placeholder="예) 2024타경12345">
+                    <div class="hint">대법원 경매정보에서 확인한 사건번호를 입력하세요. (예: 2024타경12345)</div>
                     <div class="error-msg">사건번호를 입력해주세요.</div>
-                    <!-- 사건 조회 결과 안내 -->
+                    <!-- (사건 조회 결과 안내 자리 — 현재 미사용) -->
                     <div id="caseLookupResult" style="display:none; margin-top:0.6rem; padding:0.85rem 1rem; border-radius:10px; font-size:0.86rem; line-height:1.5;"></div>
                 </div>
                 <div class="form-group">
@@ -674,7 +669,7 @@
                             <i class="fas fa-search"></i> 주소 검색
                         </button>
                     </div>
-                    <input type="text" id="propertyAddressDetail" placeholder="상세 주소 입력 (동/호수 등)" style="margin-top:0.5rem; padding:0.8rem 1rem; border:2px solid #e0e0e0; border-radius:10px; width:100%; font-size:0.95rem;">
+                    <input type="text" id="propertyAddressDetail" placeholder="상세 주소 입력 (동/호수 등)" onblur="showPropertyLocation()" style="margin-top:0.5rem; padding:0.8rem 1rem; border:2px solid #e0e0e0; border-radius:10px; width:100%; font-size:0.95rem;">
                     <div class="error-msg">물건 주소를 입력해주세요.</div>
                 </div>
             </div>
@@ -710,7 +705,7 @@
             <div class="prop-summary-photo" id="propSummaryPhoto"><i class="fas fa-image"></i></div>
             <div class="prop-summary-body" id="propSummaryBody">
                 <div class="prop-summary-empty">
-                    법원과 사건번호를 입력하고<br><strong>사건 조회</strong>를 누르면<br>물건 위치(로드뷰)와 정보가 표시됩니다.
+                    <strong>물건 주소</strong>를 입력하면<br>물건 위치(지도·로드뷰)가<br>여기에 표시됩니다.
                 </div>
             </div>
         </aside>
@@ -2258,11 +2253,29 @@ function searchAddress() {
             document.getElementById('propertyAddress').value = address;
             document.getElementById('propertyAddressDetail').focus();
             toast('주소가 입력되었습니다. 상세 주소를 입력해주세요.', 'success');
+            // 주소 입력 시 우측 요약 카드에 지도/로드뷰 표시
+            showPropertyLocation();
         },
-        onclose: function() {
-            // 팝업 닫힐 때 아무것도 안 함
-        }
+        onclose: function() {}
     }).open();
+}
+
+// 물건 주소 → 우측 요약 카드에 지도/로드뷰 표시 (CODEF 조회 없이 주소만으로)
+function showPropertyLocation() {
+    const base   = (document.getElementById('propertyAddress').value || '').trim();
+    const detail = (document.getElementById('propertyAddressDetail').value || '').trim();
+    const full   = (base + ' ' + detail).trim();
+    const photoEl = document.getElementById('propSummaryPhoto');
+    const bodyEl  = document.getElementById('propSummaryBody');
+    if (!base) return;
+    if (photoEl) renderLocationView(photoEl, full);
+    if (bodyEl) {
+        bodyEl.innerHTML =
+            '<div style="padding:0.5rem 0.25rem;font-size:0.88rem;line-height:1.6;">' +
+            '<div style="color:#888;font-size:0.8rem;margin-bottom:0.2rem;">물건 주소</div>' +
+            '<div style="font-weight:600;color:#0f766e;">' + escapeHtml(full) + '</div>' +
+            '</div>';
+    }
 }
 </script>
 
