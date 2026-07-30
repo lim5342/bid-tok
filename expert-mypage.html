@@ -778,6 +778,12 @@
                 alert('아직 승인 대기 중인 계정입니다.\n관리자 승인 완료 후 의뢰를 수임하실 수 있습니다.');
                 return;
             }
+            // 책임 확약서 미서명 시 수락 차단 → 서명 화면 표시
+            if (!user.contractSigned) {
+                alert('의뢰를 수락하려면 먼저 "전문가 활동 책임 확약서"에 서명해야 합니다.');
+                showContractModal();
+                return;
+            }
             if (!confirm('승인하시면 신청자 연락처·입찰가·환급계좌가 공개됩니다.\n승인 후 취소 3회 시 계정이 자동 정지됩니다.\n\n이 요청을 승인하시겠습니까?')) return;
             const myId = user.userId || user.id;
             try {
@@ -1086,6 +1092,91 @@
         window.cancelAfterAccept = cancelAfterAccept;
         window.viewDetail        = viewDetail;
         window.updateStatus      = updateStatus;
+        // ══════════ 전문가 책임 확약서 (전자서명) ══════════
+        const CONTRACT_VERSION = 'v1_2026-07';
+        let _contractCtx = null, _contractDrawing = false, _contractHasSign = false;
+
+        function initContractCanvas() {
+            const canvas = document.getElementById('contractCanvas');
+            if (!canvas) return;
+            // 실제 픽셀 크기 맞추기
+            const rect = canvas.getBoundingClientRect();
+            canvas.width  = rect.width;
+            canvas.height = rect.height;
+            const ctx = canvas.getContext('2d');
+            ctx.lineWidth = 2.5; ctx.lineCap = 'round'; ctx.strokeStyle = '#111827';
+            _contractCtx = ctx; _contractHasSign = false;
+            const pos = (e) => {
+                const r = canvas.getBoundingClientRect();
+                const t = e.touches ? e.touches[0] : e;
+                return { x: t.clientX - r.left, y: t.clientY - r.top };
+            };
+            const start = (e) => { e.preventDefault(); _contractDrawing = true; const p = pos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); };
+            const move  = (e) => { if (!_contractDrawing) return; e.preventDefault(); const p = pos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); _contractHasSign = true; updateContractBtn(); };
+            const end   = () => { _contractDrawing = false; };
+            canvas.onmousedown = start; canvas.onmousemove = move; canvas.onmouseup = end; canvas.onmouseleave = end;
+            canvas.ontouchstart = start; canvas.ontouchmove = move; canvas.ontouchend = end;
+        }
+        window.clearContractSign = function() {
+            const canvas = document.getElementById('contractCanvas');
+            if (canvas && _contractCtx) _contractCtx.clearRect(0, 0, canvas.width, canvas.height);
+            _contractHasSign = false; updateContractBtn();
+        };
+        window.updateContractBtn = function() {
+            const agree = document.getElementById('contractAgree');
+            const btn   = document.getElementById('contractSubmitBtn');
+            if (!agree || !btn) return;
+            const ok = agree.checked && _contractHasSign;
+            btn.disabled = !ok;
+            btn.style.background = ok ? '#1550E8' : '#cbd5e1';
+            btn.style.cursor = ok ? 'pointer' : 'not-allowed';
+        };
+        window.submitContract = async function() {
+            const agree = document.getElementById('contractAgree');
+            if (!agree.checked || !_contractHasSign) { alert('내용 동의 체크와 서명을 모두 완료해주세요.'); return; }
+            const btn = document.getElementById('contractSubmitBtn');
+            btn.disabled = true; btn.textContent = '저장 중...';
+            let signatureData = '';
+            try { signatureData = document.getElementById('contractCanvas').toDataURL('image/png'); } catch(e) {}
+            try {
+                await API.users.update(user.id, {
+                    contractSigned:    true,
+                    contractSignedAt:  new Date().toISOString(),
+                    contractSignature: signatureData,
+                    contractVersion:   CONTRACT_VERSION
+                });
+                user.contractSigned = true;
+                document.getElementById('contractModal').style.display = 'none';
+                showExpertToast('✅ 서명이 완료되었습니다. 이제 의뢰를 수락하실 수 있습니다.', 'success');
+                if (typeof loadRequests === 'function') loadRequests();
+            } catch (e) {
+                alert('저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+                btn.disabled = false; btn.textContent = '동의하고 서명 완료';
+            }
+        };
+        function showContractModal() {
+            const modal = document.getElementById('contractModal');
+            if (!modal) return;
+            modal.style.display = 'flex';
+            // 캔버스는 표시 후 크기가 잡히므로 다음 프레임에 초기화
+            setTimeout(initContractCanvas, 50);
+        }
+        // 승인된 전문가인데 아직 서명 안 했으면 강제 표시 (기존 승인자 포함)
+        async function checkContract() {
+            if (IS_ADMIN_AS) return;
+            let fresh = null;
+            try { fresh = await API.users.getById(user.id); } catch(e) {}
+            if (!fresh && API.users.findByUserId) { try { fresh = await API.users.findByUserId(user.userId); } catch(e) {} }
+            if (fresh) {
+                user.status         = fresh.status || user.status;
+                user.contractSigned = fresh.contractSigned;
+            }
+            if (user.userType === 'expert' && user.status === 'active' && !user.contractSigned) {
+                showContractModal();
+            }
+        }
+        checkContract();
+
         // ★ 메뉴 클릭·로그아웃·모달닫기 (onclick 에서 호출되므로 반드시 전역 노출)
         window.showSection            = showSection;
         window.handleLogout           = handleLogout;
@@ -1559,6 +1650,41 @@
             </div>
         </div>
     </footer>
+
+    <!-- ══════════ 전문가 책임 확약서 (전자서명, 1회 필수) ══════════ -->
+    <div id="contractModal" style="display:none;position:fixed;inset:0;z-index:100000;background:rgba(15,23,42,0.75);align-items:center;justify-content:center;padding:1rem;">
+        <div style="background:#fff;border-radius:16px;width:100%;max-width:560px;max-height:92vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.35);">
+            <div style="padding:1.3rem 1.5rem 0.9rem;border-bottom:1px solid #eee;">
+                <h3 style="margin:0;font-size:1.15rem;color:#1a1a2e;"><i class="fas fa-file-signature" style="color:#1550E8;margin-right:0.5rem;"></i>전문가 활동 책임 확약서</h3>
+                <p style="margin:0.4rem 0 0;font-size:0.85rem;color:#64748b;">의뢰를 수락하기 전에 <strong>1회</strong> 동의·서명이 필요합니다.</p>
+            </div>
+            <div style="padding:1rem 1.5rem;overflow-y:auto;font-size:0.85rem;line-height:1.75;color:#334155;">
+                <p style="margin:0 0 0.6rem;">본인은 대리입찰톡(운영사: (주)원스타프로비, 이하 "플랫폼")을 통해 매수신청대리 업무를 수행함에 있어 아래 내용에 동의하며 이를 전자서명으로 확약합니다.</p>
+                <p style="margin:0.5rem 0;"><strong>제1조 (플랫폼의 지위)</strong> 플랫폼은 이용자와 전문가를 연결·중개하는 역할만 하며, 대리입찰 업무의 당사자가 아닙니다.</p>
+                <p style="margin:0.5rem 0;"><strong>제2조 (비전속)</strong> 본 확약은 전속(독점) 계약이 아니며, 전문가는 타 경로 활동에 제한받지 않습니다. 단, 동일 사건의 중복 수임은 금지됩니다.</p>
+                <p style="margin:0.5rem 0;"><strong>제3조 (책임의 소재)</strong> 대리입찰 업무와 관련한 모든 법적·금전적 책임(입찰 이행, 보증금 관리, 낙찰/패찰 결과, 서류 작성, 의뢰인 분쟁 등)은 <strong>전문가 본인</strong>에게 있습니다.</p>
+                <p style="margin:0.5rem 0;"><strong>제4조 (플랫폼 면책)</strong> 전문가의 고의·과실, 입찰 불이행, 보증금 분실·유용, 자격·서류 허위 등으로 발생하는 손해에 대해 플랫폼은 책임지지 않습니다.</p>
+                <p style="margin:0.5rem 0;"><strong>제5조 (자격·보험 유지)</strong> 전문가는 유효한 매수신청대리인 자격과 배상책임보험을 상시 유지하며, 자격 상실 시 즉시 통보합니다.</p>
+                <p style="margin:0.5rem 0;"><strong>제6조 (성실 이행)</strong> 수락한 사건을 지정 입찰기일에 성실히 이행하며, 이행이 어려운 경우 지체 없이 통보합니다.</p>
+                <p style="margin:0.5rem 0;"><strong>제7조 (보증금 관리)</strong> 의뢰인의 보증금을 선량한 관리자의 주의로 관리하고, 패찰 시 즉시 전액 반환합니다.</p>
+                <p style="margin:0.5rem 0;"><strong>제8조 (정보보안)</strong> 의뢰인의 개인정보·입찰정보를 업무 목적 외로 사용하지 않고 비밀을 유지합니다.</p>
+                <p style="margin:0.5rem 0;"><strong>제9조 (전자서명 효력)</strong> 본인은 위 내용을 충분히 읽고 이해하였으며, 아래 서명이 「전자서명법」에 따라 서면 서명과 동일한 효력을 가짐에 동의합니다.</p>
+
+                <label style="display:flex;align-items:center;gap:0.5rem;margin:0.9rem 0 0.6rem;font-weight:700;color:#1a1a2e;cursor:pointer;">
+                    <input type="checkbox" id="contractAgree" onchange="updateContractBtn()" style="width:18px;height:18px;">
+                    위 내용을 모두 확인하였으며 동의합니다. (필수)
+                </label>
+                <p style="margin:0 0 0.35rem;font-size:0.82rem;color:#64748b;">아래 칸에 마우스 또는 손가락으로 서명해주세요.</p>
+                <canvas id="contractCanvas" style="width:100%;height:150px;border:2px dashed #cbd5e1;border-radius:10px;background:#fff;touch-action:none;"></canvas>
+                <button type="button" onclick="clearContractSign()" style="margin-top:0.4rem;background:none;border:none;color:#64748b;font-size:0.82rem;cursor:pointer;text-decoration:underline;">서명 지우기</button>
+            </div>
+            <div style="padding:1rem 1.5rem;border-top:1px solid #eee;">
+                <button type="button" id="contractSubmitBtn" onclick="submitContract()" disabled
+                    style="width:100%;padding:0.95rem;background:#cbd5e1;color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:not-allowed;">동의하고 서명 완료</button>
+                <p style="margin:0.6rem 0 0;font-size:0.78rem;color:#94a3b8;text-align:center;">문의: 02-853-5875</p>
+            </div>
+        </div>
+    </div>
 
 </body>
 </html>
