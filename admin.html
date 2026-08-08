@@ -3493,6 +3493,21 @@ let adminIdSet = new Set();
 async function loadAdminIdSet() {
     adminIdSet = new Set();
     try {
+        // ★ 보안모드: 관리자 목록을 서버(워커) 경유로 조회
+        if (window.AUTH_CONFIG && window.AUTH_CONFIG.workerUrl) {
+            const base = window.AUTH_CONFIG.workerUrl.replace(/\/+$/, '');
+            const r = await fetch(base + '/list-admins', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ session: localStorage.getItem('bidtok_session') || '' })
+            }).then(x => x.json());
+            if (r && r.success) {
+                (r.data || []).forEach(a => {
+                    if (a.id) adminIdSet.add(a.id);
+                    if (a.userId) adminIdSet.add(a.userId);
+                });
+            }
+            return;
+        }
         const PROJECT_ID = 'bid-tok';
         const API_KEY    = 'AIzaSyDrJwD2FfDr_PJbc54pvUDQcCRPGl6ICpQ';
         const res = await fetch(`https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/admins?key=${API_KEY}&pageSize=300`);
@@ -4381,6 +4396,31 @@ async function changeAdminPassword() {
     if (pwCurrent === pwNew) { showToast('현재 비밀번호와 동일합니다.', 'error'); return; }
 
     try {
+        // ★ 보안모드: 관리자 비밀번호 변경을 서버(워커) 경유 (현재 비번 검증 + 해시 저장)
+        if (window.AUTH_CONFIG && window.AUTH_CONFIG.workerUrl) {
+            const base = window.AUTH_CONFIG.workerUrl.replace(/\/+$/, '');
+            const r = await fetch(base + '/change-admin-password', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ session: localStorage.getItem('bidtok_session') || '', currentPassword: pwCurrent, newPassword: pwNew })
+            }).then(x => x.json());
+            if (!r || !r.success) {
+                showToast((r && r.message) || '비밀번호 변경 실패', 'error');
+                document.getElementById('pwCurrent').value = '';
+                return;
+            }
+            showToast('✅ 비밀번호가 변경되었습니다. 다시 로그인해주세요.', 'success');
+            setTimeout(() => {
+                currentAdmin = null;
+                clearAdminSession();
+                try { localStorage.removeItem('bidtok_session'); } catch(e){}
+                document.getElementById('adminWrap').style.display   = 'none';
+                document.getElementById('sidebarToggle').style.display = 'none';
+                document.getElementById('loginScreen').style.display = 'flex';
+                document.getElementById('loginForm').reset();
+            }, 2500);
+            return;
+        }
+
         const db  = getDB();
         const doc = await db.collection('admins').doc(sess.id).get();
         if (!doc.exists) { showToast('관리자 정보를 찾을 수 없습니다.', 'error'); return; }
