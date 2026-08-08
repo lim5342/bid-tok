@@ -59,5 +59,5 @@ window.KAKAO_CONFIG = {
 //   예: 'https://bidtok-auth-proxy.qkqk5342.workers.dev'
 // ============================================================
 window.AUTH_CONFIG = {
-    workerUrl: '',   // ← 배포 후 여기에 auth-proxy 워커 주소 입력
+    workerUrl: 'https://bidtok-auth-proxy.qkqk5342.workers.dev',   // 보안모드 활성화 (서버 경유)
 };

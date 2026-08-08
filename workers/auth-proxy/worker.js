@@ -229,6 +229,30 @@ async function fsListAll(token, collection) {
 // ============================================================
 const PBKDF2_ITER = 120000;
 
+async function fsGetDoc(token, collection, id) {
+  const res = await fetch(`${FS_BASE}/${collection}/${encodeURIComponent(id)}`, { headers: { 'Authorization': `Bearer ${token}` } });
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error(`단건조회 실패(${res.status})`);
+  const j = await res.json();
+  return { id: j.name.split('/').pop(), ...fieldsToObj(j.fields) };
+}
+async function fsSetDoc(token, collection, id, data) {
+  const res = await fetch(`${FS_BASE}/${collection}/${encodeURIComponent(id)}`, {
+    method: 'PATCH',
+    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ fields: objToFields(data) }),
+  });
+  if (!res.ok) throw new Error(`저장 실패(${res.status}): ${await res.text()}`);
+  return true;
+}
+async function fsDelete(token, collection, id) {
+  const res = await fetch(`${FS_BASE}/${collection}/${encodeURIComponent(id)}`, {
+    method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` },
+  });
+  if (!res.ok && res.status !== 404) throw new Error(`삭제 실패(${res.status})`);
+  return true;
+}
+
 async function hashPassword(password) {
   const salt = crypto.getRandomValues(new Uint8Array(16));
   const baseKey = await crypto.subtle.importKey(
@@ -274,6 +298,41 @@ function sanitizeUser(u) {
 }
 
 // ============================================================
+//  세션 토큰 (HMAC-SHA256) — 로그인 시 발급, 명단 조회 시 권한 확인
+// ============================================================
+function b64urlToStr(b64) { return new TextDecoder().decode(bytesFromB64(b64)); }
+
+async function hmacSign(secret, msg) {
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(msg));
+  return b64urlFromBytes(new Uint8Array(sig));
+}
+async function makeSession(env, payload) {
+  const body = { ...payload, exp: Math.floor(Date.now() / 1000) + 60 * 60 * 12 }; // 12시간
+  const p = b64urlFromStr(JSON.stringify(body));
+  const sig = await hmacSign(env.WORKER_SECRET || 'dev-secret', p);
+  return p + '.' + sig;
+}
+async function verifySession(env, tokenStr) {
+  if (!tokenStr || tokenStr.indexOf('.') < 0) return null;
+  const [p, sig] = tokenStr.split('.');
+  const expect = await hmacSign(env.WORKER_SECRET || 'dev-secret', p);
+  if (!timingSafeEqual(sig, expect)) return null;
+  let payload;
+  try { payload = JSON.parse(b64urlToStr(p)); } catch { return null; }
+  if (!payload || (payload.exp && payload.exp < Math.floor(Date.now() / 1000))) return null;
+  return payload;
+}
+// 신청 법원명 정규화 (지방법원 ↔ 지법)
+function normCourt(v) { return String(v || '').replace(/지방법원/g, '지법').replace(/\s+/g, ' ').trim(); }
+function normType(v) {
+  const s = String(v || '').toLowerCase().trim();
+  if (s === 'realtor' || s.includes('공인중개') || s.includes('매수신청') || s.includes('중개')) return 'realtor';
+  if (s === 'lawyer' || s.includes('법무')) return 'lawyer';
+  return '';
+}
+
+// ============================================================
 //  라우팅
 // ============================================================
 export default {
@@ -311,7 +370,7 @@ export default {
         const chk = await verifyPassword(password, user.password);
         if (!chk.ok) return json({ success: false, message: '비밀번호가 올바르지 않습니다.' }, 200, cors);
 
-        if (user.status === 'pending') return json({ success: false, message: '관리자 승인 대기 중입니다.' }, 200, cors);
+        // 승인대기(pending)·재승인(re_review) 전문가도 로그인 허용 (마이페이지에서 승인대기 화면)
         if (user.status === 'setup_pending') return json({ success: false, message: '계정 설정이 완료되지 않았습니다.' }, 200, cors);
         if (user.status === 'blocked') return json({ success: false, message: '이용이 제한된 계정입니다.' }, 200, cors);
         if (user.status === 'withdrawn') return json({ success: false, message: '탈퇴한 계정입니다.' }, 200, cors);
@@ -324,15 +383,36 @@ export default {
           } catch (e) { /* 업그레이드 실패해도 로그인은 진행 */ }
         }
 
-        return json({ success: true, user: sanitizeUser(user) }, 200, cors);
+        const session = await makeSession(env, { uid: user.id, userId: user.userId, role: user.userType });
+        return json({ success: true, user: sanitizeUser(user), session }, 200, cors);
       }
 
       // ── 관리자 로그인 ──────────────────────────────────
       if (path === '/admin-login') {
         const { adminId, password } = body;
-        const found = await fsQueryByField(token, 'admins', 'name', adminId);
-        const admin = found[0];
-        if (!admin) return json({ success: false, message: '존재하지 않는 관리자입니다.' }, 200, cors);
+        const MASTERS = {
+          bootv1:   { pw: 'Admin@2026!', name: '대표 (마스터)', role: 'master' },
+          dajangtv: { pw: 'Admin@2026!', name: '대장TV 관리자', role: 'master' }
+        };
+        // 관리자 문서ID(=로그인 아이디)로 조회, 없으면 userId 필드로 폴백
+        let admin = await fsGetDoc(token, 'admins', adminId);
+        if (!admin) { const f = await fsQueryByField(token, 'admins', 'userId', adminId); admin = f[0]; }
+        // 문서가 없고 마스터 계정 최초 로그인 → 생성 후 로그인
+        if (!admin) {
+          if (MASTERS[adminId] && MASTERS[adminId].pw === password) {
+            const m = MASTERS[adminId];
+            await fsSetDoc(token, 'admins', adminId, { name: m.name, role: m.role, pw: await hashPassword(m.pw), createdAt: new Date().toISOString() });
+            const session = await makeSession(env, { uid: adminId, adminId, role: 'admin' });
+            return json({ success: true, admin: { name: m.name, role: m.role }, session }, 200, cors);
+          }
+          return json({ success: false, message: '존재하지 않는 관리자입니다.' }, 200, cors);
+        }
+        // pw 비어있는 초기 상태 + 마스터 하드코딩 일치 → 허용
+        if (!admin.pw && MASTERS[adminId] && MASTERS[adminId].pw === password) {
+          const session = await makeSession(env, { uid: admin.id, adminId, role: 'admin' });
+          const { pw: _p, ...safeM } = admin;
+          return json({ success: true, admin: safeM, session }, 200, cors);
+        }
         const chk = await verifyPassword(password, admin.pw);
         if (!chk.ok) return json({ success: false, message: '비밀번호가 올바르지 않습니다.' }, 200, cors);
         if (chk.legacy) {
@@ -342,7 +422,8 @@ export default {
           } catch (e) {}
         }
         const { pw, ...safe } = admin;
-        return json({ success: true, admin: safe }, 200, cors);
+        const session = await makeSession(env, { uid: admin.id, adminId: admin.name || admin.id, role: 'admin' });
+        return json({ success: true, admin: safe, session }, 200, cors);
       }
 
       // ── 회원가입 ───────────────────────────────────────
@@ -483,6 +564,101 @@ export default {
           }
         }
         return json({ success: true, users_migrated: migrated, users_skipped: skipped, admins_migrated: adminMigrated }, 200, cors);
+      }
+
+      // ── 신청 목록 조회 (권한별) ───────────────────────────
+      //    admin: 전체 / expert: 내 배정 + 미배정 공개풀 / client: 내 신청
+      if (path === '/list-applications') {
+        const sess = await verifySession(env, body.session);
+        if (!sess) return json({ success: false, message: '로그인이 필요합니다.' }, 401, cors);
+        const all = await fsListAll(token, 'applications');
+        let list = [];
+        if (sess.role === 'admin') {
+          list = all;
+        } else if (sess.role === 'expert') {
+          const myId = sess.userId || sess.uid;
+          list = all.filter(a => {
+            if (a.assigned_expert_id === myId) return true;               // 내 배정건
+            if (a.assigned_expert_id) return false;                        // 남이 가져간 건 제외
+            const isPaid = a.payment_status === '결제완료' || a.payment_status === '무료매칭' || !!a.paid_at;
+            return isPaid || a.status === '매칭중';                         // 미배정 결제완료 공개풀
+          });
+        } else { // client
+          const myId = sess.userId || sess.uid;
+          list = all.filter(a => a.userId === myId || a.user_id === myId);
+        }
+        return json({ success: true, data: list }, 200, cors);
+      }
+
+      // ── 회원 목록 조회 (관리자 전용) ──────────────────────
+      if (path === '/list-users') {
+        const sess = await verifySession(env, body.session);
+        if (!sess || sess.role !== 'admin') return json({ success: false, message: '관리자 권한이 필요합니다.' }, 403, cors);
+        const users = (await fsListAll(token, 'users')).map(sanitizeUser);
+        return json({ success: true, data: users }, 200, cors);
+      }
+
+      // ── 문서 삭제 (관리자 전용) ───────────────────────────
+      if (path === '/delete-doc') {
+        const sess = await verifySession(env, body.session);
+        if (!sess || sess.role !== 'admin') return json({ success: false, message: '관리자 권한이 필요합니다.' }, 403, cors);
+        const { collection, id } = body;
+        if (!collection || !id) return json({ success: false, message: '필수 정보가 누락되었습니다.' }, 200, cors);
+        if (!['users', 'applications', 'experts', 'adminNotifications'].includes(collection)) {
+          return json({ success: false, message: '허용되지 않은 컬렉션입니다.' }, 403, cors);
+        }
+        await fsDelete(token, collection, id);
+        return json({ success: true }, 200, cors);
+      }
+
+      // ── 직원 관리자 지정 (관리자 전용) ────────────────────
+      if (path === '/grant-admin') {
+        const sess = await verifySession(env, body.session);
+        if (!sess || sess.role !== 'admin') return json({ success: false, message: '관리자 권한이 필요합니다.' }, 403, cors);
+        const { targetUserId } = body;
+        const found = await fsQueryByField(token, 'users', 'userId', targetUserId);
+        const u = found[0];
+        if (!u) return json({ success: false, message: '사용자를 찾을 수 없습니다.' }, 200, cors);
+        await fsSetDoc(token, 'admins', u.userId, {
+          name: u.name || u.userId, userId: u.userId, pw: u.password || '', role: 'staff', grantedAt: new Date().toISOString()
+        });
+        return json({ success: true, name: u.name }, 200, cors);
+      }
+
+      // ── 관리자 권한 해제 (관리자 전용) ────────────────────
+      if (path === '/revoke-admin') {
+        const sess = await verifySession(env, body.session);
+        if (!sess || sess.role !== 'admin') return json({ success: false, message: '관리자 권한이 필요합니다.' }, 403, cors);
+        const { targetUserId } = body;
+        if (targetUserId === 'bootv1' || targetUserId === 'dajangtv') return json({ success: false, message: '기본 마스터 계정은 해제할 수 없습니다.' }, 200, cors);
+        await fsDelete(token, 'admins', targetUserId);
+        return json({ success: true }, 200, cors);
+      }
+
+      // ── 새 의뢰 → 자격 전문가에게 문자 알림 (결제완료 후 호출) ──
+      if (path === '/notify-new-order') {
+        const app = await fsGetDoc(token, 'applications', body.applicationId);
+        if (!app) return json({ success: false, message: '신청 정보를 찾을 수 없습니다.' }, 200, cors);
+        const wantType = normType(app.expert_type || app.expertType);
+        const appCourt = normCourt(app.court);
+        const users = await fsListAll(token, 'users');
+        const eligible = users.filter(u => {
+          if (u.userType !== 'expert' || u.status !== 'active') return false;
+          const ut = normType(u.expertType || u.expertTypeLabel);
+          if (wantType && ut !== wantType) return false;
+          const courts = [...(Array.isArray(u.selectedCourts) ? u.selectedCourts : []),
+                          ...(Array.isArray(u.serviceRegions) ? u.serviceRegions : (u.serviceRegions ? [u.serviceRegions] : []))].map(normCourt);
+          return courts.some(c => c && (c === appCourt || c.includes(appCourt) || appCourt.includes(c)));
+        });
+        const SMS_URL = 'https://bidtok-sms-proxy.qkqk5342.workers.dev';
+        const targets = eligible.length ? eligible.map(e => ({ name: e.name, phone: e.phone }))
+                                        : [{ name: '관리자', phone: '01083445342' }];
+        await Promise.all(targets.map(t => t.phone ? fetch(SMS_URL, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'expert_new_request', to: t.phone,
+            data: { name: t.name, court: app.court, caseNumber: app.case_number, bidDate: app.bid_date } })
+        }).catch(() => {}) : Promise.resolve()));
+        return json({ success: true, notified: eligible.length }, 200, cors);
       }
 
       return json({ success: false, message: '알 수 없는 요청 경로입니다: ' + path }, 404, cors);

@@ -206,6 +206,19 @@ async function _fsDeleteDoc(collection, docId) {
 // ★ LocalDB가 비어있으면 Firebase를 다시 시도
 // ============================================================
 async function _smartGetCollection(collection) {
+    // ★ 보안모드: 개인정보 명단(회원·신청) 조회는 서버(워커) 경유 — 권한 확인 후 반환
+    if (_useAuthServer() && (collection === 'applications' || collection === 'users')) {
+        try {
+            const ep = (collection === 'applications') ? '/list-applications' : '/list-users';
+            const r = await _authPost(ep, { session: _session() });
+            if (r && r.success) return r.data || [];
+            console.warn(`[API] 서버 ${collection} 조회 거부: ${r && r.message}`);
+            return [];
+        } catch (e) {
+            console.warn(`[API] 서버 ${collection} 조회 실패:`, e.message);
+            return [];
+        }
+    }
     // 1) Firebase REST 시도
     try {
         const items = await _fsGetCollection(collection);
@@ -305,6 +318,12 @@ async function _smartUpdateDoc(collection, docId, data) {
 }
 
 async function _smartDeleteDoc(collection, docId) {
+    // ★ 보안모드: 삭제는 서버(워커) 경유 — 관리자 권한 확인
+    if (_useAuthServer()) {
+        const r = await _authPost('/delete-doc', { session: _session(), collection, id: docId });
+        if (r && r.success) { if (window.LocalDB) window.LocalDB.remove(collection, docId).catch(() => {}); return true; }
+        throw new Error((r && r.message) || '삭제 권한이 없습니다.');
+    }
     // 1) Firebase REST 시도
     try {
         await _fsDeleteDoc(collection, docId);
@@ -328,11 +347,22 @@ async function _smartDeleteDoc(collection, docId) {
 // 인증 서버(auth-proxy) 연동 헬퍼
 // ★ AUTH_CONFIG.workerUrl 이 설정돼 있으면 서버 방식, 아니면 레거시
 // ============================================================
+// 보안모드 기본값: payment-config.js 를 로드하지 않는 페이지(login/admin/expert-mypage 등)에서도
+// auth-proxy 를 사용하도록 api.js 자체에 기본 워커 주소를 주입한다.
+(function _ensureAuthConfig() {
+    window.AUTH_CONFIG = window.AUTH_CONFIG || {};
+    if (!window.AUTH_CONFIG.workerUrl) {
+        window.AUTH_CONFIG.workerUrl = 'https://bidtok-auth-proxy.qkqk5342.workers.dev';
+    }
+})();
 function _authWorkerUrl() {
     return (window.AUTH_CONFIG && window.AUTH_CONFIG.workerUrl) ? window.AUTH_CONFIG.workerUrl.replace(/\/+$/, '') : '';
 }
 function _useAuthServer() {
     return !!_authWorkerUrl();
+}
+function _session() {
+    try { return localStorage.getItem('bidtok_session') || ''; } catch (e) { return ''; }
 }
 async function _authPost(path, payload) {
     const base = _authWorkerUrl();
@@ -454,6 +484,7 @@ const API = {
             try {
                 if (_useAuthServer()) {
                     const r = await _authPost('/login', { userId, password, userType });
+                    if (r.success && r.session) { try { localStorage.setItem('bidtok_session', r.session); } catch(e){} }
                     return r.success ? { success: true, user: r.user } : { success: false, message: r.message };
                 }
                 const user = await API.users.findByUserId(userId);

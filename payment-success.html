@@ -325,6 +325,21 @@ async function autoMatchExpert(appId) {
         });
         console.log('[매칭] 자동배정 없이 매칭중 상태로 대기 (선착순 수락).');
 
+        // ★ 보안모드: 전문가 알림을 서버(워커) 경유 → 클라이언트가 회원목록 조회 불필요
+        if (window.AUTH_CONFIG && window.AUTH_CONFIG.workerUrl) {
+            try {
+                const base = window.AUTH_CONFIG.workerUrl.replace(/\/+$/, '');
+                const r = await fetch(base + '/notify-new-order', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ applicationId: appId })
+                }).then(x => x.json());
+                console.log(`[매칭] (서버) 자격 전문가 ${r && r.notified != null ? r.notified : '?'}명에게 새 의뢰 알림`);
+            } catch (notifyErr) {
+                console.warn('전문가 알림(서버) 발송 실패:', notifyErr);
+            }
+            return;
+        }
+
         // ── 자격 맞는 전문가(승인+활동법원+유형)에게 새 의뢰 문자 알림 ──
         try {
             const res = await API.users.getAll();

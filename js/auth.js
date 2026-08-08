@@ -19,6 +19,7 @@ const Auth = {
     logout: function() {
         localStorage.removeItem('currentUser');
         localStorage.removeItem('autoLogin');
+        localStorage.removeItem('bidtok_session');
         window.location.href = 'index.html';
     },
 
