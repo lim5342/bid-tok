@@ -249,6 +249,13 @@ async function _smartGetCollection(collection) {
 }
 
 async function _smartGetDoc(collection, docId) {
+    // ★ 보안모드: users/applications 단건 조회는 서버(워커) 경유
+    if (_useAuthServer() && (collection === 'users' || collection === 'applications')) {
+        try {
+            const r = await _authPost('/db-get', { session: _session(), collection, id: docId });
+            return (r && r.success) ? (r.data || null) : null;
+        } catch (e) { console.warn(`[API] 서버 ${collection} 단건조회 실패:`, e.message); return null; }
+    }
     // 1) Firebase REST 시도
     try {
         const item = await _fsGetDoc(collection, docId);
@@ -271,6 +278,12 @@ async function _smartGetDoc(collection, docId) {
 }
 
 async function _smartAddDoc(collection, data) {
+    // ★ 보안모드: applications/adminNotifications 생성은 서버(워커) 경유
+    if (_useAuthServer() && (collection === 'applications' || collection === 'adminNotifications')) {
+        const r = await _authPost('/db-create', { session: _session(), collection, data });
+        if (r && r.success) { if (window.LocalDB && r.data) window.LocalDB.update(collection, r.data.id, { ...r.data, _localOnly: false }).catch(() => {}); return r.data; }
+        throw new Error((r && r.message) || '저장 권한이 없습니다.');
+    }
     // 1) Firebase REST 시도
     try {
         const result = await _fsAddDoc(collection, data);
@@ -295,6 +308,12 @@ async function _smartAddDoc(collection, data) {
 }
 
 async function _smartUpdateDoc(collection, docId, data) {
+    // ★ 보안모드: users/applications 수정은 서버(워커) 경유
+    if (_useAuthServer() && (collection === 'users' || collection === 'applications')) {
+        const r = await _authPost('/db-update', { session: _session(), collection, id: docId, data });
+        if (r && r.success) { if (window.LocalDB) window.LocalDB.update(collection, docId, data).catch(() => {}); return true; }
+        throw new Error((r && r.message) || '수정 권한이 없습니다.');
+    }
     // 1) Firebase REST 시도
     try {
         await _fsUpdateDoc(collection, docId, data);
@@ -318,9 +337,9 @@ async function _smartUpdateDoc(collection, docId, data) {
 }
 
 async function _smartDeleteDoc(collection, docId) {
-    // ★ 보안모드: 삭제는 서버(워커) 경유 — 관리자 권한 확인
+    // ★ 보안모드: 삭제는 서버(워커) 경유 — 소유자/관리자 권한 확인
     if (_useAuthServer()) {
-        const r = await _authPost('/delete-doc', { session: _session(), collection, id: docId });
+        const r = await _authPost('/db-delete', { session: _session(), collection, id: docId });
         if (r && r.success) { if (window.LocalDB) window.LocalDB.remove(collection, docId).catch(() => {}); return true; }
         throw new Error((r && r.message) || '삭제 권한이 없습니다.');
     }

@@ -684,6 +684,78 @@ export default {
         return json({ success: true, message: '비밀번호가 변경되었습니다.' }, 200, cors);
       }
 
+      // ── 단건 조회 (로그인 필요) users/applications ────────
+      if (path === '/db-get') {
+        const sess = await verifySession(env, body.session);
+        if (!sess) return json({ success: false, message: '로그인이 필요합니다.' }, 401, cors);
+        const { collection, id } = body;
+        if (!['users', 'applications'].includes(collection)) return json({ success: false, message: '허용되지 않은 컬렉션입니다.' }, 403, cors);
+        const doc = await fsGetDoc(token, collection, id);
+        if (!doc) return json({ success: true, data: null }, 200, cors);
+        return json({ success: true, data: collection === 'users' ? sanitizeUser(doc) : doc }, 200, cors);
+      }
+
+      // ── 문서 생성 (로그인 필요) ────────────────────────────
+      if (path === '/db-create') {
+        const sess = await verifySession(env, body.session);
+        if (!sess) return json({ success: false, message: '로그인이 필요합니다.' }, 401, cors);
+        const { collection, data } = body;
+        if (collection === 'applications') {
+          const d = { ...(data || {}) };
+          if (sess.role !== 'admin') { d.userId = sess.userId || sess.uid; }  // 소유자 강제
+          const created = await fsCreate(token, 'applications', d);
+          return json({ success: true, data: created }, 200, cors);
+        }
+        if (collection === 'adminNotifications') {
+          const created = await fsCreate(token, 'adminNotifications', data || {});
+          return json({ success: true, data: created }, 200, cors);
+        }
+        return json({ success: false, message: '허용되지 않은 생성입니다.' }, 403, cors);
+      }
+
+      // ── 문서 수정 (로그인 필요, 컬렉션별 권한) ──────────────
+      if (path === '/db-update') {
+        const sess = await verifySession(env, body.session);
+        if (!sess) return json({ success: false, message: '로그인이 필요합니다.' }, 401, cors);
+        const { collection, id, data } = body;
+        const upd = { ...(data || {}) };
+        if (collection === 'users') {
+          const isSelf = (sess.uid === id) || (sess.userId && String(sess.userId) === String(id));
+          if (sess.role !== 'admin' && !isSelf) return json({ success: false, message: '수정 권한이 없습니다.' }, 403, cors);
+          if (sess.role !== 'admin') { delete upd.password; delete upd.pw; delete upd.userType; delete upd.status; delete upd.role; }
+          await fsPatch(token, 'users', id, upd);
+          return json({ success: true }, 200, cors);
+        }
+        if (collection === 'applications') {
+          // 유효 세션(관리자/의뢰인/전문가)이면 허용 — 익명 변조 차단이 목적
+          await fsPatch(token, 'applications', id, upd);
+          return json({ success: true }, 200, cors);
+        }
+        return json({ success: false, message: '허용되지 않은 수정입니다.' }, 403, cors);
+      }
+
+      // ── 문서 삭제 (로그인 필요, 소유자/관리자) ──────────────
+      if (path === '/db-delete') {
+        const sess = await verifySession(env, body.session);
+        if (!sess) return json({ success: false, message: '로그인이 필요합니다.' }, 401, cors);
+        const { collection, id } = body;
+        if (collection === 'applications') {
+          if (sess.role === 'admin') { await fsDelete(token, 'applications', id); return json({ success: true }, 200, cors); }
+          const app = await fsGetDoc(token, 'applications', id);
+          if (!app) return json({ success: true }, 200, cors);
+          const myId = sess.userId || sess.uid;
+          const owner = app.userId === myId || app.user_id === myId;
+          const deletable = ['결제대기', '매칭중', '접수', '신청접수'].includes(app.status) || !app.paid_at;
+          if (owner && deletable) { await fsDelete(token, 'applications', id); return json({ success: true }, 200, cors); }
+          return json({ success: false, message: '삭제 권한이 없습니다.' }, 403, cors);
+        }
+        // users/experts/adminNotifications 삭제는 관리자만
+        if (sess.role !== 'admin') return json({ success: false, message: '삭제 권한이 없습니다.' }, 403, cors);
+        if (!['users', 'experts', 'adminNotifications'].includes(collection)) return json({ success: false, message: '허용되지 않은 컬렉션입니다.' }, 403, cors);
+        await fsDelete(token, collection, id);
+        return json({ success: true }, 200, cors);
+      }
+
       return json({ success: false, message: '알 수 없는 요청 경로입니다: ' + path }, 404, cors);
 
     } catch (err) {

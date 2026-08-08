@@ -367,56 +367,54 @@
             btn.textContent = '조회 중...';
 
             try {
-                // Firestore에서 phone으로 조회
+                // ★ 보안모드: 서버(워커) /find-account 경유 (휴대폰 SMS 인증 완료 상태)
+                const base = (window.AUTH_CONFIG && window.AUTH_CONFIG.workerUrl)
+                    ? window.AUTH_CONFIG.workerUrl.replace(/\/+$/, '') : '';
+                if (base) {
+                    const r = await fetch(base + '/find-account', {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ phone: phoneClean })
+                    }).then(x => x.json());
+                    if (!r || !r.success) {
+                        alert('입력하신 정보와 일치하는 아이디가 없습니다.\n휴대폰 번호를 다시 확인해주세요.');
+                        btn.disabled = false;
+                        btn.textContent = '아이디 찾기';
+                        return;
+                    }
+                    document.getElementById('findIdForm').style.display = 'none';
+                    document.getElementById('resultBox').classList.add('show');
+                    document.getElementById('resultUserId').innerHTML =
+                        `<div>${r.maskedUserId || r.userId || '-'}</div>`;
+                    return;
+                }
+
+                // (개발용 폴백) Firestore 직접 조회
                 const db = getDB();
                 const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 10000));
-
-                // 하이픈 포함/미포함 두 가지 형식으로 조회
                 const phoneFormatted = phoneClean.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
                 const [snap1, snap2] = await Promise.all([
-                    Promise.race([
-                        db.collection('users').where('phone', '==', phoneClean).get(),
-                        timeout
-                    ]),
-                    Promise.race([
-                        db.collection('users').where('phone', '==', phoneFormatted).get(),
-                        new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 10000))
-                    ])
+                    Promise.race([ db.collection('users').where('phone', '==', phoneClean).get(), timeout ]),
+                    Promise.race([ db.collection('users').where('phone', '==', phoneFormatted).get(), new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 10000)) ])
                 ]);
-
                 const docs = [...snap1.docs, ...snap2.docs];
-                // 중복 제거 (같은 id)
                 const seen = new Set();
-                const users = docs.filter(d => {
-                    if (seen.has(d.id)) return false;
-                    seen.add(d.id);
-                    return true;
-                }).map(d => ({ id: d.id, ...d.data() }));
-
-                // 이름 일치 + 관리자 제외
-                const matched = users.filter(u =>
-                    u.name === name && u.userType !== 'admin'
-                );
-
+                const users = docs.filter(d => { if (seen.has(d.id)) return false; seen.add(d.id); return true; }).map(d => ({ id: d.id, ...d.data() }));
+                const matched = users.filter(u => u.name === name && u.userType !== 'admin');
                 if (matched.length === 0) {
                     alert('입력하신 정보와 일치하는 아이디가 없습니다.\n이름과 휴대폰 번호를 다시 확인해주세요.');
                     btn.disabled = false;
                     btn.textContent = '아이디 찾기';
                     return;
                 }
-
-                // 결과 표시 – 가운데 마스킹
                 const idList = matched.map(u => {
                     const id = u.userId || u.email || '-';
                     if (id.length <= 3) return id;
                     const visible = Math.ceil(id.length / 3);
                     return id.slice(0, visible) + '*'.repeat(id.length - visible * 2) + id.slice(-visible);
                 });
-
                 document.getElementById('findIdForm').style.display = 'none';
                 document.getElementById('resultBox').classList.add('show');
-                document.getElementById('resultUserId').innerHTML =
-                    idList.map(id => `<div>${id}</div>`).join('');
+                document.getElementById('resultUserId').innerHTML = idList.map(id => `<div>${id}</div>`).join('');
 
             } catch (err) {
                 console.error('아이디 찾기 오류:', err);

@@ -2515,19 +2515,14 @@ const _autoNotifSent = new Set(); // 중복 발송 방지 세트 (세션 내)
 
 async function checkUnassignedAndNotify() {
     try {
-        const db  = getDB();
-        if (!db) return;
         const now = Date.now();
         const THIRTY_MIN = 30 * 60 * 1000;
 
-        // 접수/매칭중 상태이면서 법무사 미배정 건 조회
-        const snap = await db.collection('applications')
-            .where('status', 'in', ['접수', '매칭중'])
-            .get();
-
+        // 접수/매칭중 상태이면서 법무사 미배정 건 조회 (서버 경유)
+        const allRes = await API.applications.getAll();
+        const apps = (allRes && allRes.data) || [];
         const unassigned = [];
-        snap.forEach(doc => {
-            const d = { id: doc.id, ...doc.data() };
+        apps.filter(d => ['접수', '매칭중'].includes(d.status)).forEach(d => {
             // 배정이 없고, 생성 후 30분 이상 경과, 아직 2차 알림 미발송
             if (!d.assigned_expert_id && !d.secondNotifSent) {
                 const createdMs = new Date(d.createdAt || d.created_at || 0).getTime();
@@ -2578,8 +2573,8 @@ async function checkUnassignedAndNotify() {
                 }
             }
 
-            // Firestore에 2차 발송 완료 표시
-            await db.collection('applications').doc(app.id).update({
+            // 2차 발송 완료 표시 (서버 경유)
+            await API.applications.updateStatus(app.id, app.status, {
                 secondNotifSent:   true,
                 secondNotifSentAt: new Date().toISOString()
             });
@@ -3750,15 +3745,13 @@ async function openUserDetail(id) {
         let appRows = '';
         let cancelPendingRows = '';
         try {
-            const db = getDB();
-            let appsSnap;
-            if (u.userType === 'client') {
-                appsSnap = await db.collection('applications').where('userId','==', u.userId || u.id).get();
-            } else {
-                appsSnap = await db.collection('applications').where('assigned_expert_id','==', u.userId || u.id).get();
-            }
-            const apps = [];
-            appsSnap.forEach(d => apps.push({id:d.id,...d.data()}));
+            // 신청/수임 내역 조회 (서버 경유 — 관리자 전체 조회 후 필터)
+            const allRes = await API.applications.getAll();
+            const allApps = (allRes && allRes.data) || [];
+            const key = u.userId || u.id;
+            const apps = (u.userType === 'client')
+                ? allApps.filter(a => a.userId === key || a.user_id === key)
+                : allApps.filter(a => a.assigned_expert_id === key);
             apps.sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
 
             const cancelReqs = apps.filter(a => a.payment_cancel_requested && a.payment_status === '취소신청');
@@ -3853,13 +3846,13 @@ async function processCardCancel(appId) {
     if (!confirm('카드 결제 취소 처리를 진행하시겠습니까?\n\n처리 후 고객 카드사에 환불이 요청됩니다.\n실제 환불은 카드사 규정에 따라 3~5 영업일 소요됩니다.')) return;
     const note = prompt('취소 처리 메모 (선택 입력):') ?? '';
     try {
-        const db = getDB();
-        await db.collection('applications').doc(appId).update({
+        // 결제취소 처리 (서버 경유) — 현재 status 유지 + 취소 필드 갱신
+        const _appDoc = await API.applications.getById(appId);
+        await API.applications.updateStatus(appId, (_appDoc && _appDoc.status) || '', {
             payment_status: '취소완료',
             payment_cancelled: true,
             payment_cancel_completed_at: new Date().toISOString(),
-            payment_cancel_note: note.trim() || '관리자 카드 취소 처리',
-            updatedAt: new Date().toISOString()
+            payment_cancel_note: note.trim() || '관리자 카드 취소 처리'
         });
         showToast('✅ 카드 취소 처리 완료! 고객에게 환불이 진행됩니다.', 'success');
         closeModal('modalUser');
