@@ -227,7 +227,7 @@ async function fsListAll(token, collection) {
 //  비밀번호 해싱 (PBKDF2-SHA256)
 //  저장형식:  pbkdf2$<iterations>$<saltB64url>$<hashB64url>
 // ============================================================
-const PBKDF2_ITER = 120000;
+const PBKDF2_ITER = 100000; // Cloudflare Workers 최대 지원치(10만). 초과 시 Web Crypto 오류.
 
 async function fsGetDoc(token, collection, id) {
   const res = await fetch(`${FS_BASE}/${collection}/${encodeURIComponent(id)}`, { headers: { 'Authorization': `Bearer ${token}` } });
@@ -659,6 +659,29 @@ export default {
             data: { name: t.name, court: app.court, caseNumber: app.case_number, bidDate: app.bid_date } })
         }).catch(() => {}) : Promise.resolve()));
         return json({ success: true, notified: eligible.length }, 200, cors);
+      }
+
+      // ── 관리자 목록 조회 (관리자 전용) ─────────────────────
+      if (path === '/list-admins') {
+        const sess = await verifySession(env, body.session);
+        if (!sess || sess.role !== 'admin') return json({ success: false, message: '관리자 권한이 필요합니다.' }, 403, cors);
+        const admins = (await fsListAll(token, 'admins')).map(a => { const { pw, ...safe } = a; return safe; });
+        return json({ success: true, data: admins }, 200, cors);
+      }
+
+      // ── 관리자 본인 비밀번호 변경 (관리자 전용) ─────────────
+      if (path === '/change-admin-password') {
+        const sess = await verifySession(env, body.session);
+        if (!sess || sess.role !== 'admin') return json({ success: false, message: '관리자 권한이 필요합니다.' }, 403, cors);
+        const { currentPassword, newPassword } = body;
+        if (!newPassword) return json({ success: false, message: '새 비밀번호가 필요합니다.' }, 200, cors);
+        const adminId = sess.uid;
+        const admin = await fsGetDoc(token, 'admins', adminId);
+        if (!admin) return json({ success: false, message: '관리자 정보를 찾을 수 없습니다.' }, 200, cors);
+        const chk = await verifyPassword(currentPassword, admin.pw);
+        if (!chk.ok) return json({ success: false, message: '현재 비밀번호가 올바르지 않습니다.' }, 200, cors);
+        await fsPatch(token, 'admins', adminId, { pw: await hashPassword(newPassword), pwChangedAt: new Date().toISOString() });
+        return json({ success: true, message: '비밀번호가 변경되었습니다.' }, 200, cors);
       }
 
       return json({ success: false, message: '알 수 없는 요청 경로입니다: ' + path }, 404, cors);
