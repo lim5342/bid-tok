@@ -2,30 +2,20 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // 관리자: 서버(auth-proxy 서비스계정)만 접근. 클라이언트 직접 접근 전면 차단
+    // 관리자: 서버(auth-proxy 서비스계정)만
     match /admins/{id}             { allow read, write: if false; }
 
-    // 현행 유지(단계3에서 정리 예정)
-    match /experts/{id}            { allow read, write: if true; }
+    // 회원: 클라이언트 직접 접근 전면 차단 (조회/생성/수정/삭제 모두 서버 경유)
+    match /users/{id}              { allow read, write: if false; }
+
+    // 신청: 클라이언트 직접 접근 전면 차단 (모두 서버 경유)
+    match /applications/{id}       { allow read, write: if false; }
+
+    // 사이트 콘텐츠/전문가/알림: 현행 유지(민감도 낮음, 후속 정리)
     match /siteContents/{id}       { allow read, write: if true; }
+    match /experts/{id}            { allow read, write: if true; }
     match /adminNotifications/{id} { allow read, write: if true; }
 
-    // 사용자: 전체 목록(enumeration) 차단 = 회원 개인정보 대량 유출 방지
-    //   - 단건(get)·생성/수정(write)은 허용, 전체 목록(list)은 서버만(서비스계정)
-    match /users/{id} {
-      allow get: if true;
-      allow list: if false;
-      allow write: if true;
-    }
-
-    // 신청: 전체 목록 차단 = 주문 대량 유출 방지
-    match /applications/{id} {
-      allow get: if true;
-      allow list: if false;
-      allow write: if true;
-    }
-
-    // 그 외 신규 컬렉션은 기본 차단
     match /{document=**} { allow read, write: if false; }
   }
 }
