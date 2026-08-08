@@ -2,35 +2,28 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // 관리자 컬렉션 - 누구나 읽기 가능 (로그인 검증용), 쓰기는 인증 후
-    match /admins/{adminId} {
-      allow read: if true;
+    // 현행 유지(서비스 정상): 2단계에서 서버(auth-proxy) 경유로 추가 잠금 예정
+    match /admins/{id}             { allow read, write: if true; }
+    match /experts/{id}            { allow read, write: if true; }
+    match /siteContents/{id}       { allow read, write: if true; }
+    match /adminNotifications/{id} { allow read, write: if true; }
+
+    // 사용자: 전체 목록(enumeration) 차단 = 회원 개인정보 대량 유출 방지
+    //   - 단건(get)·생성/수정(write)은 허용, 전체 목록(list)은 서버만(서비스계정)
+    match /users/{id} {
+      allow get: if true;
+      allow list: if false;
       allow write: if true;
     }
 
-    // 신청 컬렉션
-    match /applications/{docId} {
-      allow read, write: if true;
+    // 신청: 전체 목록 차단 = 주문 대량 유출 방지
+    match /applications/{id} {
+      allow get: if true;
+      allow list: if false;
+      allow write: if true;
     }
 
-    // 사용자 컬렉션
-    match /users/{docId} {
-      allow read, write: if true;
-    }
-
-    // 전문가(법무사) 컬렉션
-    match /experts/{docId} {
-      allow read, write: if true;
-    }
-
-    // 관리자 알림 컬렉션
-    match /adminNotifications/{docId} {
-      allow read, write: if true;
-    }
-
-    // 기타 모든 컬렉션
-    match /{document=**} {
-      allow read, write: if true;
-    }
+    // 그 외 신규 컬렉션은 기본 차단
+    match /{document=**} { allow read, write: if false; }
   }
 }
