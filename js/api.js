@@ -393,10 +393,33 @@ async function _authPost(path, payload) {
     });
     let data = {};
     try { data = await res.json(); } catch (e) {}
+    // 세션 만료/무효(401) → 조용히 재로그인 유도 (로그인·중복확인 등은 401을 내지 않음)
+    if (res.status === 401) {
+        _handleSessionExpired();
+        throw new Error(data.message || '로그인이 만료되었습니다. 다시 로그인해주세요.');
+    }
     if (!res.ok && data.success === undefined) {
         throw new Error(data.message || `서버 오류(${res.status})`);
     }
     return data;
+}
+
+// 세션 만료/무효 처리: 로컬 세션 정리 후 재로그인 유도
+let _sessionExpiredHandled = false;
+function _handleSessionExpired() {
+    if (_sessionExpiredHandled) return;
+    _sessionExpiredHandled = true;
+    try {
+        localStorage.removeItem('bidtok_session');
+        localStorage.removeItem('currentUser');
+        localStorage.removeItem('autoLogin');
+    } catch (e) {}
+    try { alert('로그인이 만료되었습니다. 다시 로그인해주세요.'); } catch (e) {}
+    const p = (location.pathname || '').toLowerCase();
+    try {
+        if (p.indexOf('admin') === -1) location.href = 'login.html';
+        else location.reload();
+    } catch (e) {}
 }
 
 // ============================================================

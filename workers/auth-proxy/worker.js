@@ -308,7 +308,7 @@ async function hmacSign(secret, msg) {
   return b64urlFromBytes(new Uint8Array(sig));
 }
 async function makeSession(env, payload) {
-  const body = { ...payload, exp: Math.floor(Date.now() / 1000) + 60 * 60 * 12 }; // 12시간
+  const body = { ...payload, exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30 }; // 30일
   const p = b64urlFromStr(JSON.stringify(body));
   const sig = await hmacSign(env.WORKER_SECRET || 'dev-secret', p);
   return p + '.' + sig;
