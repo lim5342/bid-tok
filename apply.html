@@ -682,7 +682,7 @@
                 </div>
                 <div class="form-group">
                     <label>최저입찰가 (원)</label>
-                    <input type="text" id="minBidPrice" placeholder="예) 245,000,000" oninput="formatInputNumber(this); showKorean('minBidPrice','minBidPriceKor')">
+                    <input type="text" id="minBidPrice" placeholder="예) 245,000,000" oninput="formatInputNumber(this); showKorean('minBidPrice','minBidPriceKor'); updateDepositAmount()">
                     <div id="minBidPriceKor" style="font-size:0.82rem; color:#1550E8; font-weight:600; min-height:1.1rem; margin-top:0.25rem;"></div>
                 </div>
             </div>
@@ -821,14 +821,14 @@
                     <div class="error-msg" id="bidAmountError">입찰가를 입력해주세요.</div>
                 </div>
                 <div class="form-group">
-                    <label>입찰 보증금 (자동계산 10%)</label>
+                    <label>입찰 보증금 (최저입찰가의 10%)</label>
                     <div style="position:relative;">
-                        <input type="text" id="depositAmount" placeholder="희망 입찰가 입력 시 자동 계산" readonly
+                        <input type="text" id="depositAmount" placeholder="최저입찰가 입력 시 자동 계산" readonly
                                style="background:#f0f4ff; border:2px solid #c7d7fd; color:#1550E8; font-weight:700; cursor:default; padding:0.8rem 3.5rem 0.8rem 1rem; border-radius:10px; width:100%; font-size:0.95rem;">
                         <span style="position:absolute; right:0.75rem; top:50%; transform:translateY(-50%); font-size:0.75rem; color:#1550E8; font-weight:700; white-space:nowrap;">원</span>
                     </div>
                     <div id="depositAmountKor" style="font-size:0.82rem; color:#1550E8; font-weight:600; min-height:1.1rem; margin-top:0.25rem;"></div>
-                    <div class="hint" style="color:#1550E8;">희망 입찰가의 10% 자동 계산</div>
+                    <div class="hint" style="color:#1550E8;">최저입찰가의 10% 자동 계산</div>
                 </div>
             </div>
 
@@ -952,8 +952,8 @@
             <p style="font-size:0.86rem; color:#666; margin:-0.4rem 0 1rem;">진행하실 전문가 유형을 선택하세요. 요건과 가격이 다릅니다.</p>
             <div class="expert-pick">
                 <!-- 공인중개사 -->
-                <label class="expert-opt" data-type="realtor" id="optRealtor" onclick="selectExpertType('realtor')">
-                    <input type="radio" name="expertPick" value="realtor">
+                <label class="expert-opt selected" data-type="realtor" id="optRealtor" onclick="selectExpertType('realtor')">
+                    <input type="radio" name="expertPick" value="realtor" checked>
                     <div class="opt-check"><i class="fas fa-check"></i></div>
                     <div class="opt-head">
                         <span class="opt-name">🏠 공인중개사</span>
@@ -969,12 +969,12 @@
                     </ul>
                 </label>
                 <!-- 법무사 -->
-                <label class="expert-opt selected" data-type="lawyer" id="optLawyer" onclick="selectExpertType('lawyer')">
-                    <input type="radio" name="expertPick" value="lawyer" checked>
+                <label class="expert-opt" data-type="lawyer" id="optLawyer" onclick="alert('법무사 매칭은 현재 준비 중입니다. 공인중개사로 진행해 주세요.'); return false;" style="opacity:0.55; cursor:not-allowed;" title="현재 준비 중입니다">
+                    <input type="radio" name="expertPick" value="lawyer" disabled>
                     <div class="opt-check"><i class="fas fa-check"></i></div>
                     <div class="opt-head">
                         <span class="opt-name">⚖️ 법무사</span>
-                        <span class="opt-badge">전자서명</span>
+                        <span class="opt-badge" style="background:#94a3b8;">준비중</span>
                     </div>
                     <div class="opt-price">154,000원</div>
                     <div class="opt-vat">VAT 포함 · 중개수수료 0원</div>
@@ -1042,7 +1042,7 @@
                 <h2 style="font-size:1.6rem; color:#1a1a2e; margin-bottom:0.75rem;">신청이 완료되었습니다!</h2>
                 <p style="color:#666; font-size:0.95rem; line-height:1.7; margin-bottom:1.25rem;">
                     대리입찰 신청이 정상적으로 접수되었습니다.<br>
-                    담당 법무사 배정 후 문자(SMS)로 안내드립니다.
+                    담당 전문가 배정 후 문자(SMS)로 안내드립니다.
                 </p>
 
                 <!-- 신청번호 배지 -->
@@ -1061,8 +1061,8 @@
                                 <div style="width:2px; height:28px; background:#e0e0e0;"></div>
                             </div>
                             <div style="padding-top:0.35rem; padding-bottom:1rem;">
-                                <strong style="font-size:0.9rem; color:#333;">법무사 매칭 중</strong>
-                                <p style="font-size:0.82rem; color:#888; margin:0.2rem 0 0;">신청 접수 후 <strong style="color:#1550E8;">2~4시간 내</strong> 담당 법무사 배정</p>
+                                <strong style="font-size:0.9rem; color:#333;">전문가 매칭 중</strong>
+                                <p style="font-size:0.82rem; color:#888; margin:0.2rem 0 0;">신청 접수 후 <strong style="color:#1550E8;">2~4시간 내</strong> 담당 전문가 배정</p>
                             </div>
                         </div>
                         <div style="display:flex; gap:1rem; align-items:flex-start;">
@@ -1072,7 +1072,7 @@
                             </div>
                             <div style="padding-top:0.35rem; padding-bottom:1rem;">
                                 <strong style="font-size:0.9rem; color:#333;">배정 완료 안내</strong>
-                                <p style="font-size:0.82rem; color:#888; margin:0.2rem 0 0;">담당 법무사 정보를 SMS 및 마이페이지에서 확인</p>
+                                <p style="font-size:0.82rem; color:#888; margin:0.2rem 0 0;">담당 전문가 정보를 SMS 및 마이페이지에서 확인</p>
                             </div>
                         </div>
                         <div style="display:flex; gap:1rem; align-items:flex-start;">
@@ -1082,7 +1082,7 @@
                             </div>
                             <div style="padding-top:0.35rem; padding-bottom:1rem;">
                                 <strong style="font-size:0.9rem; color:#333;">입찰일 당일 진행</strong>
-                                <p style="font-size:0.82rem; color:#888; margin:0.2rem 0 0;">법무사가 직접 법원에 출석하여 대리입찰 진행</p>
+                                <p style="font-size:0.82rem; color:#888; margin:0.2rem 0 0;">담당 전문가가 직접 법원에 출석하여 대리입찰 진행</p>
                             </div>
                         </div>
                         <div style="display:flex; gap:1rem; align-items:flex-start;">
@@ -1219,8 +1219,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (user.email) document.getElementById('applicantEmail').value = user.email;
     }
 
-    // 전문가 유형 기본 선택(법무사) 초기화 → 금액/라벨 동기화
-    selectExpertType('lawyer');
+    // 전문가 유형 기본 선택(공인중개사) 초기화 → 금액/라벨 동기화 (법무사는 준비중 비활성화)
+    selectExpertType('realtor');
 });
 
 // ─────────────────────────────────────────────
@@ -1728,7 +1728,7 @@ function renderCaseResult(type, html) {
 // ─────────────────────────────────────────────
 // 전문가 유형 선택 (공인중개사 132,000 / 법무사 154,000) — 모두 VAT 포함
 // ─────────────────────────────────────────────
-let selectedExpertType = 'lawyer';
+let selectedExpertType = 'realtor';
 const EXPERT_INFO = {
     realtor: { label: '공인중개사', name: '공인중개사' },
     lawyer:  { label: '법무사',     name: '법무사' },
@@ -1852,7 +1852,7 @@ async function submitApplication() {
         account_holder: val2('accountHolder'),
         account_number: val2('accountNumber'),
         bid_amount: parseNumber(val2('bidAmount')),
-        deposit_amount: Math.floor(parseNumber(val2('bidAmount')) * 0.1),
+        deposit_amount: Math.floor(parseNumber(val2('minBidPrice')) * 0.1),
         deposit_method: val2('depositMethod') || '전문가님께 직접 이체',
         signature_data: signatureData ? 'signed' : '',
         bid_type: val2('bidType'),
@@ -1986,7 +1986,9 @@ function removeJointMember(btn) {
 // 보증금 10% 자동 계산
 // ─────────────────────────────────────────────
 function updateDepositAmount() {
-    const raw = document.getElementById('bidAmount').value.replace(/[^0-9]/g, '');
+    // 입찰보증금 = 최저입찰가(최저매각가격)의 10% (법원경매 기준)
+    const minEl = document.getElementById('minBidPrice');
+    const raw = (minEl ? minEl.value : '').replace(/[^0-9]/g, '');
     const depositEl  = document.getElementById('depositAmount');
     const depositKor = document.getElementById('depositAmountKor');
     if (!depositEl) return;
