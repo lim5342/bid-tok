@@ -991,8 +991,8 @@
 
         <!-- 수수료 안내 -->
         <div class="fee-notice">
-            <div class="fee-title">💳 대리입찰 가격 <span id="feeExpertLabel" style="font-size:0.8rem; font-weight:600; color:#1550E8;">(법무사)</span> <span style="font-size:0.8rem; font-weight:500; color:#16A34A; background:#DCFCE7; padding:2px 8px; border-radius:6px; margin-left:6px;">중개수수료 0원</span></div>
-            <div class="fee-amount"><span id="feeAmountText">154,000</span>원 <span style="font-size:1rem; font-weight:400; color:#555;">(VAT 포함)</span></div>
+            <div class="fee-title">💳 대리입찰 가격 <span id="feeExpertLabel" style="font-size:0.8rem; font-weight:600; color:#1550E8;">(공인중개사)</span> <span style="font-size:0.8rem; font-weight:500; color:#16A34A; background:#DCFCE7; padding:2px 8px; border-radius:6px; margin-left:6px;">중개수수료 0원</span></div>
+            <div class="fee-amount"><span id="feeAmountText">132,000</span>원 <span style="font-size:1rem; font-weight:400; color:#555;">(VAT 포함)</span></div>
             <div class="fee-desc">✓ 전국 단일가 &nbsp;|&nbsp; ✓ 전문가 직접 연결 &nbsp;|&nbsp; ✓ 결제 금액은 전문가에게 직접 정산</div>
             <div style="margin-top:0.5rem; font-size:0.82rem; color:#888;">플랫폼 중개수수료는 0원이며, 결제하신 금액(부가세 포함)은 전액 배정된 전문가에게 정산됩니다. 공동입찰·법인 입찰은 별도 협의 후 비용이 추가될 수 있습니다.</div>
         </div>
@@ -1029,7 +1029,7 @@
         <div class="apply-btn-row">
             <button class="btn-back" onclick="goStep(3)"><i class="fas fa-arrow-left"></i> 이전</button>
             <button class="btn-submit" onclick="submitApplication()">
-                <i class="fas fa-check-circle"></i> <span id="submitFeeText">154,000</span>원 결제하고 신청 완료
+                <i class="fas fa-check-circle"></i> <span id="submitFeeText">132,000</span>원 결제하고 신청 완료
             </button>
         </div>
     </div>
@@ -1739,7 +1739,7 @@ function getExpertPrice(type) {
     return prices[type] || prices.lawyer || cfg.amount || 154000;
 }
 function selectExpertType(type) {
-    if (!EXPERT_INFO[type]) type = 'lawyer';
+    if (!EXPERT_INFO[type]) type = 'realtor';
     selectedExpertType = type;
     // 카드 선택 표시
     document.querySelectorAll('.expert-opt').forEach(el => {
