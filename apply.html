@@ -1762,8 +1762,10 @@ function selectExpertType(type) {
 
 function fillSummary() {
     const bidAmt = val2('bidAmount');
-    const deposit = bidAmt ? (Math.floor(parseNumber(bidAmt) * 0.1)).toLocaleString('ko-KR') + '원' : '-';
-    const expert = EXPERT_INFO[selectedExpertType] || EXPERT_INFO.lawyer;
+    // 입찰보증금 = 최저입찰가(최저매각가격)의 10%
+    const minBid = val2('minBidPrice');
+    const deposit = minBid ? (Math.floor(parseNumber(minBid) * 0.1)).toLocaleString('ko-KR') + '원' : '-';
+    const expert = EXPERT_INFO[selectedExpertType] || EXPERT_INFO.realtor;
     const fee = getExpertPrice(selectedExpertType);
     const rows = [
         ['법원', val2('courtSelect')],
@@ -1774,8 +1776,9 @@ function fillSummary() {
         ['신청자 이름', val2('applicantName')],
         ['휴대폰 번호', val2('applicantPhone')],
         ['환급 계좌', val2('bankName') + ' ' + val2('accountNumber')],
+        ['최저입찰가', (minBid ? minBid + '원' : '-')],
         ['희망 입찰가', bidAmt + '원'],
-        ['입찰 보증금 (10%)', deposit],
+        ['입찰 보증금 (최저가의 10%)', deposit],
         ['보증금 납부 방법', val2('depositMethod')],
         ['입찰 형태', val2('bidType')],
         ['전자계약 서명', '완료'],
