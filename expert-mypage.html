@@ -818,11 +818,7 @@
                         expertName:  user.name              || '',
                         expertPhone: user.phone             || '',
                     };
-                    // ① 문자(SMS) — 지금 바로 발송 (카카오 심사 완료 전까지 문자로 안내)
-                    fetch('https://bidtok-sms-proxy.qkqk5342.workers.dev', {
-                        method: 'POST', headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ type: 'client_assigned', to: appData.phone, data: notifData })
-                    }).catch(() => {});
+                    // ① 문자(SMS)는 서버(/db-update)가 수임 확정 시 자동 발송 → 여기선 중복 발송 안 함
                     // ② 카카오 알림톡 — 심사 통과 후 자동 발송
                     sendKakaoNotif('client_assigned', appData.phone, notifData);
                 }
