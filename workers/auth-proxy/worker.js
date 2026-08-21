@@ -639,13 +639,17 @@ export default {
       if (path === '/notify-new-order') {
         const app = await fsGetDoc(token, 'applications', body.applicationId);
         if (!app) return json({ success: false, message: '신청 정보를 찾을 수 없습니다.' }, 200, cors);
+        // 서버가 상태를 '매칭중'으로 보장 (클라이언트 세션/조회 실패와 무관하게 동작)
+        if (!app.assigned_expert_id && app.status !== '진행중' && app.status !== '매칭완료') {
+          try { await fsPatch(token, 'applications', body.applicationId, { status: '매칭중', match_stage: 'awaiting_accept', updatedAt: new Date().toISOString() }); } catch (e) {}
+        }
         const wantType = normType(app.expert_type || app.expertType);
         const appCourt = normCourt(app.court);
         const users = await fsListAll(token, 'users');
         const eligible = users.filter(u => {
           if (u.userType !== 'expert' || u.status !== 'active') return false;
           const ut = normType(u.expertType || u.expertTypeLabel);
-          if (wantType && ut !== wantType) return false;
+          if (wantType && ut && ut !== wantType) return false; // 유형 미기재 전문가는 법원 매칭만으로 포함
           const courts = [...(Array.isArray(u.selectedCourts) ? u.selectedCourts : []),
                           ...(Array.isArray(u.serviceRegions) ? u.serviceRegions : (u.serviceRegions ? [u.serviceRegions] : []))].map(normCourt);
           return courts.some(c => c && (c === appCourt || c.includes(appCourt) || appCourt.includes(c)));
@@ -729,6 +733,20 @@ export default {
         if (collection === 'applications') {
           // 유효 세션(관리자/의뢰인/전문가)이면 허용 — 익명 변조 차단이 목적
           await fsPatch(token, 'applications', id, upd);
+          // 전문가 수임 확정 → 의뢰인에게 "매칭완료" 문자 (서버가 보장, 세션/클라 실패와 무관)
+          if (upd.assigned_expert_id && (upd.status === '진행중' || upd.status === '매칭완료')) {
+            try {
+              const full = await fsGetDoc(token, 'applications', id);
+              if (full && full.phone) {
+                await fetch('https://bidtok-sms-proxy.qkqk5342.workers.dev', {
+                  method: 'POST', headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ type: 'client_assigned', to: full.phone, data: {
+                    name: full.applicant_name || '', expertName: upd.expert_name || full.expert_name || '', appId: String(id).slice(-8).toUpperCase()
+                  } })
+                });
+              }
+            } catch (e) {}
+          }
           return json({ success: true }, 200, cors);
         }
         return json({ success: false, message: '허용되지 않은 수정입니다.' }, 403, cors);
