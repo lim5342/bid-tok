@@ -390,29 +390,11 @@ export default {
       // ── 관리자 로그인 ──────────────────────────────────
       if (path === '/admin-login') {
         const { adminId, password } = body;
-        const MASTERS = {
-          bootv1:   { pw: 'Admin@2026!', name: '대표 (마스터)', role: 'master' },
-          dajangtv: { pw: 'Admin@2026!', name: '대장TV 관리자', role: 'master' }
-        };
         // 관리자 문서ID(=로그인 아이디)로 조회, 없으면 userId 필드로 폴백
+        // (보안: 하드코딩 마스터 비번 폴백 제거 — 반드시 admins 문서로만 인증)
         let admin = await fsGetDoc(token, 'admins', adminId);
         if (!admin) { const f = await fsQueryByField(token, 'admins', 'userId', adminId); admin = f[0]; }
-        // 문서가 없고 마스터 계정 최초 로그인 → 생성 후 로그인
-        if (!admin) {
-          if (MASTERS[adminId] && MASTERS[adminId].pw === password) {
-            const m = MASTERS[adminId];
-            await fsSetDoc(token, 'admins', adminId, { name: m.name, role: m.role, pw: await hashPassword(m.pw), createdAt: new Date().toISOString() });
-            const session = await makeSession(env, { uid: adminId, adminId, role: 'admin' });
-            return json({ success: true, admin: { name: m.name, role: m.role }, session }, 200, cors);
-          }
-          return json({ success: false, message: '존재하지 않는 관리자입니다.' }, 200, cors);
-        }
-        // pw 비어있는 초기 상태 + 마스터 하드코딩 일치 → 허용
-        if (!admin.pw && MASTERS[adminId] && MASTERS[adminId].pw === password) {
-          const session = await makeSession(env, { uid: admin.id, adminId, role: 'admin' });
-          const { pw: _p, ...safeM } = admin;
-          return json({ success: true, admin: safeM, session }, 200, cors);
-        }
+        if (!admin) return json({ success: false, message: '존재하지 않는 관리자입니다.' }, 200, cors);
         const chk = await verifyPassword(password, admin.pw);
         if (!chk.ok) return json({ success: false, message: '비밀번호가 올바르지 않습니다.' }, 200, cors);
         if (chk.legacy) {

@@ -1479,7 +1479,6 @@ async function ensureAdminExists() {
                     fields: {
                         name:      { stringValue: '대표 (마스터)' },
                         role:      { stringValue: 'master' },
-                        pw:        { stringValue: 'Admin@2026!' },
                         createdAt: { stringValue: new Date().toISOString() }
                     }
                 })
@@ -1682,11 +1681,8 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 확인 중...';
 
-    // ── 긴급용 하드코딩 마스터 계정 (Firestore 장애/최초 로그인 시에만) ──
-    const MASTER_ACCOUNTS = {
-        'bootv1':  { pw: 'Admin@2026!', name: '대표 (마스터)', role: 'master' },
-        'dajangtv': { pw: 'Admin@2026!', name: '대장TV 관리자', role: 'master' }
-    };
+    // ── 보안: 마스터 비밀번호 하드코딩 제거. 관리자 로그인은 서버(auth-proxy) 경유로만 인증. ──
+    const MASTER_ACCOUNTS = {};
     const PROJECT_ID = 'bid-tok';
     const API_KEY    = 'AIzaSyDrJwD2FfDr_PJbc54pvUDQcCRPGl6ICpQ';
     const restUrl = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/admins/${encodeURIComponent(id)}?key=${API_KEY}`;
