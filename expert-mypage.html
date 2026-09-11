@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ë²ë¬´ì¬ ë§ì´íì´ì§ - ëë¦¬ìì°° í¡</title>
+    <title>법무사 마이페이지 - 대리입찰 톡</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/mypage.css">
@@ -15,11 +15,11 @@
         <div class="container nav-container">
             <div class="nav-logo" onclick="window.location.href='index.html'" style="cursor: pointer;">
                 <i class="fas fa-comment-dots"></i>
-                <span>ëë¦¬ìì°° í¡</span>
+                <span>대리입찰 톡</span>
             </div>
             <div class="nav-actions">
                 <span id="userName" style="font-weight: 600; margin-right: 1rem;"></span>
-                <button class="btn btn-outline" onclick="handleLogout()">ë¡ê·¸ìì</button>
+                <button class="btn btn-outline" onclick="handleLogout()">로그아웃</button>
             </div>
         </div>
     </nav>
@@ -27,193 +27,193 @@
     <div class="mypage-container">
         <aside class="mypage-sidebar">
             <div class="sidebar-profile">
-                <!-- íë¡í ìë°í (ì¬ì§ or ìì´ì½) -->
+                <!-- 프로필 아바타 (사진 or 아이콘) -->
                 <div class="profile-avatar" id="sidebarAvatar" style="overflow:hidden;">
                     <i class="fas fa-user-tie" id="sidebarAvatarIcon"></i>
                 </div>
-                <h3 id="profileName">ë²ë¬´ì¬</h3>
+                <h3 id="profileName">법무사</h3>
                 <p id="profileEmail">expert@example.com</p>
-                <span class="expert-badge" id="expertBadge">âï¸ ì ë¬¸ê°</span>
+                <span class="expert-badge" id="expertBadge">⚖️ 전문가</span>
             </div>
             
             <nav class="sidebar-menu">
                 <a href="#requests" class="menu-item active" onclick="showSection('requests', this)">
-                    <i class="fas fa-bell"></i> ë°°ì  ìì²­
+                    <i class="fas fa-bell"></i> 배정 요청
                 </a>
                 <a href="#ongoing" class="menu-item" onclick="showSection('ongoing', this)">
-                    <i class="fas fa-tasks"></i> ì§í ì¤
+                    <i class="fas fa-tasks"></i> 진행 중
                 </a>
                 <a href="#completed" class="menu-item" onclick="showSection('completed', this)">
-                    <i class="fas fa-check-circle"></i> ìë£ ë´ì­
+                    <i class="fas fa-check-circle"></i> 완료 내역
                 </a>
                 <a href="#settlement" class="menu-item" onclick="showSection('settlement', this)">
-                    <i class="fas fa-won-sign"></i> ì ì° ë´ì­
+                    <i class="fas fa-won-sign"></i> 정산 내역
                 </a>
                 <a href="#profile" class="menu-item" onclick="showSection('profile', this)">
-                    <i class="fas fa-user-edit"></i> íìì ë³´
+                    <i class="fas fa-user-edit"></i> 회원정보
                 </a>
             </nav>
         </aside>
 
         <main class="mypage-content">
-            <!-- ë°°ì  ìì²­ ì¹ì -->
+            <!-- 배정 요청 섹션 -->
             <section id="requestsSection" class="content-section active">
                 <div class="section-header">
-                    <h2><i class="fas fa-bell"></i> ë°°ì  ìì²­</h2>
+                    <h2><i class="fas fa-bell"></i> 배정 요청</h2>
                     <div class="stats-mini">
-                        <span class="stat-item"><i class="fas fa-clock"></i> ëê¸° ì¤: <strong id="pendingCount">0</strong></span>
+                        <span class="stat-item"><i class="fas fa-clock"></i> 대기 중: <strong id="pendingCount">0</strong></span>
                     </div>
                 </div>
 
                 <div id="requestsList" class="applications-list">
-                    <!-- ë°°ì  ìì²­ì´ ì¬ê¸°ì ëì ì¼ë¡ ì¶ê°ë©ëë¤ -->
+                    <!-- 배정 요청이 여기에 동적으로 추가됩니다 -->
                 </div>
             </section>
 
-            <!-- ì§í ì¤ ì¹ì -->
+            <!-- 진행 중 섹션 -->
             <section id="ongoingSection" class="content-section">
                 <div class="section-header">
-                    <h2><i class="fas fa-tasks"></i> ì§í ì¤ì¸ ìì°°</h2>
+                    <h2><i class="fas fa-tasks"></i> 진행 중인 입찰</h2>
                 </div>
 
                 <div id="ongoingList" class="applications-list">
-                    <!-- ì§í ì¤ì¸ ìì°°ì´ ì¬ê¸°ì ëì ì¼ë¡ ì¶ê°ë©ëë¤ -->
+                    <!-- 진행 중인 입찰이 여기에 동적으로 추가됩니다 -->
                 </div>
             </section>
 
-            <!-- ìë£ ë´ì­ ì¹ì -->
+            <!-- 완료 내역 섹션 -->
             <section id="completedSection" class="content-section">
                 <div class="section-header">
-                    <h2><i class="fas fa-check-circle"></i> ìë£ ë´ì­</h2>
+                    <h2><i class="fas fa-check-circle"></i> 완료 내역</h2>
                 </div>
 
                 <div class="stats-grid">
                     <div class="stat-card">
                         <i class="fas fa-gavel"></i>
                         <div class="stat-value" id="totalCompleted">0</div>
-                        <div class="stat-label">ì´ ì²ë¦¬ ê±´ì</div>
+                        <div class="stat-label">총 처리 건수</div>
                     </div>
                     <div class="stat-card">
                         <i class="fas fa-trophy"></i>
                         <div class="stat-value" id="successCount">0</div>
-                        <div class="stat-label">ëì°° ê±´ì</div>
+                        <div class="stat-label">낙찰 건수</div>
                     </div>
                     <div class="stat-card">
                         <i class="fas fa-percentage"></i>
                         <div class="stat-value" id="successRate">0%</div>
-                        <div class="stat-label">ëì°°ë¥ </div>
+                        <div class="stat-label">낙찰률</div>
                     </div>
                 </div>
 
                 <div id="completedList" class="applications-list">
-                    <!-- ìë£ë ìì°°ì´ ì¬ê¸°ì ëì ì¼ë¡ ì¶ê°ë©ëë¤ -->
+                    <!-- 완료된 입찰이 여기에 동적으로 추가됩니다 -->
                 </div>
             </section>
 
-            <!-- ì ì° ë´ì­ ì¹ì -->
+            <!-- 정산 내역 섹션 -->
             <section id="settlementSection" class="content-section">
                 <div class="section-header">
-                    <h2><i class="fas fa-won-sign"></i> ì ì° ë´ì­</h2>
+                    <h2><i class="fas fa-won-sign"></i> 정산 내역</h2>
                 </div>
 
                 <div class="settlement-summary">
                     <div class="summary-card">
-                        <div class="summary-label">ì´ë² ë¬ ì ì° ìì </div>
-                        <div class="summary-value" id="thisMonthAmount">0ì</div>
+                        <div class="summary-label">이번 달 정산 예정</div>
+                        <div class="summary-value" id="thisMonthAmount">0원</div>
                     </div>
                     <div class="summary-card">
-                        <div class="summary-label">ì´ ëì  ì ì°</div>
-                        <div class="summary-value" id="totalAmount">0ì</div>
+                        <div class="summary-label">총 누적 정산</div>
+                        <div class="summary-value" id="totalAmount">0원</div>
                     </div>
                 </div>
 
                 <div id="settlementList" class="payments-list">
-                    <!-- ì ì° ë´ì­ì´ ì¬ê¸°ì ëì ì¼ë¡ ì¶ê°ë©ëë¤ -->
+                    <!-- 정산 내역이 여기에 동적으로 추가됩니다 -->
                 </div>
             </section>
 
-            <!-- íìì ë³´ ì¹ì -->
+            <!-- 회원정보 섹션 -->
             <section id="profileSection" class="content-section">
                 <div class="section-header">
-                    <h2><i class="fas fa-user-edit"></i> íìì ë³´</h2>
+                    <h2><i class="fas fa-user-edit"></i> 회원정보</h2>
                 </div>
 
-                <!-- ê´ë¦¬ì ëì  ë¡ê·¸ì¸ ë°°ë -->
+                <!-- 관리자 대신 로그인 배너 -->
                 <div id="adminAsBanner" style="display:none;background:linear-gradient(90deg,#f97316,#ef4444);color:white;padding:0.85rem 1.25rem;border-radius:12px;margin-bottom:1.25rem;font-size:0.88rem;font-weight:700;display:flex;align-items:center;gap:0.6rem;">
-                    <i class="fas fa-shield-alt"></i> ê´ë¦¬ì ëª¨ë: ëª¨ë  ì ë³´ ìì  ê°ë¥í©ëë¤
+                    <i class="fas fa-shield-alt"></i> 관리자 모드: 모든 정보 수정 가능합니다
                 </div>
 
-                <!-- íë¡í ì¬ì§ ë¯¸ë¦¬ë³´ê¸° -->
+                <!-- 프로필 사진 미리보기 -->
                 <div id="profilePhotoPreview" style="display:none;margin-bottom:1.5rem;padding:1.25rem;background:#f8fafc;border-radius:14px;border:1px solid #e2e8f0;">
-                    <p style="font-size:0.82rem;font-weight:700;color:#64748b;margin:0 0 0.75rem;">ë±ë¡ë íë¡í ì¬ì§</p>
+                    <p style="font-size:0.82rem;font-weight:700;color:#64748b;margin:0 0 0.75rem;">등록된 프로필 사진</p>
                     <div style="display:flex;align-items:center;gap:1rem;">
                         <div id="profilePhotoThumb" style="width:72px;height:72px;border-radius:12px;overflow:hidden;background:#e0e7ff;display:flex;align-items:center;justify-content:center;border:2px solid #c7d2fe;flex-shrink:0;"></div>
-                        <p style="font-size:0.8rem;color:#94a3b8;margin:0;line-height:1.6;">ì¬ì§ ë³ê²½ì ê³ ê°ì¼í°(02-863-1022)ë¥¼ íµí´ ìì²­í´ì£¼ì¸ì.</p>
+                        <p style="font-size:0.8rem;color:#94a3b8;margin:0;line-height:1.6;">사진 변경은 고객센터(02-863-1022)를 통해 요청해주세요.</p>
                     </div>
                 </div>
 
                 <div class="profile-form-container">
                     <form id="profileForm">
                         <div class="form-group">
-                            <label>ìì´ë</label>
+                            <label>아이디</label>
                             <input type="text" id="profileUserId" disabled>
                         </div>
 
                         <div class="form-group">
-                            <label>ì´ë©ì¼</label>
+                            <label>이메일</label>
                             <input type="email" id="profileEmailInput" id="profileEmailInput">
                         </div>
 
                         <div class="form-group">
-                            <label>ì´ë¦ <span id="nameAdminNote" style="display:none;font-size:0.78rem;color:#f97316;font-weight:400;">(ê´ë¦¬ì: ìì  ê°ë¥)</span></label>
+                            <label>이름 <span id="nameAdminNote" style="display:none;font-size:0.78rem;color:#f97316;font-weight:400;">(관리자: 수정 가능)</span></label>
                             <input type="text" id="profileNameInput" required>
                         </div>
 
                         <div class="form-group">
-                            <label>ë²ë¬´ì¬ ë±ë¡ë²í¸ <span id="licenseAdminNote" style="display:none;font-size:0.78rem;color:#f97316;font-weight:400;">(ê´ë¦¬ì: ìì  ê°ë¥)</span></label>
+                            <label>법무사 등록번호 <span id="licenseAdminNote" style="display:none;font-size:0.78rem;color:#f97316;font-weight:400;">(관리자: 수정 가능)</span></label>
                             <input type="text" id="licenseNumber">
                         </div>
 
                         <div class="form-group">
-                            <label>í´ëí° ë²í¸</label>
+                            <label>휴대폰 번호</label>
                             <input type="tel" id="profilePhone" required>
                         </div>
 
                         <div class="form-group">
-                            <label>ì¬ë¬´ì ì£¼ì</label>
+                            <label>사무소 주소</label>
                             <input type="text" id="officeAddress">
                         </div>
 
-                        <!-- íë ë²ì ì í (ì¶ê°/í´ì ë§ ê°ë¥) -->
+                        <!-- 활동 법원 선택 (추가/해제만 가능) -->
                         <div class="form-group">
-                            <label>íë ë²ì <span style="font-size:0.78rem;color:#667eea;font-weight:400;">(ë²ì ì¶ê°/í´ì  ê°ë¥)</span></label>
+                            <label>활동 법원 <span style="font-size:0.78rem;color:#667eea;font-weight:400;">(법원 추가/해제 가능)</span></label>
                             <div id="courtEditWrap" style="margin-top:0.5rem;"></div>
                             <button type="button" id="saveCourtsBtn" onclick="saveCourts()" class="btn btn-primary" style="margin-top:0.75rem;width:100%;">
-                                <i class="fas fa-map-marker-alt"></i> íë ë²ì ì ì¥
+                                <i class="fas fa-map-marker-alt"></i> 활동 법원 저장
                             </button>
-                            <div style="font-size:0.78rem;color:#888;margin-top:0.4rem;">â» íë ë²ìì ë¹ë°ë²í¸ ë³ê²½ ìì´ ì´ ë²í¼ì¼ë¡ ë°ë¡ ì ì¥ë©ëë¤.</div>
+                            <div style="font-size:0.78rem;color:#888;margin-top:0.4rem;">※ 활동 법원은 비밀번호 변경 없이 이 버튼으로 바로 저장됩니다.</div>
                         </div>
 
                         <div class="form-group">
-                            <label>ë¹ë°ë²í¸ ë³ê²½ <span style="color:#999;font-weight:400;font-size:0.8rem;">(ë³ê²½ ììë§ ìë ¥)</span></label>
-                            <input type="password" id="newPassword" placeholder="ì ë¹ë°ë²í¸ (8ì ì´ì)">
+                            <label>비밀번호 변경 <span style="color:#999;font-weight:400;font-size:0.8rem;">(변경 시에만 입력)</span></label>
+                            <input type="password" id="newPassword" placeholder="새 비밀번호 (8자 이상)">
                         </div>
 
                         <div class="form-group">
-                            <label>ë¹ë°ë²í¸ íì¸</label>
-                            <input type="password" id="newPasswordConfirm" placeholder="ì ë¹ë°ë²í¸ íì¸">
+                            <label>비밀번호 확인</label>
+                            <input type="password" id="newPasswordConfirm" placeholder="새 비밀번호 확인">
                         </div>
 
-                        <button type="submit" class="btn btn-primary" id="profileSaveBtn">ì ì¥íê¸°</button>
+                        <button type="submit" class="btn btn-primary" id="profileSaveBtn">저장하기</button>
                     </form>
 
-                    <!-- íí´ ìì­ -->
+                    <!-- 탈퇴 영역 -->
                     <div style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid #f0f0f0;">
-                        <p style="font-size:0.82rem;color:#94a3b8;margin-bottom:0.75rem;">ìë¹ì¤ ì´ì©ì ê·¸ë§íìë ¤ë©´ íí´ ì²ë¦¬í´ì£¼ì¸ì.</p>
+                        <p style="font-size:0.82rem;color:#94a3b8;margin-bottom:0.75rem;">서비스 이용을 그만하시려면 탈퇴 처리해주세요.</p>
                         <button type="button" onclick="handleWithdraw()" style="padding:0.65rem 1.5rem;background:white;color:#e53e3e;border:1.5px solid #e53e3e;border-radius:8px;font-size:0.85rem;font-weight:700;cursor:pointer;transition:all 0.2s;"
                             onmouseover="this.style.background='#e53e3e';this.style.color='white';"
                             onmouseout="this.style.background='white';this.style.color='#e53e3e';">
-                            <i class="fas fa-user-minus"></i> íì íí´
+                            <i class="fas fa-user-minus"></i> 회원 탈퇴
                         </button>
                     </div>
                 </div>
@@ -228,7 +228,7 @@
     <script src="js/auth.js"></script>
     <script>
     (function() {
-        // ââ ê´ë¦¬ì ëì  ë¡ê·¸ì¸ ì²ë¦¬ ââââââââââââââââââââââââââââââââââ
+        // ── 관리자 대신 로그인 처리 ──────────────────────────────────
         const _adminKey = new URLSearchParams(location.search).get('adminLoginAs');
         let IS_ADMIN_AS = false;
         if (_adminKey) {
@@ -240,19 +240,19 @@
                 IS_ADMIN_AS = true;
             }
         }
-        // ë¡ê·¸ì¸ ì²´í¬
+        // 로그인 체크
         if (!Auth.isLoggedIn() || Auth.getUserType() !== 'expert') {
-            alert('ë²ë¬´ì¬ ë¡ê·¸ì¸ì´ íìí©ëë¤.');
+            alert('법무사 로그인이 필요합니다.');
             window.location.href = 'login.html';
             return;
         }
 
-        // ââ ìí ë³ì (showSection ë±ìì ì°ë¯ë¡ ìµìë¨ìì ë¯¸ë¦¬ ì ì¸) ââ
+        // ── 상태 변수 (showSection 등에서 쓰므로 최상단에서 미리 선언) ──
         let _pollInterval   = null;
-        let _lastReqCount   = 0;   // ì´ì  ìë¢° ì ê¸°ìµ (ì ìë¢° ê°ì§ì©)
-        let _currentSection = 'requests'; // íì¬ ë³´ê³  ìë í­
+        let _lastReqCount   = 0;   // 이전 의뢰 수 기억 (새 의뢰 감지용)
+        let _currentSection = 'requests'; // 현재 보고 있는 탭
 
-        // ââ ì¹´ì¹´ì¤/SMS ìë¦¼í¡ ë°ì¡ (expert-mypage) âââââââââââââââ
+        // ── 카카오/SMS 알림톡 발송 (expert-mypage) ───────────────
         const KAKAO_WORKER_URL = 'https://bidtok-kakao-proxy.qkqk5342.workers.dev';
         async function sendKakaoNotif(type, to, data) {
             if (!to) return;
@@ -263,37 +263,37 @@
                     body: JSON.stringify({ type, to, data })
                 });
                 const result = await res.json();
-                if (!res.ok) throw new Error(result.error || 'ìë¦¼ ë°ì¡ ì¤í¨');
-                console.log(`â ìë¦¼ ë°ì¡ [${type}] â ${to}`);
+                if (!res.ok) throw new Error(result.error || '알림 발송 실패');
+                console.log(`✅ 알림 발송 [${type}] → ${to}`);
             } catch(e) {
-                console.warn(`â ï¸ ìë¦¼ ì¤í¨ [${type}]:`, e.message);
+                console.warn(`⚠️ 알림 실패 [${type}]:`, e.message);
             }
         }
 
-        // ì¬ì©ì ì ë³´ ë¡ë
+        // 사용자 정보 로드
         let user = Auth.getCurrentUser();
 
-        // ââ ì¹ì¸ ëê¸° / ì¬ì¹ì¸ ëê¸° ìë´ ë°°ë ââââââââââââââââââââââââ
-        //  status !== 'active' ì´ë©´ ìë¢° ìì ë¶ê°. ìë¨ì ìë´ íì.
+        // ── 승인 대기 / 재승인 대기 안내 배너 ────────────────────────
+        //  status !== 'active' 이면 의뢰 수임 불가. 상단에 안내 표시.
         if (user.userType === 'expert' && user.status !== 'active' && !IS_ADMIN_AS) {
             const isReReview = user.status === 're_review';
             const banner = document.createElement('div');
             banner.style.cssText = 'position:sticky;top:0;z-index:50;background:#fffbeb;border-bottom:2px solid #fcd34d;color:#92400e;padding:0.9rem 1.2rem;font-size:0.9rem;line-height:1.6;text-align:center;';
             banner.innerHTML = isReReview
-                ? 'ð <strong>ì¬ì¹ì¸ ê²í  ì¤ìëë¤.</strong> ì ë³´ ë³ê²½ì¼ë¡ ì¬íì¸ì´ ì§í ì¤ì´ë©°, ìë£ ì ê¹ì§ ì ìë¢° ììì´ ì íë©ëë¤. ë¬¸ì: 02-863-1022'
-                : 'â³ <strong>ì¹ì¸ ëê¸° ì¤ìëë¤.</strong> ì´ìí ìë¥ ê²í  í íì±íëë©°, ì¹ì¸ ìë£ ì ì ìë¢°ë¥¼ ììíì¤ ì ììµëë¤. ë¬¸ì: 02-863-1022';
+                ? '🔎 <strong>재승인 검토 중입니다.</strong> 정보 변경으로 재확인이 진행 중이며, 완료 전까지 새 의뢰 수임이 제한됩니다. 문의: 02-863-1022'
+                : '⏳ <strong>승인 대기 중입니다.</strong> 운영팀 서류 검토 후 활성화되며, 승인 완료 시 새 의뢰를 수임하실 수 있습니다. 문의: 02-863-1022';
             document.body.prepend(banner);
         }
 
-        // ì ë¬¸ê° ì í ë°°ì§ (ë²ë¬´ì¬ / ê³µì¸ì¤ê°ì¬)
+        // 전문가 유형 배지 (법무사 / 공인중개사)
         function applyExpertBadge(u) {
             const badge = document.getElementById('expertBadge');
             if (!badge) return;
             const t = String(u.expertType || u.expertTypeLabel || '').toLowerCase();
             const label = u.expertTypeLabel
-                || (t.includes('realtor') || t.includes('ì¤ê°') ? 'ê³µì¸ì¤ê°ì¬'
-                    : t.includes('lawyer') || t.includes('ë²ë¬´') ? 'ë²ë¬´ì¬' : 'ì ë¬¸ê°');
-            badge.textContent = 'âï¸ ' + label;
+                || (t.includes('realtor') || t.includes('중개') ? '공인중개사'
+                    : t.includes('lawyer') || t.includes('법무') ? '법무사' : '전문가');
+            badge.textContent = '⚖️ ' + label;
         }
         applyExpertBadge(user);
 
@@ -307,9 +307,9 @@
         document.getElementById('licenseNumber').value = user.licenseNumber || '';
         document.getElementById('officeAddress').value = user.officeAddress || '';
 
-        // ââ íë¡í ì¬ì§ íì ââââââââââââââââââââââââââââââââââââ
+        // ── 프로필 사진 표시 ────────────────────────────────────
         if (user.profileUrl && !user.profileUrl.includes('placeholder.test')) {
-            // ì¬ì´ëë° ìë°í
+            // 사이드바 아바타
             const avatarEl = document.getElementById('sidebarAvatar');
             const iconEl   = document.getElementById('sidebarAvatarIcon');
             if (iconEl) iconEl.style.display = 'none';
@@ -319,7 +319,7 @@
             img.onerror = function() { if(iconEl) iconEl.style.display=''; this.remove(); };
             if (avatarEl) avatarEl.appendChild(img);
 
-            // íìì ë³´ í­ ì¸ë¤ì¼
+            // 회원정보 탭 썸네일
             const thumbWrap = document.getElementById('profilePhotoPreview');
             const thumb = document.getElementById('profilePhotoThumb');
             if (thumbWrap) thumbWrap.style.display = 'block';
@@ -333,45 +333,45 @@
             }
         }
 
-        // ââ ê´ë¦¬ì ëª¨ë UI ì¤ì  âââââââââââââââââââââââââââââââââ
+        // ── 관리자 모드 UI 설정 ─────────────────────────────────
         if (IS_ADMIN_AS) {
             document.getElementById('adminAsBanner').style.display = 'flex';
-            // ê´ë¦¬ìë ì´ë¦, ë±ë¡ë²í¸ë ìì  ê°ë¥
+            // 관리자는 이름, 등록번호도 수정 가능
             const nameNote = document.getElementById('nameAdminNote');
             const licNote  = document.getElementById('licenseAdminNote');
             if (nameNote) nameNote.style.display = 'inline';
             if (licNote)  licNote.style.display  = 'inline';
-            // ì´ë©ì¼ë ìì  ê°ë¥
+            // 이메일도 수정 가능
             document.getElementById('profileEmailInput').disabled = false;
         } else {
-            // ì¼ë° ëª¨ë: ì´ë¦ë§ ìì  ê°ë¥ (ì´ë©ì¼, ë±ë¡ë²í¸ disabled)
+            // 일반 모드: 이름만 수정 가능 (이메일, 등록번호 disabled)
             document.getElementById('profileEmailInput').disabled = true;
             document.getElementById('licenseNumber').disabled = true;
         }
 
-        // ââ íë ë²ì ì²´í¬ë°ì¤ ë ëë§ ââââââââââââââââââââââââââ
+        // ── 활동 법원 체크박스 렌더링 ──────────────────────────
         const COURTS = {
-            ìëê¶: [
-                'ìì¸ì¤ìì§ë²','ìì¸ëë¶ì§ë²','ìì¸ìë¶ì§ë²','ìì¸ë¨ë¶ì§ë²','ìì¸ë¶ë¶ì§ë²',
-                'ìì ë¶ì§ë²','ìì ë¶ì§ë² ê³ ìì§ì','ìì ë¶ì§ë² ë¨ìì£¼ì§ì','ì¸ì²ì§ë²','ì¸ì²ì§ë² ë¶ì²ì§ì',
-                'ììì§ë²','ììì§ë² ì±ë¨ì§ì','ììì§ë² ì¬ì£¼ì§ì','ììì§ë² ííì§ì','ììì§ë² ìì°ì§ì','ììì§ë² ììì§ì'
+            수도권: [
+                '서울중앙지법','서울동부지법','서울서부지법','서울남부지법','서울북부지법',
+                '의정부지법','의정부지법 고양지원','의정부지법 남양주지원','인천지법','인천지법 부천지원',
+                '수원지법','수원지법 성남지원','수원지법 여주지원','수원지법 평택지원','수원지법 안산지원','수원지법 안양지원'
             ],
-            ì¶©ì²­ê¶: [
-                'ëì ì§ë²','ëì ì§ë² íì±ì§ì','ëì ì§ë² ë¼ì°ì§ì','ëì ì§ë² ì²ìì§ì','ëì ì§ë² ê³µì£¼ì§ì','ëì ì§ë² ìì°ì§ì',
-                'ì²­ì£¼ì§ë²','ì²­ì£¼ì§ë² ì¶©ì£¼ì§ì','ì²­ì£¼ì§ë² ì ì²ì§ì','ì²­ì£¼ì§ë² ìëì§ì'
+            충청권: [
+                '대전지법','대전지법 홍성지원','대전지법 논산지원','대전지법 천안지원','대전지법 공주지원','대전지법 서산지원',
+                '청주지법','청주지법 충주지원','청주지법 제천지원','청주지법 영동지원'
             ],
-            ì ë¼ê¶: [
-                'ê´ì£¼ì§ë²','ê´ì£¼ì§ë² ëª©í¬ì§ì','ê´ì£¼ì§ë² ì¥í¥ì§ì','ê´ì£¼ì§ë² ìì²ì§ì','ê´ì£¼ì§ë² í´ë¨ì§ì',
-                'ì ì£¼ì§ë²','ì ì£¼ì§ë² êµ°ì°ì§ì','ì ì£¼ì§ë² ì ìì§ì','ì ì£¼ì§ë² ë¨ìì§ì'
+            전라권: [
+                '광주지법','광주지법 목포지원','광주지법 장흥지원','광주지법 순천지원','광주지법 해남지원',
+                '전주지법','전주지법 군산지원','전주지법 정읍지원','전주지법 남원지원'
             ],
-            ê²½ìê¶: [
-                'ë¶ì°ì§ë²','ë¶ì°ì§ë² ëë¶ì§ì','ë¶ì°ì§ë² ìë¶ì§ì','ì¸ì°ì§ë²',
-                'ëêµ¬ì§ë²','ëêµ¬ì§ë² ìë¶ì§ì','ëêµ¬ì§ë² ìëì§ì','ëêµ¬ì§ë² ê²½ì£¼ì§ì','ëêµ¬ì§ë² ê¹ì²ì§ì','ëêµ¬ì§ë² ìì£¼ì§ì','ëêµ¬ì§ë² ìì±ì§ì','ëêµ¬ì§ë² ìëì§ì','ëêµ¬ì§ë² í¬í­ì§ì',
-                'ì°½ìì§ë²','ì°½ìì§ë² ë§ì°ì§ì','ì°½ìì§ë² ì§ì£¼ì§ì','ì°½ìì§ë² íµìì§ì','ì°½ìì§ë² ë°ìì§ì','ì°½ìì§ë² ê±°ì°½ì§ì'
+            경상권: [
+                '부산지법','부산지법 동부지원','부산지법 서부지원','울산지법',
+                '대구지법','대구지법 서부지원','대구지법 안동지원','대구지법 경주지원','대구지법 김천지원','대구지법 상주지원','대구지법 의성지원','대구지법 영덕지원','대구지법 포항지원',
+                '창원지법','창원지법 마산지원','창원지법 진주지원','창원지법 통영지원','창원지법 밀양지원','창원지법 거창지원'
             ],
-            ê°ìì ì£¼: [
-                'ì¶ì²ì§ë²','ì¶ì²ì§ë² ê°ë¦ì§ì','ì¶ì²ì§ë² ìì£¼ì§ì','ì¶ì²ì§ë² ìì´ì§ì','ì¶ì²ì§ë² ììì§ì',
-                'ì ì£¼ì§ë²'
+            강원제주: [
+                '춘천지법','춘천지법 강릉지원','춘천지법 원주지원','춘천지법 속초지원','춘천지법 영월지원',
+                '제주지법'
             ]
         };
         const savedCourts = (Array.isArray(user.selectedCourts) && user.selectedCourts.length)
@@ -395,20 +395,20 @@
             courtWrap.innerHTML = html;
         }
 
-        // ì¹ì ì í
+        // 섹션 전환
         function showSection(section, el) {
             _currentSection = section;
-            // ë°°ì ìì²­ í­ í´ë¦­ ì ë¹¨ê° ì  ì ê±°
+            // 배정요청 탭 클릭 시 빨간 점 제거
             if (section === 'requests') {
                 const dot = document.querySelector('.req-dot');
                 if (dot) dot.remove();
             }
-            // ë©ë´ íì±í (í´ë¦­ë a íê·¸ ëë ê°ì¥ ê°ê¹ì´ .menu-item ì°¾ê¸°)
+            // 메뉴 활성화 (클릭된 a 태그 또는 가장 가까운 .menu-item 찾기)
             const clickedItem = el ? el.closest('.menu-item') || el : (typeof event !== 'undefined' ? event.currentTarget : null);
             document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
             if (clickedItem) clickedItem.classList.add('active');
 
-            // ì¹ì ì í
+            // 섹션 전환
             document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
 
             if (section === 'requests') {
@@ -428,46 +428,46 @@
             }
         }
 
-        // ââ ê³µíµ ì í¸ âââââââââââââââââââââââââââââââââââââââââââ
+        // ── 공통 유틸 ───────────────────────────────────────────
         function formatPrice(price) {
             if (!price) return '0';
             return Number(price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         }
 
         function formatTimeRemaining(seconds) {
-            if (seconds <= 0) return 'ë§ê°';
+            if (seconds <= 0) return '마감';
             const h = Math.floor(seconds / 3600);
             const m = Math.floor((seconds % 3600) / 60);
-            return h > 0 ? `${h}ìê° ${m}ë¶` : `${m}ë¶`;
+            return h > 0 ? `${h}시간 ${m}분` : `${m}분`;
         }
 
-        // ââ ë¡ë© ì¤í¼ë âââââââââââââââââââââââââââââââââââââââââ
+        // ── 로딩 스피너 ─────────────────────────────────────────
         function setLoading(containerId) {
             document.getElementById(containerId).innerHTML =
-                '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>ë¶ë¬ì¤ë ì¤...</p></div>';
+                '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>불러오는 중...</p></div>';
         }
 
-        // ââ ë§¤ì¹­ ìê²© íì  í¬í¼ âââââââââââââââââââââââââââââââââââââ
-        // ì ë¬¸ê°ì íëë²ì ëª©ë¡ (ê°ì serviceRegions + ë§ì´íì´ì§ selectedCourts ë ë¤ ì¸ì)
+        // ── 매칭 자격 판정 헬퍼 ─────────────────────────────────────
+        // 전문가의 활동법원 목록 (가입 serviceRegions + 마이페이지 selectedCourts 둘 다 인식)
         function getMyCourts(u) {
             const a = Array.isArray(u.selectedCourts) ? u.selectedCourts : [];
             const b = Array.isArray(u.serviceRegions) ? u.serviceRegions : (u.serviceRegions ? [u.serviceRegions] : []);
             return [...new Set([...a, ...b].filter(Boolean))];
         }
-        // ì ë¬¸ê° ì í ì ê·í (realtor/lawyer)
+        // 전문가 유형 정규화 (realtor/lawyer)
         function normType(v) {
             if (!v) return '';
             const s = String(v).toLowerCase().trim();
-            if (s === 'realtor' || s.includes('ê³µì¸ì¤ê°') || s.includes('ë§¤ìì ì²­') || s.includes('ì¤ê°')) return 'realtor';
-            if (s === 'lawyer'  || s.includes('ë²ë¬´')) return 'lawyer';
+            if (s === 'realtor' || s.includes('공인중개') || s.includes('매수신청') || s.includes('중개')) return 'realtor';
+            if (s === 'lawyer'  || s.includes('법무')) return 'lawyer';
             return '';
         }
-        // ë²ìëª ì ê·í: ì ì²­ìë "ââì§ë°©ë²ì", ì ë¬¸ê°ë "ââì§ë²"ì¼ë¡ íê¸°ê° ë¬ë¼
-        //  íµì¼í´ì¼ ë§¤ì¹­ë¨. (ì: ììì§ë°©ë²ì â ììì§ë²)
+        // 법원명 정규화: 신청서는 "○○지방법원", 전문가는 "○○지법"으로 표기가 달라
+        //  통일해야 매칭됨. (예: 수원지방법원 ↔ 수원지법)
         function normCourt(v) {
-            return String(v || '').replace(/ì§ë°©ë²ì/g, 'ì§ë²').replace(/\s+/g, ' ').trim();
+            return String(v || '').replace(/지방법원/g, '지법').replace(/\s+/g, ' ').trim();
         }
-        // ì ì²­ ë²ìì´ ë´ íëë²ìì í¬í¨ëëì§ (ì ê·í í ìë°©í¥ í¬í¨ ë§¤ì¹­)
+        // 신청 법원이 내 활동법원에 포함되는지 (정규화 후 양방향 포함 매칭)
         function courtMatch(appCourt, myCourts) {
             if (!appCourt || !myCourts || myCourts.length === 0) return false;
             const c = normCourt(appCourt);
@@ -476,20 +476,20 @@
                 return m && (m === c || m.includes(c) || c.includes(m));
             });
         }
-        // ì ì²­ ì íê³¼ ì ë¬¸ê° ì í ì¼ì¹ (ì í ë¶ëªíí ì ì²­ì íµê³¼ìì¼ ëë½ ë°©ì§)
+        // 신청 유형과 전문가 유형 일치 (유형 불명확한 신청은 통과시켜 누락 방지)
         function typeMatch(appType, myType) {
             const at = normType(appType);
-            if (!at) return true;      // ì ì²­ ì í ë¶ëª â ì í íí° ë¯¸ì ì©
-            if (!myType) return false; // ì ë¬¸ê° ì í ë¶ëª â íë³´ ì ì¸
+            if (!at) return true;      // 신청 유형 불명 → 유형 필터 미적용
+            if (!myType) return false; // 전문가 유형 불명 → 후보 제외
             return at === myType;
         }
 
-        // ââ ë°°ì  ìì²­ ë¡ë (â  ë´ ë°°ì  + â¡ íëë²ì ë¯¸ë°°ì  ìë¢°) ââââââ
+        // ── 배정 요청 로드 (① 내 배정 + ② 활동법원 미배정 의뢰) ──────
         async function loadRequests() {
             const listContainer = document.getElementById('requestsList');
             setLoading('requestsList');
             try {
-                // ìµì  ì ë¬¸ê° ì ë³´ ëê¸°í (íëë²ìÂ·ì íÂ·ì¹ì¸ìí) â ì¸ìì ìì ì ìì´ DBìì ë³´ê°
+                // 최신 전문가 정보 동기화 (활동법원·유형·승인상태) — 세션에 없을 수 있어 DB에서 보강
                 try {
                     let fresh = null;
                     try { fresh = await API.users.getById(user.id); } catch(e) {}
@@ -502,11 +502,11 @@
                         user.status          = fresh.status          || user.status;
                         user.phone           = fresh.phone           || user.phone;
                     }
-                } catch(e) { console.warn('ì ë¬¸ê° ì ë³´ ëê¸°í ì¤í¨:', e); }
+                } catch(e) { console.warn('전문가 정보 동기화 실패:', e); }
                 applyExpertBadge(user);
-                // ââ ë¸ë¡ëìºì¤í¸ + ì ì°©ì ë°©ì ââââââââââââââââââââââââââââ
-                //  â  ëìê² ì´ë¯¸ ë°°ì ë ìì²­(ë§¤ì¹­ìë£/ë§¤ì¹­ì¤)
-                //  â¡ ë´ íëë²ìì "ë¯¸ë°°ì " ìë¢° ì ì²´ (ì¹ì¸ë ì ë¬¸ê° + ì í ì¼ì¹ì¼ ëë§)
+                // ── 브로드캐스트 + 선착순 방식 ────────────────────────────
+                //  ① 나에게 이미 배정된 요청(매칭완료/매칭중)
+                //  ② 내 활동법원의 "미배정" 의뢰 전체 (승인된 전문가 + 유형 일치일 때만)
                 const myId      = user.userId || user.id;
                 const myCourts  = getMyCourts(user);
                 const myType    = normType(user.expertType || user.expertTypeLabel);
@@ -517,22 +517,22 @@
 
                 const assignedToMe = allApps.filter(a =>
                     (a.assigned_expert_id === myId) &&
-                    ['ë§¤ì¹­ìë£', 'ë§¤ì¹­ì¤', 'ì ì'].includes(a.status));
+                    ['매칭완료', '매칭중', '접수'].includes(a.status));
 
-                // ë¯¸ë°°ì  ê³µê° ìë¢° (ì ì°©ì ëì)
+                // 미배정 공개 의뢰 (선착순 대상)
                 const openPool = !iAmActive ? [] : allApps.filter(a => {
-                    if (a.assigned_expert_id) return false;                 // ì´ë¯¸ ëê° ê°ì ¸ê°
-                    // â ê²°ì  ìë£ë ìë¢°ë§ ë¸ì¶ (ë¯¸ê²°ì =ê²°ì ëê¸° ìë¢°ë ì ì¸)
-                    const isPaid = a.payment_status === 'ê²°ì ìë£' || a.payment_status === 'ë¬´ë£ë§¤ì¹­' || !!a.paid_at;
-                    if (!isPaid && a.status !== 'ë§¤ì¹­ì¤') return false;
-                    if (!['ë§¤ì¹­ì¤', 'ê²°ì ìë£', 'ì ì'].includes(a.status)) return false; // ì´ë¦° ìíë§
-                    if (a.rejectedExpert === myId) return false;            // ë´ê° ê±°ì í ê±´ ì ì¸
-                    if (!courtMatch(a.court, myCourts)) return false;       // íëë²ì ì¼ì¹
-                    if (!typeMatch(a.expert_type || a.expertType, myType)) return false; // ì í ì¼ì¹
+                    if (a.assigned_expert_id) return false;                 // 이미 누가 가져감
+                    // ★ 결제 완료된 의뢰만 노출 (미결제=결제대기 의뢰는 제외)
+                    const isPaid = a.payment_status === '결제완료' || a.payment_status === '무료매칭' || !!a.paid_at;
+                    if (!isPaid && a.status !== '매칭중') return false;
+                    if (!['매칭중', '결제완료', '접수'].includes(a.status)) return false; // 열린 상태만
+                    if (a.rejectedExpert === myId) return false;            // 내가 거절한 건 제외
+                    if (!courtMatch(a.court, myCourts)) return false;       // 활동법원 일치
+                    if (!typeMatch(a.expert_type || a.expertType, myType)) return false; // 유형 일치
                     return true;
                 });
 
-                // í©ì¹ê¸°(ì¤ë³µ ì ê±°)
+                // 합치기(중복 제거)
                 const seen = new Set();
                 const data = [...assignedToMe, ...openPool].filter(a => {
                     if (seen.has(a.id)) return false; seen.add(a.id); return true;
@@ -540,11 +540,11 @@
                 document.getElementById('pendingCount').textContent = data.length;
 
                 if (data.length === 0) {
-                    listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>ë°°ì  ìì²­ì´ ììµëë¤.</p></div>';
+                    listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>배정 요청이 없습니다.</p></div>';
                     return;
                 }
 
-                // ë²ë¬´ì¬ ì·¨ì íì ê²½ê³  ë©ìì§ íì
+                // 법무사 취소 횟수 경고 메시지 표시
                 const cancelCount = user.cancelCount || 0;
                 let warningHtml = '';
                 if (cancelCount > 0) {
@@ -553,11 +553,11 @@
                     <div style="background:#fffbeb;border:1.5px solid #f59e0b;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1rem;display:flex;align-items:flex-start;gap:0.75rem;">
                         <i class="fas fa-exclamation-triangle" style="color:#f59e0b;margin-top:2px;"></i>
                         <div>
-                            <p style="font-weight:700;color:#92400e;margin:0 0 0.25rem;">â ï¸ ì¹ì¸ í ì·¨ì ê²½ê³  (${cancelCount}/3í)</p>
+                            <p style="font-weight:700;color:#92400e;margin:0 0 0.25rem;">⚠️ 승인 후 취소 경고 (${cancelCount}/3회)</p>
                             <p style="font-size:0.83rem;color:#78350f;margin:0;line-height:1.6;">
-                                ì¹ì¸ í ì·¨ì ì ëì°°ê°(ê°ì¸ì ë³´)ê° ì´ë¯¸ ê³µê°ë ìíìëë¤.<br>
-                                <strong>3í ì´ì ì·¨ì ì ê³ì ì´ ìë ì ì§</strong>ë©ëë¤.
-                                ${remaining > 0 ? `ìì¼ë¡ <strong>${remaining}í</strong> ë ì·¨ì ì ê³ì ì´ ì ì§ë©ëë¤.` : '<strong style="color:#ef4444;">ë¤ì ì·¨ì ì ì¦ì ê³ì  ì ì§!</strong>'}
+                                승인 후 취소 시 낙찰가(개인정보)가 이미 공개된 상태입니다.<br>
+                                <strong>3회 이상 취소 시 계정이 자동 정지</strong>됩니다.
+                                ${remaining > 0 ? `앞으로 <strong>${remaining}회</strong> 더 취소 시 계정이 정지됩니다.` : '<strong style="color:#ef4444;">다음 취소 시 즉시 계정 정지!</strong>'}
                             </p>
                         </div>
                     </div>`;
@@ -567,61 +567,61 @@
                     const bidDateMs = req.bid_date ? new Date(req.bid_date).getTime() - Date.now() : 0;
                     const remainSec = Math.floor(bidDateMs / 1000);
                     const isUrgent  = remainSec > 0 && remainSec < 900;
-                    const timeLabel = remainSec > 0 ? formatTimeRemaining(remainSec) + ' ë¨ì' : 'ë§ê°';
-                    // ì¹ì¸ ì  ê³µê° íë: ìì°°ì¼Â·ì ì²­ìì´ë¦Â·ë¬¼ê±´ì¢ë¥Â·ë¬¼ê±´ì£¼ìê¹ì§ íì (ìì íë¨ì©). ì°ë½ì²/ìì°°ê°ë ì¹ì¸ í ê³µê°.
+                    const timeLabel = remainSec > 0 ? formatTimeRemaining(remainSec) + ' 남음' : '마감';
+                    // 승인 전 공개 필드: 입찰일·신청자이름·물건종류·물건주소까지 표시 (수임 판단용). 연락처/입찰가는 승인 후 공개.
                     return `
                     <div class="application-card request-card">
                         <div class="card-header">
                             <div>
-                                <span class="case-number">${req.case_number || '-'}${req.item_number ? ' (ë¬¼ê±´ '+req.item_number+')' : ''}</span>
+                                <span class="case-number">${req.case_number || '-'}${req.item_number ? ' (물건 '+req.item_number+')' : ''}</span>
                                 <span class="timer-badge ${isUrgent ? 'urgent' : ''}">
                                     <i class="fas fa-clock"></i> ${timeLabel}
                                 </span>
                                 <span class="status-badge" style="background:#e0f2fe;color:#0369a1;margin-left:4px;">${req.status || '-'}</span>
                             </div>
-                            <span class="bid-date">ìì°°ì¼: ${req.bid_date || '-'}</span>
+                            <span class="bid-date">입찰일: ${req.bid_date || '-'}</span>
                         </div>
                         <div class="card-body">
-                            <p><i class="fas fa-university" style="color:#667eea;margin-right:4px;"></i><strong>ë²ì:</strong> ${req.court || '-'}</p>
-                            <p><i class="fas fa-map-marker-alt" style="color:#0f766e;margin-right:4px;"></i><strong>ë¬¼ê±´ì£¼ì:</strong> <span style="color:#0f766e;font-weight:600;">${req.address || '-'}</span></p>
-                            <p><i class="fas fa-home" style="color:#667eea;margin-right:4px;"></i><strong>ë¬¼ê±´ì¢ë¥:</strong> ${req.property_type || '-'}</p>
-                            <p class="client-info"><i class="fas fa-user"></i> ì ì²­ì: ${req.applicant_name || '-'}</p>
+                            <p><i class="fas fa-university" style="color:#667eea;margin-right:4px;"></i><strong>법원:</strong> ${req.court || '-'}</p>
+                            <p><i class="fas fa-map-marker-alt" style="color:#0f766e;margin-right:4px;"></i><strong>물건주소:</strong> <span style="color:#0f766e;font-weight:600;">${req.address || '-'}</span></p>
+                            <p><i class="fas fa-home" style="color:#667eea;margin-right:4px;"></i><strong>물건종류:</strong> ${req.property_type || '-'}</p>
+                            <p class="client-info"><i class="fas fa-user"></i> 신청자: ${req.applicant_name || '-'}</p>
                             <div style="margin-top:0.75rem;padding:0.75rem 1rem;background:#f8fafc;border-radius:10px;border:1.5px dashed #cbd5e1;">
-                                <p style="margin:0 0 0.35rem;font-size:0.82rem;font-weight:700;color:#64748b;"><i class="fas fa-lock" style="color:#94a3b8;"></i> ì¹ì¸ í ê³µê°ëë ì ë³´</p>
-                                <p style="margin:0;font-size:0.82rem;color:#94a3b8;">ð ì°ë½ì² &nbsp;Â·&nbsp; ð° ìì°°ê° &nbsp;Â·&nbsp; ð¦ íê¸ê³ì¢</p>
-                                <p style="margin:0.35rem 0 0;font-size:0.79rem;color:#cbd5e1;">ì¹ì¸ ë²í¼ì ëë¥´ë©´ ì ì ë³´ê° ê³µê°ë©ëë¤.</p>
+                                <p style="margin:0 0 0.35rem;font-size:0.82rem;font-weight:700;color:#64748b;"><i class="fas fa-lock" style="color:#94a3b8;"></i> 승인 후 공개되는 정보</p>
+                                <p style="margin:0;font-size:0.82rem;color:#94a3b8;">📞 연락처 &nbsp;·&nbsp; 💰 입찰가 &nbsp;·&nbsp; 🏦 환급계좌</p>
+                                <p style="margin:0.35rem 0 0;font-size:0.79rem;color:#cbd5e1;">승인 버튼을 누르면 위 정보가 공개됩니다.</p>
                             </div>
                             <p style="color:#999;font-size:0.83rem;margin-top:0.6rem;">
-                                <i class="fas fa-clock"></i> ë°°ì : ${req.assigned_at ? req.assigned_at.slice(0,16).replace('T',' ') : '-'}
+                                <i class="fas fa-clock"></i> 배정: ${req.assigned_at ? req.assigned_at.slice(0,16).replace('T',' ') : '-'}
                             </p>
                         </div>
                         <div class="card-footer">
                             <button class="btn btn-success" onclick="acceptRequest('${req.id}')" style="flex:1;">
-                                <i class="fas fa-check"></i> ì¹ì¸
+                                <i class="fas fa-check"></i> 승인
                             </button>
                             <button class="btn btn-danger" onclick="openRejectModal('${req.id}')" style="flex:1;">
-                                <i class="fas fa-times"></i> ê±°ì 
+                                <i class="fas fa-times"></i> 거절
                             </button>
                         </div>
                     </div>`;
                 }).join('');
             } catch (err) {
-                console.error('ë°°ì  ìì²­ ë¡ë ì¤ë¥:', err);
-                listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>ë°°ì  ìì²­ì´ ììµëë¤.</p></div>';
+                console.error('배정 요청 로드 오류:', err);
+                listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>배정 요청이 없습니다.</p></div>';
                 document.getElementById('pendingCount').textContent = '0';
             }
         }
 
-        // ââ ì§í ì¤ ë¡ë (ì¤ì  API) ââââââââââââââââââââââââââââ
+        // ── 진행 중 로드 (실제 API) ────────────────────────────
         async function loadOngoing() {
             const listContainer = document.getElementById('ongoingList');
             setLoading('ongoingList');
             try {
                 const allData = await API.applications.getByExpertId(user.userId || user.id);
-                const data = allData.filter(a => a.status === 'ì§íì¤');
+                const data = allData.filter(a => a.status === '진행중');
 
                 if (data.length === 0) {
-                    listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>ì§í ì¤ì¸ ìì°°ì´ ììµëë¤.</p></div>';
+                    listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>진행 중인 입찰이 없습니다.</p></div>';
                     return;
                 }
 
@@ -633,48 +633,48 @@
                         <div class="card-header">
                             <div>
                                 <span class="case-number">${item.case_number || '-'}</span>
-                                <span class="status-badge status-confirmed">ì§íì¤</span>
+                                <span class="status-badge status-confirmed">진행중</span>
                             </div>
-                            <span class="bid-date">ìì°°ì¼: ${item.bid_date || '-'}</span>
+                            <span class="bid-date">입찰일: ${item.bid_date || '-'}</span>
                         </div>
                         <div class="card-body">
                             <p class="address"><i class="fas fa-map-marker-alt"></i> ${item.address || item.court || '-'}</p>
-                            <p><i class="fas fa-university" style="color:#667eea;margin-right:4px;"></i><strong>ë²ì:</strong> ${item.court || '-'}</p>
-                            <p class="client-info"><i class="fas fa-user"></i> ì ì²­ì: ${item.applicant_name || '-'}</p>
-                            <p class="client-info"><i class="fas fa-phone"></i> ì°ë½ì²: ${item.phone || '-'}</p>
+                            <p><i class="fas fa-university" style="color:#667eea;margin-right:4px;"></i><strong>법원:</strong> ${item.court || '-'}</p>
+                            <p class="client-info"><i class="fas fa-user"></i> 신청자: ${item.applicant_name || '-'}</p>
+                            <p class="client-info"><i class="fas fa-phone"></i> 연락처: ${item.phone || '-'}</p>
                             <div class="price-info">
                                 <div>
-                                    <span class="label">ê°ì ê°</span>
-                                    <span class="value">${formatPrice(item.appraisal_price)}ì</span>
+                                    <span class="label">감정가</span>
+                                    <span class="value">${formatPrice(item.appraisal_price)}원</span>
                                 </div>
                                 <div>
-                                    <span class="label">ìì°°ê° (ê³µê°ë¨)</span>
-                                    <span class="value highlight">${formatPrice(item.bid_amount)}ì</span>
+                                    <span class="label">입찰가 (공개됨)</span>
+                                    <span class="value highlight">${formatPrice(item.bid_amount)}원</span>
                                 </div>
                             </div>
                         </div>
                         <div class="card-footer" style="flex-wrap:wrap;gap:0.5rem;">
-                            <button class="btn btn-outline" onclick="viewDetail('${item.id}')" style="flex:1;min-width:80px;">ìì¸ë³´ê¸°</button>
-                            <button class="btn btn-primary" onclick="openResultModal('${item.id}')" style="flex:1;min-width:80px;">ì¬ê±´ì¢ë£</button>
-                            <button class="btn btn-danger" onclick="cancelAfterAccept('${item.id}')" style="flex:1;min-width:80px;font-size:0.82rem;" title="ì·¨ì ${cancelCount}/3í">
-                                <i class="fas fa-ban"></i> ì¹ì¸ì·¨ì (${cancelCount}/3)
+                            <button class="btn btn-outline" onclick="viewDetail('${item.id}')" style="flex:1;min-width:80px;">상세보기</button>
+                            <button class="btn btn-primary" onclick="openResultModal('${item.id}')" style="flex:1;min-width:80px;">사건종료</button>
+                            <button class="btn btn-danger" onclick="cancelAfterAccept('${item.id}')" style="flex:1;min-width:80px;font-size:0.82rem;" title="취소 ${cancelCount}/3회">
+                                <i class="fas fa-ban"></i> 승인취소 (${cancelCount}/3)
                             </button>
                         </div>
                     </div>`).join('');
             } catch (err) {
-                console.error('ì§í ì¤ ë¡ë ì¤ë¥:', err);
-                listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>ì§í ì¤ì¸ ìì°°ì´ ììµëë¤.</p></div>';
+                console.error('진행 중 로드 오류:', err);
+                listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>진행 중인 입찰이 없습니다.</p></div>';
             }
         }
 
-        // ââ ìë£ ë´ì­ ë¡ë (ì¤ì  API) ââââââââââââââââââââââââââ
+        // ── 완료 내역 로드 (실제 API) ──────────────────────────
         async function loadCompleted() {
             const listContainer = document.getElementById('completedList');
             setLoading('completedList');
             try {
                 const allData = await API.applications.getByExpertId(user.userId || user.id);
-                const data = allData.filter(a => a.status === 'ìë£' || a.status === 'ëì°°' || a.status === 'ì¬ê±´ì¢ë£');
-                const successList = data.filter(i => i.status === 'ëì°°' || i.result === 'success');
+                const data = allData.filter(a => a.status === '완료' || a.status === '낙찰' || a.status === '사건종료');
+                const successList = data.filter(i => i.status === '낙찰' || i.result === 'success');
 
                 document.getElementById('totalCompleted').textContent = data.length;
                 document.getElementById('successCount').textContent = successList.length;
@@ -682,53 +682,53 @@
                     ? Math.round((successList.length / data.length) * 100) + '%' : '0%';
 
                 if (data.length === 0) {
-                    listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>ìë£ë ìì°°ì´ ììµëë¤.</p></div>';
+                    listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>완료된 입찰이 없습니다.</p></div>';
                     return;
                 }
 
                 listContainer.innerHTML = data.map(item => {
-                    const isSuccess = item.status === 'ëì°°' || item.result === 'success';
+                    const isSuccess = item.status === '낙찰' || item.result === 'success';
                     return `
                     <div class="application-card">
                         <div class="card-header">
                             <div>
                                 <span class="case-number">${item.case_number || '-'}</span>
                                 <span class="status-badge ${isSuccess ? 'status-success' : 'status-cancelled'}">
-                                    ${isSuccess ? 'ëì°° ð' : 'í¨ì°°'}
+                                    ${isSuccess ? '낙찰 🎉' : '패찰'}
                                 </span>
                             </div>
-                            <span class="bid-date">ìë£: ${item.completed_at ? item.completed_at.slice(0,10) : (item.bid_date || '-')}</span>
+                            <span class="bid-date">완료: ${item.completed_at ? item.completed_at.slice(0,10) : (item.bid_date || '-')}</span>
                         </div>
                         <div class="card-body">
                             <p class="address"><i class="fas fa-map-marker-alt"></i> ${item.address || item.court || '-'}</p>
                             <div class="price-info">
                                 <div>
-                                    <span class="label">ìì°°ê°</span>
-                                    <span class="value">${formatPrice(item.bid_amount)}ì</span>
+                                    <span class="label">입찰가</span>
+                                    <span class="value">${formatPrice(item.bid_amount)}원</span>
                                 </div>
                                 <div>
-                                    <span class="label">ììë£</span>
-                                    <span class="value highlight">${formatPrice(item.service_fee || 132000)}ì</span>
+                                    <span class="label">수수료</span>
+                                    <span class="value highlight">${formatPrice(item.service_fee || 132000)}원</span>
                                 </div>
                             </div>
                         </div>
                     </div>`;
                 }).join('');
             } catch (err) {
-                console.error('ìë£ ë´ì­ ë¡ë ì¤ë¥:', err);
-                listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>ìë£ë ìì°°ì´ ììµëë¤.</p></div>';
+                console.error('완료 내역 로드 오류:', err);
+                listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>완료된 입찰이 없습니다.</p></div>';
             }
         }
 
-        // ââ ì ì° ë´ì­ ë¡ë (ì¤ì  API â ìë£ ê±´ ì§ê³) ââââââââââ
+        // ── 정산 내역 로드 (실제 API – 완료 건 집계) ──────────
         async function loadSettlement() {
             const listContainer = document.getElementById('settlementList');
             setLoading('settlementList');
             try {
                 const allData = await API.applications.getByExpertId(user.userId || user.id);
-                const data = allData.filter(a => a.status === 'ìë£' || a.status === 'ëì°°' || a.status === 'ì¬ê±´ì¢ë£');
+                const data = allData.filter(a => a.status === '완료' || a.status === '낙찰' || a.status === '사건종료');
 
-                // ìë³ ì§ê³
+                // 월별 집계
                 const monthly = {};
                 data.forEach(app => {
                     const month = (app.completed_at || app.bid_date || '').slice(0, 7);
@@ -742,63 +742,63 @@
                 const thisMonthAmt = months.length ? monthly[months[0]].amount : 0;
                 const totalAmt = months.reduce((s, m) => s + monthly[m].amount, 0);
 
-                document.getElementById('thisMonthAmount').textContent = formatPrice(thisMonthAmt) + 'ì';
-                document.getElementById('totalAmount').textContent = formatPrice(totalAmt) + 'ì';
+                document.getElementById('thisMonthAmount').textContent = formatPrice(thisMonthAmt) + '원';
+                document.getElementById('totalAmount').textContent = formatPrice(totalAmt) + '원';
 
                 if (months.length === 0) {
-                    listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>ì ì° ë´ì­ì´ ììµëë¤.</p></div>';
+                    listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>정산 내역이 없습니다.</p></div>';
                     return;
                 }
 
                 listContainer.innerHTML = `
                     <table class="payments-table">
                         <thead>
-                            <tr><th>ì ì°ì</th><th>ì²ë¦¬ ê±´ì</th><th>ì ì° ê¸ì¡</th><th>ìí</th></tr>
+                            <tr><th>정산월</th><th>처리 건수</th><th>정산 금액</th><th>상태</th></tr>
                         </thead>
                         <tbody>
                             ${months.map(m => `
                                 <tr>
                                     <td>${m}</td>
-                                    <td>${monthly[m].count}ê±´</td>
-                                    <td><strong>${formatPrice(monthly[m].amount)}ì</strong></td>
-                                    <td><span class="status-badge status-success">ì ì°ìë£</span></td>
+                                    <td>${monthly[m].count}건</td>
+                                    <td><strong>${formatPrice(monthly[m].amount)}원</strong></td>
+                                    <td><span class="status-badge status-success">정산완료</span></td>
                                 </tr>`).join('')}
                         </tbody>
                     </table>`;
             } catch (err) {
-                console.error('ì ì° ë´ì­ ë¡ë ì¤ë¥:', err);
-                listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>ì ì° ë´ì­ì´ ììµëë¤.</p></div>';
+                console.error('정산 내역 로드 오류:', err);
+                listContainer.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>정산 내역이 없습니다.</p></div>';
             }
         }
 
-        // ââ ìë½(ì¹ì¸) âââââââââââââââââââââââââââââââââââââââââââââ
+        // ── 수락(승인) ─────────────────────────────────────────────
         async function acceptRequest(id) {
-            // ì¹ì¸ ì  ìê²© ì¬íì¸
+            // 승인 전 자격 재확인
             if (user.status !== 'active') {
-                alert('ìì§ ì¹ì¸ ëê¸° ì¤ì¸ ê³ì ìëë¤.\nê´ë¦¬ì ì¹ì¸ ìë£ í ìë¢°ë¥¼ ììíì¤ ì ììµëë¤.');
+                alert('아직 승인 대기 중인 계정입니다.\n관리자 승인 완료 후 의뢰를 수임하실 수 있습니다.');
                 return;
             }
-            // ì±ì íì½ì ë¯¸ìëª ì ìë½ ì°¨ë¨ â ìëª íë©´ íì
+            // 책임 확약서 미서명 시 수락 차단 → 서명 화면 표시
             if (!user.contractSigned) {
-                alert('ìë¢°ë¥¼ ìë½íë ¤ë©´ ë¨¼ì  "ì ë¬¸ê° íë ì±ì íì½ì"ì ìëªí´ì¼ í©ëë¤.');
+                alert('의뢰를 수락하려면 먼저 "전문가 활동 책임 확약서"에 서명해야 합니다.');
                 showContractModal();
                 return;
             }
-            if (!confirm('ì¹ì¸íìë©´ ì ì²­ì ì°ë½ì²Â·ìì°°ê°Â·íê¸ê³ì¢ê° ê³µê°ë©ëë¤.\nì¹ì¸ í ì·¨ì 3í ì ê³ì ì´ ìë ì ì§ë©ëë¤.\n\nì´ ìì²­ì ì¹ì¸íìê² ìµëê¹?')) return;
+            if (!confirm('승인하시면 신청자 연락처·입찰가·환급계좌가 공개됩니다.\n승인 후 취소 3회 시 계정이 자동 정지됩니다.\n\n이 요청을 승인하시겠습니까?')) return;
             const myId = user.userId || user.id;
             try {
-                // ââ ì ì°©ì ì ê¸: ìµì  ìí ì¬ì¡°í í ë¯¸ë°°ì ì¼ ëë§ ìì ââ
+                // ── 선착순 잠금: 최신 상태 재조회 후 미배정일 때만 수임 ──
                 const latest = await API.applications.getById(id);
-                if (!latest) { alert('ìë¢° ì ë³´ë¥¼ ì°¾ì ì ììµëë¤.'); loadRequests(); return; }
+                if (!latest) { alert('의뢰 정보를 찾을 수 없습니다.'); loadRequests(); return; }
                 if (latest.assigned_expert_id && latest.assigned_expert_id !== myId) {
-                    alert('ì´ë¯¸ ë¤ë¥¸ ì ë¬¸ê°ê° ììí ì¬ê±´ìëë¤.\nëª©ë¡ì ìë¡ê³ ì¹¨í©ëë¤.');
+                    alert('이미 다른 전문가가 수임한 사건입니다.\n목록을 새로고침합니다.');
                     loadRequests();
                     return;
                 }
                 const appData = latest;
 
-                // â íëëª íµì¼ + ì ì°©ì ìì íì 
-                await API.applications.updateStatus(id, 'ì§íì¤', {
+                // ★ 필드명 통일 + 선착순 수임 확정
+                await API.applications.updateStatus(id, '진행중', {
                     acceptedAt:          new Date().toISOString(),
                     matched_at:          new Date().toISOString(),
                     assigned_expert_id:  myId,
@@ -807,7 +807,7 @@
                     bid_amount_revealed: true
                 });
 
-                // ê³ ê°ìê² "ë´ë¹ ì ë¬¸ê° ë°°ì  ìë£" ìë¦¼
+                // 고객에게 "담당 전문가 배정 완료" 알림
                 if (appData && appData.phone) {
                     const notifData = {
                         appId:       id.slice(-8).toUpperCase(),
@@ -818,29 +818,29 @@
                         expertName:  user.name              || '',
                         expertPhone: user.phone             || '',
                     };
-                    // â  ë¬¸ì(SMS)ë ìë²(/db-update)ê° ìì íì  ì ìë ë°ì¡ â ì¬ê¸°ì  ì¤ë³µ ë°ì¡ ì í¨
-                    // â¡ ì¹´ì¹´ì¤ ìë¦¼í¡ â ì¬ì¬ íµê³¼ í ìë ë°ì¡
+                    // ① 문자(SMS)는 서버(/db-update)가 수임 확정 시 자동 발송 → 여기선 중복 발송 안 함
+                    // ② 카카오 알림톡 — 심사 통과 후 자동 발송
                     sendKakaoNotif('client_assigned', appData.phone, notifData);
                 }
 
-                showExpertToast('â ìì ìë£! ì ì²­ììê² ë¬¸ì ìë¦¼ì´ ë°ì¡ëììµëë¤.', 'success');
+                showExpertToast('✅ 수임 완료! 신청자에게 문자 알림이 발송되었습니다.', 'success');
                 loadRequests();
                 loadOngoing();
-                // ìì ì§í 'ì§í ì¤' í­ì¼ë¡ ìë ì´ë (ì ì²­ì´ ì¬ë¼ì§ ê²ì²ë¼ ë³´ì´ì§ ìê²)
+                // 수임 직후 '진행 중' 탭으로 자동 이동 (신청이 사라진 것처럼 보이지 않게)
                 const ongoingMenu = document.querySelector('.menu-item[onclick*="ongoing"]');
                 showSection('ongoing', ongoingMenu);
             } catch (err) {
                 console.error(err);
-                alert('ì²ë¦¬ ì¤ ì¤ë¥ê° ë°ìíìµëë¤.');
+                alert('처리 중 오류가 발생했습니다.');
             }
         }
 
-        // ââ ê±°ì  ì¬ì  ëª¨ë¬ ì´ê¸° ââââââââââââââââââââââââââââââââââââââ
+        // ── 거절 사유 모달 열기 ──────────────────────────────────────
         function openRejectModal(id) {
             const modal = document.getElementById('rejectModal');
             modal.style.display = 'flex';
             modal.dataset.appId = id;
-            // ì´ê¸°í
+            // 초기화
             document.querySelectorAll('input[name="rejectReason"]').forEach(r => r.checked = false);
             document.getElementById('rejectOtherWrap').style.display = 'none';
             document.getElementById('rejectOtherText').value = '';
@@ -848,7 +848,7 @@
             document.getElementById('rejectConfirmBtn').style.opacity = '0.5';
         }
 
-        // ââ ê±°ì  ì²ë¦¬ âââââââââââââââââââââââââââââââââââââââââââââââââ
+        // ── 거절 처리 ─────────────────────────────────────────────────
         async function confirmReject() {
             const modal = document.getElementById('rejectModal');
             const id    = modal.dataset.appId;
@@ -856,18 +856,18 @@
             if (!checked) return;
 
             let rejectReason = checked.value;
-            if (rejectReason === 'ê¸°í') {
+            if (rejectReason === '기타') {
                 const txt = document.getElementById('rejectOtherText').value.trim();
-                if (!txt) { alert('ê±°ì  ì¬ì ë¥¼ ìë ¥í´ì£¼ì¸ì.'); return; }
-                rejectReason = 'ê¸°í: ' + txt;
+                if (!txt) { alert('거절 사유를 입력해주세요.'); return; }
+                rejectReason = '기타: ' + txt;
             }
 
             const btn = document.getElementById('rejectConfirmBtn');
             btn.disabled = true;
-            btn.textContent = 'ì²ë¦¬ ì¤...';
+            btn.textContent = '처리 중...';
 
             try {
-                await API.applications.updateStatus(id, 'ë§¤ì¹­ì¤', {
+                await API.applications.updateStatus(id, '매칭중', {
                     rejectedExpert:      user.userId || user.id,
                     rejectedExpertName:  user.name,
                     rejectReason:        rejectReason,
@@ -876,34 +876,34 @@
                     expert_name:         ''
                 });
                 modal.style.display = 'none';
-                showExpertToast('ê±°ì  ì²ë¦¬ëììµëë¤.', 'info');
+                showExpertToast('거절 처리되었습니다.', 'info');
                 loadRequests();
             } catch (err) {
                 console.error(err);
-                alert('ì²ë¦¬ ì¤ ì¤ë¥ê° ë°ìíìµëë¤.');
+                alert('처리 중 오류가 발생했습니다.');
             } finally {
                 btn.disabled = false;
-                btn.textContent = 'ê±°ì  íì ';
+                btn.textContent = '거절 확정';
             }
         }
 
-        // ââ ì¹ì¸ í ì·¨ì ââââââââââââââââââââââââââââââââââââââââââââââ
+        // ── 승인 후 취소 ──────────────────────────────────────────────
         async function cancelAfterAccept(id) {
             const newCancelCount = (user.cancelCount || 0) + 1;
-            let warningMsg = `ì ë§ ì¹ì¸ì ì·¨ìíìê² ìµëê¹?\n\nâ ï¸ ìì°°ê°(ê°ì¸ì ë³´)ê° ì´ë¯¸ ê³µê°ë ìíìëë¤.\nì·¨ì ê¸°ë¡: ${newCancelCount}í / 3í`;
+            let warningMsg = `정말 승인을 취소하시겠습니까?\n\n⚠️ 입찰가(개인정보)가 이미 공개된 상태입니다.\n취소 기록: ${newCancelCount}회 / 3회`;
             if (newCancelCount >= 3) {
-                warningMsg += '\n\nð« ì´ë² ì·¨ì ì ê³ì ì´ ì¦ì ì ì§ë©ëë¤!';
+                warningMsg += '\n\n🚫 이번 취소 시 계정이 즉시 정지됩니다!';
             }
             if (!confirm(warningMsg)) return;
 
             try {
                 const now = new Date().toISOString();
 
-                await API.applications.updateStatus(id, 'ì·¨ì', {
+                await API.applications.updateStatus(id, '취소', {
                     cancelledBy:     user.userId || user.id,
                     cancelledByName: user.name,
                     cancelledAt:     now,
-                    cancelReason:    'ë²ë¬´ì¬ ì¹ì¸ í ì·¨ì'
+                    cancelReason:    '법무사 승인 후 취소'
                 });
 
                 await _smartUpdateDoc('users', user.id, {
@@ -925,8 +925,8 @@
                     court:        appData.court || '',
                     bidDate:      appData.bid_date || '',
                     message:      isAutoBlock
-                        ? `ð« [ìëì ì§] ${user.name} ë²ë¬´ì¬ê° ì¹ì¸ ì·¨ì ${newCancelCount}íë¡ ê³ì ì´ ìë ì ì§ëììµëë¤.`
-                        : `â ï¸ ${user.name} ë²ë¬´ì¬ê° ì¹ì¸ í ì·¨ìíìµëë¤. (${newCancelCount}/3í) ì¬ê±´: ${appData.case_number || id}`,
+                        ? `🚫 [자동정지] ${user.name} 법무사가 승인 취소 ${newCancelCount}회로 계정이 자동 정지되었습니다.`
+                        : `⚠️ ${user.name} 법무사가 승인 후 취소했습니다. (${newCancelCount}/3회) 사건: ${appData.case_number || id}`,
                     isRead:       false,
                     createdAt:    now
                 });
@@ -935,23 +935,23 @@
                     await _smartUpdateDoc('users', user.id, {
                         status:        'blocked',
                         blockedAt:     now,
-                        blockedReason: `ë²ë¬´ì¬ ì¹ì¸ í ${newCancelCount}í ì·¨ì ìëì ì§`
+                        blockedReason: `법무사 승인 후 ${newCancelCount}회 취소 자동정지`
                     });
-                    alert('ð« ê³ì  ì ì§ ìë´\n\nìì°°ê°ë ì ì²­ìì ìì¤í ê°ì¸ì¬ì° ì ë³´ìëë¤.\nì¹ì¸ í 3í ì´ì ì·¨ìë¡ ì¸í´ ê³ì ì´ ìë ì ì§ëììµëë¤.\n\nê³ì  ë³µêµ¬: ê´ë¦¬ì ë¬¸ì (02-863-1022)');
+                    alert('🚫 계정 정지 안내\n\n입찰가는 신청자의 소중한 개인재산 정보입니다.\n승인 후 3회 이상 취소로 인해 계정이 자동 정지되었습니다.\n\n계정 복구: 관리자 문의 (02-863-1022)');
                     Auth.logout();
                     return;
                 }
 
                 user.cancelCount = newCancelCount;
-                showExpertToast(`ì¹ì¸ ì·¨ì ì²ë¦¬ (${newCancelCount}/3í). ${3-newCancelCount}í ë¨ì.`, 'info');
+                showExpertToast(`승인 취소 처리 (${newCancelCount}/3회). ${3-newCancelCount}회 남음.`, 'info');
                 loadOngoing();
             } catch (err) {
                 console.error(err);
-                alert('ì²ë¦¬ ì¤ ì¤ë¥ê° ë°ìíìµëë¤.');
+                alert('처리 중 오류가 발생했습니다.');
             }
         }
 
-        // ââ ì¬ê±´ì¢ë£ ëª¨ë¬ ì´ê¸° (ê²°ê³¼ ìë ¥) âââââââââââââââââââââââââ
+        // ── 사건종료 모달 열기 (결과 입력) ─────────────────────────
         function openResultModal(id) {
             const modal = document.getElementById('resultModal');
             modal.style.display = 'flex';
@@ -962,10 +962,10 @@
             btn.style.opacity = '0.5';
             btn.style.cursor = 'not-allowed';
         }
-        // êµ¬ë²ì  updateStatus í¸í
+        // 구버전 updateStatus 호환
         function updateStatus(id) { openResultModal(id); }
 
-        // ââ ê²°ê³¼ ëª¨ë¬: ì§ì  onclick ë°©ì (ìì ì ) âââââââââââââââââââ
+        // ── 결과 모달: 직접 onclick 방식 (안정적) ───────────────────
         window.closeResultModal = function() {
             const m = document.getElementById('resultModal');
             if (m) m.style.display = 'none';
@@ -979,11 +979,11 @@
             const modal    = document.getElementById('resultModal');
             const id       = modal.dataset.appId;
             const selected = document.querySelector('input[name="bidResult"]:checked');
-            if (!selected) { alert('ëì°° ëë í¨ì°°ì ì íí´ì£¼ì¸ì.'); return; }
+            if (!selected) { alert('낙찰 또는 패찰을 선택해주세요.'); return; }
             const isSuccess   = selected.value === 'success';
-            const finalStatus = isSuccess ? 'ëì°°' : 'ì¬ê±´ì¢ë£';
+            const finalStatus = isSuccess ? '낙찰' : '사건종료';
             const btn = document.getElementById('resultSubmitBtn');
-            btn.disabled = true; btn.textContent = 'ì²ë¦¬ ì¤...';
+            btn.disabled = true; btn.textContent = '처리 중...';
             try {
                 const appData = await _smartGetDoc('applications', id) || {};
                 await API.applications.updateStatus(id, finalStatus, {
@@ -1003,23 +1003,23 @@
                         bidAmount:   appData.bid_amount     || 0,
                         expertName:  user.name              || '',
                         expertPhone: user.phone             || '',
-                        result:      isSuccess ? 'ëì°°' : 'í¨ì°°',
+                        result:      isSuccess ? '낙찰' : '패찰',
                     });
                 }
                 modal.style.display = 'none';
                 showExpertToast(
-                    isSuccess ? 'ð ëì°°! ì¬ê±´ì´ ì¢ë£ëììµëë¤.' : 'ð í¨ì°°. ì¬ê±´ì´ ì¢ë£ëììµëë¤.',
+                    isSuccess ? '🎉 낙찰! 사건이 종료되었습니다.' : '📋 패찰. 사건이 종료되었습니다.',
                     isSuccess ? 'success' : 'info'
                 );
                 loadOngoing();
                 loadCompleted();
             } catch (err) {
-                alert('ì²ë¦¬ ì¤ ì¤ë¥ê° ë°ìíìµëë¤.');
-                btn.disabled = false; btn.textContent = 'ì¬ê±´ì¢ë£ íì ';
+                alert('처리 중 오류가 발생했습니다.');
+                btn.disabled = false; btn.textContent = '사건종료 확정';
             }
         };
 
-        // ââ í ì¤í¸ ìë¦¼ âââââââââââââââââââââââââââââââââââââââ
+        // ── 토스트 알림 ───────────────────────────────────────
         function showExpertToast(message, type) {
             const colors = { success: '#10B981', error: '#ef4444', info: '#1550E8' };
             const toast = document.createElement('div');
@@ -1041,25 +1041,25 @@
         async function viewDetail(id) {
             try {
                 const app = await API.applications.getById(id);
-                if (!app) { alert('ì ë³´ë¥¼ ë¶ë¬ì¬ ì ììµëë¤.'); return; }
+                if (!app) { alert('정보를 불러올 수 없습니다.'); return; }
                 document.getElementById('expertDetailModal').style.display = 'flex';
                 document.getElementById('expertDetailContent').innerHTML = `
                     <table class="detail-table">
-                        <tr><td>ì¬ê±´ë²í¸</td><td><strong>${app.case_number || '-'}</strong></td></tr>
-                        <tr><td>ë²ì</td><td>${app.court || '-'}</td></tr>
-                        <tr><td>ë¬¼ê±´ ì£¼ì</td><td>${app.address || '-'}</td></tr>
-                        <tr><td>ìì°° ê¸°ì¼</td><td>${app.bid_date || '-'}</td></tr>
-                        <tr><td>ê°ì ê°</td><td>${formatPrice(app.appraisal_price || 0)}ì</td></tr>
-                        <tr><td>í¬ë§ ìì°°ê°</td><td><strong style="color:#1550E8;">${formatPrice(app.bid_amount || 0)}ì</strong></td></tr>
-                        <tr><td>ë¬¼ê±´ ì¢ë¥</td><td>${app.property_type || '-'}</td></tr>
-                        <tr><td>ì ì²­ì</td><td>${app.applicant_name || '-'}</td></tr>
-                        <tr><td>ì ì²­ì ì°ë½ì²</td><td>${app.phone || '-'}</td></tr>
-                        <tr><td>ìì°° íí</td><td>${app.bid_type || '-'}</td></tr>
-                        <tr><td>ìí</td><td>${app.status || '-'}</td></tr>
-                        <tr><td>ì ì²­ì¼ì</td><td>${app.created_at ? app.created_at.slice(0,16).replace('T',' ') : '-'}</td></tr>
+                        <tr><td>사건번호</td><td><strong>${app.case_number || '-'}</strong></td></tr>
+                        <tr><td>법원</td><td>${app.court || '-'}</td></tr>
+                        <tr><td>물건 주소</td><td>${app.address || '-'}</td></tr>
+                        <tr><td>입찰 기일</td><td>${app.bid_date || '-'}</td></tr>
+                        <tr><td>감정가</td><td>${formatPrice(app.appraisal_price || 0)}원</td></tr>
+                        <tr><td>희망 입찰가</td><td><strong style="color:#1550E8;">${formatPrice(app.bid_amount || 0)}원</strong></td></tr>
+                        <tr><td>물건 종류</td><td>${app.property_type || '-'}</td></tr>
+                        <tr><td>신청자</td><td>${app.applicant_name || '-'}</td></tr>
+                        <tr><td>신청자 연락처</td><td>${app.phone || '-'}</td></tr>
+                        <tr><td>입찰 형태</td><td>${app.bid_type || '-'}</td></tr>
+                        <tr><td>상태</td><td>${app.status || '-'}</td></tr>
+                        <tr><td>신청일시</td><td>${app.created_at ? app.created_at.slice(0,16).replace('T',' ') : '-'}</td></tr>
                     </table>`;
             } catch (err) {
-                alert('ìì¸ ì ë³´ë¥¼ ë¶ë¬ì¤ë ì¤ ì¤ë¥ê° ë°ìíìµëë¤.');
+                alert('상세 정보를 불러오는 중 오류가 발생했습니다.');
             }
         }
 
@@ -1068,10 +1068,10 @@
         }
 
         function handleLogout() {
-            if (confirm('ë¡ê·¸ìì íìê² ìµëê¹?')) Auth.logout();
+            if (confirm('로그아웃 하시겠습니까?')) Auth.logout();
         }
 
-        // ESC í¤ë¡ ëª¨ë¬ ë«ê¸°
+        // ESC 키로 모달 닫기
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeExpertDetailModal();
@@ -1080,7 +1080,7 @@
             }
         });
 
-        // ì ì­ ë¸ì¶
+        // 전역 노출
         window.openRejectModal   = openRejectModal;
         window.confirmReject     = confirmReject;
         window.openResultModal   = openResultModal;
@@ -1088,14 +1088,14 @@
         window.cancelAfterAccept = cancelAfterAccept;
         window.viewDetail        = viewDetail;
         window.updateStatus      = updateStatus;
-        // ââââââââââ ì ë¬¸ê° ì±ì íì½ì (ì ììëª) ââââââââââ
+        // ══════════ 전문가 책임 확약서 (전자서명) ══════════
         const CONTRACT_VERSION = 'v1_2026-07';
         let _contractCtx = null, _contractDrawing = false, _contractHasSign = false;
 
         function initContractCanvas() {
             const canvas = document.getElementById('contractCanvas');
             if (!canvas) return;
-            // ì¤ì  í½ì í¬ê¸° ë§ì¶ê¸°
+            // 실제 픽셀 크기 맞추기
             const rect = canvas.getBoundingClientRect();
             canvas.width  = rect.width;
             canvas.height = rect.height;
@@ -1129,9 +1129,9 @@
         };
         window.submitContract = async function() {
             const agree = document.getElementById('contractAgree');
-            if (!agree.checked || !_contractHasSign) { alert('ë´ì© ëì ì²´í¬ì ìëªì ëª¨ë ìë£í´ì£¼ì¸ì.'); return; }
+            if (!agree.checked || !_contractHasSign) { alert('내용 동의 체크와 서명을 모두 완료해주세요.'); return; }
             const btn = document.getElementById('contractSubmitBtn');
-            btn.disabled = true; btn.textContent = 'ì ì¥ ì¤...';
+            btn.disabled = true; btn.textContent = '저장 중...';
             let signatureData = '';
             try { signatureData = document.getElementById('contractCanvas').toDataURL('image/png'); } catch(e) {}
             try {
@@ -1143,21 +1143,21 @@
                 });
                 user.contractSigned = true;
                 document.getElementById('contractModal').style.display = 'none';
-                showExpertToast('â ìëªì´ ìë£ëììµëë¤. ì´ì  ìë¢°ë¥¼ ìë½íì¤ ì ììµëë¤.', 'success');
+                showExpertToast('✅ 서명이 완료되었습니다. 이제 의뢰를 수락하실 수 있습니다.', 'success');
                 if (typeof loadRequests === 'function') loadRequests();
             } catch (e) {
-                alert('ì ì¥ ì¤ ì¤ë¥ê° ë°ìíìµëë¤. ì ì í ë¤ì ìëí´ì£¼ì¸ì.');
-                btn.disabled = false; btn.textContent = 'ëìíê³  ìëª ìë£';
+                alert('저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+                btn.disabled = false; btn.textContent = '동의하고 서명 완료';
             }
         };
         function showContractModal() {
             const modal = document.getElementById('contractModal');
             if (!modal) return;
             modal.style.display = 'flex';
-            // ìºë²ì¤ë íì í í¬ê¸°ê° ì¡íë¯ë¡ ë¤ì íë ìì ì´ê¸°í
+            // 캔버스는 표시 후 크기가 잡히므로 다음 프레임에 초기화
             setTimeout(initContractCanvas, 50);
         }
-        // ì¹ì¸ë ì ë¬¸ê°ì¸ë° ìì§ ìëª ì íì¼ë©´ ê°ì  íì (ê¸°ì¡´ ì¹ì¸ì í¬í¨)
+        // 승인된 전문가인데 아직 서명 안 했으면 강제 표시 (기존 승인자 포함)
         async function checkContract() {
             if (IS_ADMIN_AS) return;
             let fresh = null;
@@ -1173,19 +1173,19 @@
         }
         checkContract();
 
-        // â ë©ë´ í´ë¦­Â·ë¡ê·¸ììÂ·ëª¨ë¬ë«ê¸° (onclick ìì í¸ì¶ëë¯ë¡ ë°ëì ì ì­ ë¸ì¶)
+        // ★ 메뉴 클릭·로그아웃·모달닫기 (onclick 에서 호출되므로 반드시 전역 노출)
         window.showSection            = showSection;
         window.handleLogout           = handleLogout;
         window.closeExpertDetailModal = closeExpertDetailModal;
-        // (handleWithdraw ë ìëìì window.handleWithdraw = async function... ì¼ë¡ ì´ë¯¸ ë¸ì¶ë¨)
+        // (handleWithdraw 는 아래에서 window.handleWithdraw = async function... 으로 이미 노출됨)
 
-        // ê±°ì  ëª¨ë¬ ì´ë²¤í¸ (DOMContentLoaded)
-        //  (ê²°ê³¼ ëª¨ë¬ XÂ·ë¼ëì¤Â·íì  ë²í¼ì ììì ì§ì  onclick/onchange ë¡ ì²ë¦¬ â ìì ì )
+        // 거절 모달 이벤트 (DOMContentLoaded)
+        //  (결과 모달 X·라디오·확정 버튼은 위에서 직접 onclick/onchange 로 처리 — 안정적)
         document.addEventListener('DOMContentLoaded', function() {
-            // ê±°ì  ëª¨ë¬ ë¼ëì¤ â ê¸°í íì¤í¸ ìì­ íì + ë²í¼ íì±í
+            // 거절 모달 라디오 → 기타 텍스트 영역 표시 + 버튼 활성화
             document.querySelectorAll('input[name="rejectReason"]').forEach(function(r) {
                 r.addEventListener('change', function() {
-                    const isOther = this.value === 'ê¸°í';
+                    const isOther = this.value === '기타';
                     document.getElementById('rejectOtherWrap').style.display = isOther ? 'block' : 'none';
                     const btn = document.getElementById('rejectConfirmBtn');
                     btn.disabled       = false;
@@ -1195,7 +1195,7 @@
             });
         });
 
-        // ââ íëë²ì ì¹© í ê¸ (í´ë¦­ ì ì í/í´ì ) âââââââââââââââ
+        // ── 활동법원 칩 토글 (클릭 시 선택/해제) ───────────────
         window.toggleCourt = function(el) {
             const cb = el.querySelector('input[type="checkbox"]');
             if (!cb) return;
@@ -1204,30 +1204,30 @@
             else            { el.style.borderColor = '#e0e0e0'; el.style.background = '#fff'; }
         };
 
-        // ââ íë ë²ìë§ ì ì¥ (ë¹ë°ë²í¸ ë³ê²½ ìì´) âââââââââââââââ
+        // ── 활동 법원만 저장 (비밀번호 변경 없이) ───────────────
         window.saveCourts = async function() {
             const selectedCourts = Array.from(document.querySelectorAll('#courtEditWrap input[name="selectedCourts"]:checked')).map(c => c.value);
             if (selectedCourts.length === 0) {
-                if (!confirm('ì íë íë ë²ìì´ ììµëë¤.\nì´ëë¡ ì ì¥íë©´ ì ìë¢°ë¥¼ ë°ì§ ëª»í©ëë¤. ê·¸ëë ì ì¥í ê¹ì?')) return;
+                if (!confirm('선택된 활동 법원이 없습니다.\n이대로 저장하면 새 의뢰를 받지 못합니다. 그래도 저장할까요?')) return;
             }
             const btn = document.getElementById('saveCourtsBtn');
-            if (btn) { btn.disabled = true; btn.textContent = 'ì ì¥ ì¤...'; }
+            if (btn) { btn.disabled = true; btn.textContent = '저장 중...'; }
             try {
                 const result = await Auth.saveProfile({ selectedCourts, serviceRegions: selectedCourts });
                 if (result && result.success) {
                     if (user) { user.selectedCourts = selectedCourts; user.serviceRegions = selectedCourts; }
-                    showExpertToast('â íë ë²ìì´ ì ì¥ëììµëë¤. (' + selectedCourts.length + 'ê³³)', 'success');
+                    showExpertToast('✅ 활동 법원이 저장되었습니다. (' + selectedCourts.length + '곳)', 'success');
                 } else {
-                    alert((result && result.message) || 'ì ì¥ ì¤ ì¤ë¥ê° ë°ìíìµëë¤.');
+                    alert((result && result.message) || '저장 중 오류가 발생했습니다.');
                 }
             } catch (e) {
-                alert('ì ì¥ ì¤ ì¤ë¥ê° ë°ìíìµëë¤.');
+                alert('저장 중 오류가 발생했습니다.');
             } finally {
-                if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-map-marker-alt"></i> íë ë²ì ì ì¥'; }
+                if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-map-marker-alt"></i> 활동 법원 저장'; }
             }
         };
 
-        // ââ ë²ì ë¼ë²¨ ìì ìë°ì´í¸ (êµ¬ë²ì  í¸í) âââââââââââââââ
+        // ── 법원 라벨 색상 업데이트 (구버전 호환) ───────────────
         window.updateCourtLabel = function(checkbox) {
             const label = checkbox.closest('label');
             if (!label) return;
@@ -1240,32 +1240,32 @@
             }
         };
 
-        // ââ íì íí´ âââââââââââââââââââââââââââââââââââââââââ
+        // ── 회원 탈퇴 ─────────────────────────────────────────
         window.handleWithdraw = async function() {
-            if (!confirm('ì ë§ íí´íìê² ìµëê¹?\n\níí´ ì ê³ì ì´ ì­ì ëë©° ë³µêµ¬ê° ë¶ê°ë¥í©ëë¤.')) return;
-            if (!confirm('ë§ì§ë§ íì¸ìëë¤. ê³ìíìê² ìµëê¹?')) return;
+            if (!confirm('정말 탈퇴하시겠습니까?\n\n탈퇴 시 계정이 삭제되며 복구가 불가능합니다.')) return;
+            if (!confirm('마지막 확인입니다. 계속하시겠습니까?')) return;
             try {
                 if (typeof API !== 'undefined' && user.id) {
-                    await API.users.update(user.id, { status: 'withdrawn', withdrawnAt: new Date().toISOString(), withdrawReason: 'ë²ë¬´ì¬ ìë°ì  íí´' });
+                    await API.users.update(user.id, { status: 'withdrawn', withdrawnAt: new Date().toISOString(), withdrawReason: '법무사 자발적 탈퇴' });
                 }
                 localStorage.removeItem('currentUser');
                 localStorage.removeItem('autoLogin');
-                alert('íí´ ì²ë¦¬ê° ìë£ëììµëë¤.\nê·¸ëì ì´ì©í´ì£¼ìì ê°ì¬í©ëë¤.');
+                alert('탈퇴 처리가 완료되었습니다.\n그동안 이용해주셔서 감사합니다.');
                 window.location.href = 'index.html';
             } catch(e) {
-                alert('íí´ ì²ë¦¬ ì¤ ì¤ë¥ê° ë°ìíìµëë¤.');
+                alert('탈퇴 처리 중 오류가 발생했습니다.');
             }
         };
 
-        // ââ íìì ë³´ ì ì¥ (ì¤ì  API) âââââââââââââââââââââââââââ
+        // ── 회원정보 저장 (실제 API) ───────────────────────────
         document.getElementById('profileForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const newPassword = document.getElementById('newPassword').value;
             const newPasswordConfirm = document.getElementById('newPasswordConfirm').value;
-            if (newPassword && newPassword !== newPasswordConfirm) { alert('ë¹ë°ë²í¸ê° ì¼ì¹íì§ ììµëë¤.'); return; }
-            if (newPassword && newPassword.length < 8) { alert('ë¹ë°ë²í¸ë 8ì ì´ìì´ì´ì¼ í©ëë¤.'); return; }
+            if (newPassword && newPassword !== newPasswordConfirm) { alert('비밀번호가 일치하지 않습니다.'); return; }
+            if (newPassword && newPassword.length < 8) { alert('비밀번호는 8자 이상이어야 합니다.'); return; }
 
-            // ì íë ë²ì ëª©ë¡
+            // 선택된 법원 목록
             const selectedCourts = Array.from(document.querySelectorAll('input[name="selectedCourts"]:checked')).map(c => c.value);
 
             const updates = {
@@ -1273,9 +1273,9 @@
                 phone:         document.getElementById('profilePhone').value,
                 officeAddress: document.getElementById('officeAddress').value,
                 selectedCourts,
-                serviceRegions: selectedCourts   // ë§¤ì¹­ìì ììª½ íë ëª¨ë ì¸ìëëë¡ ëê¸°í
+                serviceRegions: selectedCourts   // 매칭에서 양쪽 필드 모두 인식되도록 동기화
             };
-            // ê´ë¦¬ì ëª¨ë: ì¶ê° íë ìì 
+            // 관리자 모드: 추가 필드 수정
             if (IS_ADMIN_AS) {
                 updates.email         = document.getElementById('profileEmailInput').value;
                 updates.licenseNumber = document.getElementById('licenseNumber').value;
@@ -1283,7 +1283,7 @@
             if (newPassword) updates.password = newPassword;
 
             const btn = document.getElementById('profileSaveBtn');
-            btn.disabled = true; btn.textContent = 'ì ì¥ ì¤...';
+            btn.disabled = true; btn.textContent = '저장 중...';
 
             const result = await Auth.saveProfile(updates);
             if (result.success) {
@@ -1291,31 +1291,31 @@
                 document.getElementById('profileName').textContent = updates.name;
                 document.getElementById('newPassword').value = '';
                 document.getElementById('newPasswordConfirm').value = '';
-                alert('â íìì ë³´ê° ì ì¥ëììµëë¤.');
+                alert('✅ 회원정보가 저장되었습니다.');
             } else {
-                alert(result.message || 'ì ì¥ ì¤ ì¤ë¥ê° ë°ìíìµëë¤.');
+                alert(result.message || '저장 중 오류가 발생했습니다.');
             }
-            btn.disabled = false; btn.textContent = 'ì ì¥íê¸°';
+            btn.disabled = false; btn.textContent = '저장하기';
         });
 
-        // ââ 1ë¶ í´ë§: ë°°ì  ìì²­ ìë ê°±ì  ââââââââââââââââââââââââ
-        // (_pollInterval / _lastReqCount / _currentSection ì ìë¨ìì ë¯¸ë¦¬ ì ì¸í¨)
+        // ── 1분 폴링: 배정 요청 자동 갱신 ────────────────────────
+        // (_pollInterval / _lastReqCount / _currentSection 은 상단에서 미리 선언함)
 
         async function pollNewRequests() {
             try {
                 const allData = await API.applications.getByExpertId(user.userId || user.id);
-                const reqData = allData.filter(a => a.status === 'ë§¤ì¹­ìë£' || a.status === 'ë§¤ì¹­ì¤');
+                const reqData = allData.filter(a => a.status === '매칭완료' || a.status === '매칭중');
                 const newCount = reqData.length;
 
-                // ââ ë±ì§ ìë°ì´í¸ ââââââââââââââââââââââââââââââââââ
+                // ── 뱃지 업데이트 ──────────────────────────────────
                 const badge = document.getElementById('pendingCount');
                 if (badge) badge.textContent = newCount;
 
-                // ââ ì ìë¢° ëì°© ì í ì¤í¸ ìë¦¼ ââââââââââââââââââ
+                // ── 새 의뢰 도착 시 토스트 알림 ──────────────────
                 if (newCount > _lastReqCount && _lastReqCount >= 0) {
                     const diff = newCount - _lastReqCount;
-                    showExpertToast(`ð ì ë°°ì  ìì²­ ${diff}ê±´ì´ ëì°©íìµëë¤!`, 'info');
-                    // ë°°ì ìì²­ í­ì ë³´ê³  ìì§ ìì¼ë©´ ë©ë´ì ë¹¨ê° ë±ì§ íì
+                    showExpertToast(`🔔 새 배정 요청 ${diff}건이 도착했습니다!`, 'info');
+                    // 배정요청 탭을 보고 있지 않으면 메뉴에 빨간 뱃지 표시
                     if (_currentSection !== 'requests') {
                         const menuEl = document.querySelector('a[href="#requests"]');
                         if (menuEl) {
@@ -1331,62 +1331,62 @@
                 }
                 _lastReqCount = newCount;
 
-                // ââ íì¬ í­ì´ ë°°ì ìì²­ í­ì´ë©´ ìë ë¦¬ë ëë§ ââââââ
+                // ── 현재 탭이 배정요청 탭이면 자동 리렌더링 ──────
                 if (_currentSection === 'requests') loadRequests();
                 else if (_currentSection === 'ongoing')   loadOngoing();
 
             } catch(e) {
-                // í´ë§ ì¤í¨ë ì¡°ì©í ë¬´ì (ì¤íë¼ì¸ ë±)
-                console.warn('í´ë§ ì¤ë¥ (ë¬´ì):', e.message);
+                // 폴링 실패는 조용히 무시 (오프라인 등)
+                console.warn('폴링 오류 (무시):', e.message);
             }
         }
 
-        // (showSection ì ììì _currentSection ê°±ì Â·ë±ì§ ì ê±°ê¹ì§ ì²ë¦¬í¨ â ì¤ë³µ ì ì ì ê±°)
+        // (showSection 은 위에서 _currentSection 갱신·뱃지 제거까지 처리함 — 중복 정의 제거)
 
-        // í´ë§ ìì (60ì´ ê°ê²©)
+        // 폴링 시작 (60초 간격)
         function startPolling() {
             if (_pollInterval) return;
             _pollInterval = setInterval(pollNewRequests, 60 * 1000);
-            console.log('ð¡ ë°°ì  ìì²­ ìë ê°±ì  ìì (60ì´ ê°ê²©)');
+            console.log('📡 배정 요청 자동 갱신 시작 (60초 간격)');
         }
 
-        // íì´ì§ í¬ì»¤ì¤/ë¸ë¬ì ë°ë¼ í´ë§ ìë ì¡°ì 
+        // 페이지 포커스/블러에 따라 폴링 속도 조절
         document.addEventListener('visibilitychange', function() {
             if (document.hidden) {
                 clearInterval(_pollInterval); _pollInterval = null;
             } else {
-                pollNewRequests();  // í­ ë³µê· ì¦ì ì²´í¬
+                pollNewRequests();  // 탭 복귀 즉시 체크
                 startPolling();
             }
         });
 
-        // í´ë§ ì ëë©ì´ì ì¤íì¼
+        // 폴링 애니메이션 스타일
         const _pollingStyle = document.createElement('style');
         _pollingStyle.textContent = '@keyframes reqPulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.4;transform:scale(1.4);} }';
         document.head.appendChild(_pollingStyle);
 
-        // ì´ê¸° ë¡ë
+        // 초기 로드
         loadRequests();
         startPolling();
-    })(); // IIFE ë â ë¹ë¡ê·¸ì¸ ì null ì ê·¼ ë°©ì§
+    })(); // IIFE 끝 – 비로그인 시 null 접근 방지
     </script>
 
-    <!-- ì ì²­ ìì¸ë³´ê¸° ëª¨ë¬ -->
+    <!-- 신청 상세보기 모달 -->
     <div id="expertDetailModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center; padding:1rem;">
         <div style="background:white; border-radius:20px; width:100%; max-width:520px; max-height:85vh; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
             <div style="padding:1.5rem 2rem 1rem; border-bottom:1px solid #e0e0e0; display:flex; justify-content:space-between; align-items:center;">
-                <h3 style="margin:0; font-size:1.1rem; color:#333;"><i class="fas fa-clipboard-list" style="color:#667eea; margin-right:0.5rem;"></i>ì ì²­ ìì¸ ì ë³´</h3>
+                <h3 style="margin:0; font-size:1.1rem; color:#333;"><i class="fas fa-clipboard-list" style="color:#667eea; margin-right:0.5rem;"></i>신청 상세 정보</h3>
                 <button onclick="closeExpertDetailModal()" style="background:none; border:none; font-size:1.5rem; cursor:pointer; color:#999; line-height:1;">&times;</button>
             </div>
             <div id="expertDetailContent" style="overflow-y:auto; flex:1; padding:1.5rem 2rem;"></div>
             <div style="padding:1rem 2rem 1.5rem; border-top:1px solid #e0e0e0;">
-                <button onclick="closeExpertDetailModal()" style="width:100%; padding:0.9rem; background:#667eea; color:white; border:none; border-radius:10px; font-weight:700; cursor:pointer; font-size:0.95rem;">ë«ê¸°</button>
+                <button onclick="closeExpertDetailModal()" style="width:100%; padding:0.9rem; background:#667eea; color:white; border:none; border-radius:10px; font-weight:700; cursor:pointer; font-size:0.95rem;">닫기</button>
             </div>
         </div>
     </div>
 
     <style>
-        /* expert-mypage ì ì© ì¶ê° ì¤íì¼ */
+        /* expert-mypage 전용 추가 스타일 */
         .expert-badge {
             display: inline-block;
             padding: 0.4rem 1rem;
@@ -1466,7 +1466,7 @@
             color: #667eea;
         }
 
-        /* ê²°ê³¼ ìë ¥ ëª¨ë¬ */
+        /* 결과 입력 모달 */
         .result-modal-overlay {
             display: none;
             position: fixed;
@@ -1522,7 +1522,7 @@
         .result-option input[value="fail"]:checked + label { border-color: #667eea; background: #f0f4ff; }
         .result-option input[value="fail"]:checked + label .result-text { color: #667eea; }
 
-        /* í ì¤í¸ ì ëë©ì´ì */
+        /* 토스트 애니메이션 */
         @keyframes toastIn  { from { opacity:0; transform:translateX(-50%) translateY(12px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
         @keyframes toastOut { from { opacity:1; transform:translateX(-50%) translateY(0); } to { opacity:0; transform:translateX(-50%) translateY(12px); } }
 
@@ -1533,92 +1533,92 @@
         }
     </style>
 
-    <!-- ìì°° ê²°ê³¼ ìë ¥ ëª¨ë¬ -->
+    <!-- 입찰 결과 입력 모달 -->
     <div id="resultModal" class="result-modal-overlay">
         <div class="result-modal-box">
             <div class="result-modal-header">
-                <h3><i class="fas fa-gavel" style="color:#1550E8;margin-right:0.5rem;"></i>ì¬ê±´ì¢ë£ â ê²°ê³¼ ìë ¥</h3>
+                <h3><i class="fas fa-gavel" style="color:#1550E8;margin-right:0.5rem;"></i>사건종료 – 결과 입력</h3>
                 <button id="resultModalClose" onclick="closeResultModal()" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#999;line-height:1;">&times;</button>
             </div>
             <div class="result-modal-body">
-                <p style="font-size:0.88rem;color:#888;margin-bottom:1.25rem;">ì´ë² ìì°° ê²°ê³¼ë¥¼ ì íí´ì£¼ì¸ì.</p>
+                <p style="font-size:0.88rem;color:#888;margin-bottom:1.25rem;">이번 입찰 결과를 선택해주세요.</p>
                 <div class="result-options">
                     <div class="result-option">
                         <input type="radio" name="bidResult" id="resultSuccess" value="success" onchange="enableResultSubmit()">
                         <label for="resultSuccess">
-                            <span class="result-icon">ð</span>
-                            <span class="result-text">ëì°°</span>
+                            <span class="result-icon">🎉</span>
+                            <span class="result-text">낙찰</span>
                         </label>
                     </div>
                     <div class="result-option">
                         <input type="radio" name="bidResult" id="resultFail" value="fail" onchange="enableResultSubmit()">
                         <label for="resultFail">
-                            <span class="result-icon">ð</span>
-                            <span class="result-text">í¨ì°°</span>
+                            <span class="result-icon">📋</span>
+                            <span class="result-text">패찰</span>
                         </label>
                     </div>
                 </div>
                 <button id="resultSubmitBtn" class="btn btn-primary" onclick="submitResult()"
                     style="width:100%;padding:0.9rem;font-size:1rem;opacity:0.5;cursor:not-allowed;"
-                    disabled>ì¬ê±´ì¢ë£ íì </button>
+                    disabled>사건종료 확정</button>
             </div>
         </div>
     </div>
 
-    <!-- ê±°ì  ì¬ì  ëª¨ë¬ -->
+    <!-- 거절 사유 모달 -->
     <div id="rejectModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:9999; align-items:center; justify-content:center; padding:1rem;">
         <div style="background:white; border-radius:20px; width:100%; max-width:420px; box-shadow:0 20px 60px rgba(0,0,0,0.3); overflow:hidden;">
             <div style="padding:1.4rem 1.75rem 1rem; border-bottom:1px solid #e0e0e0; display:flex; justify-content:space-between; align-items:center; background:linear-gradient(135deg,#f97316 0%,#ef4444 100%);">
-                <h3 style="margin:0; font-size:1.05rem; color:white;"><i class="fas fa-times-circle" style="margin-right:0.5rem;"></i>ê±°ì  ì¬ì  ì í</h3>
+                <h3 style="margin:0; font-size:1.05rem; color:white;"><i class="fas fa-times-circle" style="margin-right:0.5rem;"></i>거절 사유 선택</h3>
                 <button onclick="document.getElementById('rejectModal').style.display='none'" style="background:rgba(255,255,255,0.2); border:none; font-size:1.3rem; cursor:pointer; color:white; border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; line-height:1;">&times;</button>
             </div>
             <div style="padding:1.5rem 1.75rem;">
-                <p style="font-size:0.88rem; color:#64748b; margin:0 0 1.25rem;">ê±°ì  ì¬ì ë¥¼ ì íí´ì£¼ì¸ì. ê´ë¦¬ìì ê³ ê°ìê² ì ë¬ë©ëë¤.</p>
+                <p style="font-size:0.88rem; color:#64748b; margin:0 0 1.25rem;">거절 사유를 선택해주세요. 관리자와 고객에게 전달됩니다.</p>
 
-                <!-- ì íì§ 1 -->
+                <!-- 선택지 1 -->
                 <label style="display:flex; align-items:flex-start; gap:0.75rem; padding:1rem; border:2px solid #e0e0e0; border-radius:12px; cursor:pointer; margin-bottom:0.75rem; transition:all 0.2s;" id="rejectLabel1"
                     onclick="document.querySelectorAll('#rejectModal label').forEach(l=>l.style.borderColor='#e0e0e0'); this.style.borderColor='#ef4444'; document.getElementById('rejectLabel1').style.background='#fef2f2'; document.getElementById('rejectLabel2').style.background='#fff'; document.getElementById('rejectLabel3').style.background='#fff';">
-                    <input type="radio" name="rejectReason" value="ìì°°ì¼ ì§í ë¶ê°" style="margin-top:3px; accent-color:#ef4444;">
+                    <input type="radio" name="rejectReason" value="입찰일 진행 불가" style="margin-top:3px; accent-color:#ef4444;">
                     <div>
-                        <p style="font-weight:700; color:#374151; margin:0 0 0.2rem;">ð ìì°°ì¼ ì§í ë¶ê°</p>
-                        <p style="font-size:0.8rem; color:#6b7280; margin:0;">í´ë¹ ìì°°ì¼ì ë¤ë¥¸ ì¼ì ì´ ìì´ ì§íì´ ì´ë µìµëë¤.</p>
+                        <p style="font-weight:700; color:#374151; margin:0 0 0.2rem;">📅 입찰일 진행 불가</p>
+                        <p style="font-size:0.8rem; color:#6b7280; margin:0;">해당 입찰일에 다른 일정이 있어 진행이 어렵습니다.</p>
                     </div>
                 </label>
 
-                <!-- ì íì§ 2 -->
+                <!-- 선택지 2 -->
                 <label style="display:flex; align-items:flex-start; gap:0.75rem; padding:1rem; border:2px solid #e0e0e0; border-radius:12px; cursor:pointer; margin-bottom:0.75rem; transition:all 0.2s;" id="rejectLabel2"
                     onclick="document.querySelectorAll('#rejectModal label').forEach(l=>{l.style.borderColor='#e0e0e0'; l.style.background='#fff';}); this.style.borderColor='#ef4444'; this.style.background='#fef2f2';">
-                    <input type="radio" name="rejectReason" value="ë²ì¸ ë° ê³µëìì°° ì§í ìí¨" style="margin-top:3px; accent-color:#ef4444;">
+                    <input type="radio" name="rejectReason" value="법인 및 공동입찰 진행 안함" style="margin-top:3px; accent-color:#ef4444;">
                     <div>
-                        <p style="font-weight:700; color:#374151; margin:0 0 0.2rem;">ð¢ ë²ì¸ ë° ê³µëìì°° ì§í ìí¨</p>
-                        <p style="font-size:0.8rem; color:#6b7280; margin:0;">ë²ì¸ ëë ê³µë ìì°° ê±´ì ì²ë¦¬íì§ ììµëë¤.</p>
+                        <p style="font-weight:700; color:#374151; margin:0 0 0.2rem;">🏢 법인 및 공동입찰 진행 안함</p>
+                        <p style="font-size:0.8rem; color:#6b7280; margin:0;">법인 또는 공동 입찰 건은 처리하지 않습니다.</p>
                     </div>
                 </label>
 
-                <!-- ì íì§ 3 (ê¸°í) -->
+                <!-- 선택지 3 (기타) -->
                 <label style="display:flex; align-items:flex-start; gap:0.75rem; padding:1rem; border:2px solid #e0e0e0; border-radius:12px; cursor:pointer; margin-bottom:0.75rem; transition:all 0.2s;" id="rejectLabel3"
                     onclick="document.querySelectorAll('#rejectModal label').forEach(l=>{l.style.borderColor='#e0e0e0'; l.style.background='#fff';}); this.style.borderColor='#ef4444'; this.style.background='#fef2f2';">
-                    <input type="radio" name="rejectReason" value="ê¸°í" style="margin-top:3px; accent-color:#ef4444;">
+                    <input type="radio" name="rejectReason" value="기타" style="margin-top:3px; accent-color:#ef4444;">
                     <div style="flex:1;">
-                        <p style="font-weight:700; color:#374151; margin:0 0 0.2rem;">âï¸ ê¸°í (ì§ì  ìë ¥)</p>
-                        <p style="font-size:0.8rem; color:#6b7280; margin:0;">ì ì¬ì  ì¸ ë¤ë¥¸ ì¬ì ë¥¼ ì§ì  ìë ¥í©ëë¤.</p>
+                        <p style="font-weight:700; color:#374151; margin:0 0 0.2rem;">✏️ 기타 (직접 입력)</p>
+                        <p style="font-size:0.8rem; color:#6b7280; margin:0;">위 사유 외 다른 사유를 직접 입력합니다.</p>
                     </div>
                 </label>
 
-                <!-- ê¸°í íì¤í¸ ìë ¥ -->
+                <!-- 기타 텍스트 입력 -->
                 <div id="rejectOtherWrap" style="display:none; margin-top:0.5rem;">
                     <textarea id="rejectOtherText"
-                        placeholder="ê±°ì  ì¬ì ë¥¼ ìë ¥í´ì£¼ì¸ì (ìµë 200ì)"
+                        placeholder="거절 사유를 입력해주세요 (최대 200자)"
                         maxlength="200"
                         style="width:100%; padding:0.85rem; border:1.5px solid #cbd5e1; border-radius:10px; font-size:0.88rem; resize:vertical; min-height:80px; box-sizing:border-box; font-family:inherit;"></textarea>
                 </div>
 
                 <div style="display:flex; gap:0.75rem; margin-top:1.25rem;">
                     <button onclick="document.getElementById('rejectModal').style.display='none'"
-                        style="flex:1; padding:0.9rem; background:white; color:#64748b; border:1.5px solid #e0e0e0; border-radius:10px; font-weight:700; cursor:pointer; font-size:0.9rem;">ì·¨ì</button>
+                        style="flex:1; padding:0.9rem; background:white; color:#64748b; border:1.5px solid #e0e0e0; border-radius:10px; font-weight:700; cursor:pointer; font-size:0.9rem;">취소</button>
                     <button id="rejectConfirmBtn" onclick="confirmReject()"
                         style="flex:2; padding:0.9rem; background:linear-gradient(135deg,#f97316,#ef4444); color:white; border:none; border-radius:10px; font-weight:700; cursor:not-allowed; font-size:0.9rem; opacity:0.5;"
-                        disabled>ê±°ì  íì </button>
+                        disabled>거절 확정</button>
                 </div>
             </div>
         </div>
@@ -1630,54 +1630,54 @@
             <div style="display:flex; flex-wrap:wrap; gap:1.5rem; justify-content:space-between; align-items:flex-start; margin-bottom:1.5rem;">
                 <div>
                     <div style="font-size:1.1rem; font-weight:700; color:white; margin-bottom:0.5rem;">
-                        <i class="fas fa-comment-dots" style="color:#667eea;"></i> ëë¦¬ìì°° í¡
+                        <i class="fas fa-comment-dots" style="color:#667eea;"></i> 대리입찰 톡
                     </div>
-                    <p style="margin:0.25rem 0; font-size:0.85rem;">ìí¸ëª: ëë¦¬ìì°°í¡ - ëì¥TV (ì´ìì¬: (ì£¼)ìì¤ííë¡ë¹)</p>
-                    <p style="margin:0.25rem 0; font-size:0.85rem;">ì£¼ì: ìì¸í¹ë³ì ê¸ì²êµ¬ ê°ì°ëì§í¸1ë¡ 75-24 901í¸</p>
-                    <p style="margin:0.25rem 0; font-size:0.85rem;">ëíì í: <a href="tel:02-863-1022" style="color:#667eea;">02-863-1022</a> &nbsp;|&nbsp; íì¼ 09:00~18:00</p>
+                    <p style="margin:0.25rem 0; font-size:0.85rem;">상호명: 대리입찰톡 - 대장TV (운영사: (주)원스타프로비)</p>
+                    <p style="margin:0.25rem 0; font-size:0.85rem;">주소: 서울특별시 금천구 가산디지털1로 75-24 901호</p>
+                    <p style="margin:0.25rem 0; font-size:0.85rem;">대표전화: <a href="tel:02-863-1022" style="color:#667eea;">02-863-1022</a> &nbsp;|&nbsp; 평일 09:00~18:00</p>
                 </div>
                 <div style="font-size:0.85rem; line-height:1.8;">
-                    <a href="terms.html" style="color:#aaa; text-decoration:none; margin-right:1rem;">ì´ì©ì½ê´</a>
-                    <a href="privacy.html" style="color:#aaa; text-decoration:none;">ê°ì¸ì ë³´ì²ë¦¬ë°©ì¹¨</a>
+                    <a href="terms.html" style="color:#aaa; text-decoration:none; margin-right:1rem;">이용약관</a>
+                    <a href="privacy.html" style="color:#aaa; text-decoration:none;">개인정보처리방침</a>
                 </div>
             </div>
             <div style="border-top:1px solid #333; padding-top:1rem; font-size:0.8rem; color:#666; text-align:center;">
-                &copy; 2026 (ì£¼)ìì¤ííë¡ë¹ ëë¦¬ìì°°í¡. All rights reserved.
+                &copy; 2026 (주)원스타프로비 대리입찰톡. All rights reserved.
             </div>
         </div>
     </footer>
 
-    <!-- ââââââââââ ì ë¬¸ê° ì±ì íì½ì (ì ììëª, 1í íì) ââââââââââ -->
+    <!-- ══════════ 전문가 책임 확약서 (전자서명, 1회 필수) ══════════ -->
     <div id="contractModal" style="display:none;position:fixed;inset:0;z-index:100000;background:rgba(15,23,42,0.75);align-items:center;justify-content:center;padding:1rem;">
         <div style="background:#fff;border-radius:16px;width:100%;max-width:560px;max-height:92vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.35);">
             <div style="padding:1.3rem 1.5rem 0.9rem;border-bottom:1px solid #eee;">
-                <h3 style="margin:0;font-size:1.15rem;color:#1a1a2e;"><i class="fas fa-file-signature" style="color:#1550E8;margin-right:0.5rem;"></i>ì ë¬¸ê° íë ì±ì íì½ì</h3>
-                <p style="margin:0.4rem 0 0;font-size:0.85rem;color:#64748b;">ìë¢°ë¥¼ ìë½íê¸° ì ì <strong>1í</strong> ëìÂ·ìëªì´ íìí©ëë¤.</p>
+                <h3 style="margin:0;font-size:1.15rem;color:#1a1a2e;"><i class="fas fa-file-signature" style="color:#1550E8;margin-right:0.5rem;"></i>전문가 활동 책임 확약서</h3>
+                <p style="margin:0.4rem 0 0;font-size:0.85rem;color:#64748b;">의뢰를 수락하기 전에 <strong>1회</strong> 동의·서명이 필요합니다.</p>
             </div>
             <div style="padding:1rem 1.5rem;overflow-y:auto;font-size:0.85rem;line-height:1.75;color:#334155;">
-                <p style="margin:0 0 0.6rem;">ë³¸ì¸ì ëë¦¬ìì°°í¡(ì´ìì¬: (ì£¼)ìì¤ííë¡ë¹, ì´í "íë«í¼")ì íµí´ ë§¤ìì ì²­ëë¦¬ ìë¬´ë¥¼ ìíí¨ì ìì´ ìë ë´ì©ì ëìíë©° ì´ë¥¼ ì ììëªì¼ë¡ íì½í©ëë¤.</p>
-                <p style="margin:0.5rem 0;"><strong>ì 1ì¡° (íë«í¼ì ì§ì)</strong> íë«í¼ì ì´ì©ìì ì ë¬¸ê°ë¥¼ ì°ê²°Â·ì¤ê°íë ì­í ë§ íë©°, ëë¦¬ìì°° ìë¬´ì ë¹ì¬ìê° ìëëë¤.</p>
-                <p style="margin:0.5rem 0;"><strong>ì 2ì¡° (ë¹ì ì)</strong> ë³¸ íì½ì ì ì(ëì ) ê³ì½ì´ ìëë©°, ì ë¬¸ê°ë í ê²½ë¡ íëì ì íë°ì§ ììµëë¤. ë¨, ëì¼ ì¬ê±´ì ì¤ë³µ ììì ê¸ì§ë©ëë¤.</p>
-                <p style="margin:0.5rem 0;"><strong>ì 3ì¡° (ì±ìì ìì¬)</strong> ëë¦¬ìì°° ìë¬´ì ê´ë ¨í ëª¨ë  ë²ì Â·ê¸ì ì  ì±ì(ìì°° ì´í, ë³´ì¦ê¸ ê´ë¦¬, ëì°°/í¨ì°° ê²°ê³¼, ìë¥ ìì±, ìë¢°ì¸ ë¶ì ë±)ì <strong>ì ë¬¸ê° ë³¸ì¸</strong>ìê² ììµëë¤.</p>
-                <p style="margin:0.5rem 0;"><strong>ì 4ì¡° (íë«í¼ ë©´ì±)</strong> ì ë¬¸ê°ì ê³ ìÂ·ê³¼ì¤, ìì°° ë¶ì´í, ë³´ì¦ê¸ ë¶ì¤Â·ì ì©, ìê²©Â·ìë¥ íì ë±ì¼ë¡ ë°ìíë ìí´ì ëí´ íë«í¼ì ì±ìì§ì§ ììµëë¤.</p>
-                <p style="margin:0.5rem 0;"><strong>ì 5ì¡° (ìê²©Â·ë³´í ì ì§)</strong> ì ë¬¸ê°ë ì í¨í ë§¤ìì ì²­ëë¦¬ì¸ ìê²©ê³¼ ë°°ìì±ìë³´íì ìì ì ì§íë©°, ìê²© ìì¤ ì ì¦ì íµë³´í©ëë¤.</p>
-                <p style="margin:0.5rem 0;"><strong>ì 6ì¡° (ì±ì¤ ì´í)</strong> ìë½í ì¬ê±´ì ì§ì  ìì°°ê¸°ì¼ì ì±ì¤í ì´ííë©°, ì´íì´ ì´ë ¤ì´ ê²½ì° ì§ì²´ ìì´ íµë³´í©ëë¤.</p>
-                <p style="margin:0.5rem 0;"><strong>ì 7ì¡° (ë³´ì¦ê¸ ê´ë¦¬)</strong> ìë¢°ì¸ì ë³´ì¦ê¸ì ì ëí ê´ë¦¬ìì ì£¼ìë¡ ê´ë¦¬íê³ , í¨ì°° ì ì¦ì ì ì¡ ë°íí©ëë¤.</p>
-                <p style="margin:0.5rem 0;"><strong>ì 8ì¡° (ì ë³´ë³´ì)</strong> ìë¢°ì¸ì ê°ì¸ì ë³´Â·ìì°°ì ë³´ë¥¼ ìë¬´ ëª©ì  ì¸ë¡ ì¬ì©íì§ ìê³  ë¹ë°ì ì ì§í©ëë¤.</p>
-                <p style="margin:0.5rem 0;"><strong>ì 9ì¡° (ì ììëª í¨ë ¥)</strong> ë³¸ì¸ì ì ë´ì©ì ì¶©ë¶í ì½ê³  ì´í´íìì¼ë©°, ìë ìëªì´ ãì ììëªë²ãì ë°ë¼ ìë©´ ìëªê³¼ ëì¼í í¨ë ¥ì ê°ì§ì ëìí©ëë¤.</p>
+                <p style="margin:0 0 0.6rem;">본인은 대리입찰톡(운영사: (주)원스타프로비, 이하 "플랫폼")을 통해 매수신청대리 업무를 수행함에 있어 아래 내용에 동의하며 이를 전자서명으로 확약합니다.</p>
+                <p style="margin:0.5rem 0;"><strong>제1조 (플랫폼의 지위)</strong> 플랫폼은 이용자와 전문가를 연결·중개하는 역할만 하며, 대리입찰 업무의 당사자가 아닙니다.</p>
+                <p style="margin:0.5rem 0;"><strong>제2조 (비전속)</strong> 본 확약은 전속(독점) 계약이 아니며, 전문가는 타 경로 활동에 제한받지 않습니다. 단, 동일 사건의 중복 수임은 금지됩니다.</p>
+                <p style="margin:0.5rem 0;"><strong>제3조 (책임의 소재)</strong> 대리입찰 업무와 관련한 모든 법적·금전적 책임(입찰 이행, 보증금 관리, 낙찰/패찰 결과, 서류 작성, 의뢰인 분쟁 등)은 <strong>전문가 본인</strong>에게 있습니다.</p>
+                <p style="margin:0.5rem 0;"><strong>제4조 (플랫폼 면책)</strong> 전문가의 고의·과실, 입찰 불이행, 보증금 분실·유용, 자격·서류 허위 등으로 발생하는 손해에 대해 플랫폼은 책임지지 않습니다.</p>
+                <p style="margin:0.5rem 0;"><strong>제5조 (자격·보험 유지)</strong> 전문가는 유효한 매수신청대리인 자격과 배상책임보험을 상시 유지하며, 자격 상실 시 즉시 통보합니다.</p>
+                <p style="margin:0.5rem 0;"><strong>제6조 (성실 이행)</strong> 수락한 사건을 지정 입찰기일에 성실히 이행하며, 이행이 어려운 경우 지체 없이 통보합니다.</p>
+                <p style="margin:0.5rem 0;"><strong>제7조 (보증금 관리)</strong> 의뢰인의 보증금을 선량한 관리자의 주의로 관리하고, 패찰 시 즉시 전액 반환합니다.</p>
+                <p style="margin:0.5rem 0;"><strong>제8조 (정보보안)</strong> 의뢰인의 개인정보·입찰정보를 업무 목적 외로 사용하지 않고 비밀을 유지합니다.</p>
+                <p style="margin:0.5rem 0;"><strong>제9조 (전자서명 효력)</strong> 본인은 위 내용을 충분히 읽고 이해하였으며, 아래 서명이 「전자서명법」에 따라 서면 서명과 동일한 효력을 가짐에 동의합니다.</p>
 
                 <label style="display:flex;align-items:center;gap:0.5rem;margin:0.9rem 0 0.6rem;font-weight:700;color:#1a1a2e;cursor:pointer;">
                     <input type="checkbox" id="contractAgree" onchange="updateContractBtn()" style="width:18px;height:18px;">
-                    ì ë´ì©ì ëª¨ë íì¸íìì¼ë©° ëìí©ëë¤. (íì)
+                    위 내용을 모두 확인하였으며 동의합니다. (필수)
                 </label>
-                <p style="margin:0 0 0.35rem;font-size:0.82rem;color:#64748b;">ìë ì¹¸ì ë§ì°ì¤ ëë ìê°ë½ì¼ë¡ ìëªí´ì£¼ì¸ì.</p>
+                <p style="margin:0 0 0.35rem;font-size:0.82rem;color:#64748b;">아래 칸에 마우스 또는 손가락으로 서명해주세요.</p>
                 <canvas id="contractCanvas" style="width:100%;height:150px;border:2px dashed #cbd5e1;border-radius:10px;background:#fff;touch-action:none;"></canvas>
-                <button type="button" onclick="clearContractSign()" style="margin-top:0.4rem;background:none;border:none;color:#64748b;font-size:0.82rem;cursor:pointer;text-decoration:underline;">ìëª ì§ì°ê¸°</button>
+                <button type="button" onclick="clearContractSign()" style="margin-top:0.4rem;background:none;border:none;color:#64748b;font-size:0.82rem;cursor:pointer;text-decoration:underline;">서명 지우기</button>
             </div>
             <div style="padding:1rem 1.5rem;border-top:1px solid #eee;">
                 <button type="button" id="contractSubmitBtn" onclick="submitContract()" disabled
-                    style="width:100%;padding:0.95rem;background:#cbd5e1;color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:not-allowed;">ëìíê³  ìëª ìë£</button>
-                <p style="margin:0.6rem 0 0;font-size:0.78rem;color:#94a3b8;text-align:center;">ë¬¸ì: 02-863-1022</p>
+                    style="width:100%;padding:0.95rem;background:#cbd5e1;color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:not-allowed;">동의하고 서명 완료</button>
+                <p style="margin:0.6rem 0 0;font-size:0.78rem;color:#94a3b8;text-align:center;">문의: 02-863-1022</p>
             </div>
         </div>
     </div>
