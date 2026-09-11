@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>회원가입 - 대리입찰 톡</title>
+    <title>íìê°ì - ëë¦¬ìì°° í¡</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/additional.css">
     <style>
@@ -275,48 +275,48 @@
     <div class="signup-wrapper">
     <div class="signup-container">
         <div class="signup-header">
-            <h1>🎯 회원가입</h1>
+            <h1>ð¯ íìê°ì</h1>
         </div>
 
-        <!-- 법무사 탭 제거됨: 법무사는 관리자가 직접 등록 (partner.html 통해 신청) -->
+        <!-- ë²ë¬´ì¬ í­ ì ê±°ë¨: ë²ë¬´ì¬ë ê´ë¦¬ìê° ì§ì  ë±ë¡ (partner.html íµí´ ì ì²­) -->
 
         <div class="signup-content">
-            <!-- 신청자 회원가입 폼 -->
+            <!-- ì ì²­ì íìê°ì í¼ -->
             <form id="clientSignupForm" class="signup-form active">
                 <div class="form-group">
-                    <label for="clientUserId">아이디 *</label>
+                    <label for="clientUserId">ìì´ë *</label>
                     <div class="phone-verify-group">
-                        <input type="text" id="clientUserId" name="userId" required placeholder="영문, 숫자 4~20자" minlength="4" maxlength="20">
-                        <button type="button" class="verify-btn" onclick="checkUserIdDuplicate('client')">중복확인</button>
+                        <input type="text" id="clientUserId" name="userId" required placeholder="ìë¬¸, ì«ì 4~20ì" minlength="4" maxlength="20">
+                        <button type="button" class="verify-btn" onclick="checkUserIdDuplicate('client')">ì¤ë³µíì¸</button>
                     </div>
-                    <small>영문 소문자, 숫자 사용 가능 (4~20자)</small>
-                    <div id="clientUserIdSuccess" class="verify-success" style="display: none;">✓ 사용 가능한 아이디입니다</div>
+                    <small>ìë¬¸ ìë¬¸ì, ì«ì ì¬ì© ê°ë¥ (4~20ì)</small>
+                    <div id="clientUserIdSuccess" class="verify-success" style="display: none;">â ì¬ì© ê°ë¥í ìì´ëìëë¤</div>
                 </div>
 
                 <div class="form-group">
-                    <label for="clientEmail">이메일 *</label>
+                    <label for="clientEmail">ì´ë©ì¼ *</label>
                     <div class="phone-verify-group">
                         <input type="email" id="clientEmail" name="email" required placeholder="example@email.com">
-                        <button type="button" class="verify-btn" onclick="checkEmailDuplicate('client')">중복확인</button>
+                        <button type="button" class="verify-btn" onclick="checkEmailDuplicate('client')">ì¤ë³µíì¸</button>
                     </div>
-                    <div id="clientEmailSuccess" class="verify-success" style="display: none;">✓ 사용 가능한 이메일입니다</div>
+                    <div id="clientEmailSuccess" class="verify-success" style="display: none;">â ì¬ì© ê°ë¥í ì´ë©ì¼ìëë¤</div>
                 </div>
 
                 <div class="form-group">
-                    <label for="clientPassword">비밀번호 *</label>
+                    <label for="clientPassword">ë¹ë°ë²í¸ *</label>
                     <div style="position: relative;">
-                        <input type="password" id="clientPassword" name="password" required placeholder="8자 이상 입력">
+                        <input type="password" id="clientPassword" name="password" required placeholder="8ì ì´ì ìë ¥">
                         <button type="button" onclick="togglePassword('clientPassword', 'clientPasswordToggle')" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); border: none; background: none; cursor: pointer; font-size: 1.2rem; color: #999;">
                             <i id="clientPasswordToggle" class="fas fa-eye"></i>
                         </button>
                     </div>
-                    <small>영문, 숫자 포함 8자 이상</small>
+                    <small>ìë¬¸, ì«ì í¬í¨ 8ì ì´ì</small>
                 </div>
 
                 <div class="form-group">
-                    <label for="clientPasswordConfirm">비밀번호 확인 *</label>
+                    <label for="clientPasswordConfirm">ë¹ë°ë²í¸ íì¸ *</label>
                     <div style="position: relative;">
-                        <input type="password" id="clientPasswordConfirm" name="passwordConfirm" required placeholder="비밀번호 재입력">
+                        <input type="password" id="clientPasswordConfirm" name="passwordConfirm" required placeholder="ë¹ë°ë²í¸ ì¬ìë ¥">
                         <button type="button" onclick="togglePassword('clientPasswordConfirm', 'clientPasswordConfirmToggle')" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); border: none; background: none; cursor: pointer; font-size: 1.2rem; color: #999;">
                             <i id="clientPasswordConfirmToggle" class="fas fa-eye"></i>
                         </button>
@@ -324,104 +324,104 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="clientName">이름 *</label>
-                    <input type="text" id="clientName" name="name" required placeholder="홍길동" autocomplete="off">
+                    <label for="clientName">ì´ë¦ *</label>
+                    <input type="text" id="clientName" name="name" required placeholder="íê¸¸ë" autocomplete="off">
                 </div>
 
                 <div class="form-group">
-                    <label for="clientPhone">휴대폰 번호 *</label>
+                    <label for="clientPhone">í´ëí° ë²í¸ *</label>
                     <div class="phone-verify-group">
                         <input type="tel" id="clientPhone" name="phone" required placeholder="010-1234-5678" maxlength="13">
-                        <button type="button" class="verify-btn" id="clientSendVerify" onclick="sendVerifyCode('client')">인증번호 발송</button>
+                        <button type="button" class="verify-btn" id="clientSendVerify" onclick="sendVerifyCode('client')">ì¸ì¦ë²í¸ ë°ì¡</button>
                     </div>
                 </div>
 
                 <div class="form-group" id="clientVerifyCodeGroup" style="display: none;">
-                    <label for="clientVerifyCode">인증번호 입력 *</label>
+                    <label for="clientVerifyCode">ì¸ì¦ë²í¸ ìë ¥ *</label>
                     <div class="phone-verify-group">
-                        <input type="text" id="clientVerifyCode" name="verifyCode" placeholder="인증번호 6자리" maxlength="6">
-                        <button type="button" class="verify-btn" id="clientConfirmVerify" onclick="confirmVerifyCode('client')">인증 확인</button>
+                        <input type="text" id="clientVerifyCode" name="verifyCode" placeholder="ì¸ì¦ë²í¸ 6ìë¦¬" maxlength="6">
+                        <button type="button" class="verify-btn" id="clientConfirmVerify" onclick="confirmVerifyCode('client')">ì¸ì¦ íì¸</button>
                     </div>
                     <small id="clientVerifyTimer" class="verify-timer"></small>
-                    <div id="clientVerifySuccess" class="verify-success" style="display: none;">✓ 인증이 완료되었습니다</div>
+                    <div id="clientVerifySuccess" class="verify-success" style="display: none;">â ì¸ì¦ì´ ìë£ëììµëë¤</div>
                 </div>
 
                 <div class="terms-group">
                     <div class="terms-checkbox all-terms">
                         <input type="checkbox" id="clientAllTerms" onclick="toggleAllTerms('client')">
-                        <label for="clientAllTerms">전체 동의</label>
+                        <label for="clientAllTerms">ì ì²´ ëì</label>
                     </div>
                     <div class="terms-checkbox">
                         <input type="checkbox" id="clientTerms1" name="terms1" required>
-                        <label for="clientTerms1">[필수] 이용약관 동의</label>
-                        <a href="terms.html" target="_blank" style="margin-left: 0.5rem; color: #667eea; text-decoration: none; font-size: 0.9rem;">내용보기</a>
+                        <label for="clientTerms1">[íì] ì´ì©ì½ê´ ëì</label>
+                        <a href="terms.html" target="_blank" style="margin-left: 0.5rem; color: #667eea; text-decoration: none; font-size: 0.9rem;">ë´ì©ë³´ê¸°</a>
                     </div>
                     <div class="terms-checkbox">
                         <input type="checkbox" id="clientTerms2" name="terms2" required>
-                        <label for="clientTerms2">[필수] 개인정보 수집 및 이용 동의</label>
-                        <a href="privacy.html" target="_blank" style="margin-left: 0.5rem; color: #667eea; text-decoration: none; font-size: 0.9rem;">내용보기</a>
+                        <label for="clientTerms2">[íì] ê°ì¸ì ë³´ ìì§ ë° ì´ì© ëì</label>
+                        <a href="privacy.html" target="_blank" style="margin-left: 0.5rem; color: #667eea; text-decoration: none; font-size: 0.9rem;">ë´ì©ë³´ê¸°</a>
                     </div>
                     <div class="terms-checkbox">
                         <input type="checkbox" id="clientTerms3" name="terms3" required>
-                        <label for="clientTerms3">[필수] 카카오 알림톡/SMS 서비스 알림 수신 동의
-                            <small style="color:#666;font-weight:400;display:block;margin-top:2px;">(입찰결과, 법무사 배정 등 서비스 알림)</small>
+                        <label for="clientTerms3">[íì] ì¹´ì¹´ì¤ ìë¦¼í¡/SMS ìë¹ì¤ ìë¦¼ ìì  ëì
+                            <small style="color:#666;font-weight:400;display:block;margin-top:2px;">(ìì°°ê²°ê³¼, ë²ë¬´ì¬ ë°°ì  ë± ìë¹ì¤ ìë¦¼)</small>
                         </label>
                     </div>
                 </div>
 
-                <button type="submit" class="submit-btn">회원가입</button>
+                <button type="submit" class="submit-btn">íìê°ì</button>
             </form>
 
-            <!-- 법무사 직접 신청: 관리자가 등록 → expert-setup.html로 비밀번호 설정 -->
+            <!-- ë²ë¬´ì¬ ì§ì  ì ì²­: ê´ë¦¬ìê° ë±ë¡ â expert-setup.htmlë¡ ë¹ë°ë²í¸ ì¤ì  -->
             <div id="expertSignupForm" class="signup-form" style="display:none;">
                 <div style="text-align:center;padding:40px 24px;">
-                    <div style="font-size:3rem;margin-bottom:16px;">🔒</div>
-                    <h3 style="font-size:1.2rem;font-weight:800;color:#111827;margin-bottom:12px;">법무사 회원가입 안내</h3>
+                    <div style="font-size:3rem;margin-bottom:16px;">ð</div>
+                    <h3 style="font-size:1.2rem;font-weight:800;color:#111827;margin-bottom:12px;">ë²ë¬´ì¬ íìê°ì ìë´</h3>
                     <p style="color:#6B7280;font-size:0.9rem;line-height:1.7;margin-bottom:24px;">
-                        법무사 계정은 <strong>직접 신청이 불가</strong>합니다.<br>
-                        아래 대리인 신청 페이지에서 서류를 제출하시면<br>
-                        운영자 심사 후 개별 연락을 통해 계정을 발급해 드립니다.
+                        ë²ë¬´ì¬ ê³ì ì <strong>ì§ì  ì ì²­ì´ ë¶ê°</strong>í©ëë¤.<br>
+                        ìë ëë¦¬ì¸ ì ì²­ íì´ì§ìì ìë¥ë¥¼ ì ì¶íìë©´<br>
+                        ì´ìì ì¬ì¬ í ê°ë³ ì°ë½ì íµí´ ê³ì ì ë°ê¸í´ ëë¦½ëë¤.
                     </p>
                     <a href="partner.html" style="display:inline-block;background:#0D9488;color:#fff;padding:12px 28px;border-radius:10px;font-weight:700;text-decoration:none;font-size:0.95rem;">
-                        <i class="fas fa-arrow-right" style="margin-right:6px;"></i>대리인 신청하기
+                        <i class="fas fa-arrow-right" style="margin-right:6px;"></i>ëë¦¬ì¸ ì ì²­íê¸°
                     </a>
                 </div>
             </div>
 
-            <!-- 법무사 가입 완료 화면 -->
+            <!-- ë²ë¬´ì¬ ê°ì ìë£ íë©´ -->
             <div id="expertSignupSuccess" style="display:none; text-align:center; padding: 1rem 0;">
-                <div style="font-size:4rem; margin-bottom:1rem;">✅</div>
-                <h2 style="color:#333; margin-bottom:0.5rem;">가입 신청 완료!</h2>
-                <p style="color:#666; font-size:1rem; margin-bottom:2rem;">법무사 가입 신청이 성공적으로 접수되었습니다.</p>
+                <div style="font-size:4rem; margin-bottom:1rem;">â</div>
+                <h2 style="color:#333; margin-bottom:0.5rem;">ê°ì ì ì²­ ìë£!</h2>
+                <p style="color:#666; font-size:1rem; margin-bottom:2rem;">ë²ë¬´ì¬ ê°ì ì ì²­ì´ ì±ê³µì ì¼ë¡ ì ìëììµëë¤.</p>
 
                 <div style="background:#f0f4ff; border:2px solid #667eea; border-radius:12px; padding:1.5rem; text-align:left; margin-bottom:1.5rem;">
-                    <h3 style="color:#667eea; margin:0 0 1rem; font-size:1rem;">📋 승인 절차 안내</h3>
+                    <h3 style="color:#667eea; margin:0 0 1rem; font-size:1rem;">ð ì¹ì¸ ì ì°¨ ìë´</h3>
                     <ol style="margin:0; padding-left:1.2rem; color:#555; line-height:2;">
-                        <li>제출하신 서류를 검토합니다</li>
-                        <li>법무사 등록번호 및 자격 확인</li>
-                        <li>승인 완료 후 이메일/SMS로 안내</li>
-                        <li>로그인 후 서비스 이용 가능</li>
+                        <li>ì ì¶íì  ìë¥ë¥¼ ê²í í©ëë¤</li>
+                        <li>ë²ë¬´ì¬ ë±ë¡ë²í¸ ë° ìê²© íì¸</li>
+                        <li>ì¹ì¸ ìë£ í ì´ë©ì¼/SMSë¡ ìë´</li>
+                        <li>ë¡ê·¸ì¸ í ìë¹ì¤ ì´ì© ê°ë¥</li>
                     </ol>
                 </div>
 
                 <div style="background:#fff8e1; border:1px solid #ffd54f; border-radius:10px; padding:1rem 1.5rem; text-align:left; margin-bottom:1.5rem;">
-                    <p style="margin:0; color:#666; font-size:0.9rem;">⏱️ <strong>평균 승인 소요 시간: 1~2 영업일</strong><br>
-                    문의: <strong>qkqk5342@naver.com</strong> 또는 서비스 내 문의하기</p>
+                    <p style="margin:0; color:#666; font-size:0.9rem;">â±ï¸ <strong>íê·  ì¹ì¸ ìì ìê°: 1~2 ììì¼</strong><br>
+                    ë¬¸ì: <strong>qkqk5342@naver.com</strong> ëë ìë¹ì¤ ë´ ë¬¸ìíê¸°</p>
                 </div>
 
-                <a href="login.html" class="submit-btn" style="display:block; text-decoration:none; text-align:center; padding:1rem;">로그인 페이지로 이동</a>
+                <a href="login.html" class="submit-btn" style="display:block; text-decoration:none; text-align:center; padding:1rem;">ë¡ê·¸ì¸ íì´ì§ë¡ ì´ë</a>
             </div>
 
         </div>
 
         <div class="signup-footer">
-            이미 계정이 있으신가요? <a href="login.html">로그인하기</a>
+            ì´ë¯¸ ê³ì ì´ ìì¼ì ê°ì? <a href="login.html">ë¡ê·¸ì¸íê¸°</a>
         </div>
     </div>
     </div><!-- /signup-wrapper -->
 
     <script>
-        // ── 페이지 로드 후 이름 필드 강제 초기화 (브라우저 자동완성 차단) ──
+        // ââ íì´ì§ ë¡ë í ì´ë¦ íë ê°ì  ì´ê¸°í (ë¸ë¼ì°ì  ìëìì± ì°¨ë¨) ââ
         window.addEventListener('load', function() {
             const nameFields = ['clientName', 'expertName'];
             nameFields.forEach(function(id) {
@@ -434,12 +434,12 @@
         });
 
         function switchTab(type) {
-            // 탭 전환
+            // í­ ì í
             const tabs = document.querySelectorAll('.signup-tab');
             tabs.forEach(tab => tab.classList.remove('active'));
             event.target.classList.add('active');
 
-            // 폼 전환
+            // í¼ ì í
             const forms = document.querySelectorAll('.signup-form');
             forms.forEach(form => form.classList.remove('active'));
             
@@ -459,13 +459,13 @@
             });
         }
 
-        // 전역 변수
+        // ì ì­ ë³ì
         let verifyTimers = {};
         let verifiedPhones = {};
         let checkedUserIds = {};
         let checkedEmails = {};
 
-        // 비밀번호 표시/숨김 토글
+        // ë¹ë°ë²í¸ íì/ì¨ê¹ í ê¸
         function togglePassword(inputId, iconId) {
             const input = document.getElementById(inputId);
             const icon = document.getElementById(iconId);
@@ -481,20 +481,20 @@
             }
         }
 
-        // 아이디 중복 체크
+        // ìì´ë ì¤ë³µ ì²´í¬
         async function checkUserIdDuplicate(type) {
             const userIdInput = document.getElementById(`${type}UserId`);
             const userId = userIdInput.value.trim();
             
             if (userId.length < 4 || userId.length > 20) {
-                alert('아이디는 4~20자로 입력해주세요.');
+                alert('ìì´ëë 4~20ìë¡ ìë ¥í´ì£¼ì¸ì.');
                 userIdInput.focus();
                 return;
             }
             
             const regex = /^[a-z0-9]+$/;
             if (!regex.test(userId)) {
-                alert('아이디는 영문 소문자와 숫자만 사용 가능합니다.');
+                alert('ìì´ëë ìë¬¸ ìë¬¸ìì ì«ìë§ ì¬ì© ê°ë¥í©ëë¤.');
                 userIdInput.focus();
                 return;
             }
@@ -502,7 +502,7 @@
             try {
                 const result = await Auth.checkUserIdDuplicate(userId);
                 if (!result.available) {
-                    alert('이미 사용 중인 아이디입니다.');
+                    alert('ì´ë¯¸ ì¬ì© ì¤ì¸ ìì´ëìëë¤.');
                     checkedUserIds[type] = false;
                 } else {
                     checkedUserIds[type] = true;
@@ -510,24 +510,24 @@
                     userIdInput.disabled = true;
                 }
             } catch (err) {
-                alert('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+                alert('ìë² ì¤ë¥ê° ë°ìíìµëë¤. ì ì í ë¤ì ìëí´ì£¼ì¸ì.');
             }
         }
 
-        // 이메일 중복 체크
+        // ì´ë©ì¼ ì¤ë³µ ì²´í¬
         async function checkEmailDuplicate(type) {
             const emailInput = document.getElementById(`${type}Email`);
             const email = emailInput.value.trim();
             
             if (!email) {
-                alert('이메일을 입력해주세요.');
+                alert('ì´ë©ì¼ì ìë ¥í´ì£¼ì¸ì.');
                 emailInput.focus();
                 return;
             }
             
             const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!regex.test(email)) {
-                alert('올바른 이메일 형식이 아닙니다.');
+                alert('ì¬ë°ë¥¸ ì´ë©ì¼ íìì´ ìëëë¤.');
                 emailInput.focus();
                 return;
             }
@@ -535,7 +535,7 @@
             try {
                 const result = await Auth.checkEmailDuplicate(email);
                 if (!result.available) {
-                    alert('이미 사용 중인 이메일입니다.');
+                    alert('ì´ë¯¸ ì¬ì© ì¤ì¸ ì´ë©ì¼ìëë¤.');
                     checkedEmails[type] = false;
                 } else {
                     checkedEmails[type] = true;
@@ -543,11 +543,11 @@
                     emailInput.disabled = true;
                 }
             } catch (err) {
-                alert('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+                alert('ìë² ì¤ë¥ê° ë°ìíìµëë¤. ì ì í ë¤ì ìëí´ì£¼ì¸ì.');
             }
         }
 
-        // 휴대폰 번호 포맷팅
+        // í´ëí° ë²í¸ í¬ë§·í
         function formatPhoneNumber(input) {
             const value = input.value.replace(/[^0-9]/g, '');
             let formatted = '';
@@ -563,7 +563,7 @@
             input.value = formatted;
         }
 
-        // 휴대폰 입력 필드에 포맷팅 추가 (요소가 없는 경우 안전하게 처리)
+        // í´ëí° ìë ¥ íëì í¬ë§·í ì¶ê° (ììê° ìë ê²½ì° ìì íê² ì²ë¦¬)
         const clientPhoneEl = document.getElementById('clientPhone');
         if (clientPhoneEl) {
             clientPhoneEl.addEventListener('input', function() {
@@ -578,26 +578,26 @@
             });
         }
 
-        // 솔라피 SMS Worker URL
+        // ìë¼í¼ SMS Worker URL
         const SMS_WORKER_URL = 'https://bidtok-sms-proxy.qkqk5342.workers.dev';
 
-        // 인증번호 발송
+        // ì¸ì¦ë²í¸ ë°ì¡
         async function sendVerifyCode(type) {
             const phoneInput = document.getElementById(`${type}Phone`);
             const phone = phoneInput.value.replace(/[^0-9]/g, '');
             const sendBtn = document.getElementById(`${type}SendVerify`);
 
             if (phone.length !== 11) {
-                alert('올바른 휴대폰 번호를 입력해주세요.');
+                alert('ì¬ë°ë¥¸ í´ëí° ë²í¸ë¥¼ ìë ¥í´ì£¼ì¸ì.');
                 phoneInput.focus();
                 return;
             }
 
-            // 버튼 로딩 상태
+            // ë²í¼ ë¡ë© ìí
             sendBtn.disabled = true;
-            sendBtn.textContent = '발송 중...';
+            sendBtn.textContent = 'ë°ì¡ ì¤...';
 
-            // 6자리 인증번호 생성
+            // 6ìë¦¬ ì¸ì¦ë²í¸ ìì±
             const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
 
             try {
@@ -610,32 +610,32 @@
                 const data = await res.json();
 
                 if (res.ok && data.success) {
-                    // 인증번호 세션에 저장
+                    // ì¸ì¦ë²í¸ ì¸ìì ì ì¥
                     sessionStorage.setItem(`verifyCode_${type}`, verifyCode);
 
-                    // UI 업데이트
+                    // UI ìë°ì´í¸
                     document.getElementById(`${type}VerifyCodeGroup`).style.display = 'block';
-                    sendBtn.textContent = '발송완료';
+                    sendBtn.textContent = 'ë°ì¡ìë£';
                     phoneInput.disabled = true;
 
-                    // 타이머 시작 (5분)
+                    // íì´ë¨¸ ìì (5ë¶)
                     startVerifyTimer(type, 300);
 
-                    alert('📱 인증번호가 발송되었습니다.\n휴대폰 문자를 확인해주세요.');
+                    alert('ð± ì¸ì¦ë²í¸ê° ë°ì¡ëììµëë¤.\ní´ëí° ë¬¸ìë¥¼ íì¸í´ì£¼ì¸ì.');
                 } else {
-                    alert('문자 발송에 실패했습니다. 잠시 후 다시 시도해주세요.\n' + (data.error || ''));
+                    alert('ë¬¸ì ë°ì¡ì ì¤í¨íìµëë¤. ì ì í ë¤ì ìëí´ì£¼ì¸ì.\n' + (data.error || ''));
                     sendBtn.disabled = false;
-                    sendBtn.textContent = '인증번호 발송';
+                    sendBtn.textContent = 'ì¸ì¦ë²í¸ ë°ì¡';
                 }
             } catch (e) {
-                console.error('SMS 발송 오류:', e);
-                alert('네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+                console.error('SMS ë°ì¡ ì¤ë¥:', e);
+                alert('ë¤í¸ìí¬ ì¤ë¥ê° ë°ìíìµëë¤. ì ì í ë¤ì ìëí´ì£¼ì¸ì.');
                 sendBtn.disabled = false;
-                sendBtn.textContent = '인증번호 발송';
+                sendBtn.textContent = 'ì¸ì¦ë²í¸ ë°ì¡';
             }
         }
 
-        // 인증 타이머
+        // ì¸ì¦ íì´ë¨¸
         function startVerifyTimer(type, seconds) {
             const timerElement = document.getElementById(`${type}VerifyTimer`);
             let remaining = seconds;
@@ -652,24 +652,24 @@
                 
                 if (remaining <= 0) {
                     clearInterval(verifyTimers[type]);
-                    timerElement.textContent = '인증시간 만료';
+                    timerElement.textContent = 'ì¸ì¦ìê° ë§ë£';
                     document.getElementById(`${type}ConfirmVerify`).disabled = true;
                 }
             }, 1000);
         }
 
-        // 인증번호 확인
+        // ì¸ì¦ë²í¸ íì¸
         function confirmVerifyCode(type) {
             const inputCode = document.getElementById(`${type}VerifyCode`).value;
             const savedCode = sessionStorage.getItem(`verifyCode_${type}`);
             
             if (!inputCode) {
-                alert('인증번호를 입력해주세요.');
+                alert('ì¸ì¦ë²í¸ë¥¼ ìë ¥í´ì£¼ì¸ì.');
                 return;
             }
             
             if (inputCode === savedCode) {
-                // 인증 성공
+                // ì¸ì¦ ì±ê³µ
                 verifiedPhones[type] = true;
                 clearInterval(verifyTimers[type]);
                 
@@ -677,31 +677,31 @@
                 document.getElementById(`${type}VerifyCodeGroup`).querySelectorAll('input, button').forEach(el => el.disabled = true);
                 document.getElementById(`${type}VerifyTimer`).style.display = 'none';
                 
-                alert('인증이 완료되었습니다!');
+                alert('ì¸ì¦ì´ ìë£ëììµëë¤!');
             } else {
-                alert('인증번호가 일치하지 않습니다.');
+                alert('ì¸ì¦ë²í¸ê° ì¼ì¹íì§ ììµëë¤.');
             }
         }
 
-        // 신청자 회원가입 제출
+        // ì ì²­ì íìê°ì ì ì¶
         document.getElementById('clientSignupForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            // 아이디 중복 확인
+            // ìì´ë ì¤ë³µ íì¸
             if (!checkedUserIds['client']) {
-                alert('아이디 중복 확인을 해주세요.');
+                alert('ìì´ë ì¤ë³µ íì¸ì í´ì£¼ì¸ì.');
                 return;
             }
             
-            // 이메일 중복 확인
+            // ì´ë©ì¼ ì¤ë³µ íì¸
             if (!checkedEmails['client']) {
-                alert('이메일 중복 확인을 해주세요.');
+                alert('ì´ë©ì¼ ì¤ë³µ íì¸ì í´ì£¼ì¸ì.');
                 return;
             }
             
-            // 휴대폰 인증 확인
+            // í´ëí° ì¸ì¦ íì¸
             if (!verifiedPhones['client']) {
-                alert('휴대폰 인증을 완료해주세요.');
+                alert('í´ëí° ì¸ì¦ì ìë£í´ì£¼ì¸ì.');
                 return;
             }
             
@@ -709,12 +709,12 @@
             const passwordConfirm = document.getElementById('clientPasswordConfirm').value;
             
             if (password !== passwordConfirm) {
-                alert('비밀번호가 일치하지 않습니다.');
+                alert('ë¹ë°ë²í¸ê° ì¼ì¹íì§ ììµëë¤.');
                 return;
             }
             
             if (password.length < 8) {
-                alert('비밀번호는 8자 이상이어야 합니다.');
+                alert('ë¹ë°ë²í¸ë 8ì ì´ìì´ì´ì¼ í©ëë¤.');
                 return;
             }
             
@@ -723,7 +723,7 @@
             const terms3 = document.getElementById('clientTerms3').checked;
             
             if (!terms1 || !terms2 || !terms3) {
-                alert('필수 약관에 동의해주세요.');
+                alert('íì ì½ê´ì ëìí´ì£¼ì¸ì.');
                 return;
             }
             
@@ -741,47 +741,47 @@
             
             const submitBtn = this.querySelector('button[type="submit"]');
             submitBtn.disabled = true;
-            submitBtn.textContent = '가입 처리 중...';
+            submitBtn.textContent = 'ê°ì ì²ë¦¬ ì¤...';
             
             try {
                 const result = await Auth.signup(formData);
                 if (result.success) {
-                    alert('회원가입이 완료되었습니다!\n로그인 페이지로 이동합니다.');
+                    alert('íìê°ìì´ ìë£ëììµëë¤!\në¡ê·¸ì¸ íì´ì§ë¡ ì´ëí©ëë¤.');
                     window.location.href = 'login.html';
                 } else {
-                    alert(result.message || '회원가입에 실패했습니다.');
+                    alert(result.message || 'íìê°ìì ì¤í¨íìµëë¤.');
                     submitBtn.disabled = false;
-                    submitBtn.textContent = '회원가입';
+                    submitBtn.textContent = 'íìê°ì';
                 }
             } catch (error) {
-                alert('회원가입 중 오류가 발생했습니다.\n\n' + (error.message || '다시 시도해주세요.'));
+                alert('íìê°ì ì¤ ì¤ë¥ê° ë°ìíìµëë¤.\n\n' + (error.message || 'ë¤ì ìëí´ì£¼ì¸ì.'));
                 console.error(error);
                 submitBtn.disabled = false;
-                submitBtn.textContent = '회원가입';
+                submitBtn.textContent = 'íìê°ì';
             }
         });
 
-        // 법무사 회원가입 제출 (현재 expertSignupForm은 div이므로 submit 이벤트 없음 - 안전하게 처리)
+        // ë²ë¬´ì¬ íìê°ì ì ì¶ (íì¬ expertSignupFormì divì´ë¯ë¡ submit ì´ë²¤í¸ ìì - ìì íê² ì²ë¦¬)
         const expertSignupFormEl = document.getElementById('expertSignupForm');
         if (expertSignupFormEl && expertSignupFormEl.tagName === 'FORM') {
         expertSignupFormEl.addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            // 아이디 중복 확인
+            // ìì´ë ì¤ë³µ íì¸
             if (!checkedUserIds['expert']) {
-                alert('아이디 중복 확인을 해주세요.');
+                alert('ìì´ë ì¤ë³µ íì¸ì í´ì£¼ì¸ì.');
                 return;
             }
             
-            // 이메일 중복 확인
+            // ì´ë©ì¼ ì¤ë³µ íì¸
             if (!checkedEmails['expert']) {
-                alert('이메일 중복 확인을 해주세요.');
+                alert('ì´ë©ì¼ ì¤ë³µ íì¸ì í´ì£¼ì¸ì.');
                 return;
             }
             
-            // 휴대폰 인증 확인
+            // í´ëí° ì¸ì¦ íì¸
             if (!verifiedPhones['expert']) {
-                alert('휴대폰 인증을 완료해주세요.');
+                alert('í´ëí° ì¸ì¦ì ìë£í´ì£¼ì¸ì.');
                 return;
             }
             
@@ -789,19 +789,19 @@
             const passwordConfirm = document.getElementById('expertPasswordConfirm').value;
             
             if (password !== passwordConfirm) {
-                alert('비밀번호가 일치하지 않습니다.');
+                alert('ë¹ë°ë²í¸ê° ì¼ì¹íì§ ììµëë¤.');
                 return;
             }
             
             if (password.length < 8) {
-                alert('비밀번호는 8자 이상이어야 합니다.');
+                alert('ë¹ë°ë²í¸ë 8ì ì´ìì´ì´ì¼ í©ëë¤.');
                 return;
             }
             
-            // 지역 체크
+            // ì§ì­ ì²´í¬
             const regions = Array.from(document.querySelectorAll('input[name="regions"]:checked')).map(cb => cb.value);
             if (regions.length === 0) {
-                alert('서비스 가능 지역을 최소 1개 이상 선택해주세요.');
+                alert('ìë¹ì¤ ê°ë¥ ì§ì­ì ìµì 1ê° ì´ì ì íí´ì£¼ì¸ì.');
                 return;
             }
             
@@ -810,21 +810,21 @@
             const terms3 = document.getElementById('expertTerms3').checked;
             
             if (!terms1 || !terms2 || !terms3) {
-                alert('필수 약관에 동의해주세요.');
+                alert('íì ì½ê´ì ëìí´ì£¼ì¸ì.');
                 return;
             }
             
-            // 파일 체크
+            // íì¼ ì²´í¬
             const licenseFile = document.getElementById('licenseFile').files[0];
             const insuranceFile = document.getElementById('insuranceFile').files[0];
             const bizRegFile = document.getElementById('bizRegFile').files[0];
             
             if (!licenseFile || !insuranceFile) {
-                alert('자격증과 보험증권을 모두 업로드해주세요.');
+                alert('ìê²©ì¦ê³¼ ë³´íì¦ê¶ì ëª¨ë ìë¡ëí´ì£¼ì¸ì.');
                 return;
             }
             if (!bizRegFile) {
-                alert('사업자등록증을 업로드해주세요.');
+                alert('ì¬ììë±ë¡ì¦ì ìë¡ëí´ì£¼ì¸ì.');
                 return;
             }
             
@@ -845,42 +845,42 @@
             
             const submitBtn = this.querySelector('button[type="submit"]');
             submitBtn.disabled = true;
-            submitBtn.textContent = '정보 확인 중...';
+            submitBtn.textContent = 'ì ë³´ íì¸ ì¤...';
             
             try {
-                // 파일명만 저장 (실제 파일 업로드는 추후 스토리지 연동)
+                // íì¼ëªë§ ì ì¥ (ì¤ì  íì¼ ìë¡ëë ì¶í ì¤í ë¦¬ì§ ì°ë)
                 formData.licenseFileName = licenseFile.name;
                 formData.insuranceFileName = insuranceFile.name;
                 formData.bizRegFileName = bizRegFile.name;
                 
-                submitBtn.textContent = '가입 처리 중...';
+                submitBtn.textContent = 'ê°ì ì²ë¦¬ ì¤...';
                 const result = await Auth.signup(formData);
                 if (result.success) {
                     showExpertSignupSuccess();
                     return;
                 } else {
-                    alert(result.message || '가입 신청에 실패했습니다.');
+                    alert(result.message || 'ê°ì ì ì²­ì ì¤í¨íìµëë¤.');
                     submitBtn.disabled = false;
-                    submitBtn.textContent = '법무사 가입 신청';
+                    submitBtn.textContent = 'ë²ë¬´ì¬ ê°ì ì ì²­';
                 }
             } catch (error) {
-                alert('회원가입 중 오류가 발생했습니다.\n\n' + (error.message || '다시 시도해주세요.'));
+                alert('íìê°ì ì¤ ì¤ë¥ê° ë°ìíìµëë¤.\n\n' + (error.message || 'ë¤ì ìëí´ì£¼ì¸ì.'));
                 console.error(error);
                 submitBtn.disabled = false;
-                submitBtn.textContent = '법무사 가입 신청';
+                submitBtn.textContent = 'ë²ë¬´ì¬ ê°ì ì ì²­';
             }
         });
         } // end if expertSignupFormEl
 
-        // 법무사 가입 완료 화면 표시
+        // ë²ë¬´ì¬ ê°ì ìë£ íë©´ íì
         function showExpertSignupSuccess() {
-            // 폼 숨기기
+            // í¼ ì¨ê¸°ê¸°
             document.getElementById('expertSignupForm').style.display = 'none';
-            // 탭 숨기기 (완료 화면에서는 탭 불필요)
+            // í­ ì¨ê¸°ê¸° (ìë£ íë©´ììë í­ ë¶íì)
             document.querySelector('.signup-tabs').style.display = 'none';
-            // 완료 화면 표시
+            // ìë£ íë©´ íì
             document.getElementById('expertSignupSuccess').style.display = 'block';
-            // 페이지 상단으로 스크롤
+            // íì´ì§ ìë¨ì¼ë¡ ì¤í¬ë¡¤
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     </script>
@@ -896,19 +896,19 @@
             <div style="display:flex; flex-wrap:wrap; gap:1.5rem; justify-content:space-between; align-items:flex-start; margin-bottom:1.5rem;">
                 <div>
                     <div style="font-size:1.1rem; font-weight:700; color:white; margin-bottom:0.5rem;">
-                        <i class="fas fa-comment-dots" style="color:#667eea;"></i> 대리입찰 톡
+                        <i class="fas fa-comment-dots" style="color:#667eea;"></i> ëë¦¬ìì°° í¡
                     </div>
-                    <p style="margin:0.25rem 0; font-size:0.85rem;">상호명: 대리입찰톡 - 대장TV (운영사: (주)원스타프로비)</p>
-                    <p style="margin:0.25rem 0; font-size:0.85rem;">주소: 서울특별시 금천구 가산디지털1로 75-24 901호</p>
-                    <p style="margin:0.25rem 0; font-size:0.85rem;">대표전화: <a href="tel:02-853-5875" style="color:#667eea;">02-853-5875</a> &nbsp;|&nbsp; 평일 09:00~18:00</p>
+                    <p style="margin:0.25rem 0; font-size:0.85rem;">ìí¸ëª: ëë¦¬ìì°°í¡ - ëì¥TV (ì´ìì¬: (ì£¼)ìì¤ííë¡ë¹)</p>
+                    <p style="margin:0.25rem 0; font-size:0.85rem;">ì£¼ì: ìì¸í¹ë³ì ê¸ì²êµ¬ ê°ì°ëì§í¸1ë¡ 75-24 901í¸</p>
+                    <p style="margin:0.25rem 0; font-size:0.85rem;">ëíì í: <a href="tel:02-863-1022" style="color:#667eea;">02-863-1022</a> &nbsp;|&nbsp; íì¼ 09:00~18:00</p>
                 </div>
                 <div style="font-size:0.85rem; line-height:1.8;">
-                    <a href="terms.html" style="color:#aaa; text-decoration:none; margin-right:1rem;">이용약관</a>
-                    <a href="privacy.html" style="color:#aaa; text-decoration:none;">개인정보처리방침</a>
+                    <a href="terms.html" style="color:#aaa; text-decoration:none; margin-right:1rem;">ì´ì©ì½ê´</a>
+                    <a href="privacy.html" style="color:#aaa; text-decoration:none;">ê°ì¸ì ë³´ì²ë¦¬ë°©ì¹¨</a>
                 </div>
             </div>
             <div style="border-top:1px solid #333; padding-top:1rem; font-size:0.8rem; color:#666; text-align:center;">
-                &copy; 2026 (주)원스타프로비 대리입찰톡. All rights reserved.
+                &copy; 2026 (ì£¼)ìì¤ííë¡ë¹ ëë¦¬ìì°°í¡. All rights reserved.
             </div>
         </div>
     </footer>
