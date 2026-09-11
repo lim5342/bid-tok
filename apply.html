@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ëë¦¬ìì°° ì ì²­ - ëë¦¬ìì°° í¡</title>
+    <title>대리입찰 신청 - 대리입찰 톡</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <!-- ë¤ì ì°í¸ë²í¸ API -->
+    <!-- 다음 우편번호 API -->
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <style>
-        /* ââ ì ì²´ ë ì´ìì ââ */
+        /* ── 전체 레이아웃 ── */
         body { background: #f8f9fa; }
 
         .apply-header {
@@ -43,7 +43,7 @@
         }
         .apply-logo i { font-size: 1.4rem; }
 
-        /* ââ ì§í ë¨ê³ ë° ââ */
+        /* ── 진행 단계 바 ── */
         .progress-wrap {
             background: white;
             padding: 1.5rem 0 0;
@@ -110,7 +110,7 @@
             color: white;
         }
         .step-item.done .step-circle::after {
-            content: 'â';
+            content: '✓';
         }
         .step-label {
             font-size: 0.78rem;
@@ -123,21 +123,21 @@
         .step-item.active .step-label { color: #1550E8; font-weight: 700; }
         .step-item.done .step-label { color: #10B981; }
 
-        /* ââ ì»¨íì¸  ìì­ ââ */
+        /* ── 컨텐츠 영역 ── */
         .apply-body {
             max-width: 800px;
             margin: 2rem auto;
             padding: 0 1.5rem 4rem;
         }
-        /* STEP1(ì¬ê±´ ì¡°í)ì ì°ì¸¡ ìì½ ì¹´ëë¥¼ ìí´ ë ëê² */
+        /* STEP1(사건 조회)은 우측 요약 카드를 위해 더 넓게 */
         .apply-body.step1-wide { max-width: 1160px; }
-        /* STEP1ì´ ìë í¨ëì ë³¸ë¬¸ í­ì 800pxë¡ ì ì§ */
+        /* STEP1이 아닌 패널은 본문 폭을 800px로 유지 */
         .apply-body.step1-wide .step-panel:not(#panel1) { max-width: 800px; margin-left: auto; margin-right: auto; }
 
         .step-panel { display: none; }
         .step-panel.active { display: block; }
 
-        /* ââ ì¹´ë ââ */
+        /* ── 카드 ── */
         .apply-card {
             background: white;
             border-radius: 16px;
@@ -155,7 +155,7 @@
         }
         .apply-card h3 i { color: #1550E8; }
 
-        /* ââ STEP1: í¼ + ì°ì¸¡ ë°ë¼ë¤ëë ë¬¼ê±´ ìì½ ì¹´ë ââ */
+        /* ── STEP1: 폼 + 우측 따라다니는 물건 요약 카드 ── */
         .step1-layout {
             display: grid;
             grid-template-columns: 1fr 320px;
@@ -186,9 +186,9 @@
             color: #cbd5e1; font-size: 2rem; overflow: hidden; position: relative;
         }
         .prop-summary-photo img { width: 100%; height: 100%; object-fit: cover; }
-        /* ì¹´ì¹´ì¤ ë¡ëë·°/ì§ë ì»¨íì´ë */
+        /* 카카오 로드뷰/지도 컨테이너 */
         .prop-map-view { width: 100%; height: 100%; }
-        /* ë¡ëë·°/ì§ë ì í í ê¸ */
+        /* 로드뷰/지도 전환 토글 */
         .prop-map-toggle {
             position: absolute; top: 8px; right: 8px; z-index: 5;
             display: flex; gap: 4px; background: rgba(255,255,255,0.92);
@@ -227,11 +227,11 @@
             .step1-layout { grid-template-columns: 1fr; }
             .prop-summary { position: static; }
         }
-        /* ì¬ê±´ ì¡°íì¤ ë¡ë© */
+        /* 사건 조회중 로딩 */
         .case-loading { display:inline-block; width:14px; height:14px; border:2px solid #fff; border-top-color:transparent; border-radius:50%; animation:caseSpin .7s linear infinite; vertical-align:-2px; }
         @keyframes caseSpin { to { transform: rotate(360deg); } }
 
-        /* ââ í¼ ìì ââ */
+        /* ── 폼 요소 ── */
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -281,7 +281,7 @@
         .form-group.has-error .error-msg { display: block; }
         .form-group.has-error input { border-color: #EF4444; }
 
-        /* ââ ìì°°ê° ìë ¥ ââ */
+        /* ── 입찰가 입력 ── */
         .bid-amount-wrap { position: relative; }
         .bid-amount-wrap input { padding-right: 2.5rem; }
         .bid-amount-wrap .unit {
@@ -301,7 +301,7 @@
             min-height: 1.2rem;
         }
 
-        /* ââ ì¸ì¦ ë²í¼ ââ */
+        /* ── 인증 버튼 ── */
         .input-btn-group {
             display: flex;
             gap: 0.5rem;
@@ -322,11 +322,11 @@
         .btn-verify:hover { background: #0d3ba8; }
         .btn-verify:disabled { background: #999; cursor: not-allowed; }
 
-        /* ââ ë²ì ê²ì ââ */
+        /* ── 법원 검색 ── */
         .court-search-wrap { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
         .court-search-wrap input { flex: 1; }
 
-        /* ââ ììë£ ìë´ ââ */
+        /* ── 수수료 안내 ── */
         .fee-notice {
             background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 100%);
             border: 1.5px solid #c7d7fd;
@@ -351,7 +351,7 @@
             margin-top: 0.3rem;
         }
 
-        /* ââ ì ë¬¸ê° ì í ì í (ê³µì¸ì¤ê°ì¬ / ë²ë¬´ì¬) ââ */
+        /* ── 전문가 유형 선택 (공인중개사 / 법무사) ── */
         .expert-pick {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -410,7 +410,7 @@
         .expert-opt.selected .opt-check { background: #1550E8; border-color: #1550E8; }
         .expert-opt .opt-head .opt-badge { margin-right: 26px; }
 
-        /* ââ íì¸ ìì½ ââ */
+        /* ── 확인 요약 ── */
         .summary-table {
             width: 100%;
             border-collapse: collapse;
@@ -431,7 +431,7 @@
             font-weight: 600;
         }
 
-        /* ââ ë²í¼ ââ */
+        /* ── 버튼 ── */
         .apply-btn-row {
             display: flex;
             gap: 1rem;
@@ -477,7 +477,7 @@
         }
         .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(21,80,232,0.3); }
 
-        /* ââ ìë£ íë©´ ââ */
+        /* ── 완료 화면 ── */
         .success-wrap {
             text-align: center;
             padding: 3rem 1rem;
@@ -523,7 +523,7 @@
             flex-wrap: wrap;
         }
 
-        /* ââ ì½ê´ ëì ââ */
+        /* ── 약관 동의 ── */
         .agree-box {
             background: #f8f9fa;
             border: 1px solid #e0e0e0;
@@ -545,7 +545,7 @@
         .agree-check input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
         .agree-check label { font-size: 0.9rem; color: #333; cursor: pointer; font-weight: 500; }
 
-        /* ââ ëª¨ë°ì¼ ââ */
+        /* ── 모바일 ── */
         @media (max-width: 600px) {
             .form-row { grid-template-columns: 1fr; }
             .form-row.three { grid-template-columns: 1fr; }
@@ -556,203 +556,203 @@
             .step-circle { width: 34px; height: 34px; font-size: 0.88rem; }
         }
     </style>
-    <!-- í ì¤íì´ë¨¼ì¸  SDK -->
+    <!-- 토스페이먼츠 SDK -->
     <script src="https://js.tosspayments.com/v1/payment"></script>
 </head>
 <body>
 
-<!-- í¤ë -->
+<!-- 헤더 -->
 <header class="apply-header">
     <div class="apply-header-inner">
         <a class="apply-logo" href="index.html">
             <i class="fas fa-comment-dots"></i>
-            <span>ëë¦¬ìì°° í¡</span>
+            <span>대리입찰 톡</span>
         </a>
         <div style="font-size:0.88rem; color:#666;">
-            <i class="fas fa-lock" style="color:#10B981;"></i> ìì í ì ì²­
+            <i class="fas fa-lock" style="color:#10B981;"></i> 안전한 신청
         </div>
     </div>
 </header>
 
-<!-- ì§í ë¨ê³ -->
+<!-- 진행 단계 -->
 <div class="progress-wrap">
     <div class="progress-steps">
         <div class="progress-line-fill" id="progressFill"></div>
         <div class="step-item active" id="stepItem1">
             <div class="step-circle">1</div>
-            <div class="step-label">ì¬ê±´ ì¡°í</div>
+            <div class="step-label">사건 조회</div>
         </div>
         <div class="step-item" id="stepItem2">
             <div class="step-circle">2</div>
-            <div class="step-label">ìì°°ì ë³´ìì±</div>
+            <div class="step-label">입찰정보작성</div>
         </div>
         <div class="step-item" id="stepItem3">
             <div class="step-circle">3</div>
-            <div class="step-label">ì ìê³ì½</div>
+            <div class="step-label">전자계약</div>
         </div>
         <div class="step-item" id="stepItem4">
             <div class="step-circle">4</div>
-            <div class="step-label">ì ì²­ ìë£</div>
+            <div class="step-label">신청 완료</div>
         </div>
     </div>
 </div>
 
-<!-- ì»¨íì¸  -->
+<!-- 컨텐츠 -->
 <div class="apply-body step1-wide">
 
-    <!-- ââ STEP 1: ì¬ê±´ ì¡°í ââ -->
+    <!-- ══ STEP 1: 사건 조회 ══ -->
     <div class="step-panel active" id="panel1">
       <div class="step1-layout">
         <div class="apply-card">
-            <h3><i class="fas fa-search"></i> ì¬ê±´ ì¡°í ë° ì ë³´ ìë ¥</h3>
+            <h3><i class="fas fa-search"></i> 사건 조회 및 정보 입력</h3>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label>ì§ì­ ì í <span class="required">*</span></label>
+                    <label>지역 선택 <span class="required">*</span></label>
                     <select id="regionSelect" onchange="updateCourts()">
-                        <option value="">ì§ì­ì ì ííì¸ì</option>
-                        <option>ìì¸</option><option>ì¸ì²</option><option>ê²½ê¸°</option>
-                        <option>ë¶ì°</option><option>ëêµ¬</option><option>ê´ì£¼</option>
-                        <option>ëì </option><option>ì¸ì°</option><option>ê°ì</option>
-                        <option>ì¶©ë¶</option><option>ì¶©ë¨</option><option>ì ë¶</option>
-                        <option>ì ë¨</option><option>ê²½ë¶</option><option>ê²½ë¨</option><option>ì ì£¼</option>
+                        <option value="">지역을 선택하세요</option>
+                        <option>서울</option><option>인천</option><option>경기</option>
+                        <option>부산</option><option>대구</option><option>광주</option>
+                        <option>대전</option><option>울산</option><option>강원</option>
+                        <option>충북</option><option>충남</option><option>전북</option>
+                        <option>전남</option><option>경북</option><option>경남</option><option>제주</option>
                     </select>
-                    <div class="error-msg">ì§ì­ì ì íí´ì£¼ì¸ì.</div>
+                    <div class="error-msg">지역을 선택해주세요.</div>
                 </div>
                 <div class="form-group">
-                    <label>ë²ì ì í <span class="required">*</span></label>
+                    <label>법원 선택 <span class="required">*</span></label>
                     <select id="courtSelect">
-                        <option value="">ì§ì­ ì í í ë²ì ì í</option>
+                        <option value="">지역 선택 후 법원 선택</option>
                     </select>
-                    <div class="error-msg">ë²ìì ì íí´ì£¼ì¸ì.</div>
+                    <div class="error-msg">법원을 선택해주세요.</div>
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label>ì¬ê±´ë²í¸ <span class="required">*</span></label>
-                    <input type="text" id="caseNumber" placeholder="ì) 2024íê²½12345 (ëë 2024-12345)" onblur="formatCaseNumber(this)">
-                    <div class="hint">ì«ìë§ ë£ì´ë ë©ëë¤. ì) <strong>2024-12345</strong> ëë <strong>202412345</strong> â ìëì¼ë¡ <strong>2024íê²½12345</strong>ë¡ ë³íë©ëë¤.</div>
-                    <div class="error-msg">ì¬ê±´ë²í¸ë¥¼ ìë ¥í´ì£¼ì¸ì.</div>
-                    <!-- (ì¬ê±´ ì¡°í ê²°ê³¼ ìë´ ìë¦¬ â íì¬ ë¯¸ì¬ì©) -->
+                    <label>사건번호 <span class="required">*</span></label>
+                    <input type="text" id="caseNumber" placeholder="예) 2024타경12345 (또는 2024-12345)" onblur="formatCaseNumber(this)">
+                    <div class="hint">숫자만 넣어도 됩니다. 예) <strong>2024-12345</strong> 또는 <strong>202412345</strong> → 자동으로 <strong>2024타경12345</strong>로 변환됩니다.</div>
+                    <div class="error-msg">사건번호를 입력해주세요.</div>
+                    <!-- (사건 조회 결과 안내 자리 — 현재 미사용) -->
                     <div id="caseLookupResult" style="display:none; margin-top:0.6rem; padding:0.85rem 1rem; border-radius:10px; font-size:0.86rem; line-height:1.5;"></div>
                 </div>
                 <div class="form-group">
-                    <label>ë¬¼ê±´ë²í¸</label>
-                    <input type="text" id="itemNumber" placeholder="ì) 1 (ë¨ì¼ ë¬¼ê±´ì ë³´íµ 1)">
-                    <div class="hint">í ì¬ê±´ì ì¬ë¬ ë¬¼ê±´ì´ ìì ë êµ¬ë¶íë ë²í¸ (ëª¨ë¥´ë©´ ë¹ìëì¸ì)</div>
+                    <label>물건번호</label>
+                    <input type="text" id="itemNumber" placeholder="예) 1 (단일 물건은 보통 1)">
+                    <div class="hint">한 사건에 여러 물건이 있을 때 구분하는 번호 (모르면 비워두세요)</div>
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label>ìì°° ê¸°ì¼ <span class="required">*</span></label>
+                    <label>입찰 기일 <span class="required">*</span></label>
                     <input type="date" id="bidDate" min="" onchange="checkBidDateWindow()">
-                    <small style="display:block;margin-top:0.35rem;color:#888;font-size:0.82rem;">â» ìì°° ê¸°ì¼ <strong>ììì¼ ê¸°ì¤ 2ì¼ ì </strong>ê¹ì§ë§ ì ì²­ ê°ë¥í©ëë¤.</small>
+                    <small style="display:block;margin-top:0.35rem;color:#888;font-size:0.82rem;">※ 입찰 기일 <strong>영업일 기준 2일 전</strong>까지만 신청 가능합니다.</small>
                     <div id="bidDateWarn" style="display:none;margin-top:0.5rem;padding:0.75rem 0.9rem;background:#fff4f4;border:1.5px solid #f5b5b5;border-radius:10px;color:#c0392b;font-size:0.86rem;line-height:1.6;">
-                        â ï¸ ìì°° ê¸°ì¼ì´ <strong>ììì¼ ê¸°ì¤ 2ì¼ ì´ë´</strong>ë¼ ì¨ë¼ì¸ ì ì²­ì´ ì´ë µìµëë¤.<br>
-                        ê¸í ê±´ì ëíë²í¸ <a href="tel:02-863-1022" style="color:#c0392b;font-weight:700;">02-863-1022</a> ë¡ ì í ì£¼ìë©´ ëìëë¦¬ê² ìµëë¤.
+                        ⚠️ 입찰 기일이 <strong>영업일 기준 2일 이내</strong>라 온라인 신청이 어렵습니다.<br>
+                        급한 건은 대표번호 <a href="tel:02-863-1022" style="color:#c0392b;font-weight:700;">02-863-1022</a> 로 전화 주시면 도와드리겠습니다.
                     </div>
-                    <div class="error-msg">ìì°° ê¸°ì¼ì ì íí´ì£¼ì¸ì.</div>
+                    <div class="error-msg">입찰 기일을 선택해주세요.</div>
                 </div>
                 <div class="form-group">
-                    <!-- ë ì´ìì ì ë ¬ì© ë¹ ì¹¸ -->
+                    <!-- 레이아웃 정렬용 빈 칸 -->
                 </div>
             </div>
 
             <div class="form-row full">
                 <div class="form-group">
-                    <label>ë¬¼ê±´ ì£¼ì <span class="required">*</span></label>
+                    <label>물건 주소 <span class="required">*</span></label>
                     <div class="input-btn-group">
-                        <input type="text" id="propertyAddress" placeholder="ì£¼ì ê²ì ë²í¼ì ëë¬ ìë ¥íì¸ì" readonly style="cursor:pointer; background:#fff;" onclick="searchAddress()">
+                        <input type="text" id="propertyAddress" placeholder="주소 검색 버튼을 눌러 입력하세요" readonly style="cursor:pointer; background:#fff;" onclick="searchAddress()">
                         <button class="btn-verify" type="button" onclick="searchAddress()">
-                            <i class="fas fa-search"></i> ì£¼ì ê²ì
+                            <i class="fas fa-search"></i> 주소 검색
                         </button>
                     </div>
-                    <input type="text" id="propertyAddressDetail" placeholder="ìì¸ ì£¼ì ìë ¥ (ë/í¸ì ë±)" onblur="showPropertyLocation()" style="margin-top:0.5rem; padding:0.8rem 1rem; border:2px solid #e0e0e0; border-radius:10px; width:100%; font-size:0.95rem;">
-                    <div class="error-msg">ë¬¼ê±´ ì£¼ìë¥¼ ìë ¥í´ì£¼ì¸ì.</div>
+                    <input type="text" id="propertyAddressDetail" placeholder="상세 주소 입력 (동/호수 등)" onblur="showPropertyLocation()" style="margin-top:0.5rem; padding:0.8rem 1rem; border:2px solid #e0e0e0; border-radius:10px; width:100%; font-size:0.95rem;">
+                    <div class="error-msg">물건 주소를 입력해주세요.</div>
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label>ê°ì ê° (ì)</label>
-                    <input type="text" id="appraisalPrice" placeholder="ì) 350,000,000" oninput="formatInputNumber(this); showKorean('appraisalPrice','appraisalPriceKor')">
+                    <label>감정가 (원)</label>
+                    <input type="text" id="appraisalPrice" placeholder="예) 350,000,000" oninput="formatInputNumber(this); showKorean('appraisalPrice','appraisalPriceKor')">
                     <div id="appraisalPriceKor" style="font-size:0.82rem; color:#1550E8; font-weight:600; min-height:1.1rem; margin-top:0.25rem;"></div>
                 </div>
                 <div class="form-group">
-                    <label>ìµì ìì°°ê° (ì)</label>
-                    <input type="text" id="minBidPrice" placeholder="ì) 245,000,000" oninput="formatInputNumber(this); showKorean('minBidPrice','minBidPriceKor'); updateDepositAmount()">
+                    <label>최저입찰가 (원)</label>
+                    <input type="text" id="minBidPrice" placeholder="예) 245,000,000" oninput="formatInputNumber(this); showKorean('minBidPrice','minBidPriceKor'); updateDepositAmount()">
                     <div id="minBidPriceKor" style="font-size:0.82rem; color:#1550E8; font-weight:600; min-height:1.1rem; margin-top:0.25rem;"></div>
                 </div>
             </div>
 
             <div class="form-row full">
                 <div class="form-group">
-                    <label>ë¬¼ê±´ ì¢ë¥</label>
+                    <label>물건 종류</label>
                     <select id="propertyType">
-                        <option value="">ì í (ì íì¬í­)</option>
-                        <option>ìíí¸</option><option>ë¹ë¼/ì°ë¦½</option><option>ë¨ë/ë¤ê°êµ¬</option>
-                        <option>ì¤í¼ì¤í</option><option>ìê°</option><option>í ì§</option><option>ê¸°í</option>
+                        <option value="">선택 (선택사항)</option>
+                        <option>아파트</option><option>빌라/연립</option><option>단독/다가구</option>
+                        <option>오피스텔</option><option>상가</option><option>토지</option><option>기타</option>
                     </select>
                 </div>
             </div>
         </div>
 
-        <!-- ì°ì¸¡ ë°ë¼ë¤ëë ë¬¼ê±´ ìì½ ì¹´ë -->
+        <!-- 우측 따라다니는 물건 요약 카드 -->
         <aside class="prop-summary" id="propSummary">
-            <div class="prop-summary-head"><i class="fas fa-building"></i> ë¬¼ê±´ ìì½</div>
+            <div class="prop-summary-head"><i class="fas fa-building"></i> 물건 요약</div>
             <div class="prop-summary-photo" id="propSummaryPhoto"><i class="fas fa-image"></i></div>
             <div class="prop-summary-body" id="propSummaryBody">
                 <div class="prop-summary-empty">
-                    <strong>ë¬¼ê±´ ì£¼ì</strong>ë¥¼ ìë ¥íë©´<br>ë¬¼ê±´ ìì¹(ì§ëÂ·ë¡ëë·°)ê°<br>ì¬ê¸°ì íìë©ëë¤.
+                    <strong>물건 주소</strong>를 입력하면<br>물건 위치(지도·로드뷰)가<br>여기에 표시됩니다.
                 </div>
             </div>
         </aside>
       </div>
 
         <div class="apply-btn-row">
-            <button class="btn-back" onclick="window.location.href='index.html'"><i class="fas fa-arrow-left"></i> íì¼ë¡</button>
-            <button class="btn-next" onclick="goStep(2)">ë¤ì ë¨ê³ &nbsp;<i class="fas fa-arrow-right"></i></button>
+            <button class="btn-back" onclick="window.location.href='index.html'"><i class="fas fa-arrow-left"></i> 홈으로</button>
+            <button class="btn-next" onclick="goStep(2)">다음 단계 &nbsp;<i class="fas fa-arrow-right"></i></button>
         </div>
     </div>
 
-    <!-- ââ STEP 2: ìì°°ì ë³´ìì± ââ -->
+    <!-- ══ STEP 2: 입찰정보작성 ══ -->
     <div class="step-panel" id="panel2">
         <div class="apply-card">
-            <h3><i class="fas fa-user"></i> ì ì²­ì ì ë³´</h3>
+            <h3><i class="fas fa-user"></i> 신청자 정보</h3>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label>ì´ë¦ <span class="required">*</span></label>
-                    <input type="text" id="applicantName" placeholder="ì¤ëªì ìë ¥íì¸ì">
-                    <div class="error-msg">ì´ë¦ì ìë ¥í´ì£¼ì¸ì.</div>
+                    <label>이름 <span class="required">*</span></label>
+                    <input type="text" id="applicantName" placeholder="실명을 입력하세요">
+                    <div class="error-msg">이름을 입력해주세요.</div>
                 </div>
                 <div class="form-group">
-                    <label>ìëìì¼ <span class="required">*</span></label>
-                    <input type="text" id="applicantBirth" placeholder="ì) 19850315" maxlength="8">
-                    <div class="hint">8ìë¦¬ ì«ìë¡ ìë ¥ (YYYYMMDD)</div>
-                    <div class="error-msg">ìëìì¼ì ìë ¥í´ì£¼ì¸ì.</div>
+                    <label>생년월일 <span class="required">*</span></label>
+                    <input type="text" id="applicantBirth" placeholder="예) 19850315" maxlength="8">
+                    <div class="hint">8자리 숫자로 입력 (YYYYMMDD)</div>
+                    <div class="error-msg">생년월일을 입력해주세요.</div>
                 </div>
             </div>
 
             <div class="form-row full">
                 <div class="form-group">
-                    <label>í´ëí° ë²í¸ <span class="required">*</span></label>
+                    <label>휴대폰 번호 <span class="required">*</span></label>
                     <div class="input-btn-group">
                         <input type="tel" id="applicantPhone" placeholder="010-0000-0000" oninput="formatPhone(this)">
-                        <button class="btn-verify" onclick="sendSmsCode()" id="btnSendSms">ì¸ì¦ë²í¸ ë°ì¡</button>
+                        <button class="btn-verify" onclick="sendSmsCode()" id="btnSendSms">인증번호 발송</button>
                     </div>
-                    <div class="error-msg" id="phoneErrorMsg">í´ëí° ë²í¸ë¥¼ ìë ¥í´ì£¼ì¸ì.</div>
+                    <div class="error-msg" id="phoneErrorMsg">휴대폰 번호를 입력해주세요.</div>
                 </div>
             </div>
 
             <div class="form-row full" id="smsCodeRow" style="display:none;">
                 <div class="form-group">
-                    <label>ì¸ì¦ë²í¸ <span class="required">*</span></label>
+                    <label>인증번호 <span class="required">*</span></label>
                     <div class="input-btn-group">
-                        <input type="text" id="smsCode" placeholder="6ìë¦¬ ì¸ì¦ë²í¸" maxlength="6">
-                        <button class="btn-verify" onclick="verifySmsCode()">íì¸</button>
+                        <input type="text" id="smsCode" placeholder="6자리 인증번호" maxlength="6">
+                        <button class="btn-verify" onclick="verifySmsCode()">확인</button>
                     </div>
                     <div class="hint" id="smsTimer" style="color:#1550E8;"></div>
                 </div>
@@ -760,300 +760,300 @@
 
             <div class="form-row full">
                 <div class="form-group">
-                    <label>ì´ë©ì¼ ì£¼ì</label>
+                    <label>이메일 주소</label>
                     <input type="email" id="applicantEmail" placeholder="example@email.com">
-                    <div class="hint">ê²°ê³¼ ìë´ ë©ì¼ì ë°ì¼ì¤ ì£¼ì (ì íì¬í­)</div>
+                    <div class="hint">결과 안내 메일을 받으실 주소 (선택사항)</div>
                 </div>
             </div>
         </div>
 
         <div class="apply-card">
-            <h3><i class="fas fa-university"></i> ê³ì¢ ì ë³´ (ë³´ì¦ê¸ íê¸ì©)</h3>
+            <h3><i class="fas fa-university"></i> 계좌 정보 (보증금 환급용)</h3>
             <div class="form-row">
                 <div class="form-group">
-                    <label>ìíëª <span class="required">*</span></label>
+                    <label>은행명 <span class="required">*</span></label>
                     <select id="bankName">
-                        <option value="">ìí ì í</option>
-                        <option>êµ­ë¯¼ìí</option><option>ì íìí</option><option>ì°ë¦¬ìí</option>
-                        <option>íëìí</option><option>ëíìí</option><option>ê¸°ììí</option>
-                        <option>SCì ì¼ìí</option><option>ì¨í°ìí</option><option>ì¹´ì¹´ì¤ë±í¬</option>
-                        <option>ì¼ì´ë±í¬</option><option>í ì¤ë±í¬</option><option>ìë§ìê¸ê³ </option>
-                        <option>ìíìí</option><option>ì°ì²´êµ­</option><option>ê¸°í</option>
+                        <option value="">은행 선택</option>
+                        <option>국민은행</option><option>신한은행</option><option>우리은행</option>
+                        <option>하나은행</option><option>농협은행</option><option>기업은행</option>
+                        <option>SC제일은행</option><option>씨티은행</option><option>카카오뱅크</option>
+                        <option>케이뱅크</option><option>토스뱅크</option><option>새마을금고</option>
+                        <option>수협은행</option><option>우체국</option><option>기타</option>
                     </select>
-                    <div class="error-msg">ìíì ì íí´ì£¼ì¸ì.</div>
+                    <div class="error-msg">은행을 선택해주세요.</div>
                 </div>
                 <div class="form-group">
-                    <label>ìê¸ì£¼ëª <span class="required">*</span></label>
-                    <input type="text" id="accountHolder" placeholder="ìê¸ì£¼ ì´ë¦">
-                    <div class="error-msg">ìê¸ì£¼ëªì ìë ¥í´ì£¼ì¸ì.</div>
+                    <label>예금주명 <span class="required">*</span></label>
+                    <input type="text" id="accountHolder" placeholder="예금주 이름">
+                    <div class="error-msg">예금주명을 입력해주세요.</div>
                 </div>
             </div>
             <div class="form-row full">
                 <div class="form-group">
-                    <label>ê³ì¢ë²í¸ <span class="required">*</span></label>
-                    <input type="text" id="accountNumber" placeholder="- ìì´ ì«ìë§ ìë ¥">
-                    <div class="error-msg">ê³ì¢ë²í¸ë¥¼ ìë ¥í´ì£¼ì¸ì.</div>
+                    <label>계좌번호 <span class="required">*</span></label>
+                    <input type="text" id="accountNumber" placeholder="- 없이 숫자만 입력">
+                    <div class="error-msg">계좌번호를 입력해주세요.</div>
                 </div>
             </div>
         </div>
 
         <div class="apply-btn-row">
-            <button class="btn-back" onclick="goStep(1)"><i class="fas fa-arrow-left"></i> ì´ì </button>
-            <button class="btn-next" onclick="goStep(3)">ë¤ì ë¨ê³ &nbsp;<i class="fas fa-arrow-right"></i></button>
+            <button class="btn-back" onclick="goStep(1)"><i class="fas fa-arrow-left"></i> 이전</button>
+            <button class="btn-next" onclick="goStep(3)">다음 단계 &nbsp;<i class="fas fa-arrow-right"></i></button>
         </div>
     </div>
 
-    <!-- ââ STEP 3: ì ìê³ì½ (ìì°° ì ë³´ + ê³ì½ì ìëª) ââ -->
+    <!-- ══ STEP 3: 전자계약 (입찰 정보 + 계약서 서명) ══ -->
     <div class="step-panel" id="panel3">
 
         <div class="apply-card">
-            <h3><i class="fas fa-money-bill-wave"></i> ìì°° ê¸ì¡ ì¤ì </h3>
+            <h3><i class="fas fa-money-bill-wave"></i> 입찰 금액 설정</h3>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label>í¬ë§ ìì°°ê° (ì) <span class="required">*</span></label>
+                    <label>희망 입찰가 (원) <span class="required">*</span></label>
                     <div class="bid-amount-wrap">
-                        <input type="text" id="bidAmount" placeholder="ìì°° ê¸ì¡ì ìë ¥íì¸ì"
+                        <input type="text" id="bidAmount" placeholder="입찰 금액을 입력하세요"
                                oninput="formatInputNumber(this); updateBidPreview(); updateDepositAmount();">
-                        <span class="unit">ì</span>
+                        <span class="unit">원</span>
                     </div>
                     <div class="bid-amount-preview" id="bidAmountPreview" style="font-size:0.85rem; color:#1550E8; font-weight:700; min-height:1.2rem; margin-top:0.25rem;"></div>
-                    <div class="error-msg" id="bidAmountError">ìì°°ê°ë¥¼ ìë ¥í´ì£¼ì¸ì.</div>
+                    <div class="error-msg" id="bidAmountError">입찰가를 입력해주세요.</div>
                 </div>
                 <div class="form-group">
-                    <label>ìì°° ë³´ì¦ê¸ (ìµì ìì°°ê°ì 10%)</label>
+                    <label>입찰 보증금 (최저입찰가의 10%)</label>
                     <div style="position:relative;">
-                        <input type="text" id="depositAmount" placeholder="ìµì ìì°°ê° ìë ¥ ì ìë ê³ì°" readonly
+                        <input type="text" id="depositAmount" placeholder="최저입찰가 입력 시 자동 계산" readonly
                                style="background:#f0f4ff; border:2px solid #c7d7fd; color:#1550E8; font-weight:700; cursor:default; padding:0.8rem 3.5rem 0.8rem 1rem; border-radius:10px; width:100%; font-size:0.95rem;">
-                        <span style="position:absolute; right:0.75rem; top:50%; transform:translateY(-50%); font-size:0.75rem; color:#1550E8; font-weight:700; white-space:nowrap;">ì</span>
+                        <span style="position:absolute; right:0.75rem; top:50%; transform:translateY(-50%); font-size:0.75rem; color:#1550E8; font-weight:700; white-space:nowrap;">원</span>
                     </div>
                     <div id="depositAmountKor" style="font-size:0.82rem; color:#1550E8; font-weight:600; min-height:1.1rem; margin-top:0.25rem;"></div>
-                    <div class="hint" style="color:#1550E8;">ìµì ìì°°ê°ì 10% ìë ê³ì°</div>
+                    <div class="hint" style="color:#1550E8;">최저입찰가의 10% 자동 계산</div>
                 </div>
             </div>
 
             <div class="form-row full">
                 <div class="form-group">
-                    <label>ìì°° ë³´ì¦ê¸ ë©ë¶ ë°©ë² <span class="required">*</span></label>
+                    <label>입찰 보증금 납부 방법 <span class="required">*</span></label>
                     <select id="depositMethod">
-                        <option value="ê³ì¢ì´ì²´">ë´ë¹ ì ë¬¸ê°ê» ì§ì  ì´ì²´</option>
+                        <option value="계좌이체">담당 전문가께 직접 이체</option>
                     </select>
-                    <div class="error-msg">ë©ë¶ ë°©ë²ì ì íí´ì£¼ì¸ì.</div>
-                    <!-- ìë´ ë°ì¤ -->
+                    <div class="error-msg">납부 방법을 선택해주세요.</div>
+                    <!-- 안내 박스 -->
                     <div style="margin-top:0.75rem; background:#f0f7ff; border:1.5px solid #c7d7fd; border-radius:10px; padding:0.9rem 1.1rem; font-size:0.82rem; color:#444; line-height:1.8;">
-                        <div style="font-weight:700; color:#1550E8; margin-bottom:0.35rem;"><i class="fas fa-shield-alt" style="margin-right:0.4rem;"></i>ìì í ë³´ì¦ê¸ ê´ë¦¬ ìë´</div>
-                        <div>â ë³´ì¦ê¸ì ë°°ì ë ë´ë¹ ì ë¬¸ê°(ë²ë¬´ì¬Â·ê³µì¸ì¤ê°ì¬)ê» <strong>ì§ì  ì´ì²´</strong>íìë©´ ë©ëë¤.</div>
-                        <div>â ë´ë¹ ì ë¬¸ê°ë <strong>5ìµ ì ë°°ìì±ìë³´í</strong>ì ê°ìëì´ ìì´ ìì í©ëë¤.</div>
-                        <div>â ëì°° ì¤í¨(í¨ì°°) ì ë³´ì¦ê¸ì <strong>ì¦ì ì ì¡ ë°í</strong>ë©ëë¤.</div>
+                        <div style="font-weight:700; color:#1550E8; margin-bottom:0.35rem;"><i class="fas fa-shield-alt" style="margin-right:0.4rem;"></i>안전한 보증금 관리 안내</div>
+                        <div>✅ 보증금은 배정된 담당 전문가(법무사·공인중개사)께 <strong>직접 이체</strong>하시면 됩니다.</div>
+                        <div>✅ 담당 전문가는 <strong>5억 원 배상책임보험</strong>에 가입되어 있어 안전합니다.</div>
+                        <div>✅ 낙찰 실패(패찰) 시 보증금은 <strong>즉시 전액 반환</strong>됩니다.</div>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="apply-card">
-            <h3><i class="fas fa-users"></i> ìì°° íí</h3>
+            <h3><i class="fas fa-users"></i> 입찰 형태</h3>
             <div class="form-row full">
                 <div class="form-group">
-                    <label>ìì°° íí <span class="required">*</span></label>
+                    <label>입찰 형태 <span class="required">*</span></label>
                     <select id="bidType" onchange="toggleJointInfo()">
-                        <option value="ë¨ë">ë¨ë ìì°°</option>
-                        <option value="ê³µë">ê³µë ìì°°</option>
-                        <option value="ë²ì¸">ë²ì¸ ìì°°</option>
+                        <option value="단독">단독 입찰</option>
+                        <option value="공동">공동 입찰</option>
+                        <option value="법인">법인 입찰</option>
                     </select>
                 </div>
             </div>
 
-            <!-- ê³µë ìì°° ì°¸ì¬ì ì¶ê° ìì­ -->
+            <!-- 공동 입찰 참여자 추가 영역 -->
             <div id="jointInfo" style="display:none;">
                 <div id="jointMemberList"></div>
                 <div style="margin-top:0.75rem;">
                     <button type="button" onclick="addJointMember()"
                         id="btnAddJoint"
                         style="padding:0.65rem 1.2rem; background:#f0f4ff; border:2px dashed #1550E8; border-radius:10px; color:#1550E8; font-weight:700; font-size:0.9rem; cursor:pointer; width:100%;">
-                        <i class="fas fa-plus-circle"></i> ê³µëìì°°ì ì¶ê°íê¸° (ìµë 3ëª)
+                        <i class="fas fa-plus-circle"></i> 공동입찰자 추가하기 (최대 3명)
                     </button>
                     <div id="jointLimitMsg" style="display:none; margin-top:0.5rem; background:#fff3cd; border:1px solid #ffc107; border-radius:8px; padding:0.7rem 1rem; font-size:0.82rem; color:#856404;">
-                        <i class="fas fa-exclamation-triangle"></i> 3ëªì ì´ê³¼íë ê³µëìì°°ì <strong>ë´ë¹ ì ë¬¸ê°ê» ì§ì  ì°ë½</strong>íì¬ ë³ë íìí´ì£¼ì¸ì.
+                        <i class="fas fa-exclamation-triangle"></i> 3명을 초과하는 공동입찰은 <strong>담당 전문가께 직접 연락</strong>하여 별도 협의해주세요.
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- ì ìê³ì½ì + ìëª -->
+        <!-- 전자계약서 + 서명 -->
         <div class="apply-card">
-            <h3><i class="fas fa-file-signature"></i> ì ìê³ì½ ë° ìëª</h3>
+            <h3><i class="fas fa-file-signature"></i> 전자계약 및 서명</h3>
 
             <div style="background:#f8f9fa; border:1px solid #e0e0e0; border-radius:10px; padding:1.25rem 1.5rem; margin-bottom:1.25rem; max-height:200px; overflow-y:auto; font-size:0.82rem; color:#555; line-height:1.9;">
-                <strong style="color:#333; font-size:0.9rem; display:block; margin-bottom:0.75rem;">ð ëë¦¬ìì°° ìì ê³ì½ì</strong>
-                <strong>ììì¸(ì´í "ê°"):</strong> ì ì²­ì &nbsp;&nbsp; <strong>ììì¸(ì´í "ì"):</strong> ë´ë¹ ë²ë¬´ì¬<br><br>
-                <strong>ì 1ì¡° (ìì ë´ì©)</strong> ê°ì ììê² ìë ê²½ë§¤ ë¬¼ê±´ì ëí ìì°° ëë¦¬ê¶ì ììí©ëë¤.<br>
-                <strong>ì 2ì¡° (ìì ë²ì)</strong> ìì ê°ì ëì íì¬ ì§ì  ë²ìì ì¶ì, ì§ì  ê¸ì¡ì¼ë¡ ìì°°íë¥¼ ì ì¶í©ëë¤.<br>
-                <strong>ì 3ì¡° (ë³´ì¦ê¸ ê´ë¦¬)</strong> ìì ê°ì¼ë¡ë¶í° ì ë¬ë°ì ìì°°ë³´ì¦ê¸ì ìì íê² ê´ë¦¬íê³ , ëì°° ì¤í¨ ì ì¦ì ë°íí©ëë¤.<br>
-                <strong>ì 4ì¡° (ëë¦¬ìì°° ê°ê²© ë° ì ì°)</strong> ëë¦¬ìì°° ê°ê²©ì ì ë¬¸ê° ì íì ë°ë¼ ê³µì¸ì¤ê°ì¬ 132,000ì, ë²ë¬´ì¬ 154,000ì(ê° VAT í¬í¨)ì´ë©°, ê²°ì íì  ê¸ì¡ì ë°°ì ë ì ë¬¸ê°ìê² ì§ì  ì ì°ë©ëë¤. íë«í¼ì ì¤ê°ììë£ 0ìì¼ë¡, ë³ëë¡ ë¼ë ê¸ì¡ì´ ììµëë¤. ê³µëìì°° ëë ë²ì¸ ìì°°ì ê²½ì° ë´ë¹ ì ë¬¸ê°ì ë³ë íì í ë¹ì©ì´ ì¶ê°ë  ì ììµëë¤.<br>
-                <strong>ì 5ì¡° (ì±ì)</strong> ìì ìì°° ëë¦¬ ì¤ ë°ìíë ì¬ê³ ì ëí´ ë°°ìì±ìë³´í íë ë´ìì ì±ìì§ëë¤.<br>
-                <strong>ì 6ì¡° (ì·¨ì)</strong> ìì°° ê¸°ì¼ 48ìê° ì ê¹ì§ ì·¨ì ì ì²­ì´ ê°ë¥í©ëë¤.
+                <strong style="color:#333; font-size:0.9rem; display:block; margin-bottom:0.75rem;">📋 대리입찰 위임 계약서</strong>
+                <strong>위임인(이하 "갑"):</strong> 신청자 &nbsp;&nbsp; <strong>수임인(이하 "을"):</strong> 담당 법무사<br><br>
+                <strong>제1조 (위임 내용)</strong> 갑은 을에게 아래 경매 물건에 대한 입찰 대리권을 위임합니다.<br>
+                <strong>제2조 (위임 범위)</strong> 을은 갑을 대신하여 지정 법원에 출석, 지정 금액으로 입찰표를 제출합니다.<br>
+                <strong>제3조 (보증금 관리)</strong> 을은 갑으로부터 전달받은 입찰보증금을 안전하게 관리하고, 낙찰 실패 시 즉시 반환합니다.<br>
+                <strong>제4조 (대리입찰 가격 및 정산)</strong> 대리입찰 가격은 전문가 유형에 따라 공인중개사 132,000원, 법무사 154,000원(각 VAT 포함)이며, 결제하신 금액은 배정된 전문가에게 직접 정산됩니다. 플랫폼은 중개수수료 0원으로, 별도로 떼는 금액이 없습니다. 공동입찰 또는 법인 입찰의 경우 담당 전문가와 별도 협의 후 비용이 추가될 수 있습니다.<br>
+                <strong>제5조 (책임)</strong> 을은 입찰 대리 중 발생하는 사고에 대해 배상책임보험 한도 내에서 책임집니다.<br>
+                <strong>제6조 (취소)</strong> 입찰 기일 48시간 전까지 취소 신청이 가능합니다.
             </div>
 
-            <!-- ìëª ìºë²ì¤ -->
+            <!-- 서명 캔버스 -->
             <div style="margin-bottom:1rem;">
                 <label style="font-size:0.9rem; font-weight:600; color:#444; margin-bottom:0.5rem; display:block;">
-                    ì ììëª <span style="color:#EF4444;">*</span>
-                    <span style="font-size:0.78rem; color:#999; font-weight:400; margin-left:0.5rem;">ìë ë°ì¤ì ë§ì°ì¤ ëë ìê°ë½ì¼ë¡ ìëªí´ì£¼ì¸ì</span>
+                    전자서명 <span style="color:#EF4444;">*</span>
+                    <span style="font-size:0.78rem; color:#999; font-weight:400; margin-left:0.5rem;">아래 박스에 마우스 또는 손가락으로 서명해주세요</span>
                 </label>
                 <div style="border:2px solid #e0e0e0; border-radius:10px; background:white; overflow:hidden; position:relative;" id="signaturePadWrap">
                     <canvas id="signatureCanvas" width="700" height="150"
                         style="width:100%; height:150px; display:block; cursor:crosshair; touch-action:none;"></canvas>
                     <div id="signaturePlaceholder" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; color:#ccc; font-size:0.92rem; gap:0.4rem;">
-                        <i class="fas fa-pen-nib"></i> ì¬ê¸°ì ìëªíì¸ì
+                        <i class="fas fa-pen-nib"></i> 여기에 서명하세요
                     </div>
                 </div>
                 <div style="display:flex; gap:0.5rem; margin-top:0.4rem; justify-content:flex-end;">
-                    <button type="button" onclick="clearSignature()" style="padding:0.35rem 0.9rem; background:#f3f4f6; border:1px solid #d1d5db; border-radius:7px; font-size:0.82rem; cursor:pointer; color:#666; font-weight:600;"><i class="fas fa-undo"></i> ìëª ì§ì°ê¸°</button>
+                    <button type="button" onclick="clearSignature()" style="padding:0.35rem 0.9rem; background:#f3f4f6; border:1px solid #d1d5db; border-radius:7px; font-size:0.82rem; cursor:pointer; color:#666; font-weight:600;"><i class="fas fa-undo"></i> 서명 지우기</button>
                 </div>
-                <div id="signatureError" style="font-size:0.8rem; color:#EF4444; display:none; margin-top:0.3rem;">ìëªì´ íìí©ëë¤.</div>
+                <div id="signatureError" style="font-size:0.8rem; color:#EF4444; display:none; margin-top:0.3rem;">서명이 필요합니다.</div>
             </div>
 
             <div class="agree-check">
                 <input type="checkbox" id="agreeContract">
-                <label for="agreeContract" style="font-size:0.9rem; color:#333; cursor:pointer; font-weight:500;">ì ê³ì½ ë´ì©ì íì¸íìì¼ë©° ì ììëªì¼ë¡ ê³ì½ì ëìí©ëë¤ <span style="color:#EF4444;">(íì)</span></label>
+                <label for="agreeContract" style="font-size:0.9rem; color:#333; cursor:pointer; font-weight:500;">위 계약 내용을 확인하였으며 전자서명으로 계약에 동의합니다 <span style="color:#EF4444;">(필수)</span></label>
             </div>
         </div>
 
         <div class="apply-card">
-            <h3><i class="fas fa-comment-alt"></i> ì¶ê° ìì²­ì¬í­</h3>
+            <h3><i class="fas fa-comment-alt"></i> 추가 요청사항</h3>
             <div class="form-row full">
                 <div class="form-group">
-                    <label>ë©ëª¨ (ì íì¬í­)</label>
-                    <textarea id="memo" rows="3" placeholder="ë²ë¬´ì¬ìê² ì ë¬í  í¹ì´ì¬í­ì´ ìì¼ë©´ ìë ¥íì¸ì."></textarea>
+                    <label>메모 (선택사항)</label>
+                    <textarea id="memo" rows="3" placeholder="법무사에게 전달할 특이사항이 있으면 입력하세요."></textarea>
                 </div>
             </div>
         </div>
 
         <div class="apply-btn-row">
-            <button class="btn-back" onclick="goStep(2)"><i class="fas fa-arrow-left"></i> ì´ì </button>
-            <button class="btn-next" onclick="goStep(4)">ë¤ì ë¨ê³ &nbsp;<i class="fas fa-arrow-right"></i></button>
+            <button class="btn-back" onclick="goStep(2)"><i class="fas fa-arrow-left"></i> 이전</button>
+            <button class="btn-next" onclick="goStep(4)">다음 단계 &nbsp;<i class="fas fa-arrow-right"></i></button>
         </div>
     </div>
 
-    <!-- ââ STEP 4: ììë£ê²°ì  ââ -->
+    <!-- ══ STEP 4: 수수료결제 ══ -->
     <div class="step-panel" id="panel4">
 
-        <!-- ì ì²­ ë´ì© ìì½ -->
+        <!-- 신청 내용 요약 -->
         <div class="apply-card">
-            <h3><i class="fas fa-clipboard-check"></i> ì ì²­ ë´ì© ìµì¢ íì¸</h3>
+            <h3><i class="fas fa-clipboard-check"></i> 신청 내용 최종 확인</h3>
             <table class="summary-table" id="summaryTable">
-                <!-- JSë¡ ì±ìì§ -->
+                <!-- JS로 채워짐 -->
             </table>
         </div>
 
-        <!-- ì ë¬¸ê° ì í ì í -->
+        <!-- 전문가 유형 선택 -->
         <div class="apply-card">
-            <h3><i class="fas fa-user-tie"></i> ëë¦¬ìì°° ì ë¬¸ê° ì í</h3>
-            <p style="font-size:0.86rem; color:#666; margin:-0.4rem 0 1rem;">ì§ííì¤ ì ë¬¸ê° ì íì ì ííì¸ì. ìê±´ê³¼ ê°ê²©ì´ ë¤ë¦ëë¤.</p>
+            <h3><i class="fas fa-user-tie"></i> 대리입찰 전문가 선택</h3>
+            <p style="font-size:0.86rem; color:#666; margin:-0.4rem 0 1rem;">진행하실 전문가 유형을 선택하세요. 요건과 가격이 다릅니다.</p>
             <div class="expert-pick">
-                <!-- ê³µì¸ì¤ê°ì¬ -->
+                <!-- 공인중개사 -->
                 <label class="expert-opt selected" data-type="realtor" id="optRealtor" onclick="selectExpertType('realtor')">
                     <input type="radio" name="expertPick" value="realtor" checked>
                     <div class="opt-check"><i class="fas fa-check"></i></div>
                     <div class="opt-head">
-                        <span class="opt-name">ð  ê³µì¸ì¤ê°ì¬</span>
-                        <span class="opt-badge">ë§¤ìì ì²­ëë¦¬</span>
+                        <span class="opt-name">🏠 공인중개사</span>
+                        <span class="opt-badge">매수신청대리</span>
                     </div>
-                    <div class="opt-price">132,000ì</div>
-                    <div class="opt-vat">VAT í¬í¨ Â· ì¤ê°ììë£ 0ì</div>
+                    <div class="opt-price">132,000원</div>
+                    <div class="opt-vat">VAT 포함 · 중개수수료 0원</div>
                     <ul class="opt-feats">
-                        <li><i class="fas fa-check"></i><span>ë§¤ìì ì²­ëë¦¬ì¸</span></li>
-                        <li><i class="fas fa-check"></i><span>ë³´í 5ìµ ê°ì ìë£</span></li>
-                        <li class="note"><i class="fas fa-info-circle"></i><span>ì¸ê°ì¦ëªì ë± ì¼ë¶ ìë¥ ì¤ë¹ íì</span></li>
-                        <li><i class="fas fa-check"></i><span>ìì°° ê²°ê³¼ ìë´</span></li>
+                        <li><i class="fas fa-check"></i><span>매수신청대리인</span></li>
+                        <li><i class="fas fa-check"></i><span>보험 5억 가입 완료</span></li>
+                        <li class="note"><i class="fas fa-info-circle"></i><span>인감증명서 등 일부 서류 준비 필요</span></li>
+                        <li><i class="fas fa-check"></i><span>입찰 결과 안내</span></li>
                     </ul>
                 </label>
-                <!-- ë²ë¬´ì¬ -->
-                <label class="expert-opt" data-type="lawyer" id="optLawyer" onclick="alert('ë²ë¬´ì¬ ë§¤ì¹­ì íì¬ ì¤ë¹ ì¤ìëë¤. ê³µì¸ì¤ê°ì¬ë¡ ì§íí´ ì£¼ì¸ì.'); return false;" style="opacity:0.55; cursor:not-allowed;" title="íì¬ ì¤ë¹ ì¤ìëë¤">
+                <!-- 법무사 -->
+                <label class="expert-opt" data-type="lawyer" id="optLawyer" onclick="alert('법무사 매칭은 현재 준비 중입니다. 공인중개사로 진행해 주세요.'); return false;" style="opacity:0.55; cursor:not-allowed;" title="현재 준비 중입니다">
                     <input type="radio" name="expertPick" value="lawyer" disabled>
                     <div class="opt-check"><i class="fas fa-check"></i></div>
                     <div class="opt-head">
-                        <span class="opt-name">âï¸ ë²ë¬´ì¬</span>
-                        <span class="opt-badge" style="background:#94a3b8;">ì¤ë¹ì¤</span>
+                        <span class="opt-name">⚖️ 법무사</span>
+                        <span class="opt-badge" style="background:#94a3b8;">준비중</span>
                     </div>
-                    <div class="opt-price">154,000ì</div>
-                    <div class="opt-vat">VAT í¬í¨ Â· ì¤ê°ììë£ 0ì</div>
+                    <div class="opt-price">154,000원</div>
+                    <div class="opt-vat">VAT 포함 · 중개수수료 0원</div>
                     <ul class="opt-feats">
-                        <li><i class="fas fa-check"></i><span>ì¨ë¼ì¸ ì ììëªë§ (3ë¶ ìë£)</span></li>
-                        <li><i class="fas fa-check"></i><span>ì£¼ë¯¼ì¼í° ë°©ë¬¸ ë¶íì</span></li>
-                        <li><i class="fas fa-check"></i><span>ì¸ê°ì¦ëªì ë¶íì</span></li>
-                        <li><i class="fas fa-check"></i><span>ëë¦¬ ìì°°ì°¸ì¬</span></li>
-                        <li><i class="fas fa-check"></i><span>ìì°° ê²°ê³¼ ìë´</span></li>
+                        <li><i class="fas fa-check"></i><span>온라인 전자서명만 (3분 완료)</span></li>
+                        <li><i class="fas fa-check"></i><span>주민센터 방문 불필요</span></li>
+                        <li><i class="fas fa-check"></i><span>인감증명서 불필요</span></li>
+                        <li><i class="fas fa-check"></i><span>대리 입찰참여</span></li>
+                        <li><i class="fas fa-check"></i><span>입찰 결과 안내</span></li>
                     </ul>
                 </label>
             </div>
         </div>
 
-        <!-- ììë£ ìë´ -->
+        <!-- 수수료 안내 -->
         <div class="fee-notice">
-            <div class="fee-title">ð³ ëë¦¬ìì°° ê°ê²© <span id="feeExpertLabel" style="font-size:0.8rem; font-weight:600; color:#1550E8;">(ê³µì¸ì¤ê°ì¬)</span> <span style="font-size:0.8rem; font-weight:500; color:#16A34A; background:#DCFCE7; padding:2px 8px; border-radius:6px; margin-left:6px;">ì¤ê°ììë£ 0ì</span></div>
-            <div class="fee-amount"><span id="feeAmountText">132,000</span>ì <span style="font-size:1rem; font-weight:400; color:#555;">(VAT í¬í¨)</span></div>
-            <div class="fee-desc">â ì êµ­ ë¨ì¼ê° &nbsp;|&nbsp; â ì ë¬¸ê° ì§ì  ì°ê²° &nbsp;|&nbsp; â ê²°ì  ê¸ì¡ì ì ë¬¸ê°ìê² ì§ì  ì ì°</div>
-            <div style="margin-top:0.5rem; font-size:0.82rem; color:#888;">íë«í¼ ì¤ê°ììë£ë 0ìì´ë©°, ê²°ì íì  ê¸ì¡(ë¶ê°ì¸ í¬í¨)ì ì ì¡ ë°°ì ë ì ë¬¸ê°ìê² ì ì°ë©ëë¤. ê³µëìì°°Â·ë²ì¸ ìì°°ì ë³ë íì í ë¹ì©ì´ ì¶ê°ë  ì ììµëë¤.</div>
+            <div class="fee-title">💳 대리입찰 가격 <span id="feeExpertLabel" style="font-size:0.8rem; font-weight:600; color:#1550E8;">(공인중개사)</span> <span style="font-size:0.8rem; font-weight:500; color:#16A34A; background:#DCFCE7; padding:2px 8px; border-radius:6px; margin-left:6px;">중개수수료 0원</span></div>
+            <div class="fee-amount"><span id="feeAmountText">132,000</span>원 <span style="font-size:1rem; font-weight:400; color:#555;">(VAT 포함)</span></div>
+            <div class="fee-desc">✓ 전국 단일가 &nbsp;|&nbsp; ✓ 전문가 직접 연결 &nbsp;|&nbsp; ✓ 결제 금액은 전문가에게 직접 정산</div>
+            <div style="margin-top:0.5rem; font-size:0.82rem; color:#888;">플랫폼 중개수수료는 0원이며, 결제하신 금액(부가세 포함)은 전액 배정된 전문가에게 정산됩니다. 공동입찰·법인 입찰은 별도 협의 후 비용이 추가될 수 있습니다.</div>
         </div>
 
         <div class="apply-card">
-            <h3><i class="fas fa-shield-alt"></i> ì½ê´ ëì</h3>
+            <h3><i class="fas fa-shield-alt"></i> 약관 동의</h3>
 
             <div class="agree-box">
-                <strong>[ëë¦¬ìì°° ìë¹ì¤ ì´ì©ì½ê´]</strong><br><br>
-                ì 1ì¡°(ëª©ì ) ë³¸ ì½ê´ì ëë¦¬ìì°° í¡(ì´í "íì¬")ì´ ì ê³µíë ëë¦¬ìì°° ìë¹ì¤ì ì´ì©ì¡°ê±´ ë° ì ì°¨ ë±ì ê´í ì¬í­ì ê·ì í¨ì ëª©ì ì¼ë¡ í©ëë¤.<br><br>
-                ì 2ì¡°(ìë¹ì¤ ë´ì©) íì¬ë ì ì²­ìì ìë¢°ë¥¼ ë°ì ë²ë¬´ì¬ ëë ë§¤ìì ì²­ëë¦¬ì¸ì´ ë²ì ê²½ë§¤ ìì°°ì ëë¦¬ ì°¸ì¬íë ìë¹ì¤ë¥¼ ì ê³µí©ëë¤.<br><br>
-                ì 3ì¡°(ì±ì ë²ì) ë²ë¬´ì¬ë ë°°ìì±ìë³´íì ê°ìëì´ ìì¼ë©°, ë³´ì¦ê¸ ë¶ì¤ ëë í¡ë ¹ì ëí´ ë³´í íë ë´ìì ë³´ìí©ëë¤. ë¨, ê³ ê°ì´ ì ê³µí ìëª»ë ì ë³´ë¡ ì¸í ìí´ë ì±ìì§ì§ ììµëë¤.<br><br>
-                ì 4ì¡°(ëë¦¬ìì°° ê°ê²© ë° ì ì°) ëë¦¬ìì°° ê°ê²©ì ì ë¬¸ê° ì íì ë°ë¼ ê³µì¸ì¤ê°ì¬ 132,000ì, ë²ë¬´ì¬ 154,000ì(ê° VAT í¬í¨)ì´ë©° ì êµ­ ë¨ì¼ê°ìëë¤. íì¬ë ì¤ê°ììë£ 0ìì¼ë¡ ì´ìëë©°, ê²°ì íì  ê¸ì¡ ì ì¡ì ë°°ì ë ì ë¬¸ê°(ë²ë¬´ì¬ ëë ê³µì¸ì¤ê°ì¬)ìê² ì§ì  ì ì°ë©ëë¤. ë¨, ê³µëìì°° ëë ë²ì¸ ìì°°ì ê²½ì° ë´ë¹ ì ë¬¸ê°ì ë³ë íì í ë¹ì©ì´ ì¶ê°ë  ì ììµëë¤.<br><br>
-                ì 5ì¡°(ì·¨ì) ìì°° ê¸°ì¼ 48ìê° ì ê¹ì§ ì·¨ì ì ì²­ì´ ê°ë¥í©ëë¤.
+                <strong>[대리입찰 서비스 이용약관]</strong><br><br>
+                제1조(목적) 본 약관은 대리입찰 톡(이하 "회사")이 제공하는 대리입찰 서비스의 이용조건 및 절차 등에 관한 사항을 규정함을 목적으로 합니다.<br><br>
+                제2조(서비스 내용) 회사는 신청자의 의뢰를 받아 법무사 또는 매수신청대리인이 법원 경매 입찰에 대리 참여하는 서비스를 제공합니다.<br><br>
+                제3조(책임 범위) 법무사는 배상책임보험에 가입되어 있으며, 보증금 분실 또는 횡령에 대해 보험 한도 내에서 보상합니다. 단, 고객이 제공한 잘못된 정보로 인한 손해는 책임지지 않습니다.<br><br>
+                제4조(대리입찰 가격 및 정산) 대리입찰 가격은 전문가 유형에 따라 공인중개사 132,000원, 법무사 154,000원(각 VAT 포함)이며 전국 단일가입니다. 회사는 중개수수료 0원으로 운영되며, 결제하신 금액 전액은 배정된 전문가(법무사 또는 공인중개사)에게 직접 정산됩니다. 단, 공동입찰 또는 법인 입찰의 경우 담당 전문가와 별도 협의 후 비용이 추가될 수 있습니다.<br><br>
+                제5조(취소) 입찰 기일 48시간 전까지 취소 신청이 가능합니다.
             </div>
             <div class="agree-check">
                 <input type="checkbox" id="agreeTerms">
-                <label for="agreeTerms">ìë¹ì¤ ì´ì©ì½ê´ì ëìí©ëë¤ <span class="required" style="color:#EF4444;">(íì)</span></label>
+                <label for="agreeTerms">서비스 이용약관에 동의합니다 <span class="required" style="color:#EF4444;">(필수)</span></label>
             </div>
 
             <div class="agree-box">
-                <strong>[ê°ì¸ì ë³´ ìì§Â·ì´ì© ëì]</strong><br><br>
-                ìì§ í­ëª©: ì´ë¦, ìëìì¼, í´ëí° ë²í¸, ì´ë©ì¼, ê³ì¢ì ë³´, ìì°° ê´ë ¨ ì ë³´<br>
-                ìì§ ëª©ì : ëë¦¬ìì°° ìë¹ì¤ ì ê³µ, ë²ì ì ì¶ ìë¥ ìì±, ê²°ê³¼ íµë³´<br>
-                ë³´ì  ê¸°ê°: ìë¹ì¤ ìë£ í 5ë (ê´ë ¨ ë²ë ¹ì ë°ë¦)<br>
-                ì ì¬í­ì ëìíì§ ìì ê²½ì° ìë¹ì¤ ì´ì©ì´ ì íë  ì ììµëë¤.
+                <strong>[개인정보 수집·이용 동의]</strong><br><br>
+                수집 항목: 이름, 생년월일, 휴대폰 번호, 이메일, 계좌정보, 입찰 관련 정보<br>
+                수집 목적: 대리입찰 서비스 제공, 법원 제출 서류 작성, 결과 통보<br>
+                보유 기간: 서비스 완료 후 5년 (관련 법령에 따름)<br>
+                위 사항에 동의하지 않을 경우 서비스 이용이 제한될 수 있습니다.
             </div>
             <div class="agree-check">
                 <input type="checkbox" id="agreePrivacy">
-                <label for="agreePrivacy">ê°ì¸ì ë³´ ìì§Â·ì´ì©ì ëìí©ëë¤ <span class="required" style="color:#EF4444;">(íì)</span></label>
+                <label for="agreePrivacy">개인정보 수집·이용에 동의합니다 <span class="required" style="color:#EF4444;">(필수)</span></label>
             </div>
         </div>
 
         <div class="apply-btn-row">
-            <button class="btn-back" onclick="goStep(3)"><i class="fas fa-arrow-left"></i> ì´ì </button>
+            <button class="btn-back" onclick="goStep(3)"><i class="fas fa-arrow-left"></i> 이전</button>
             <button class="btn-submit" onclick="submitApplication()">
-                <i class="fas fa-check-circle"></i> <span id="submitFeeText">132,000</span>ì ê²°ì íê³  ì ì²­ ìë£
+                <i class="fas fa-check-circle"></i> <span id="submitFeeText">132,000</span>원 결제하고 신청 완료
             </button>
         </div>
     </div>
 
-    <!-- ââ STEP 5: ìë£ ââ -->
+    <!-- ══ STEP 5: 완료 ══ -->
     <div class="step-panel" id="panel5">
         <div class="apply-card" style="max-width:620px; margin:0 auto;">
             <div class="success-wrap">
-                <div class="success-icon" style="font-size:3.5rem; margin-bottom:1rem;">ð</div>
-                <h2 style="font-size:1.6rem; color:#1a1a2e; margin-bottom:0.75rem;">ì ì²­ì´ ìë£ëììµëë¤!</h2>
+                <div class="success-icon" style="font-size:3.5rem; margin-bottom:1rem;">🎉</div>
+                <h2 style="font-size:1.6rem; color:#1a1a2e; margin-bottom:0.75rem;">신청이 완료되었습니다!</h2>
                 <p style="color:#666; font-size:0.95rem; line-height:1.7; margin-bottom:1.25rem;">
-                    ëë¦¬ìì°° ì ì²­ì´ ì ìì ì¼ë¡ ì ìëììµëë¤.<br>
-                    ë´ë¹ ì ë¬¸ê° ë°°ì  í ë¬¸ì(SMS)ë¡ ìë´ëë¦½ëë¤.
+                    대리입찰 신청이 정상적으로 접수되었습니다.<br>
+                    담당 전문가 배정 후 문자(SMS)로 안내드립니다.
                 </p>
 
-                <!-- ì ì²­ë²í¸ ë°°ì§ -->
+                <!-- 신청번호 배지 -->
                 <div class="app-number-badge" id="appNumberBadge"
                     style="background:#f0f4ff; border:1.5px solid #c7d4f8; color:#1550E8; border-radius:10px; padding:0.75rem 1.5rem; font-size:0.95rem; font-weight:700; display:inline-block; margin-bottom:1.75rem;">
-                    ì ì²­ë²í¸: -
+                    신청번호: -
                 </div>
 
-                <!-- ì§í ìë´ íìë¼ì¸ -->
+                <!-- 진행 안내 타임라인 -->
                 <div style="background:#f8f9fa; border-radius:14px; padding:1.5rem; margin-bottom:1.75rem; text-align:left;">
-                    <p style="font-size:0.78rem; font-weight:700; color:#999; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:1rem;">ìì¼ë¡ì ì§í ì ì°¨</p>
+                    <p style="font-size:0.78rem; font-weight:700; color:#999; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:1rem;">앞으로의 진행 절차</p>
                     <div style="display:flex; flex-direction:column; gap:0;">
                         <div style="display:flex; gap:1rem; align-items:flex-start;">
                             <div style="display:flex; flex-direction:column; align-items:center; flex-shrink:0;">
@@ -1061,8 +1061,8 @@
                                 <div style="width:2px; height:28px; background:#e0e0e0;"></div>
                             </div>
                             <div style="padding-top:0.35rem; padding-bottom:1rem;">
-                                <strong style="font-size:0.9rem; color:#333;">ì ë¬¸ê° ë§¤ì¹­ ì¤</strong>
-                                <p style="font-size:0.82rem; color:#888; margin:0.2rem 0 0;">ì ì²­ ì ì í <strong style="color:#1550E8;">2~4ìê° ë´</strong> ë´ë¹ ì ë¬¸ê° ë°°ì </p>
+                                <strong style="font-size:0.9rem; color:#333;">전문가 매칭 중</strong>
+                                <p style="font-size:0.82rem; color:#888; margin:0.2rem 0 0;">신청 접수 후 <strong style="color:#1550E8;">2~4시간 내</strong> 담당 전문가 배정</p>
                             </div>
                         </div>
                         <div style="display:flex; gap:1rem; align-items:flex-start;">
@@ -1071,8 +1071,8 @@
                                 <div style="width:2px; height:28px; background:#e0e0e0;"></div>
                             </div>
                             <div style="padding-top:0.35rem; padding-bottom:1rem;">
-                                <strong style="font-size:0.9rem; color:#333;">ë°°ì  ìë£ ìë´</strong>
-                                <p style="font-size:0.82rem; color:#888; margin:0.2rem 0 0;">ë´ë¹ ì ë¬¸ê° ì ë³´ë¥¼ SMS ë° ë§ì´íì´ì§ìì íì¸</p>
+                                <strong style="font-size:0.9rem; color:#333;">배정 완료 안내</strong>
+                                <p style="font-size:0.82rem; color:#888; margin:0.2rem 0 0;">담당 전문가 정보를 SMS 및 마이페이지에서 확인</p>
                             </div>
                         </div>
                         <div style="display:flex; gap:1rem; align-items:flex-start;">
@@ -1081,8 +1081,8 @@
                                 <div style="width:2px; height:28px; background:#e0e0e0;"></div>
                             </div>
                             <div style="padding-top:0.35rem; padding-bottom:1rem;">
-                                <strong style="font-size:0.9rem; color:#333;">ìì°°ì¼ ë¹ì¼ ì§í</strong>
-                                <p style="font-size:0.82rem; color:#888; margin:0.2rem 0 0;">ë´ë¹ ì ë¬¸ê°ê° ì§ì  ë²ìì ì¶ìíì¬ ëë¦¬ìì°° ì§í</p>
+                                <strong style="font-size:0.9rem; color:#333;">입찰일 당일 진행</strong>
+                                <p style="font-size:0.82rem; color:#888; margin:0.2rem 0 0;">담당 전문가가 직접 법원에 출석하여 대리입찰 진행</p>
                             </div>
                         </div>
                         <div style="display:flex; gap:1rem; align-items:flex-start;">
@@ -1090,27 +1090,27 @@
                                 <div style="width:32px; height:32px; background:#e0e0e0; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#666; font-weight:700; font-size:0.8rem;">4</div>
                             </div>
                             <div style="padding-top:0.35rem;">
-                                <strong style="font-size:0.9rem; color:#333;">ê²°ê³¼ íµë³´</strong>
-                                <p style="font-size:0.82rem; color:#888; margin:0.2rem 0 0;">ìì°° ê²°ê³¼(ëì°°/í¨ì°°) SMS ì¦ì íµë³´ ë° ë§ì´íì´ì§ ìë°ì´í¸</p>
+                                <strong style="font-size:0.9rem; color:#333;">결과 통보</strong>
+                                <p style="font-size:0.82rem; color:#888; margin:0.2rem 0 0;">입찰 결과(낙찰/패찰) SMS 즉시 통보 및 마이페이지 업데이트</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- ìë¦¼ ë°ì¤ -->
+                <!-- 알림 박스 -->
                 <div style="background:#fff8e1; border:1px solid #ffd54f; border-radius:10px; padding:0.85rem 1.25rem; font-size:0.82rem; color:#795548; margin-bottom:1.75rem; text-align:left; display:flex; gap:0.6rem; align-items:flex-start;">
-                    <span style="font-size:1rem; flex-shrink:0;">ð¡</span>
-                    <span>ìì°° ê¸°ì¼ <strong>48ìê° ì </strong>ê¹ì§ ì·¨ì ì ì²­ì´ ê°ë¥í©ëë¤. ì·¨ìë ë§ì´íì´ì§ìì ì§ì  ì²ë¦¬íì¸ì.</span>
+                    <span style="font-size:1rem; flex-shrink:0;">💡</span>
+                    <span>입찰 기일 <strong>48시간 전</strong>까지 취소 신청이 가능합니다. 취소는 마이페이지에서 직접 처리하세요.</span>
                 </div>
 
                 <div class="success-actions" style="display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;">
                     <button class="btn btn-outline" onclick="window.location.href='mypage.html'"
                         style="flex:1; min-width:160px; padding:0.9rem 1.5rem; font-weight:700;">
-                        <i class="fas fa-list"></i> ì ì²­ ë´ì­ íì¸
+                        <i class="fas fa-list"></i> 신청 내역 확인
                     </button>
                     <button class="btn btn-primary" onclick="window.location.href='index.html'"
                         style="flex:1; min-width:160px; padding:0.9rem 1.5rem; font-weight:700;">
-                        <i class="fas fa-home"></i> íì¼ë¡ ì´ë
+                        <i class="fas fa-home"></i> 홈으로 이동
                     </button>
                 </div>
             </div>
@@ -1124,7 +1124,7 @@
     <script src="js/localdb.js"></script>
     <script src="js/payment-config.js"></script>
     <script>
-    // ì¹´ì¹´ì¤ë§µ SDK ëì  ë¡ë (ìì¬ì§ ë¡ëë·°/ì§ëì©). jsKey ìì ëë§ ë¡ë.
+    // 카카오맵 SDK 동적 로드 (소재지 로드뷰/지도용). jsKey 있을 때만 로드.
     (function () {
         var key = (window.KAKAO_CONFIG && window.KAKAO_CONFIG.jsKey || '').trim();
         if (!key) { window.__kakaoMapReady = false; return; }
@@ -1143,47 +1143,47 @@
     <script src="js/api.js"></script>
 <script src="js/auth.js"></script>
 <script>
-// âââââââââââââââââââââââââââââââââââââââââââââ
-// ìì
-// âââââââââââââââââââââââââââââââââââââââââââââ
+// ─────────────────────────────────────────────
+// 상수
+// ─────────────────────────────────────────────
 const COURT_DATA = {
-    'ìì¸': ['ìì¸ì¤ìì§ë°©ë²ì','ìì¸ëë¶ì§ë°©ë²ì','ìì¸ë¨ë¶ì§ë°©ë²ì','ìì¸ë¶ë¶ì§ë°©ë²ì','ìì¸ìë¶ì§ë°©ë²ì'],
-    'ì¸ì²': ['ì¸ì²ì§ë°©ë²ì','ì¸ì²ì§ë°©ë²ì ë¶ì²ì§ì'],
-    'ê²½ê¸°': ['ììì§ë°©ë²ì','ììì§ë°©ë²ì ì±ë¨ì§ì','ììì§ë°©ë²ì ìì°ì§ì','ììì§ë°©ë²ì ììì§ì','ììì§ë°©ë²ì ì¬ì£¼ì§ì','ììì§ë°©ë²ì ííì§ì','ìì ë¶ì§ë°©ë²ì','ìì ë¶ì§ë°©ë²ì ê³ ìì§ì','ìì ë¶ì§ë°©ë²ì ë¨ìì£¼ì§ì'],
-    'ë¶ì°': ['ë¶ì°ì§ë°©ë²ì','ë¶ì°ì§ë°©ë²ì ëë¶ì§ì','ë¶ì°ì§ë°©ë²ì ìë¶ì§ì'],
-    'ëêµ¬': ['ëêµ¬ì§ë°©ë²ì','ëêµ¬ì§ë°©ë²ì ìë¶ì§ì','ëêµ¬ì§ë°©ë²ì ìëì§ì','ëêµ¬ì§ë°©ë²ì ê²½ì£¼ì§ì','ëêµ¬ì§ë°©ë²ì ê¹ì²ì§ì','ëêµ¬ì§ë°©ë²ì ìì£¼ì§ì','ëêµ¬ì§ë°©ë²ì ìì±ì§ì','ëêµ¬ì§ë°©ë²ì ìëì§ì','ëêµ¬ì§ë°©ë²ì í¬í­ì§ì'],
-    'ê´ì£¼': ['ê´ì£¼ì§ë°©ë²ì','ê´ì£¼ì§ë°©ë²ì ëª©í¬ì§ì','ê´ì£¼ì§ë°©ë²ì ìì²ì§ì','ê´ì£¼ì§ë°©ë²ì í´ë¨ì§ì'],
-    'ëì ': ['ëì ì§ë°©ë²ì','ëì ì§ë°©ë²ì íì±ì§ì','ëì ì§ë°©ë²ì ë¼ì°ì§ì','ëì ì§ë°©ë²ì ìì°ì§ì','ëì ì§ë°©ë²ì ì²ìì§ì','ëì ì§ë°©ë²ì ê³µì£¼ì§ì'],
-    'ì¸ì°': ['ì¸ì°ì§ë°©ë²ì'],
-    'ê°ì': ['ì¶ì²ì§ë°©ë²ì','ì¶ì²ì§ë°©ë²ì ê°ë¦ì§ì','ì¶ì²ì§ë°©ë²ì ìì´ì§ì','ì¶ì²ì§ë°©ë²ì ìì£¼ì§ì','ì¶ì²ì§ë°©ë²ì ììì§ì'],
-    'ì¶©ë¶': ['ì²­ì£¼ì§ë°©ë²ì','ì²­ì£¼ì§ë°©ë²ì ì¶©ì£¼ì§ì','ì²­ì£¼ì§ë°©ë²ì ì ì²ì§ì','ì²­ì£¼ì§ë°©ë²ì ìëì§ì'],
-    'ì¶©ë¨': ['ëì ì§ë°©ë²ì ì²ìì§ì','ëì ì§ë°©ë²ì ê³µì£¼ì§ì'],
-    'ì ë¶': ['ì ì£¼ì§ë°©ë²ì','ì ì£¼ì§ë°©ë²ì êµ°ì°ì§ì','ì ì£¼ì§ë°©ë²ì ì ìì§ì','ì ì£¼ì§ë°©ë²ì ë¨ìì§ì'],
-    'ì ë¨': ['ê´ì£¼ì§ë°©ë²ì ì¥í¥ì§ì','ê´ì£¼ì§ë°©ë²ì ê°ì§ì§ì'],
-    'ê²½ë¶': ['ëêµ¬ì§ë°©ë²ì ìì£¼ì§ì','ëêµ¬ì§ë°©ë²ì ì¸ì§ì§ì'],
-    'ê²½ë¨': ['ì°½ìì§ë°©ë²ì','ì°½ìì§ë°©ë²ì ë§ì°ì§ì','ì°½ìì§ë°©ë²ì ì§ì£¼ì§ì','ì°½ìì§ë°©ë²ì íµìì§ì','ì°½ìì§ë°©ë²ì ë°ìì§ì','ì°½ìì§ë°©ë²ì ê±°ì°½ì§ì'],
-    'ì ì£¼': ['ì ì£¼ì§ë°©ë²ì']
+    '서울': ['서울중앙지방법원','서울동부지방법원','서울남부지방법원','서울북부지방법원','서울서부지방법원'],
+    '인천': ['인천지방법원','인천지방법원 부천지원'],
+    '경기': ['수원지방법원','수원지방법원 성남지원','수원지방법원 안산지원','수원지방법원 안양지원','수원지방법원 여주지원','수원지방법원 평택지원','의정부지방법원','의정부지방법원 고양지원','의정부지방법원 남양주지원'],
+    '부산': ['부산지방법원','부산지방법원 동부지원','부산지방법원 서부지원'],
+    '대구': ['대구지방법원','대구지방법원 서부지원','대구지방법원 안동지원','대구지방법원 경주지원','대구지방법원 김천지원','대구지방법원 상주지원','대구지방법원 의성지원','대구지방법원 영덕지원','대구지방법원 포항지원'],
+    '광주': ['광주지방법원','광주지방법원 목포지원','광주지방법원 순천지원','광주지방법원 해남지원'],
+    '대전': ['대전지방법원','대전지방법원 홍성지원','대전지방법원 논산지원','대전지방법원 서산지원','대전지방법원 천안지원','대전지방법원 공주지원'],
+    '울산': ['울산지방법원'],
+    '강원': ['춘천지방법원','춘천지방법원 강릉지원','춘천지방법원 속초지원','춘천지방법원 원주지원','춘천지방법원 영월지원'],
+    '충북': ['청주지방법원','청주지방법원 충주지원','청주지방법원 제천지원','청주지방법원 영동지원'],
+    '충남': ['대전지방법원 천안지원','대전지방법원 공주지원'],
+    '전북': ['전주지방법원','전주지방법원 군산지원','전주지방법원 정읍지원','전주지방법원 남원지원'],
+    '전남': ['광주지방법원 장흥지원','광주지방법원 강진지원'],
+    '경북': ['대구지방법원 영주지원','대구지방법원 울진지원'],
+    '경남': ['창원지방법원','창원지방법원 마산지원','창원지방법원 진주지원','창원지방법원 통영지원','창원지방법원 밀양지원','창원지방법원 거창지원'],
+    '제주': ['제주지방법원']
 };
 
-// ëë²ì ë²ìê²½ë§¤ì ë³´ ë²ìì¬ë¬´ìì½ë(cortOfcCd) ë§¤í â ì¬ê±´ ì¡°í ë§í¬ ìì±ì©
+// 대법원 법원경매정보 법원사무소코드(cortOfcCd) 매핑 — 사건 조회 링크 생성용
 const COURT_CODE = {
-    'ìì¸ì¤ìì§ë°©ë²ì':'B000210','ìì¸ëë¶ì§ë°©ë²ì':'B000211','ìì¸ë¨ë¶ì§ë°©ë²ì':'B000215','ìì¸ë¶ë¶ì§ë°©ë²ì':'B000212','ìì¸ìë¶ì§ë°©ë²ì':'B000216',
-    'ìì ë¶ì§ë°©ë²ì':'B000213','ìì ë¶ì§ë°©ë²ì ê³ ìì§ì':'B000231','ìì ë¶ì§ë°©ë²ì ë¨ìì£¼ì§ì':'B214807',
-    'ì¸ì²ì§ë°©ë²ì':'B000240','ì¸ì²ì§ë°©ë²ì ë¶ì²ì§ì':'B000241',
-    'ììì§ë°©ë²ì':'B000250','ììì§ë°©ë²ì ì±ë¨ì§ì':'B000251','ììì§ë°©ë²ì ìì°ì§ì':'B000254','ììì§ë°©ë²ì ììì§ì':'B000252','ììì§ë°©ë²ì ì¬ì£¼ì§ì':'B000253','ììì§ë°©ë²ì ííì§ì':'B000255',
-    'ì¶ì²ì§ë°©ë²ì':'B000260','ì¶ì²ì§ë°©ë²ì ê°ë¦ì§ì':'B000261','ì¶ì²ì§ë°©ë²ì ìì´ì§ì':'B000263','ì¶ì²ì§ë°©ë²ì ìì£¼ì§ì':'B000262','ì¶ì²ì§ë°©ë²ì ììì§ì':'B000264',
-    'ëì ì§ë°©ë²ì':'B000270','ëì ì§ë°©ë²ì íì±ì§ì':'B000272','ëì ì§ë°©ë²ì ë¼ì°ì§ì':'B000274','ëì ì§ë°©ë²ì ìì°ì§ì':'B000273','ëì ì§ë°©ë²ì ì²ìì§ì':'B000271','ëì ì§ë°©ë²ì ê³µì£¼ì§ì':'B000275',
-    'ì²­ì£¼ì§ë°©ë²ì':'B000280','ì²­ì£¼ì§ë°©ë²ì ì¶©ì£¼ì§ì':'B000281','ì²­ì£¼ì§ë°©ë²ì ì ì²ì§ì':'B000282','ì²­ì£¼ì§ë°©ë²ì ìëì§ì':'B000283',
-    'ëêµ¬ì§ë°©ë²ì':'B000310','ëêµ¬ì§ë°©ë²ì ìë¶ì§ì':'B000320','ëêµ¬ì§ë°©ë²ì ìëì§ì':'B000311','ëêµ¬ì§ë°©ë²ì ê²½ì£¼ì§ì':'B000312','ëêµ¬ì§ë°©ë²ì ê¹ì²ì§ì':'B000314','ëêµ¬ì§ë°©ë²ì ìì£¼ì§ì':'B000315','ëêµ¬ì§ë°©ë²ì ìì±ì§ì':'B000313','ëêµ¬ì§ë°©ë²ì ìëì§ì':'B000316','ëêµ¬ì§ë°©ë²ì í¬í­ì§ì':'B000317','ëêµ¬ì§ë°©ë²ì ìì£¼ì§ì':'B000318','ëêµ¬ì§ë°©ë²ì ì¸ì§ì§ì':'B000319',
-    'ë¶ì°ì§ë°©ë²ì':'B000410','ë¶ì°ì§ë°©ë²ì ëë¶ì§ì':'B000412','ë¶ì°ì§ë°©ë²ì ìë¶ì§ì':'B000413',
-    'ì¸ì°ì§ë°©ë²ì':'B000411',
-    'ì°½ìì§ë°©ë²ì':'B000420','ì°½ìì§ë°©ë²ì ë§ì°ì§ì':'B000421','ì°½ìì§ë°©ë²ì ì§ì£¼ì§ì':'B000422','ì°½ìì§ë°©ë²ì íµìì§ì':'B000424','ì°½ìì§ë°©ë²ì ë°ìì§ì':'B000423','ì°½ìì§ë°©ë²ì ê±°ì°½ì§ì':'B000425',
-    'ê´ì£¼ì§ë°©ë²ì':'B000510','ê´ì£¼ì§ë°©ë²ì ëª©í¬ì§ì':'B000511','ê´ì£¼ì§ë°©ë²ì ìì²ì§ì':'B000513','ê´ì£¼ì§ë°©ë²ì í´ë¨ì§ì':'B000514','ê´ì£¼ì§ë°©ë²ì ì¥í¥ì§ì':'B000512','ê´ì£¼ì§ë°©ë²ì ê°ì§ì§ì':'B214804',
-    'ì ì£¼ì§ë°©ë²ì':'B000520','ì ì£¼ì§ë°©ë²ì êµ°ì°ì§ì':'B000521','ì ì£¼ì§ë°©ë²ì ì ìì§ì':'B000523','ì ì£¼ì§ë°©ë²ì ë¨ìì§ì':'B000522',
-    'ì ì£¼ì§ë°©ë²ì':'B000540'
+    '서울중앙지방법원':'B000210','서울동부지방법원':'B000211','서울남부지방법원':'B000215','서울북부지방법원':'B000212','서울서부지방법원':'B000216',
+    '의정부지방법원':'B000213','의정부지방법원 고양지원':'B000231','의정부지방법원 남양주지원':'B214807',
+    '인천지방법원':'B000240','인천지방법원 부천지원':'B000241',
+    '수원지방법원':'B000250','수원지방법원 성남지원':'B000251','수원지방법원 안산지원':'B000254','수원지방법원 안양지원':'B000252','수원지방법원 여주지원':'B000253','수원지방법원 평택지원':'B000255',
+    '춘천지방법원':'B000260','춘천지방법원 강릉지원':'B000261','춘천지방법원 속초지원':'B000263','춘천지방법원 원주지원':'B000262','춘천지방법원 영월지원':'B000264',
+    '대전지방법원':'B000270','대전지방법원 홍성지원':'B000272','대전지방법원 논산지원':'B000274','대전지방법원 서산지원':'B000273','대전지방법원 천안지원':'B000271','대전지방법원 공주지원':'B000275',
+    '청주지방법원':'B000280','청주지방법원 충주지원':'B000281','청주지방법원 제천지원':'B000282','청주지방법원 영동지원':'B000283',
+    '대구지방법원':'B000310','대구지방법원 서부지원':'B000320','대구지방법원 안동지원':'B000311','대구지방법원 경주지원':'B000312','대구지방법원 김천지원':'B000314','대구지방법원 상주지원':'B000315','대구지방법원 의성지원':'B000313','대구지방법원 영덕지원':'B000316','대구지방법원 포항지원':'B000317','대구지방법원 영주지원':'B000318','대구지방법원 울진지원':'B000319',
+    '부산지방법원':'B000410','부산지방법원 동부지원':'B000412','부산지방법원 서부지원':'B000413',
+    '울산지방법원':'B000411',
+    '창원지방법원':'B000420','창원지방법원 마산지원':'B000421','창원지방법원 진주지원':'B000422','창원지방법원 통영지원':'B000424','창원지방법원 밀양지원':'B000423','창원지방법원 거창지원':'B000425',
+    '광주지방법원':'B000510','광주지방법원 목포지원':'B000511','광주지방법원 순천지원':'B000513','광주지방법원 해남지원':'B000514','광주지방법원 장흥지원':'B000512','광주지방법원 강진지원':'B214804',
+    '전주지방법원':'B000520','전주지방법원 군산지원':'B000521','전주지방법원 정읍지원':'B000523','전주지방법원 남원지원':'B000522',
+    '제주지방법원':'B000540'
 };
 
-// ë²ìê²½ë§¤ì ë³´ ì¬ê±´ë²í¸ë³ ê²ì íì´ì§ (ì ì²­ìê° ì§ì  ë¬¼ê±´ íì¸)
+// 법원경매정보 사건번호별 검색 페이지 (신청자가 직접 물건 확인)
 const COURT_AUCTION_SEARCH_URL = 'https://www.courtauction.go.kr/pgj/index.on?w2xPath=/pgj/ui/pgj100/PGJ153F00.xml';
 
 let currentStep = 1;
@@ -1191,56 +1191,56 @@ let phoneVerified = false;
 let smsTimerInterval = null;
 let smsCodeReal = '';
 
-// âââââââââââââââââââââââââââââââââââââââââââââ
-// ì´ê¸°í
-// âââââââââââââââââââââââââââââââââââââââââââââ
+// ─────────────────────────────────────────────
+// 초기화
+// ─────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function() {
-    // ë¡ê·¸ì¸ ì²´í¬
+    // 로그인 체크
     if (!Auth.isLoggedIn()) {
-        alert('ë¡ê·¸ì¸ì´ íìí ìë¹ì¤ìëë¤.');
+        alert('로그인이 필요한 서비스입니다.');
         window.location.href = 'login.html';
         return;
     }
     if (Auth.getUserType() !== 'client') {
-        alert('ì ì²­ì ê³ì ì¼ë¡ ë¡ê·¸ì¸í´ì£¼ì¸ì.');
+        alert('신청자 계정으로 로그인해주세요.');
         window.location.href = 'login.html';
         return;
     }
 
-    // ìì°° ê¸°ì¼ ììì¼ ê¸°ì¤ 2ì¼ ì ê¹ì§ë§ ì ì²­ ê°ë¥ (ë¹ì¼Â·ìë° ì ì²­ì í¼ì Â·íë¶ ë°©ì§ ìí´ ì°¨ë¨)
+    // 입찰 기일 영업일 기준 2일 전까지만 신청 가능 (당일·임박 신청은 혼선·환불 방지 위해 차단)
     const bidDateInput = document.getElementById('bidDate');
     const minBidDate = addBusinessDays(new Date(), 2);
     bidDateInput.min = minBidDate.toISOString().split('T')[0];
 
-    // ë¡ê·¸ì¸ ì¬ì©ì ì ë³´ ìë ìë ¥ (ì´ë¦ì ì§ì  ìë ¥)
+    // 로그인 사용자 정보 자동 입력 (이름은 직접 입력)
     const user = Auth.getCurrentUser();
     if (user) {
         if (user.phone) document.getElementById('applicantPhone').value = user.phone;
         if (user.email) document.getElementById('applicantEmail').value = user.email;
     }
 
-    // ì ë¬¸ê° ì í ê¸°ë³¸ ì í(ê³µì¸ì¤ê°ì¬) ì´ê¸°í â ê¸ì¡/ë¼ë²¨ ëê¸°í (ë²ë¬´ì¬ë ì¤ë¹ì¤ ë¹íì±í)
+    // 전문가 유형 기본 선택(공인중개사) 초기화 → 금액/라벨 동기화 (법무사는 준비중 비활성화)
     selectExpertType('realtor');
 });
 
-// âââââââââââââââââââââââââââââââââââââââââââââ
-// ë¨ê³ ì´ë
-// âââââââââââââââââââââââââââââââââââââââââââââ
+// ─────────────────────────────────────────────
+// 단계 이동
+// ─────────────────────────────────────────────
 function goStep(step) {
-    // ì í¨ì± ê²ì¬
+    // 유효성 검사
     if (step > currentStep) {
         if (!validateStep(currentStep)) return;
     }
 
-    // í¨ë ì í
+    // 패널 전환
     document.getElementById('panel' + currentStep).classList.remove('active');
     document.getElementById('panel' + step).classList.add('active');
 
-    // STEP1(ì¬ê±´ ì¡°í)ììë§ ì°ì¸¡ ìì½ ì¹´ëë¥¼ ìí´ ë³¸ë¬¸ í­ íì¥
+    // STEP1(사건 조회)에서만 우측 요약 카드를 위해 본문 폭 확장
     const body = document.querySelector('.apply-body');
     if (body) body.classList.toggle('step1-wide', step === 1);
 
-    // ì¤í ì¸ëì¼ì´í° ìë°ì´í¸
+    // 스텝 인디케이터 업데이트
     for (let i = 1; i <= 4; i++) {
         const item = document.getElementById('stepItem' + i);
         item.classList.remove('active', 'done');
@@ -1248,53 +1248,53 @@ function goStep(step) {
         else if (i === step) item.classList.add('active');
     }
 
-    // ì§í ë°
+    // 진행 바
     const fills = { 1: '0%', 2: '33%', 3: '66%', 4: '100%' };
     document.getElementById('progressFill').style.width = fills[step] || '0%';
 
-    // step4ë©´ ìì½ ì±ì°ê¸°
+    // step4면 요약 채우기
     if (step === 4) fillSummary();
 
     currentStep = step;
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// âââââââââââââââââââââââââââââââââââââââââââââ
-// ì í¨ì± ê²ì¬
-// âââââââââââââââââââââââââââââââââââââââââââââ
-// ì¬ê±´ë²í¸ ìë 'íê²½' ë³í: "2024-12345" / "202412345" â "2024íê²½12345"
+// ─────────────────────────────────────────────
+// 유효성 검사
+// ─────────────────────────────────────────────
+// 사건번호 자동 '타경' 변환: "2024-12345" / "202412345" → "2024타경12345"
 function formatCaseNumber(input) {
     let v = (input.value || '').trim();
     if (!v) return;
-    // ì´ë¯¸ 'íê²½'ì´ ìì¼ë©´ ì°ë+ë²í¸ë§ ì ë¦¬
-    let m = v.replace(/\s/g, '').match(/(\d{4})í?ê²½(\d+)/);
-    if (m) { input.value = m[1] + 'íê²½' + m[2]; return; }
-    // ì«ì(ë° íì´í)ë§ ìë ¥í ê²½ì°
+    // 이미 '타경'이 있으면 연도+번호만 정리
+    let m = v.replace(/\s/g, '').match(/(\d{4})타?경(\d+)/);
+    if (m) { input.value = m[1] + '타경' + m[2]; return; }
+    // 숫자(및 하이픈)만 입력한 경우
     let cleaned = v.replace(/[^0-9-]/g, '');
     let m2 = cleaned.match(/^(\d{4})-?(\d{1,})$/);
-    if (m2) { input.value = m2[1] + 'íê²½' + m2[2]; }
+    if (m2) { input.value = m2[1] + '타경' + m2[2]; }
 }
 
-// ììì¼(ì£¼ë§ ì ì¸) nì¼ ë¤ ë ì§
+// 영업일(주말 제외) n일 뒤 날짜
 function addBusinessDays(from, n) {
     const d = new Date(from); d.setHours(0,0,0,0);
     let added = 0;
     while (added < n) {
         d.setDate(d.getDate() + 1);
         const day = d.getDay();
-        if (day !== 0 && day !== 6) added++;   // 0=ì¼, 6=í  ì ì¸
+        if (day !== 0 && day !== 6) added++;   // 0=일, 6=토 제외
     }
     return d;
 }
 
-// ìì°° ê¸°ì¼ì´ ììì¼ ê¸°ì¤ 2ì¼ ì´ë´ì¸ì§ íì¸ â ê²½ê³  ë°ì¤ íì, ì ì²­ ê°ë¥ ì¬ë¶ ë°í
+// 입찰 기일이 영업일 기준 2일 이내인지 확인 → 경고 박스 표시, 신청 가능 여부 반환
 function checkBidDateWindow() {
     const el = document.getElementById('bidDate');
     const warn = document.getElementById('bidDateWarn');
     const v = el ? el.value : '';
     if (!v) { if (warn) warn.style.display = 'none'; return true; }
     const bd = new Date(v + 'T00:00:00');
-    const limit = addBusinessDays(new Date(), 2);   // ììì¼ ê¸°ì¤ 2ì¼ ë¤
+    const limit = addBusinessDays(new Date(), 2);   // 영업일 기준 2일 뒤
     const tooClose = bd < limit;
     if (warn) warn.style.display = tooClose ? 'block' : 'none';
     return !tooClose;
@@ -1310,12 +1310,12 @@ function validateStep(step) {
         if (!val('caseNumber'))   { showError('caseNumber');   ok = false; }
         if (!val('bidDate'))      { showError('bidDate');      ok = false; }
         else if (!checkBidDateWindow()) {
-            // ìì°° ê¸°ì¼ 3ì¼ ì´ë´ â ëíë²í¸ ìë´ í ì§í ì°¨ë¨
-            toast('ìì°° ê¸°ì¼ ììì¼ ê¸°ì¤ 2ì¼ ì´ë´ë ì¨ë¼ì¸ ì ì²­ì´ ì´ë µìµëë¤. ëíë²í¸(02-863-1022)ë¡ ë¬¸ìí´ì£¼ì¸ì.', 'error');
+            // 입찰 기일 3일 이내 → 대표번호 안내 후 진행 차단
+            toast('입찰 기일 영업일 기준 2일 이내는 온라인 신청이 어렵습니다. 대표번호(02-863-1022)로 문의해주세요.', 'error');
             ok = false;
         }
         if (!val('propertyAddress')) { showError('propertyAddress'); ok = false; }
-        if (!ok) { toast('íì í­ëª©ì ëª¨ë ìë ¥í´ì£¼ì¸ì.', 'error'); }
+        if (!ok) { toast('필수 항목을 모두 입력해주세요.', 'error'); }
         return ok;
     }
 
@@ -1323,12 +1323,12 @@ function validateStep(step) {
         let ok = true;
         if (!val('applicantName'))   { showError('applicantName');   ok = false; }
         if (!val('applicantBirth'))  { showError('applicantBirth');  ok = false; }
-        if (!val('applicantPhone'))  { showError('applicantPhone', 'í´ëí° ë²í¸ë¥¼ ìë ¥í´ì£¼ì¸ì.'); ok = false; }
+        if (!val('applicantPhone'))  { showError('applicantPhone', '휴대폰 번호를 입력해주세요.'); ok = false; }
         if (!val('bankName'))        { showError('bankName');        ok = false; }
         if (!val('accountHolder'))   { showError('accountHolder');   ok = false; }
         if (!val('accountNumber'))   { showError('accountNumber');   ok = false; }
-        // ì íë²í¸ ì¸ì¦ì ì íì ì¼ë¡ (SMS ê¸°ë¥ ë¯¸êµ¬í ì ì¤íµ)
-        if (!ok) { toast('íì í­ëª©ì ëª¨ë ìë ¥í´ì£¼ì¸ì.', 'error'); }
+        // 전화번호 인증은 선택적으로 (SMS 기능 미구현 시 스킵)
+        if (!ok) { toast('필수 항목을 모두 입력해주세요.', 'error'); }
         return ok;
     }
 
@@ -1337,16 +1337,16 @@ function validateStep(step) {
         if (!val('bidAmount'))     { showError('bidAmount');     ok = false; }
         if (!val('depositMethod')) { showError('depositMethod'); ok = false; }
         if (!document.getElementById('agreeContract') || !document.getElementById('agreeContract').checked) {
-            toast('ì ìê³ì½ ëì(ìëª)ê° íìí©ëë¤.', 'error');
+            toast('전자계약 동의(서명)가 필요합니다.', 'error');
             ok = false;
         }
         if (!signatureData) {
             const errEl = document.getElementById('signatureError');
             if (errEl) errEl.style.display = 'block';
-            toast('ìëªì´ íìí©ëë¤.', 'error');
+            toast('서명이 필요합니다.', 'error');
             ok = false;
         }
-        if (!ok) { toast('íì í­ëª©ì ëª¨ë ìë ¥í´ì£¼ì¸ì.', 'error'); }
+        if (!ok) { toast('필수 항목을 모두 입력해주세요.', 'error'); }
         return ok;
     }
 
@@ -1375,37 +1375,37 @@ function clearErrors() {
     document.querySelectorAll('input.error, select.error').forEach(el => el.classList.remove('error'));
 }
 
-// âââââââââââââââââââââââââââââââââââââââââââââ
-// ì¬ê±´ë²í¸ ì¡°í/ê²ì¦ (ëë²ì ë²ìê²½ë§¤ì ë³´ ì°ë)
-// âââââââââââââââââââââââââââââââââââââââââââââ
-let caseLookupVerified = false;  // ì ì²­ìê° ì¬ê±´ ì¡°íë¥¼ í ë²ì´ë¼ë íëì§
+// ─────────────────────────────────────────────
+// 사건번호 조회/검증 (대법원 법원경매정보 연동)
+// ─────────────────────────────────────────────
+let caseLookupVerified = false;  // 신청자가 사건 조회를 한 번이라도 했는지
 
-// ì¬ê±´ë²í¸ ì ê·í: ë¤ìí ìë ¥ì 'YYYYíê²½NNNNN' ííë¡ íì±
-// ì) "2024íê²½53351", "2024 íê²½ 53351", "2024íê²½53351", "2024-53351" â {year:2024, serial:53351}
+// 사건번호 정규화: 다양한 입력을 'YYYY타경NNNNN' 형태로 파싱
+// 예) "2024타경53351", "2024 타경 53351", "2024타경53351", "2024-53351" → {year:2024, serial:53351}
 function parseCaseNumber(raw) {
     if (!raw) return null;
     const s = String(raw).replace(/\s/g, '');
-    // 1) ì ì í¨í´: 4ìë¦¬ì°ë + ì¬ê±´ë¶í¸(íê²½/íê¸°/íì± ë±) + ì¼ë ¨ë²í¸
-    //    ì«ìë ëê¹ì§ ëª¨ë ì¡ëë¡ \d+ (ìì \d{1,7} ì´ 53351ì ì¼ë¶ë§ ì¡ë ë²ê·¸ ìì )
-    let m = s.match(/(\d{4})\s*í[ê°-í£]*\s*(\d+)/);
+    // 1) 정석 패턴: 4자리연도 + 사건부호(타경/타기/타채 등) + 일련번호
+    //    숫자는 끝까지 모두 잡도록 \d+ (앞서 \d{1,7} 이 53351의 일부만 잡던 버그 수정)
+    let m = s.match(/(\d{4})\s*타[가-힣]*\s*(\d+)/);
     if (m) {
-        return { year: m[1], serial: m[2], formatted: m[1] + 'íê²½' + m[2] };
+        return { year: m[1], serial: m[2], formatted: m[1] + '타경' + m[2] };
     }
-    // 2) ë¶í¸ ìì´ ì°ë + êµ¬ë¶ì + ë²í¸ (ì: 2024-53351, 2024.53351)
+    // 2) 부호 없이 연도 + 구분자 + 번호 (예: 2024-53351, 2024.53351)
     m = s.match(/(\d{4})[^\d]{1,3}(\d+)/);
     if (m) {
-        return { year: m[1], serial: m[2], formatted: m[1] + 'íê²½' + m[2] };
+        return { year: m[1], serial: m[2], formatted: m[1] + '타경' + m[2] };
     }
-    // 3) ì«ìë§ ë¶ì¬ ìë ¥í ê²½ì° (ì: 202453351) â ì 4ìë¦¬=ì°ë, ëë¨¸ì§=ë²í¸
+    // 3) 숫자만 붙여 입력한 경우 (예: 202453351) → 앞 4자리=연도, 나머지=번호
     m = s.match(/^(\d{4})(\d{1,7})$/);
     if (m) {
-        return { year: m[1], serial: m[2], formatted: m[1] + 'íê²½' + m[2] };
+        return { year: m[1], serial: m[2], formatted: m[1] + '타경' + m[2] };
     }
     return null;
 }
 
 function onCaseNumberInput() {
-    // ìë ¥ì´ ë°ëë©´ ì¡°í ìí ì´ê¸°í
+    // 입력이 바뀌면 조회 상태 초기화
     caseLookupVerified = false;
     const r = document.getElementById('caseLookupResult');
     if (r) r.style.display = 'none';
@@ -1417,15 +1417,15 @@ async function lookupCase() {
     const itemNo = (document.getElementById('itemNumber').value || '').trim();
     const btn = document.getElementById('caseLookupBtn');
 
-    // 1) ë²ì ì í íì¸
+    // 1) 법원 선택 확인
     if (!courtName) {
-        renderCaseResult('warn', 'ë¨¼ì  <strong>ì§ì­ê³¼ ë²ì</strong>ì ì íí´ì£¼ì¸ì.');
+        renderCaseResult('warn', '먼저 <strong>지역과 법원</strong>을 선택해주세요.');
         return;
     }
-    // 2) ì¬ê±´ë²í¸ íì ê²ì¦
+    // 2) 사건번호 형식 검증
     const parsed = parseCaseNumber(raw);
     if (!parsed) {
-        renderCaseResult('error', 'ì¬ê±´ë²í¸ íìì´ ì¬ë°ë¥´ì§ ììµëë¤. ì) <strong>2024íê²½12345</strong>');
+        renderCaseResult('error', '사건번호 형식이 올바르지 않습니다. 예) <strong>2024타경12345</strong>');
         return;
     }
     document.getElementById('caseNumber').value = parsed.formatted;
@@ -1433,26 +1433,26 @@ async function lookupCase() {
 
     const workerUrl = (window.CODEF_CONFIG && window.CODEF_CONFIG.workerUrl || '').replace(/\/+$/, '');
 
-    // CODEF ìì»¤ê° ì¤ì ëì´ ìì§ ìì¼ë©´ ê¸°ì¡´ í´ë°±(íìê²ì¦ + ëë²ì ë§í¬)
+    // CODEF 워커가 설정되어 있지 않으면 기존 폴백(형식검증 + 대법원 링크)
     if (!workerUrl) {
         caseLookupVerified = true;
-        const itemTxt = itemNo ? (' Â· ë¬¼ê±´ë²í¸ <strong>' + itemNo + '</strong>') : '';
+        const itemTxt = itemNo ? (' · 물건번호 <strong>' + itemNo + '</strong>') : '';
         renderCaseResult('ok',
-            'â ì¬ê±´ë²í¸ <strong>' + parsed.formatted + '</strong> (' + courtName + itemTxt + ') íìì´ íì¸ëììµëë¤.<br>' +
-            'ìëìì <strong>ëë²ì ë²ìê²½ë§¤ì ë³´</strong>ë¡ ì¤ì  ë¬¼ê±´(ì£¼ìÂ·ê°ì ê°Â·ë§¤ê°ê¸°ì¼)ì íì¸íì¸ì.<br>' +
+            '✅ 사건번호 <strong>' + parsed.formatted + '</strong> (' + courtName + itemTxt + ') 형식이 확인되었습니다.<br>' +
+            '아래에서 <strong>대법원 법원경매정보</strong>로 실제 물건(주소·감정가·매각기일)을 확인하세요.<br>' +
             '<div style="margin-top:0.6rem; display:flex; gap:0.5rem; flex-wrap:wrap;">' +
               '<a href="' + COURT_AUCTION_SEARCH_URL + '" target="_blank" rel="noopener" class="btn-verify" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px; padding:0.55rem 1rem;">' +
-                '<i class="fas fa-external-link-alt"></i> ë²ìê²½ë§¤ì ë³´ìì ì¬ê±´ íì¸' +
+                '<i class="fas fa-external-link-alt"></i> 법원경매정보에서 사건 확인' +
               '</a>' +
             '</div>'
         );
         return;
     }
 
-    // ââ CODEF ìë ì¡°í ââ
+    // ── CODEF 자동 조회 ──
     const origBtn = btn ? btn.innerHTML : '';
-    if (btn) { btn.disabled = true; btn.innerHTML = '<span class="case-loading"></span> ì¡°íì¤'; }
-    renderCaseResult('warn', '<i class="fas fa-spinner fa-spin"></i> ë²ìê²½ë§¤ì ë³´ìì ì¬ê±´ì ì¡°ííê³  ììµëë¤...');
+    if (btn) { btn.disabled = true; btn.innerHTML = '<span class="case-loading"></span> 조회중'; }
+    renderCaseResult('warn', '<i class="fas fa-spinner fa-spin"></i> 법원경매정보에서 사건을 조회하고 있습니다...');
 
     try {
         const res = await fetch(workerUrl + '/search', {
@@ -1470,13 +1470,13 @@ async function lookupCase() {
         const data = await res.json();
 
         if (!res.ok || data.success === false || !data.normalized) {
-            const msg = (data && (data.message || data.error)) || 'í´ë¹ ì¬ê±´ ì ë³´ë¥¼ ì°¾ì ì ììµëë¤.';
+            const msg = (data && (data.message || data.error)) || '해당 사건 정보를 찾을 수 없습니다.';
             renderCaseResult('warn',
-                'â ï¸ ' + msg + '<br>ì¬ê±´ë²í¸/ë²ì/ë¬¼ê±´ë²í¸ë¥¼ ë¤ì íì¸íìê±°ë, ìë ì ë³´ë¥¼ ì§ì  ìë ¥í´ì£¼ì¸ì.<br>' +
-                '<a href="' + COURT_AUCTION_SEARCH_URL + '" target="_blank" rel="noopener" style="color:#1550E8; font-weight:600;"><i class="fas fa-external-link-alt"></i> ë²ìê²½ë§¤ì ë³´ìì ì§ì  íì¸</a>'
+                '⚠️ ' + msg + '<br>사건번호/법원/물건번호를 다시 확인하시거나, 아래 정보를 직접 입력해주세요.<br>' +
+                '<a href="' + COURT_AUCTION_SEARCH_URL + '" target="_blank" rel="noopener" style="color:#1550E8; font-weight:600;"><i class="fas fa-external-link-alt"></i> 법원경매정보에서 직접 확인</a>'
             );
             renderPropSummaryEmpty();
-            caseLookupVerified = true; // ì§ì  ìë ¥ íì©
+            caseLookupVerified = true; // 직접 입력 허용
             return;
         }
 
@@ -1485,13 +1485,13 @@ async function lookupCase() {
         renderPropSummary(n, courtName, parsed.formatted, itemNo);
         caseLookupVerified = true;
         renderCaseResult('ok',
-            'â <strong>' + parsed.formatted + '</strong> ì¬ê±´ ì ë³´ë¥¼ ë¶ë¬ììµëë¤. ì¤ë¥¸ìª½ ìì½ê³¼ ìë ìë ¥ê°ì íì¸í´ì£¼ì¸ì.' +
-            (n.appraisalPrice || n.minBidPrice ? '' : '<br><span style="font-size:0.8rem;color:#888;">ì¼ë¶ í­ëª©ì ìëì¼ë¡ ì±ìì§ì§ ììì ì ìì´ì. ë¹ì´ ìì¼ë©´ ì§ì  ìë ¥í´ì£¼ì¸ì.</span>')
+            '✅ <strong>' + parsed.formatted + '</strong> 사건 정보를 불러왔습니다. 오른쪽 요약과 아래 입력값을 확인해주세요.' +
+            (n.appraisalPrice || n.minBidPrice ? '' : '<br><span style="font-size:0.8rem;color:#888;">일부 항목은 자동으로 채워지지 않았을 수 있어요. 비어 있으면 직접 입력해주세요.</span>')
         );
     } catch (e) {
         renderCaseResult('error',
-            'ì¬ê±´ ì¡°í ì¤ ì¤ë¥ê° ë°ìíìµëë¤. ì ì í ë¤ì ìëíìê±°ë ì ë³´ë¥¼ ì§ì  ìë ¥í´ì£¼ì¸ì.<br>' +
-            '<a href="' + COURT_AUCTION_SEARCH_URL + '" target="_blank" rel="noopener" style="color:#1550E8; font-weight:600;"><i class="fas fa-external-link-alt"></i> ë²ìê²½ë§¤ì ë³´ìì ì§ì  íì¸</a>'
+            '사건 조회 중 오류가 발생했습니다. 잠시 후 다시 시도하시거나 정보를 직접 입력해주세요.<br>' +
+            '<a href="' + COURT_AUCTION_SEARCH_URL + '" target="_blank" rel="noopener" style="color:#1550E8; font-weight:600;"><i class="fas fa-external-link-alt"></i> 법원경매정보에서 직접 확인</a>'
         );
         renderPropSummaryEmpty();
         caseLookupVerified = true;
@@ -1500,17 +1500,17 @@ async function lookupCase() {
     }
 }
 
-// CODEF ì ê·í ë°ì´í°ë¥¼ í¼ì ìë ì±ì°ê¸°
+// CODEF 정규화 데이터를 폼에 자동 채우기
 function applyCaseData(n) {
     const setV = (id, v) => { const el = document.getElementById(id); if (el && v != null && v !== '') el.value = v; };
-    // ë¬¼ê±´ë²í¸
+    // 물건번호
     if (n.itemNo) setV('itemNumber', String(n.itemNo).replace(/[^\d]/g, '') || n.itemNo);
-    // ì£¼ì
+    // 주소
     if (n.address) {
         const addrEl = document.getElementById('propertyAddress');
         if (addrEl) addrEl.value = n.address;
     }
-    // ë§¤ê°ê¸°ì¼(YYYYMMDD / YYYY-MM-DD / YYYY.MM.DD â input[type=date])
+    // 매각기일(YYYYMMDD / YYYY-MM-DD / YYYY.MM.DD → input[type=date])
     if (n.bidDate) {
         const dd = String(n.bidDate).replace(/[^\d]/g, '');
         if (dd.length >= 8) {
@@ -1519,7 +1519,7 @@ function applyCaseData(n) {
             if (el) { el.value = iso; checkBidDateWindow(); }
         }
     }
-    // ê°ì ê° / ìµì ë§¤ê°ê°
+    // 감정가 / 최저매각가
     const numOnly = (v) => String(v).replace(/[^\d]/g, '');
     if (n.appraisalPrice) {
         const el = document.getElementById('appraisalPrice');
@@ -1529,15 +1529,15 @@ function applyCaseData(n) {
         const el = document.getElementById('minBidPrice');
         if (el) { el.value = Number(numOnly(n.minBidPrice)).toLocaleString(); showKorean('minBidPrice','minBidPriceKor'); }
     }
-    // ë¬¼ê±´ ì¢ë¥ ë§¤í
+    // 물건 종류 매핑
     if (n.propertyType) {
         const sel = document.getElementById('propertyType');
         if (sel) {
             const map = [
-                [/ìíí¸/, 'ìíí¸'], [/(ë¹ë¼|ì°ë¦½|ë¤ì¸ë)/, 'ë¹ë¼/ì°ë¦½'], [/(ë¨ë|ë¤ê°êµ¬)/, 'ë¨ë/ë¤ê°êµ¬'],
-                [/ì¤í¼ì¤í/, 'ì¤í¼ì¤í'], [/(ìê°|ì í¬|ê·¼ë¦°)/, 'ìê°'], [/(í ì§|ëì§|ìì¼|ì |ëµ)/, 'í ì§'],
+                [/아파트/, '아파트'], [/(빌라|연립|다세대)/, '빌라/연립'], [/(단독|다가구)/, '단독/다가구'],
+                [/오피스텔/, '오피스텔'], [/(상가|점포|근린)/, '상가'], [/(토지|대지|임야|전|답)/, '토지'],
             ];
-            let matched = 'ê¸°í';
+            let matched = '기타';
             for (const [re, label] of map) { if (re.test(n.propertyType)) { matched = label; break; } }
             sel.value = matched;
         }
@@ -1549,7 +1549,7 @@ function escapeHtml(s) {
 }
 function fmtMoney(v) {
     const d = String(v == null ? '' : v).replace(/[^\d]/g, '');
-    return d ? Number(d).toLocaleString() + 'ì' : '-';
+    return d ? Number(d).toLocaleString() + '원' : '-';
 }
 function fmtDate(v) {
     const d = String(v == null ? '' : v).replace(/[^\d]/g, '');
@@ -1557,50 +1557,50 @@ function fmtDate(v) {
     return v || '-';
 }
 
-// ì°ì¸¡ ë°ë¼ë¤ëë ë¬¼ê±´ ìì½ ì¹´ë ë ëë§
+// 우측 따라다니는 물건 요약 카드 렌더링
 function renderPropSummary(n, courtName, caseFormatted, itemNo) {
     const photoEl = document.getElementById('propSummaryPhoto');
     const bodyEl = document.getElementById('propSummaryBody');
     if (!photoEl || !bodyEl) return;
 
-    // ëë²ì ê²½ë§¤ì¬ê±´ê²ì APIìë ë¬¼ê±´ ì¬ì§ì´ ìì´, ìì¬ì§ ì£¼ìë¡ ì¹´ì¹´ì¤ ë¡ëë·°/ì§ëë¥¼ íìí©ëë¤.
-    // (í¥í ì¤ì  ë¬¼ê±´ ì¬ì§ ìì¤ê° ì°ëëë©´ n.photos ë¥¼ ì°ì  ì¬ì©)
+    // 대법원 경매사건검색 API에는 물건 사진이 없어, 소재지 주소로 카카오 로드뷰/지도를 표시합니다.
+    // (향후 실제 물건 사진 소스가 연동되면 n.photos 를 우선 사용)
     if (n.photos && n.photos.length) {
         const addr = (n.address || '').replace(/"/g, '&quot;');
-        photoEl.innerHTML = '<img src="' + escapeHtml(n.photos[0]) + '" alt="ë¬¼ê±´ ì¬ì§" data-addr="' + addr + '" ' +
+        photoEl.innerHTML = '<img src="' + escapeHtml(n.photos[0]) + '" alt="물건 사진" data-addr="' + addr + '" ' +
             'onerror="renderLocationView(document.getElementById(\'propSummaryPhoto\'), this.getAttribute(\'data-addr\')||\'\')">';
     } else {
         renderLocationView(photoEl, n.address || '');
     }
 
     const depositVal = n.bidDeposit
-        ? (fmtMoney(n.bidDeposit) + (n.bidDepositEstimated ? ' <span style="font-size:0.72rem;color:#999;">(ìµì ê° 10% ì¶ì )</span>' : ''))
+        ? (fmtMoney(n.bidDeposit) + (n.bidDepositEstimated ? ' <span style="font-size:0.72rem;color:#999;">(최저가 10% 추정)</span>' : ''))
         : '-';
 
     const rows = [
-        ['ë²ì', escapeHtml(n.court || courtName)],
-        ['ì¬ê±´ë²í¸', escapeHtml(n.caseNo || caseFormatted) + ((n.itemNo || itemNo) ? ' (ë¬¼ê±´ ' + escapeHtml(n.itemNo || itemNo) + ')' : '')],
+        ['법원', escapeHtml(n.court || courtName)],
+        ['사건번호', escapeHtml(n.caseNo || caseFormatted) + ((n.itemNo || itemNo) ? ' (물건 ' + escapeHtml(n.itemNo || itemNo) + ')' : '')],
     ];
-    if (n.caseName) rows.push(['ì¬ê±´ëª', escapeHtml(n.caseName)]);
+    if (n.caseName) rows.push(['사건명', escapeHtml(n.caseName)]);
     rows.push(
-        ['ë¬¼ê±´ì¢ë¥', escapeHtml(n.propertyType || '-')],
-        ['ìì¬ì§', escapeHtml(n.address || '-')],
-        ['ê°ì ê°', fmtMoney(n.appraisalPrice), 'price'],
-        ['ìµì ìì°°ê°', fmtMoney(n.minBidPrice), 'price'],
-        ['ìì°°ë³´ì¦ê¸', depositVal],
-        ['ë§¤ê°ê¸°ì¼', n.bidDate ? escapeHtml(n.bidDate) : fmtDate(n.bidDateRaw)]
+        ['물건종류', escapeHtml(n.propertyType || '-')],
+        ['소재지', escapeHtml(n.address || '-')],
+        ['감정가', fmtMoney(n.appraisalPrice), 'price'],
+        ['최저입찰가', fmtMoney(n.minBidPrice), 'price'],
+        ['입찰보증금', depositVal],
+        ['매각기일', n.bidDate ? escapeHtml(n.bidDate) : fmtDate(n.bidDateRaw)]
     );
-    if (n.bidPlace) rows.push(['ì¥ì', escapeHtml(n.bidPlace)]);
-    if (n.failedCount) rows.push(['ì ì°°', escapeHtml(n.failedCount) + 'í']);
-    if (n.status) rows.push(['ì§íìí', escapeHtml(n.status)]);
-    if (n.claimAmount) rows.push(['ì²­êµ¬ê¸ì¡', fmtMoney(n.claimAmount)]);
+    if (n.bidPlace) rows.push(['장소', escapeHtml(n.bidPlace)]);
+    if (n.failedCount) rows.push(['유찰', escapeHtml(n.failedCount) + '회']);
+    if (n.status) rows.push(['진행상태', escapeHtml(n.status)]);
+    if (n.claimAmount) rows.push(['청구금액', fmtMoney(n.claimAmount)]);
 
     bodyEl.innerHTML = rows.map(([k, v, cls]) =>
         '<div class="prop-summary-row"><span class="k">' + k + '</span><span class="v ' + (cls || '') + '">' + v + '</span></div>'
     ).join('') +
     '<div style="margin-top:0.7rem;font-size:0.72rem;color:#9aa3af;line-height:1.4;">' +
-      'â» ëë²ì ë²ìê²½ë§¤ì ë³´ ê¸°ì¤. ë¬¼ê±´ ì¬ì§ì ì ê³µëì§ ìì¼ë©°, ìì°°ë³´ì¦ê¸ì íµì ìµì ê°ì 10%ìëë¤. ' +
-      'ì íí ì ë³´ë <a href="' + COURT_AUCTION_SEARCH_URL + '" target="_blank" rel="noopener" style="color:#1550E8;">ë²ìê²½ë§¤ì ë³´</a>ìì íì¸íì¸ì.' +
+      '※ 대법원 법원경매정보 기준. 물건 사진은 제공되지 않으며, 입찰보증금은 통상 최저가의 10%입니다. ' +
+      '정확한 정보는 <a href="' + COURT_AUCTION_SEARCH_URL + '" target="_blank" rel="noopener" style="color:#1550E8;">법원경매정보</a>에서 확인하세요.' +
     '</div>';
 }
 
@@ -1608,22 +1608,22 @@ function renderPropSummaryEmpty() {
     const photoEl = document.getElementById('propSummaryPhoto');
     const bodyEl = document.getElementById('propSummaryBody');
     if (photoEl) photoEl.innerHTML = '<i class="fas fa-image"></i>';
-    if (bodyEl) bodyEl.innerHTML = '<div class="prop-summary-empty">ì¡°íë ë¬¼ê±´ ì ë³´ê° ììµëë¤.<br>ì ë³´ë¥¼ ì§ì  ìë ¥í´ì£¼ì¸ì.</div>';
+    if (bodyEl) bodyEl.innerHTML = '<div class="prop-summary-empty">조회된 물건 정보가 없습니다.<br>정보를 직접 입력해주세요.</div>';
 }
 
-// âââââââââââââââââââââââââââââââââââââââââââââ
-// ìì¬ì§ ì£¼ì â ì¹´ì¹´ì¤ ë¡ëë·°/ì§ë íì
-//   - ì¹´ì¹´ì¤ SDKê° ì¤ë¹ëë©´ ì£¼ìë¥¼ ì¢íë¡ ë³í(geocode)íì¬ ë¡ëë·° ì°ì ,
-//     ë¡ëë·°ê° ìë ì§ì­ì´ë©´ ì§ëë¡ í´ë°±.
-//   - jsKey ë¯¸ì¤ì /ë¡ë ì¤í¨ ì: ë²ìê²½ë§¤ì ë³´ ë°ë¡ê°ê¸° ìë´.
-// âââââââââââââââââââââââââââââââââââââââââââââ
+// ─────────────────────────────────────────────
+// 소재지 주소 → 카카오 로드뷰/지도 표시
+//   - 카카오 SDK가 준비되면 주소를 좌표로 변환(geocode)하여 로드뷰 우선,
+//     로드뷰가 없는 지역이면 지도로 폴백.
+//   - jsKey 미설정/로드 실패 시: 법원경매정보 바로가기 안내.
+// ─────────────────────────────────────────────
 function locationFallback(el, address) {
     const link = COURT_AUCTION_SEARCH_URL;
     el.innerHTML =
         '<div class="prop-photo-fallback">' +
             '<i class="fas fa-map-marker-alt"></i>' +
-            '<div>' + (address ? escapeHtml(address) : 'ìì¬ì§ ì ë³´ ìì') + '</div>' +
-            '<a href="' + link + '" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> ë²ìê²½ë§¤ì ë³´ìì ì¬ì§ ë³´ê¸°</a>' +
+            '<div>' + (address ? escapeHtml(address) : '소재지 정보 없음') + '</div>' +
+            '<a href="' + link + '" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> 법원경매정보에서 사진 보기</a>' +
         '</div>';
 }
 
@@ -1650,7 +1650,7 @@ async function renderLocationView(el, address) {
     try {
         const kakao = window.kakao;
         const geocoder = new kakao.maps.services.Geocoder();
-        // ì£¼ìê° ì§ë²/ëë¡ëª í¼í©ì¼ ì ìì´ ê·¸ëë¡ ê²ì
+        // 주소가 지번/도로명 혼합일 수 있어 그대로 검색
         geocoder.addressSearch(address, function (result, status) {
             if (status !== kakao.maps.services.Status.OK || !result || !result.length) {
                 locationFallback(el, address);
@@ -1665,11 +1665,11 @@ async function renderLocationView(el, address) {
 }
 
 function buildKakaoView(el, kakao, coords, address) {
-    // ì»¨íì´ë + ë¡ëë·°/ì§ë í ê¸ êµ¬ì±
+    // 컨테이너 + 로드뷰/지도 토글 구성
     el.innerHTML =
         '<div class="prop-map-toggle">' +
-            '<button type="button" id="propViewRoad" class="active">ë¡ëë·°</button>' +
-            '<button type="button" id="propViewMap">ì§ë</button>' +
+            '<button type="button" id="propViewRoad" class="active">로드뷰</button>' +
+            '<button type="button" id="propViewMap">지도</button>' +
         '</div>' +
         '<div class="prop-map-view" id="propMapView"></div>';
 
@@ -1693,7 +1693,7 @@ function buildKakaoView(el, kakao, coords, address) {
         rvClient = rvClient || new kakao.maps.RoadviewClient();
         rvClient.getNearestPanoId(coords, 50, function (panoId) {
             if (panoId === null) {
-                // ê·¼ì² ë¡ëë·°ê° ìì¼ë©´ ì§ëë¡ í´ë°±
+                // 근처 로드뷰가 없으면 지도로 폴백
                 showMap();
                 return;
             }
@@ -1705,7 +1705,7 @@ function buildKakaoView(el, kakao, coords, address) {
     btnRoad.addEventListener('click', showRoadview);
     btnMap.addEventListener('click', showMap);
 
-    // ê¸°ë³¸: ë¡ëë·° ì°ì 
+    // 기본: 로드뷰 우선
     showRoadview();
 }
 
@@ -1722,16 +1722,16 @@ function renderCaseResult(type, html) {
     box.style.display = 'block';
 }
 
-// âââââââââââââââââââââââââââââââââââââââââââââ
-// ìì½ ì±ì°ê¸°
-// âââââââââââââââââââââââââââââââââââââââââââââ
-// âââââââââââââââââââââââââââââââââââââââââââââ
-// ì ë¬¸ê° ì í ì í (ê³µì¸ì¤ê°ì¬ 132,000 / ë²ë¬´ì¬ 154,000) â ëª¨ë VAT í¬í¨
-// âââââââââââââââââââââââââââââââââââââââââââââ
+// ─────────────────────────────────────────────
+// 요약 채우기
+// ─────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// 전문가 유형 선택 (공인중개사 132,000 / 법무사 154,000) — 모두 VAT 포함
+// ─────────────────────────────────────────────
 let selectedExpertType = 'realtor';
 const EXPERT_INFO = {
-    realtor: { label: 'ê³µì¸ì¤ê°ì¬', name: 'ê³µì¸ì¤ê°ì¬' },
-    lawyer:  { label: 'ë²ë¬´ì¬',     name: 'ë²ë¬´ì¬' },
+    realtor: { label: '공인중개사', name: '공인중개사' },
+    lawyer:  { label: '법무사',     name: '법무사' },
 };
 function getExpertPrice(type) {
     const cfg = window.PAYMENT_CONFIG || {};
@@ -1741,13 +1741,13 @@ function getExpertPrice(type) {
 function selectExpertType(type) {
     if (!EXPERT_INFO[type]) type = 'realtor';
     selectedExpertType = type;
-    // ì¹´ë ì í íì
+    // 카드 선택 표시
     document.querySelectorAll('.expert-opt').forEach(el => {
         el.classList.toggle('selected', el.getAttribute('data-type') === type);
     });
     const radio = document.querySelector('.expert-opt[data-type="' + type + '"] input');
     if (radio) radio.checked = true;
-    // ê¸ì¡/ë¼ë²¨ ê°±ì 
+    // 금액/라벨 갱신
     const fee = getExpertPrice(type);
     const feeStr = fee.toLocaleString('ko-KR');
     const amtEl = document.getElementById('feeAmountText');
@@ -1756,39 +1756,39 @@ function selectExpertType(type) {
     if (amtEl) amtEl.textContent = feeStr;
     if (lblEl) lblEl.textContent = '(' + EXPERT_INFO[type].label + ')';
     if (subEl) subEl.textContent = feeStr;
-    // STEP4 ìì½ ì¦ì ê°±ì  (ì´ë¯¸ STEP4ë¥¼ ë³´ê³  ìì ë)
+    // STEP4 요약 즉시 갱신 (이미 STEP4를 보고 있을 때)
     if (typeof currentStep !== 'undefined' && currentStep === 4) fillSummary();
 }
 
 function fillSummary() {
     const bidAmt = val2('bidAmount');
-    // ìì°°ë³´ì¦ê¸ = ìµì ìì°°ê°(ìµì ë§¤ê°ê°ê²©)ì 10%
+    // 입찰보증금 = 최저입찰가(최저매각가격)의 10%
     const minBid = val2('minBidPrice');
-    const deposit = minBid ? (Math.floor(parseNumber(minBid) * 0.1)).toLocaleString('ko-KR') + 'ì' : '-';
+    const deposit = minBid ? (Math.floor(parseNumber(minBid) * 0.1)).toLocaleString('ko-KR') + '원' : '-';
     const expert = EXPERT_INFO[selectedExpertType] || EXPERT_INFO.realtor;
     const fee = getExpertPrice(selectedExpertType);
     const rows = [
-        ['ë²ì', val2('courtSelect')],
-        ['ì¬ê±´ë²í¸', val2('caseNumber') + (val2('itemNumber') ? ' (ë¬¼ê±´ë²í¸ ' + val2('itemNumber') + ')' : '')],
-        ['ìì°° ê¸°ì¼', val2('bidDate')],
-        ['ë¬¼ê±´ ì£¼ì', (val2('propertyAddress') + ' ' + val2('propertyAddressDetail')).trim()],
-        ['ë¬¼ê±´ ì¢ë¥', val2('propertyType') || '-'],
-        ['ì ì²­ì ì´ë¦', val2('applicantName')],
-        ['í´ëí° ë²í¸', val2('applicantPhone')],
-        ['íê¸ ê³ì¢', val2('bankName') + ' ' + val2('accountNumber')],
-        ['ìµì ìì°°ê°', (minBid ? minBid + 'ì' : '-')],
-        ['í¬ë§ ìì°°ê°', bidAmt + 'ì'],
-        ['ìì°° ë³´ì¦ê¸ (ìµì ê°ì 10%)', deposit],
-        ['ë³´ì¦ê¸ ë©ë¶ ë°©ë²', val2('depositMethod')],
-        ['ìì°° íí', val2('bidType')],
-        ['ì ìê³ì½ ìëª', 'ìë£'],
-        ['ì ë¬¸ê° ì í', expert.label],
-        ['ëë¦¬ìì°° ê°ê²©', fee.toLocaleString('ko-KR') + 'ì (VAT í¬í¨)'],
-        ['ì¤ê°ììë£', '0ì (íë«í¼ì´ ë¼ë ë ìì)'],
+        ['법원', val2('courtSelect')],
+        ['사건번호', val2('caseNumber') + (val2('itemNumber') ? ' (물건번호 ' + val2('itemNumber') + ')' : '')],
+        ['입찰 기일', val2('bidDate')],
+        ['물건 주소', (val2('propertyAddress') + ' ' + val2('propertyAddressDetail')).trim()],
+        ['물건 종류', val2('propertyType') || '-'],
+        ['신청자 이름', val2('applicantName')],
+        ['휴대폰 번호', val2('applicantPhone')],
+        ['환급 계좌', val2('bankName') + ' ' + val2('accountNumber')],
+        ['최저입찰가', (minBid ? minBid + '원' : '-')],
+        ['희망 입찰가', bidAmt + '원'],
+        ['입찰 보증금 (최저가의 10%)', deposit],
+        ['보증금 납부 방법', val2('depositMethod')],
+        ['입찰 형태', val2('bidType')],
+        ['전자계약 서명', '완료'],
+        ['전문가 유형', expert.label],
+        ['대리입찰 가격', fee.toLocaleString('ko-KR') + '원 (VAT 포함)'],
+        ['중개수수료', '0원 (플랫폼이 떼는 돈 없음)'],
     ];
 
     document.getElementById('summaryTable').innerHTML = rows
-        .filter(([_, v]) => v && v.trim() !== '' && v.trim() !== 'ì')
+        .filter(([_, v]) => v && v.trim() !== '' && v.trim() !== '원')
         .map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`)
         .join('');
 }
@@ -1797,32 +1797,32 @@ function val2(id) {
     return el ? el.value.trim() : '';
 }
 
-// âââââââââââââââââââââââââââââââââââââââââââââ
-// ì ì²­ ì ì¶
-// âââââââââââââââââââââââââââââââââââââââââââââ
-// âââââââââââââââââââââââââââââââââââââââââââââ
-// í ì¤íì´ë¨¼ì¸  ì¤ì ì js/payment-config.js (window.PAYMENT_CONFIG) ìì ê´ë¦¬
-// âââââââââââââââââââââââââââââââââââââââââââââ
+// ─────────────────────────────────────────────
+// 신청 제출
+// ─────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// 토스페이먼츠 설정은 js/payment-config.js (window.PAYMENT_CONFIG) 에서 관리
+// ─────────────────────────────────────────────
 
 async function submitApplication() {
     if (!document.getElementById('agreeTerms').checked) {
-        toast('ìë¹ì¤ ì´ì©ì½ê´ì ëìí´ì£¼ì¸ì.', 'error'); return;
+        toast('서비스 이용약관에 동의해주세요.', 'error'); return;
     }
     if (!document.getElementById('agreePrivacy').checked) {
-        toast('ê°ì¸ì ë³´ ìì§Â·ì´ì©ì ëìí´ì£¼ì¸ì.', 'error'); return;
+        toast('개인정보 수집·이용에 동의해주세요.', 'error'); return;
     }
     if (!signatureData) {
-        toast('ì ìê³ì½ ìëªì´ íìí©ëë¤. 3ë¨ê³ë¡ ëìê°ì ìëªí´ì£¼ì¸ì.', 'error'); return;
+        toast('전자계약 서명이 필요합니다. 3단계로 돌아가서 서명해주세요.', 'error'); return;
     }
 
     const btn = document.querySelector('.btn-submit');
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ì²ë¦¬ ì¤...';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 처리 중...';
 
     const user = Auth.getCurrentUser();
     const rawCase = val2('caseNumber').replace(/\s/g, '');
 
-    // ê³µëìì°° ì ë³´ ìì§
+    // 공동입찰 정보 수집
     const jointMembers = [];
     document.querySelectorAll('.joint-member-row').forEach((row, i) => {
         const name = row.querySelector('.joint-member-name')?.value?.trim();
@@ -1833,7 +1833,7 @@ async function submitApplication() {
     const cfg = window.PAYMENT_CONFIG || {};
     const expertType = selectedExpertType || 'lawyer';
     const expertLabel = (EXPERT_INFO[expertType] || EXPERT_INFO.lawyer).label;
-    const serviceFee = getExpertPrice(expertType); // VAT í¬í¨ ìµì¢ ê²°ì  ê¸ì¡
+    const serviceFee = getExpertPrice(expertType); // VAT 포함 최종 결제 금액
     const orderId = 'BIDTOK_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
 
     const appData = {
@@ -1856,7 +1856,7 @@ async function submitApplication() {
         account_number: val2('accountNumber'),
         bid_amount: parseNumber(val2('bidAmount')),
         deposit_amount: Math.floor(parseNumber(val2('minBidPrice')) * 0.1),
-        deposit_method: val2('depositMethod') || 'ì ë¬¸ê°ëê» ì§ì  ì´ì²´',
+        deposit_method: val2('depositMethod') || '전문가님께 직접 이체',
         signature_data: signatureData ? 'signed' : '',
         bid_type: val2('bidType'),
         joint_members: jointMembers,
@@ -1864,15 +1864,15 @@ async function submitApplication() {
         expert_type: expertType,
         expert_type_label: expertLabel,
         service_fee: serviceFee,
-        payment_status: 'ëê¸°',
+        payment_status: '대기',
         user_id: user ? (user.userId || user.id) : '',
         userId: user ? (user.userId || user.id) : '',
-        status: 'ê²°ì ëê¸°',
+        status: '결제대기',
         created_at: new Date().toISOString()
     };
 
     try {
-        // ââ 1. ì ì²­ ë°ì´í°ë¥¼ 'ê²°ì ëê¸°' ìíë¡ ë¨¼ì  ì ì¥ ââ
+        // ── 1. 신청 데이터를 '결제대기' 상태로 먼저 저장 ──
         let savedApp;
         if (typeof API !== 'undefined' && API.applications) {
             savedApp = await API.applications.create(appData);
@@ -1885,49 +1885,49 @@ async function submitApplication() {
             savedApp = newApp;
         }
 
-        // ê²°ì  ì±ê³µ íì´ì§ìì ì¬ì©í  ìì ë°ì´í° ì ì¥
+        // 결제 성공 페이지에서 사용할 임시 데이터 저장
         try { sessionStorage.setItem('bidtok_pending_order', JSON.stringify(appData)); } catch (e) {}
 
-        // ââ 2. í ì¤íì´ë¨¼ì¸  ê²°ì ì°½ í¸ì¶ ââ
+        // ── 2. 토스페이먼츠 결제창 호출 ──
         if (typeof TossPayments === 'undefined' || !cfg.clientKey) {
-            toast('ê²°ì  ëª¨ëì ë¶ë¬ì¤ì§ ëª»íìµëë¤. ìë¡ê³ ì¹¨ í ë¤ì ìëí´ì£¼ì¸ì.', 'error');
+            toast('결제 모듈을 불러오지 못했습니다. 새로고침 후 다시 시도해주세요.', 'error');
             btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-check-circle"></i> ' + serviceFee.toLocaleString('ko-KR') + 'ì ê²°ì íê³  ì ì²­ ìë£';
+            btn.innerHTML = '<i class="fas fa-check-circle"></i> ' + serviceFee.toLocaleString('ko-KR') + '원 결제하고 신청 완료';
             return;
         }
 
         const tossPayments = TossPayments(cfg.clientKey);
-        await tossPayments.requestPayment('ì¹´ë', {
+        await tossPayments.requestPayment('카드', {
             amount: serviceFee,
             orderId: orderId,
-            orderName: 'ëë¦¬ìì°° ì ì²­ [' + expertLabel + '] (' + (appData.court || '') + ' ' + (appData.case_number || '') + ')',
-            customerName: appData.applicant_name || 'ê³ ê°',
+            orderName: '대리입찰 신청 [' + expertLabel + '] (' + (appData.court || '') + ' ' + (appData.case_number || '') + ')',
+            customerName: appData.applicant_name || '고객',
             customerMobilePhone: (appData.phone || '').replace(/[^0-9]/g, '') || undefined,
             successUrl: cfg.successUrl || (location.origin + '/payment-success.html'),
             failUrl: cfg.failUrl || (location.origin + '/payment-fail.html'),
         });
-        // ê²°ì ì°½ì¼ë¡ ë¦¬ë¤ì´ë í¸ëë¯ë¡ ì´í ì½ëë ì¤íëì§ ìì
+        // 결제창으로 리다이렉트되므로 이후 코드는 실행되지 않음
 
     } catch (err) {
         if (err && err.code === 'USER_CANCEL') {
-            // ì¬ì©ìê° ê²°ì ì°½ì ë«ì â ë¤ì ìë ê°ë¥
-            toast('ê²°ì ê° ì·¨ìëììµëë¤. ë¤ì ìëí´ì£¼ì¸ì.', 'error');
+            // 사용자가 결제창을 닫음 → 다시 시도 가능
+            toast('결제가 취소되었습니다. 다시 시도해주세요.', 'error');
         } else {
-            console.error('ì ì²­/ê²°ì  ì¤ë¥:', err);
-            toast('ì²ë¦¬ ì¤ ì¤ë¥ê° ë°ìíìµëë¤: ' + (err.message || ''), 'error');
+            console.error('신청/결제 오류:', err);
+            toast('처리 중 오류가 발생했습니다: ' + (err.message || ''), 'error');
         }
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-check-circle"></i> ' + serviceFee.toLocaleString('ko-KR') + 'ì ê²°ì íê³  ì ì²­ ìë£';
+        btn.innerHTML = '<i class="fas fa-check-circle"></i> ' + serviceFee.toLocaleString('ko-KR') + '원 결제하고 신청 완료';
     }
 }
 
-// âââââââââââââââââââââââââââââââââââââââââââââ
-// ë²ì ëª©ë¡ ìë°ì´í¸
-// âââââââââââââââââââââââââââââââââââââââââââââ
+// ─────────────────────────────────────────────
+// 법원 목록 업데이트
+// ─────────────────────────────────────────────
 function updateCourts() {
     const region = document.getElementById('regionSelect').value;
     const courtSel = document.getElementById('courtSelect');
-    courtSel.innerHTML = '<option value="">ë²ìì ì ííì¸ì</option>';
+    courtSel.innerHTML = '<option value="">법원을 선택하세요</option>';
     if (region && COURT_DATA[region]) {
         COURT_DATA[region].forEach(c => {
             courtSel.innerHTML += `<option value="${c}">${c}</option>`;
@@ -1935,12 +1935,12 @@ function updateCourts() {
     }
 }
 
-// âââââââââââââââââââââââââââââââââââââââââââââ
-// ê³µë ìì°° í ê¸ + ë©¤ë² ì¶ê°
-// âââââââââââââââââââââââââââââââââââââââââââââ
+// ─────────────────────────────────────────────
+// 공동 입찰 토글 + 멤버 추가
+// ─────────────────────────────────────────────
 function toggleJointInfo() {
     const type = document.getElementById('bidType').value;
-    document.getElementById('jointInfo').style.display = type === 'ê³µë' ? 'block' : 'none';
+    document.getElementById('jointInfo').style.display = type === '공동' ? 'block' : 'none';
 }
 
 let jointMemberCount = 0;
@@ -1957,10 +1957,10 @@ function addJointMember() {
     div.style.cssText = 'display:grid; grid-template-columns:1fr 1fr auto; gap:0.6rem; align-items:center; margin-bottom:0.6rem;';
     div.innerHTML = `
         <input type="text" class="joint-member-name"
-            placeholder="ê³µëìì°°ì ${idx} ì´ë¦"
+            placeholder="공동입찰자 ${idx} 이름"
             style="padding:0.7rem 0.9rem; border:2px solid #e0e0e0; border-radius:10px; font-size:0.92rem; width:100%;">
         <input type="text" class="joint-member-ratio"
-            placeholder="ì§ë¶ì¨ ì) 50%"
+            placeholder="지분율 예) 50%"
             style="padding:0.7rem 0.9rem; border:2px solid #e0e0e0; border-radius:10px; font-size:0.92rem; width:100%;">
         <button type="button" onclick="removeJointMember(this)"
             style="padding:0.65rem 0.8rem; background:#fee2e2; border:none; border-radius:10px; color:#dc2626; font-size:1rem; cursor:pointer; font-weight:700; white-space:nowrap;">
@@ -1985,11 +1985,11 @@ function removeJointMember(btn) {
     }
 }
 
-// âââââââââââââââââââââââââââââââââââââââââââââ
-// ë³´ì¦ê¸ 10% ìë ê³ì°
-// âââââââââââââââââââââââââââââââââââââââââââââ
+// ─────────────────────────────────────────────
+// 보증금 10% 자동 계산
+// ─────────────────────────────────────────────
 function updateDepositAmount() {
-    // ìì°°ë³´ì¦ê¸ = ìµì ìì°°ê°(ìµì ë§¤ê°ê°ê²©)ì 10% (ë²ìê²½ë§¤ ê¸°ì¤)
+    // 입찰보증금 = 최저입찰가(최저매각가격)의 10% (법원경매 기준)
     const minEl = document.getElementById('minBidPrice');
     const raw = (minEl ? minEl.value : '').replace(/[^0-9]/g, '');
     const depositEl  = document.getElementById('depositAmount');
@@ -2005,9 +2005,9 @@ function updateDepositAmount() {
     if (depositKor) depositKor.textContent = '= ' + toKoreanAmount(deposit);
 }
 
-// âââââââââââââââââââââââââââââââââââââââââââââ
-// ì«ì í¬ë§·
-// âââââââââââââââââââââââââââââââââââââââââââââ
+// ─────────────────────────────────────────────
+// 숫자 포맷
+// ─────────────────────────────────────────────
 function formatInputNumber(input) {
     const raw = input.value.replace(/[^0-9]/g, '');
     input.value = raw ? Number(raw).toLocaleString('ko-KR') : '';
@@ -2016,20 +2016,20 @@ function parseNumber(str) {
     return parseInt((str || '0').replace(/[^0-9]/g, ''), 10) || 0;
 }
 
-// ì«ì â íê¸ ê¸ì¡ ë³í (ìµ/ì²ë§/ë°±ë§/ë§ ë¨ì)
+// 숫자 → 한글 금액 변환 (억/천만/백만/만 단위)
 function toKoreanAmount(num) {
     if (!num || num === 0) return '';
     const eok   = Math.floor(num / 100000000);
     const man   = Math.floor((num % 100000000) / 10000);
     const under = num % 10000;
     let text = '';
-    if (eok  > 0) text += eok + 'ìµ ';
-    if (man  > 0) text += man.toLocaleString('ko-KR') + 'ë§ ';
+    if (eok  > 0) text += eok + '억 ';
+    if (man  > 0) text += man.toLocaleString('ko-KR') + '만 ';
     if (under > 0) text += under.toLocaleString('ko-KR');
-    return text.trim() + 'ì';
+    return text.trim() + '원';
 }
 
-// ìë ¥ íë íë¨ì íê¸ ê¸ì¡ íì
+// 입력 필드 하단에 한글 금액 표시
 function showKorean(inputId, outId) {
     const raw = document.getElementById(inputId).value.replace(/[^0-9]/g, '');
     const el  = document.getElementById(outId);
@@ -2048,16 +2048,16 @@ function updateBidPreview() {
         preview.style.color = '#1550E8';
         return;
     }
-    // ì í¨ ìë ¥ â ë¹¨ê° ìë¬ ì ê±° + ì´ë¡ íì¸ íì
+    // 유효 입력 → 빨간 에러 제거 + 초록 확인 표시
     if (group) group.classList.remove('has-error');
     input.classList.remove('error');
-    preview.innerHTML = '<i class="fas fa-check-circle"></i> = ' + toKoreanAmount(Number(raw)) + ' <span style="font-weight:600;">ìë ¥ ìë£</span>';
+    preview.innerHTML = '<i class="fas fa-check-circle"></i> = ' + toKoreanAmount(Number(raw)) + ' <span style="font-weight:600;">입력 완료</span>';
     preview.style.color = '#16a34a';
 }
 
-// âââââââââââââââââââââââââââââââââââââââââââââ
-// ì íë²í¸ í¬ë§·
-// âââââââââââââââââââââââââââââââââââââââââââââ
+// ─────────────────────────────────────────────
+// 전화번호 포맷
+// ─────────────────────────────────────────────
 function formatPhone(input) {
     let v = input.value.replace(/[^0-9]/g, '');
     if (v.length <= 3) input.value = v;
@@ -2065,10 +2065,10 @@ function formatPhone(input) {
     else input.value = v.slice(0,3) + '-' + v.slice(3,7) + '-' + v.slice(7,11);
 }
 
-// âââââââââââââââââââââââââââââââââââââââââââââ
-// SMS ì¸ì¦ (ìì ìë íµê³¼ - ëªìëì©ë°©ì§ í´ì§ ëê¸° ì¤)
-// íìì¼ í´ì§ ìë£ í ì¤ì  ë°ì¡ì¼ë¡ ë³µêµ¬ ìì 
-// âââââââââââââââââââââââââââââââââââââââââââââ
+// ─────────────────────────────────────────────
+// SMS 인증 (임시 자동 통과 - 명의도용방지 해지 대기 중)
+// 화요일 해지 완료 후 실제 발송으로 복구 예정
+// ─────────────────────────────────────────────
 const SMS_WORKER_URL    = 'https://bidtok-sms-proxy.qkqk5342.workers.dev';
 const KAKAO_WORKER_URL  = 'https://bidtok-kakao-proxy.qkqk5342.workers.dev';
 
@@ -2076,14 +2076,14 @@ function sendSmsCode() {
     const phone = document.getElementById('applicantPhone').value.trim();
     const phoneClean = phone.replace(/[^0-9]/g,'');
     if (!phone || phoneClean.length < 10) {
-        toast('ì¬ë°ë¥¸ í´ëí° ë²í¸ë¥¼ ìë ¥í´ì£¼ì¸ì.', 'error'); return;
+        toast('올바른 휴대폰 번호를 입력해주세요.', 'error'); return;
     }
 
     const btn = document.getElementById('btnSendSms');
     btn.disabled = true;
-    btn.textContent = 'ë°ì¡ ì¤...';
+    btn.textContent = '발송 중...';
 
-    // 6ìë¦¬ ì¸ì¦ë²í¸ ìì±
+    // 6자리 인증번호 생성
     smsCodeReal = Math.floor(100000 + Math.random() * 900000).toString();
 
     fetch(SMS_WORKER_URL, {
@@ -2094,7 +2094,7 @@ function sendSmsCode() {
     .then(res => res.json())
     .then(data => {
         if (data.success) {
-            btn.textContent = 'ì¬ë°ì¡';
+            btn.textContent = '재발송';
             btn.disabled = false;
             btn.style.background = '#6B7280';
 
@@ -2103,55 +2103,55 @@ function sendSmsCode() {
             document.getElementById('smsTimer').textContent = '';
             document.getElementById('smsTimer').style.color = '#1550E8';
 
-            // 3ë¶ íì´ë¨¸
+            // 3분 타이머
             let remaining = 180;
             clearInterval(smsTimerInterval);
             smsTimerInterval = setInterval(() => {
                 remaining--;
                 const m = Math.floor(remaining / 60);
                 const s = remaining % 60;
-                document.getElementById('smsTimer').textContent = `ì¸ì¦ ì í¨ìê° ${m}:${s.toString().padStart(2,'0')}`;
+                document.getElementById('smsTimer').textContent = `인증 유효시간 ${m}:${s.toString().padStart(2,'0')}`;
                 if (remaining <= 0) {
                     clearInterval(smsTimerInterval);
-                    document.getElementById('smsTimer').textContent = 'â° ì¸ì¦ìê° ë§ë£ - ì¬ë°ì¡í´ì£¼ì¸ì';
+                    document.getElementById('smsTimer').textContent = '⏰ 인증시간 만료 - 재발송해주세요';
                     document.getElementById('smsTimer').style.color = '#dc3545';
                     smsCodeReal = '';
                 }
             }, 1000);
 
-            toast('ð± ì¸ì¦ë²í¸ê° ë°ì¡ëììµëë¤!', 'success');
+            toast('📱 인증번호가 발송되었습니다!', 'success');
         } else {
-            toast('ë¬¸ì ë°ì¡ ì¤í¨: ' + (data.error || ''), 'error');
+            toast('문자 발송 실패: ' + (data.error || ''), 'error');
             btn.disabled = false;
-            btn.textContent = 'ì¸ì¦ë²í¸ ë°ì¡';
+            btn.textContent = '인증번호 발송';
         }
     })
     .catch(err => {
-        console.error('SMS ì¤ë¥:', err);
-        toast('ë¬¸ì ë°ì¡ ì¤ ì¤ë¥ê° ë°ìíìµëë¤.', 'error');
+        console.error('SMS 오류:', err);
+        toast('문자 발송 중 오류가 발생했습니다.', 'error');
         btn.disabled = false;
-        btn.textContent = 'ì¸ì¦ë²í¸ ë°ì¡';
+        btn.textContent = '인증번호 발송';
     });
 }
 
 function verifySmsCode() {
     const inputCode = document.getElementById('smsCode').value.trim();
-    if (!inputCode) { toast('ì¸ì¦ë²í¸ë¥¼ ìë ¥í´ì£¼ì¸ì.', 'error'); return; }
-    if (!smsCodeReal) { toast('ì¸ì¦ë²í¸ë¥¼ ë¨¼ì  ë°ì¡í´ì£¼ì¸ì.', 'error'); return; }
-    if (inputCode !== smsCodeReal) { toast('ì¸ì¦ë²í¸ê° ì¼ì¹íì§ ììµëë¤.', 'error'); return; }
+    if (!inputCode) { toast('인증번호를 입력해주세요.', 'error'); return; }
+    if (!smsCodeReal) { toast('인증번호를 먼저 발송해주세요.', 'error'); return; }
+    if (inputCode !== smsCodeReal) { toast('인증번호가 일치하지 않습니다.', 'error'); return; }
 
     phoneVerified = true;
     clearInterval(smsTimerInterval);
-    document.getElementById('smsTimer').textContent = 'â ì¸ì¦ ìë£';
+    document.getElementById('smsTimer').textContent = '✅ 인증 완료';
     document.getElementById('smsTimer').style.color = '#10B981';
     document.getElementById('smsCode').disabled = true;
     document.getElementById('btnSendSms').disabled = true;
-    toast('í´ëí° ì¸ì¦ì´ ìë£ëììµëë¤!', 'success');
+    toast('휴대폰 인증이 완료되었습니다!', 'success');
 }
 
-// âââââââââââââââââââââââââââââââââââââââââââââ
-// ì¹´ì¹´ì¤ ìë¦¼í¡ ê³µíµ ë°ì¡ í¨ì
-// âââââââââââââââââââââââââââââââââââââââââââââ
+// ─────────────────────────────────────────────
+// 카카오 알림톡 공통 발송 함수
+// ─────────────────────────────────────────────
 async function sendKakaoNotification(type, to, data) {
     if (!to) return;
     const res = await fetch(KAKAO_WORKER_URL, {
@@ -2160,13 +2160,13 @@ async function sendKakaoNotification(type, to, data) {
         body: JSON.stringify({ type, to, data })
     });
     const result = await res.json();
-    if (!res.ok) throw new Error(result.error || 'ìë¦¼ ë°ì¡ ì¤í¨');
+    if (!res.ok) throw new Error(result.error || '알림 발송 실패');
     return result;
 }
 
-// âââââââââââââââââââââââââââââââââââââââââââââ
-// í ì¤í¸ ìë¦¼
-// âââââââââââââââââââââââââââââââââââââââââââââ
+// ─────────────────────────────────────────────
+// 토스트 알림
+// ─────────────────────────────────────────────
 function toast(msg, type = 'info') {
     const existing = document.querySelector('.toast-msg');
     if (existing) existing.remove();
@@ -2186,14 +2186,14 @@ function toast(msg, type = 'info') {
     setTimeout(() => t.remove(), 3000);
 }
 
-// CSS ì ëë©ì´ì
+// CSS 애니메이션
 const style = document.createElement('style');
 style.textContent = `@keyframes fadeInUp { from { opacity:0; transform: translate(-50%,20px); } to { opacity:1; transform: translate(-50%,0); } }`;
 document.head.appendChild(style);
 
-// âââââââââââââââââââââââââââââââââââââââââââââ
-// ì ììëª í¨ë
-// âââââââââââââââââââââââââââââââââââââââââââââ
+// ─────────────────────────────────────────────
+// 전자서명 패드
+// ─────────────────────────────────────────────
 let signatureData = null;
 
 (function initSignaturePad() {
@@ -2270,36 +2270,36 @@ function clearSignature() {
     if (ph) ph.style.display = 'flex';
 }
 
-// âââââââââââââââââââââââââââââââââââââââââââââ
-// ë¤ì ì£¼ì ê²ì API
-// âââââââââââââââââââââââââââââââââââââââââââââ
+// ─────────────────────────────────────────────
+// 다음 주소 검색 API
+// ─────────────────────────────────────────────
 function searchAddress() {
-    // ë¤ì ì°í¸ë²í¸ API ë¡ë íì¸
+    // 다음 우편번호 API 로드 확인
     if (typeof daum === 'undefined' || !daum.Postcode) {
-        // API ë¡ë ì¤í¨ ì ì§ì  ìë ¥ì¼ë¡ ì í
+        // API 로드 실패 시 직접 입력으로 전환
         const input = document.getElementById('propertyAddress');
         input.readOnly = false;
-        input.placeholder = 'ì£¼ìë¥¼ ì§ì  ìë ¥í´ì£¼ì¸ì';
+        input.placeholder = '주소를 직접 입력해주세요';
         input.focus();
-        toast('ì£¼ì ê²ì ìë¹ì¤ì ì°ê²°í  ì ììµëë¤. ì§ì  ìë ¥í´ì£¼ì¸ì.', 'info');
+        toast('주소 검색 서비스에 연결할 수 없습니다. 직접 입력해주세요.', 'info');
         return;
     }
 
     new daum.Postcode({
         oncomplete: function(data) {
-            // ëë¡ëª ì£¼ì ì°ì , ìì¼ë©´ ì§ë² ì£¼ì
+            // 도로명 주소 우선, 없으면 지번 주소
             const address = data.roadAddress || data.jibunAddress;
             document.getElementById('propertyAddress').value = address;
             document.getElementById('propertyAddressDetail').focus();
-            toast('ì£¼ìê° ìë ¥ëììµëë¤. ìì¸ ì£¼ìë¥¼ ìë ¥í´ì£¼ì¸ì.', 'success');
-            // ì£¼ì ìë ¥ ì ì°ì¸¡ ìì½ ì¹´ëì ì§ë/ë¡ëë·° íì
+            toast('주소가 입력되었습니다. 상세 주소를 입력해주세요.', 'success');
+            // 주소 입력 시 우측 요약 카드에 지도/로드뷰 표시
             showPropertyLocation();
         },
         onclose: function() {}
     }).open();
 }
 
-// ë¬¼ê±´ ì£¼ì â ì°ì¸¡ ìì½ ì¹´ëì ì§ë/ë¡ëë·° íì (CODEF ì¡°í ìì´ ì£¼ìë§ì¼ë¡)
+// 물건 주소 → 우측 요약 카드에 지도/로드뷰 표시 (CODEF 조회 없이 주소만으로)
 function showPropertyLocation() {
     const base   = (document.getElementById('propertyAddress').value || '').trim();
     const detail = (document.getElementById('propertyAddressDetail').value || '').trim();
@@ -2307,12 +2307,12 @@ function showPropertyLocation() {
     const photoEl = document.getElementById('propSummaryPhoto');
     const bodyEl  = document.getElementById('propSummaryBody');
     if (!base) return;
-    // ì§ëë ëë¡ëª ì£¼ì(base)ë§ì¼ë¡ ì¢íë³í â ë/í¸ìê¹ì§ ë£ì¼ë©´ ë³í ì¤í¨ë¡ ì§ëê° ì¬ë¼ì§
+    // 지도는 도로명 주소(base)만으로 좌표변환 — 동/호수까지 넣으면 변환 실패로 지도가 사라짐
     if (photoEl) renderLocationView(photoEl, base);
     if (bodyEl) {
         bodyEl.innerHTML =
             '<div style="padding:0.5rem 0.25rem;font-size:0.88rem;line-height:1.6;">' +
-            '<div style="color:#888;font-size:0.8rem;margin-bottom:0.2rem;">ë¬¼ê±´ ì£¼ì</div>' +
+            '<div style="color:#888;font-size:0.8rem;margin-bottom:0.2rem;">물건 주소</div>' +
             '<div style="font-weight:600;color:#0f766e;">' + escapeHtml(full) + '</div>' +
             '</div>';
     }
@@ -2326,19 +2326,19 @@ function showPropertyLocation() {
             <div style="display:flex; flex-wrap:wrap; gap:1.5rem; justify-content:space-between; align-items:flex-start; margin-bottom:1.5rem;">
                 <div>
                     <div style="font-size:1.1rem; font-weight:700; color:white; margin-bottom:0.5rem;">
-                        <i class="fas fa-comment-dots" style="color:#667eea;"></i> ëë¦¬ìì°° í¡
+                        <i class="fas fa-comment-dots" style="color:#667eea;"></i> 대리입찰 톡
                     </div>
-                    <p style="margin:0.25rem 0; font-size:0.85rem;">ìí¸ëª: ëë¦¬ìì°°í¡ - ëì¥TV (ì´ìì¬: (ì£¼)ìì¤ííë¡ë¹)</p>
-                    <p style="margin:0.25rem 0; font-size:0.85rem;">ì£¼ì: ìì¸í¹ë³ì ê¸ì²êµ¬ ê°ì°ëì§í¸1ë¡ 75-24 901í¸</p>
-                    <p style="margin:0.25rem 0; font-size:0.85rem;">ëíì í: <a href="tel:02-863-1022" style="color:#667eea;">02-863-1022</a> &nbsp;|&nbsp; íì¼ 09:00~18:00</p>
+                    <p style="margin:0.25rem 0; font-size:0.85rem;">상호명: 대리입찰톡 - 대장TV (운영사: (주)원스타프로비)</p>
+                    <p style="margin:0.25rem 0; font-size:0.85rem;">주소: 서울특별시 금천구 가산디지털1로 75-24 901호</p>
+                    <p style="margin:0.25rem 0; font-size:0.85rem;">대표전화: <a href="tel:02-863-1022" style="color:#667eea;">02-863-1022</a> &nbsp;|&nbsp; 평일 09:00~18:00</p>
                 </div>
                 <div style="font-size:0.85rem; line-height:1.8;">
-                    <a href="terms.html" style="color:#aaa; text-decoration:none; margin-right:1rem;">ì´ì©ì½ê´</a>
-                    <a href="privacy.html" style="color:#aaa; text-decoration:none;">ê°ì¸ì ë³´ì²ë¦¬ë°©ì¹¨</a>
+                    <a href="terms.html" style="color:#aaa; text-decoration:none; margin-right:1rem;">이용약관</a>
+                    <a href="privacy.html" style="color:#aaa; text-decoration:none;">개인정보처리방침</a>
                 </div>
             </div>
             <div style="border-top:1px solid #333; padding-top:1rem; font-size:0.8rem; color:#666; text-align:center;">
-                &copy; 2026 (ì£¼)ìì¤ííë¡ë¹ ëë¦¬ìì°°í¡. All rights reserved.
+                &copy; 2026 (주)원스타프로비 대리입찰톡. All rights reserved.
             </div>
         </div>
     </footer>
