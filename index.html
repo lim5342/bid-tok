@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>대리입찰 톡 - 전국 경매 대리입찰 연결 플랫폼</title>
+    <title>ëë¦¬ìì°° í¡ - ì êµ­ ê²½ë§¤ ëë¦¬ìì°° ì°ê²° íë«í¼</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -13,7 +13,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/additional.css">
-    <!-- ══════════ 토스 스타일 디자인 (메인 랜딩 전용) ══════════ -->
+    <!-- ââââââââââ í ì¤ ì¤íì¼ ëìì¸ (ë©ì¸ ëë© ì ì©) ââââââââââ -->
     <style id="toss-style">
     :root{
       --ts-blue:#3182F6; --ts-blue-dark:#1B64DA; --ts-blue-weak:#E8F3FF;
@@ -21,7 +21,7 @@
       --ts-sub:#8B95A1; --ts-line:#E5E8EB;
       --ts-shadow:0 4px 16px rgba(0,0,0,.06);
     }
-    /* 메인 랜딩(.toss)에만 Pretendard 적용 */
+    /* ë©ì¸ ëë©(.toss)ìë§ Pretendard ì ì© */
     .toss, .toss *{font-family:'Pretendard','Noto Sans KR',-apple-system,sans-serif;}
     .toss{color:var(--ts-body);}
     .toss .ts-container{max-width:1100px;margin:0 auto;padding:0 24px;}
@@ -29,7 +29,7 @@
     .toss .ts-gray{background:var(--ts-bg-gray);}
     .toss h1,.toss h2,.toss h3,.toss h4{color:var(--ts-title);letter-spacing:-0.03em;}
 
-    /* ── 버튼 ── */
+    /* ââ ë²í¼ ââ */
     .toss .ts-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
       border:none;cursor:pointer;border-radius:12px;font-weight:700;font-size:16px;
       padding:14px 24px;transition:background .2s,transform .1s;text-decoration:none;line-height:1;}
@@ -39,13 +39,13 @@
     .toss .ts-btn-line{background:#fff;color:var(--ts-body);border:1px solid var(--ts-line);}
     .toss .ts-btn-line:hover{background:var(--ts-bg-gray);}
     .toss .ts-btn-lg{padding:16px 30px;font-size:17px;}
-    /* 버튼 shine */
+    /* ë²í¼ shine */
     .toss .ts-btn-blue::after{content:'';position:absolute;top:0;left:-120%;width:60%;height:100%;
       background:linear-gradient(120deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.35) 50%,rgba(255,255,255,0) 100%);
       transform:skewX(-20deg);animation:tsShine 4.5s ease-in-out infinite;}
     @keyframes tsShine{0%{left:-120%;}22%{left:130%;}100%{left:130%;}}
 
-    /* ── 히어로 ── */
+    /* ââ íì´ë¡ ââ */
     .toss .ts-hero{background:#fff;padding:96px 0 100px;overflow:hidden;}
     .toss .ts-hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;}
     .toss .ts-badge{display:inline-flex;align-items:center;gap:8px;background:var(--ts-blue-weak);
@@ -68,13 +68,13 @@
     .toss .ts-sparkle.s4{width:7px;height:7px;top:20%;left:18%;animation-delay:2.4s;}
     @keyframes tsTwinkle{0%,100%{opacity:0;transform:scale(.4);}45%,60%{opacity:1;transform:scale(1);}}
 
-    /* ── 섹션 헤더 ── */
+    /* ââ ì¹ì í¤ë ââ */
     .toss .ts-sec-head{text-align:center;margin-bottom:56px;}
     .toss .ts-sec-head .ts-tag{color:var(--ts-blue);font-weight:700;font-size:15px;margin-bottom:12px;display:block;}
     .toss .ts-sec-head h2{font-size:clamp(28px,4vw,40px);font-weight:800;margin:0 0 14px;}
     .toss .ts-sec-head p{font-size:18px;color:var(--ts-sub);margin:0;}
 
-    /* ── WHY 카드 ── */
+    /* ââ WHY ì¹´ë ââ */
     .toss .ts-why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
     .toss .ts-card{background:#fff;border:1px solid var(--ts-line);border-radius:20px;padding:36px 28px;transition:transform .2s,box-shadow .2s;}
     .toss .ts-card:hover{transform:translateY(-4px);box-shadow:var(--ts-shadow);}
@@ -84,7 +84,7 @@
     .toss .ts-card h3{font-size:20px;font-weight:700;margin:0 0 12px;}
     .toss .ts-card p{font-size:15px;color:var(--ts-body);line-height:1.6;margin:0;}
 
-    /* ── 이용방법 스텝 ── */
+    /* ââ ì´ì©ë°©ë² ì¤í ââ */
     .toss .ts-stepper{display:flex;justify-content:space-between;gap:16px;position:relative;max-width:900px;margin:0 auto;}
     .toss .ts-stepper::before{content:'';position:absolute;top:26px;left:11%;right:11%;height:2px;background:var(--ts-line);z-index:0;}
     .toss .ts-step{position:relative;z-index:1;text-align:center;flex:1;}
@@ -93,14 +93,14 @@
     .toss .ts-step h4{font-size:17px;font-weight:700;margin:0 0 8px;}
     .toss .ts-step p{font-size:14px;color:var(--ts-sub);line-height:1.55;margin:0;}
 
-    /* ── 후기 ── */
+    /* ââ íê¸° ââ */
     .toss .ts-reviews{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
     .toss .ts-review{background:#fff;border:1px solid var(--ts-line);border-radius:16px;padding:28px;}
     .toss .ts-review .ts-stars{color:var(--ts-blue);font-size:15px;margin-bottom:14px;letter-spacing:2px;}
     .toss .ts-review p{font-size:15px;color:var(--ts-body);line-height:1.65;margin:0 0 18px;}
     .toss .ts-review .ts-author{font-size:14px;font-weight:700;color:var(--ts-title);}
 
-    /* ── 요금 ── */
+    /* ââ ìê¸ ââ */
     .toss .ts-pricing{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;max-width:820px;margin:0 auto;}
     .toss .ts-price-card{background:#fff;border:1px solid var(--ts-line);border-radius:20px;padding:36px 32px;position:relative;}
     .toss .ts-price-card.reco{border:2px solid var(--ts-blue);}
@@ -118,7 +118,7 @@
     .toss .ts-price-feats li.note{color:var(--ts-sub);}
     .toss .ts-price-feats li.note svg{color:var(--ts-sub);}
 
-    /* ── FAQ ── */
+    /* ââ FAQ ââ */
     .toss .ts-faq{max-width:760px;margin:0 auto;}
     .toss .ts-faq-item{border-bottom:1px solid var(--ts-line);}
     .toss .ts-faq-q{width:100%;background:none;border:none;cursor:pointer;text-align:left;
@@ -130,17 +130,17 @@
     .toss .ts-faq-item.open .ts-faq-a{max-height:220px;}
     .toss .ts-faq-a p{font-size:15px;color:var(--ts-body);line-height:1.7;margin:0;padding:0 4px 24px;}
 
-    /* ── 전문가 모집 배너 ── */
+    /* ââ ì ë¬¸ê° ëª¨ì§ ë°°ë ââ */
     .toss .ts-recruit{background:var(--ts-title);border-radius:20px;padding:48px;text-align:center;margin-top:48px;}
     .toss .ts-recruit p{font-size:15px;color:#B0B8C1;margin:0 0 8px;}
     .toss .ts-recruit h3{font-size:24px;color:#fff;font-weight:700;margin:0 0 24px;}
 
-    /* ── CTA ── */
+    /* ââ CTA ââ */
     .toss .ts-cta{background:var(--ts-blue-weak);text-align:center;}
     .toss .ts-cta h2{font-size:clamp(26px,4vw,36px);font-weight:800;margin:0 0 12px;}
     .toss .ts-cta p{font-size:18px;color:var(--ts-body);margin:0 0 32px;}
 
-    /* ── 스크롤 리빌 ── */
+    /* ââ ì¤í¬ë¡¤ ë¦¬ë¹ ââ */
     .toss .reveal{opacity:0;transform:translateY(28px);
       transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1);will-change:opacity,transform;}
     .toss .reveal.is-visible{opacity:1;transform:none;}
@@ -154,7 +154,7 @@
     .toss .reveal-stagger.is-visible>*:nth-child(4){transition-delay:.35s;}
     .toss .reveal-stagger.is-visible>*:nth-child(5){transition-delay:.45s;}
 
-    /* ── 반응형 ── */
+    /* ââ ë°ìí ââ */
     @media(max-width:768px){
       .toss section{padding:60px 0;}
       .toss .ts-hero{padding:64px 0 72px;}
@@ -172,7 +172,7 @@
     }
     </style>
     <style>
-    /* ── 새 디자인 오버라이드 ── */
+    /* ââ ì ëìì¸ ì¤ë²ë¼ì´ë ââ */
     :root {
         --mint: #2DD4BF;
         --mint-dark: #0D9488;
@@ -182,7 +182,7 @@
         --bg-hero: #F0FFFE;
     }
 
-    /* 네비 새 스타일 */
+    /* ë¤ë¹ ì ì¤íì¼ */
     .navbar {
         background: #fff !important;
         border-bottom: 1px solid #E5E7EB !important;
@@ -216,7 +216,7 @@
         font-size: 0.9rem !important;
     }
     .nav-menu li a:hover { color: var(--mint) !important; }
-    /* 로그인/회원가입 버튼 새 스타일 */
+    /* ë¡ê·¸ì¸/íìê°ì ë²í¼ ì ì¤íì¼ */
     #loginBtn {
         background: #fff !important;
         color: var(--text-dark) !important;
@@ -236,10 +236,10 @@
         cursor: pointer;
     }
     .btn-signup-new:hover { background: var(--mint-dark) !important; }
-    /* 기존 applyBtn/expertApplyBtn 숨김 (nav에서) */
+    /* ê¸°ì¡´ applyBtn/expertApplyBtn ì¨ê¹ (navìì) */
     nav .btn-expert, nav .btn-primary { display: none !important; }
 
-    /* ── 히어로 새 스타일 ── */
+    /* ââ íì´ë¡ ì ì¤íì¼ ââ */
     .hero-new {
         background: var(--bg-hero);
         min-height: 480px;
@@ -294,7 +294,7 @@
     }
     .btn-outline-gray:hover { border-color: var(--mint); color: var(--mint); }
 
-    /* ── WHY 섹션 (대리입찰 톡 스타일 대형 2-컬럼) ── */
+    /* ââ WHY ì¹ì (ëë¦¬ìì°° í¡ ì¤íì¼ ëí 2-ì»¬ë¼) ââ */
     .why-section {
         background: #F8FAFC;
         padding: 100px 20px;
@@ -326,7 +326,7 @@
         font-size: 1rem;
         color: var(--text-gray);
     }
-    /* 탭 메뉴 */
+    /* í­ ë©ë´ */
     .why-tabs {
         display: flex;
         flex-wrap: wrap;
@@ -357,7 +357,7 @@
         color: var(--mint);
         background: rgba(45,212,191,.06);
     }
-    /* 2-컬럼 콘텐츠 영역 */
+    /* 2-ì»¬ë¼ ì½íì¸  ìì­ */
     .why-content {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -372,7 +372,7 @@
         opacity: 0;
         transform: translateY(10px);
     }
-    /* 좌측 텍스트 */
+    /* ì¢ì¸¡ íì¤í¸ */
     .why-text-col {
         display: flex;
         flex-direction: column;
@@ -438,7 +438,7 @@
         font-weight: 800;
         margin-top: 1px;
     }
-    /* 우측 비주얼 카드 */
+    /* ì°ì¸¡ ë¹ì£¼ì¼ ì¹´ë */
     .why-visual-col {
         position: relative;
     }
@@ -496,7 +496,7 @@
         color: #9CA3AF;
         font-weight: 500;
     }
-    /* 우측 장식 블롭 */
+    /* ì°ì¸¡ ì¥ì ë¸ë¡­ */
     .why-visual-blob {
         position: absolute;
         width: 200px; height: 200px;
@@ -505,7 +505,7 @@
         top: -40px; right: -40px;
         pointer-events: none;
     }
-    /* 진행 바 */
+    /* ì§í ë° */
     .why-progress-bar {
         width: 100%;
         height: 3px;
@@ -521,7 +521,7 @@
         width: 0%;
         transition: width 0.1s linear;
     }
-    /* 모바일: 세로 스택 */
+    /* ëª¨ë°ì¼: ì¸ë¡ ì¤í */
     @media (max-width: 768px) {
         .why-section { padding: 64px 16px; }
         .why-section-header { margin-bottom: 40px; }
@@ -539,7 +539,7 @@
         .why-tab { padding: 0.5rem 1rem; font-size: 0.82rem; }
     }
 
-    /* ── 이용 방법 ── */
+    /* ââ ì´ì© ë°©ë² ââ */
     .how-section {
         background: #F9FAFB;
         padding: 72px 20px;
@@ -572,13 +572,13 @@
     .how-step h4 { font-weight: 700; color: var(--text-dark); margin-bottom: .4rem; font-size:.95rem; }
     .how-step p { font-size: .83rem; color: var(--text-gray); line-height: 1.6; }
 
-    /* 가격 카드 민트 오버라이드 */
+    /* ê°ê²© ì¹´ë ë¯¼í¸ ì¤ë²ë¼ì´ë */
     .recommended-pricing { border-color: var(--mint) !important; }
     .pricing-badge { background: var(--mint) !important; }
 
-    /* 가격 2종(공인중개사/법무사) 카드 — 동일 크기/동일 색상 */
+    /* ê°ê²© 2ì¢(ê³µì¸ì¤ê°ì¬/ë²ë¬´ì¬) ì¹´ë â ëì¼ í¬ê¸°/ëì¼ ìì */
     .pricing-grid { align-items: stretch; }
-    /* 두 카드 모두 같은 파란색 계열, 같은 크기(확대 효과 제거) */
+    /* ë ì¹´ë ëª¨ë ê°ì íëì ê³ì´, ê°ì í¬ê¸°(íë í¨ê³¼ ì ê±°) */
     .pricing-card--realtor,
     .pricing-card--lawyer {
         background: linear-gradient(135deg, #1550E8 0%, #0D3AB8 100%) !important;
@@ -588,7 +588,7 @@
     }
     .pricing-card--realtor .pricing-features,
     .pricing-card--lawyer .pricing-features { flex: 1; }
-    /* 배지 색상은 두 카드 동일(민트) */
+    /* ë°°ì§ ììì ë ì¹´ë ëì¼(ë¯¼í¸) */
     .pricing-card--realtor .pricing-badge,
     .pricing-card--lawyer .pricing-badge { background: var(--mint) !important; }
     .pricing-feature--note { opacity: 0.9; font-size: 1rem !important; }
@@ -597,43 +597,43 @@
         .pricing-card.recommended-pricing { transform: none; }
     }
 
-    /* CTA 민트 오버라이드 */
+    /* CTA ë¯¼í¸ ì¤ë²ë¼ì´ë */
     .cta-section { background: linear-gradient(135deg, #0D9488, #2DD4BF) !important; }
     </style>
 </head>
 <body>
-    <!-- Navigation (토스 스타일) -->
+    <!-- Navigation (í ì¤ ì¤íì¼) -->
     <nav class="navbar toss" id="navbar" style="background:#fff;border-bottom:1px solid var(--ts-line);box-shadow:none;">
         <div class="container nav-container">
             <div class="nav-logo" style="color:var(--ts-title);font-weight:800;">
                 <i class="fas fa-comment-dots" style="color:var(--ts-blue);"></i>
-                <span>대리입찰 톡</span>
-                <span class="logo-sub" style="color:var(--ts-sub);">by 대장TV</span>
+                <span>ëë¦¬ìì°° í¡</span>
+                <span class="logo-sub" style="color:var(--ts-sub);">by ëì¥TV</span>
             </div>
             <ul class="nav-menu" id="navMenu">
-                <li><a href="#why" style="color:var(--ts-body);">서비스 소개</a></li>
-                <li><a href="guide.html" style="color:var(--ts-body);">이용가이드</a></li>
-                <li><a href="safety.html" style="color:var(--ts-body);">안전장치</a></li>
-                <li><a href="#support" style="color:var(--ts-body);">고객지원</a></li>
+                <li><a href="#why" style="color:var(--ts-body);">ìë¹ì¤ ìê°</a></li>
+                <li><a href="guide.html" style="color:var(--ts-body);">ì´ì©ê°ì´ë</a></li>
+                <li><a href="safety.html" style="color:var(--ts-body);">ìì ì¥ì¹</a></li>
+                <li><a href="#support" style="color:var(--ts-body);">ê³ ê°ì§ì</a></li>
             </ul>
             <div class="nav-actions">
-                <!-- 비로그인 시 -->
+                <!-- ë¹ë¡ê·¸ì¸ ì -->
                 <div id="loginActions" style="display: flex; align-items: center; gap: 0.5rem;">
-                    <button class="ts-btn ts-btn-line" onclick="window.location.href='login.html'" id="loginBtn" style="padding:9px 18px;font-size:15px;">로그인</button>
-                    <button class="ts-btn ts-btn-blue" onclick="window.location.href='signup.html'" style="padding:9px 18px;font-size:15px;">회원가입</button>
+                    <button class="ts-btn ts-btn-line" onclick="window.location.href='login.html'" id="loginBtn" style="padding:9px 18px;font-size:15px;">ë¡ê·¸ì¸</button>
+                    <button class="ts-btn ts-btn-blue" onclick="window.location.href='signup.html'" style="padding:9px 18px;font-size:15px;">íìê°ì</button>
                 </div>
                 
-                <!-- 로그인 시 -->
+                <!-- ë¡ê·¸ì¸ ì -->
                 <div id="userInfo" style="display: none; align-items: center; gap: 0.75rem;">
                     <span id="userTypeLabel" style="padding: 0.25rem 0.7rem; background: var(--ts-blue-weak); color: var(--ts-blue-dark); border-radius: 20px; font-size: 0.8rem; font-weight: 700;"></span>
                     <span id="userName" style="font-weight: 600; font-size:.9rem; color:var(--ts-title);"></span>
-                    <button class="ts-btn ts-btn-line" onclick="goToMypage()" style="font-size:.85rem; padding:.5rem .9rem;">마이페이지</button>
-                    <button class="ts-btn ts-btn-line" onclick="handleLogout()" style="font-size:.85rem; padding:.5rem .9rem;">로그아웃</button>
+                    <button class="ts-btn ts-btn-line" onclick="goToMypage()" style="font-size:.85rem; padding:.5rem .9rem;">ë§ì´íì´ì§</button>
+                    <button class="ts-btn ts-btn-line" onclick="handleLogout()" style="font-size:.85rem; padding:.5rem .9rem;">ë¡ê·¸ìì</button>
                 </div>
 
-                <!-- JS 연동용 숨김 버튼 -->
-                <button class="btn btn-expert" id="expertApplyBtn" style="display:none;" onclick="location.href='partner.html'">전문가 신청</button>
-                <button class="btn btn-primary" id="applyBtn" style="display:none;">대리입찰 신청</button>
+                <!-- JS ì°ëì© ì¨ê¹ ë²í¼ -->
+                <button class="btn btn-expert" id="expertApplyBtn" style="display:none;" onclick="location.href='partner.html'">ì ë¬¸ê° ì ì²­</button>
+                <button class="btn btn-primary" id="applyBtn" style="display:none;">ëë¦¬ìì°° ì ì²­</button>
             </div>
             <button class="nav-toggle" id="navToggle">
                 <span></span>
@@ -643,7 +643,7 @@
         </div>
     </nav>
 
-    <!-- ── 서비스 안내 배너 ── -->
+    <!-- ââ ìë¹ì¤ ìë´ ë°°ë ââ -->
     <div id="betaBanner" style="
         position:fixed; top:60px; left:0; right:0; z-index:90;
         background:linear-gradient(90deg,#1B64DA,#3182F6);
@@ -654,35 +654,35 @@
         box-shadow:0 2px 8px rgba(13,148,136,0.3);
     ">
         <i class="fas fa-bolt" style="margin-right:6px;"></i>
-        <span id="bannerText"><strong>중개수수료 0원</strong> — 대리입찰 톡은 의뢰인과 전문가를 <strong>무료로 연결</strong>해 드립니다. 플랫폼이 가져가는 수수료는 없습니다.</span>
+        <span id="bannerText"><strong>ì¤ê°ììë£ 0ì</strong> â ëë¦¬ìì°° í¡ì ìë¢°ì¸ê³¼ ì ë¬¸ê°ë¥¼ <strong>ë¬´ë£ë¡ ì°ê²°</strong>í´ ëë¦½ëë¤. íë«í¼ì´ ê°ì ¸ê°ë ììë£ë ììµëë¤.</span>
         <button onclick="document.getElementById('betaBanner').style.display='none';document.getElementById('betaBannerSpacer').style.display='none';" style="
             position:absolute; right:12px; top:50%; transform:translateY(-50%);
             background:none; border:none; color:rgba(255,255,255,0.7);
             font-size:1rem; cursor:pointer; padding:4px;
-        " title="닫기">✕</button>
+        " title="ë«ê¸°">â</button>
     </div>
     <div id="betaBannerSpacer" style="height:38px;"></div>
 
     <!-- Main Page -->
     <div id="mainPage" class="page active toss">
-        <!-- Hero Section (토스 스타일 2컬럼 + 이미지) -->
+        <!-- Hero Section (í ì¤ ì¤íì¼ 2ì»¬ë¼ + ì´ë¯¸ì§) -->
         <section class="ts-hero">
             <div class="ts-container">
                 <div class="ts-hero-inner">
                     <div class="ts-hero-copy reveal">
                         <div class="ts-badge">
                             <i data-lucide="badge-check" style="width:16px;height:16px;"></i>
-                            <span id="heroBadge">부동산경매 1등 대장TV가 운영하는 중개수수료 무료 대리입찰 플랫폼</span>
+                            <span id="heroBadge">ë¶ëì°ê²½ë§¤ 1ë± ëì¥TVê° ì´ìíë ì¤ê°ììë£ ë¬´ë£ ëë¦¬ìì°° íë«í¼</span>
                         </div>
-                        <h1 id="heroTitle">법원 갈 시간에<br><span class="accent" id="heroTitle2">가족과 함께</span></h1>
-                        <p class="ts-sub" id="heroSub">소비자는 앉아서 간편하게 신청,<br>전문가가 대신 법원에 가서 입찰합니다</p>
+                        <h1 id="heroTitle">ë²ì ê° ìê°ì<br><span class="accent" id="heroTitle2">ê°ì¡±ê³¼ í¨ê»</span></h1>
+                        <p class="ts-sub" id="heroSub">ìë¹ìë ììì ê°í¸íê² ì ì²­,<br>ì ë¬¸ê°ê° ëì  ë²ìì ê°ì ìì°°í©ëë¤</p>
                         <div class="ts-hero-btns">
-                            <button class="ts-btn ts-btn-blue ts-btn-lg" id="heroApplyBtn" onclick="location.href='apply.html'">지금 신청하기</button>
-                            <button class="ts-btn ts-btn-line ts-btn-lg" onclick="location.href='partner.html'">대리인 신청</button>
+                            <button class="ts-btn ts-btn-blue ts-btn-lg" id="heroApplyBtn" onclick="location.href='apply.html'">ì§ê¸ ì ì²­íê¸°</button>
+                            <button class="ts-btn ts-btn-line ts-btn-lg" onclick="location.href='partner.html'">ëë¦¬ì¸ ì ì²­</button>
                         </div>
                     </div>
                     <div class="ts-hero-img-wrap reveal reveal-delay">
-                        <img class="ts-hero-img" src="assets/hero-proxy.png" alt="소비자는 집에서 간편하게 신청하고, 전문가가 대신 법원에 가서 입찰하는 대리입찰 서비스">
+                        <img class="ts-hero-img" src="assets/hero-proxy.png" alt="ìë¹ìë ì§ìì ê°í¸íê² ì ì²­íê³ , ì ë¬¸ê°ê° ëì  ë²ìì ê°ì ìì°°íë ëë¦¬ìì°° ìë¹ì¤">
                         <span class="ts-sparkle s1"></span>
                         <span class="ts-sparkle s2"></span>
                         <span class="ts-sparkle s3"></span>
@@ -692,247 +692,247 @@
             </div>
         </section>
 
-        <!-- WHY 섹션 (토스 스타일 3카드) -->
+        <!-- WHY ì¹ì (í ì¤ ì¤íì¼ 3ì¹´ë) -->
         <section class="ts-gray" id="why">
             <div class="ts-container">
                 <div class="ts-sec-head reveal">
-                    <span class="ts-tag">WHY 대리입찰 톡</span>
-                    <h2>왜 대리입찰 톡일까요?</h2>
-                    <p>중개수수료 0원, 전국 어디서나 같은 가격으로</p>
+                    <span class="ts-tag">WHY ëë¦¬ìì°° í¡</span>
+                    <h2>ì ëë¦¬ìì°° í¡ì¼ê¹ì?</h2>
+                    <p>ì¤ê°ììë£ 0ì, ì êµ­ ì´ëìë ê°ì ê°ê²©ì¼ë¡</p>
                 </div>
                 <div class="ts-why-grid reveal reveal-stagger">
                     <div class="ts-card">
                         <div class="ts-ico"><i data-lucide="wallet"></i></div>
-                        <h3>투명한 단일 가격</h3>
-                        <p>공인중개사 132,000원 · 법무사 154,000원(각 부가세 포함). 중개수수료 0원, 전국 전문가 직접 연결.</p>
+                        <h3>í¬ëªí ë¨ì¼ ê°ê²©</h3>
+                        <p>ê³µì¸ì¤ê°ì¬ 132,000ì Â· ë²ë¬´ì¬ 154,000ì(ê° ë¶ê°ì¸ í¬í¨). ì¤ê°ììë£ 0ì, ì êµ­ ì ë¬¸ê° ì§ì  ì°ê²°.</p>
                     </div>
                     <div class="ts-card">
                         <div class="ts-ico"><i data-lucide="clock"></i></div>
-                        <h3>법원 갈 필요 없음</h3>
-                        <p>연차 내고 법원 갈 필요 없이, 인증된 전문가가 직접 법원에 출석해 대리 입찰합니다.</p>
+                        <h3>ë²ì ê° íì ìì</h3>
+                        <p>ì°ì°¨ ë´ê³  ë²ì ê° íì ìì´, ì¸ì¦ë ì ë¬¸ê°ê° ì§ì  ë²ìì ì¶ìí´ ëë¦¬ ìì°°í©ëë¤.</p>
                     </div>
                     <div class="ts-card">
                         <div class="ts-ico"><i data-lucide="shield-check"></i></div>
-                        <h3>보증금 5억 보장</h3>
-                        <p>전문 매수신청대리인의 배상책임보험 가입으로 입찰보증금은 최대 5억 원까지 안전하게 보장됩니다.</p>
+                        <h3>ë³´ì¦ê¸ 5ìµ ë³´ì¥</h3>
+                        <p>ì ë¬¸ ë§¤ìì ì²­ëë¦¬ì¸ì ë°°ìì±ìë³´í ê°ìì¼ë¡ ìì°°ë³´ì¦ê¸ì ìµë 5ìµ ìê¹ì§ ìì íê² ë³´ì¥ë©ëë¤.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- 이용 방법 (토스 스텝 인디케이터) -->
+        <!-- ì´ì© ë°©ë² (í ì¤ ì¤í ì¸ëì¼ì´í°) -->
         <section id="service">
             <div class="ts-container">
                 <div class="ts-sec-head reveal">
                     <span class="ts-tag">HOW IT WORKS</span>
-                    <h2 id="howTitle">이용 방법</h2>
-                    <p id="howSub">딱 4단계로 완료됩니다</p>
+                    <h2 id="howTitle">ì´ì© ë°©ë²</h2>
+                    <p id="howSub">ë± 4ë¨ê³ë¡ ìë£ë©ëë¤</p>
                 </div>
                 <div class="ts-stepper reveal reveal-stagger">
                     <div class="ts-step">
                         <div class="ts-step-num">1</div>
-                        <h4 id="step1Title">사건번호 입력</h4>
-                        <p id="step1Desc">대법원 경매 사건번호를 입력하면 자동으로 정보를 불러옵니다</p>
+                        <h4 id="step1Title">ì¬ê±´ë²í¸ ìë ¥</h4>
+                        <p id="step1Desc">ëë²ì ê²½ë§¤ ì¬ê±´ë²í¸ë¥¼ ìë ¥íë©´ ìëì¼ë¡ ì ë³´ë¥¼ ë¶ë¬ìµëë¤</p>
                     </div>
                     <div class="ts-step">
                         <div class="ts-step-num">2</div>
-                        <h4 id="step2Title">입찰가 결정</h4>
-                        <p id="step2Desc">원하는 입찰 금액과 보증금 납부 방법을 선택합니다</p>
+                        <h4 id="step2Title">ìì°°ê° ê²°ì </h4>
+                        <p id="step2Desc">ìíë ìì°° ê¸ì¡ê³¼ ë³´ì¦ê¸ ë©ë¶ ë°©ë²ì ì íí©ëë¤</p>
                     </div>
                     <div class="ts-step">
                         <div class="ts-step-num">3</div>
-                        <h4 id="step3Title">전자서명</h4>
-                        <p id="step3Desc">온라인 전자서명으로 위임장 작성. 인감증명서 불필요</p>
+                        <h4 id="step3Title">ì ììëª</h4>
+                        <p id="step3Desc">ì¨ë¼ì¸ ì ììëªì¼ë¡ ììì¥ ìì±. ì¸ê°ì¦ëªì ë¶íì</p>
                     </div>
                     <div class="ts-step">
                         <div class="ts-step-num">4</div>
-                        <h4 id="step4Title">결과 수령</h4>
-                        <p id="step4Desc">입찰 당일 문자로 낙찰/패찰 결과를 즉시 안내받습니다</p>
+                        <h4 id="step4Title">ê²°ê³¼ ìë ¹</h4>
+                        <p id="step4Desc">ìì°° ë¹ì¼ ë¬¸ìë¡ ëì°°/í¨ì°° ê²°ê³¼ë¥¼ ì¦ì ìë´ë°ìµëë¤</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Experts Section (숨김 - JS 연동용 유지) -->
+        <!-- Experts Section (ì¨ê¹ - JS ì°ëì© ì ì§) -->
         <section id="experts" style="display:none;">
             <div class="container">
                 <div class="experts-grid" id="expertsGrid">
                     <div class="expert-card">
                         <div class="expert-header">
-                            <div class="expert-avatar">⚖️</div>
+                            <div class="expert-avatar">âï¸</div>
                             <div class="expert-info">
-                                <h3>김법무</h3>
-                                <span class="expert-type-badge badge-lawyer">법무사</span>
+                                <h3>ê¹ë²ë¬´</h3>
+                                <span class="expert-type-badge badge-lawyer">ë²ë¬´ì¬</span>
                             </div>
                         </div>
                         <div class="expert-rating">
                             <i class="fas fa-star"></i>
-                            <span>4.8 (247건)</span>
+                            <span>4.8 (247ê±´)</span>
                         </div>
                         <div class="expert-regions">
                             <i class="fas fa-map-marker-alt"></i>
-                            <span>서울, 경기, 인천</span>
+                            <span>ìì¸, ê²½ê¸°, ì¸ì²</span>
                         </div>
-                        <p class="expert-intro">15년 경력 법무사입니다. 부동산 경매 전문.</p>
+                        <p class="expert-intro">15ë ê²½ë ¥ ë²ë¬´ì¬ìëë¤. ë¶ëì° ê²½ë§¤ ì ë¬¸.</p>
                     </div>
                     
                     <div class="expert-card">
                         <div class="expert-header">
-                            <div class="expert-avatar">💰</div>
+                            <div class="expert-avatar">ð°</div>
                             <div class="expert-info">
-                                <h3>이대리</h3>
-                                <span class="expert-type-badge badge-agent">공인중개사</span>
+                                <h3>ì´ëë¦¬</h3>
+                                <span class="expert-type-badge badge-agent">ê³µì¸ì¤ê°ì¬</span>
                             </div>
                         </div>
                         <div class="expert-rating">
                             <i class="fas fa-star"></i>
-                            <span>4.6 (189건)</span>
+                            <span>4.6 (189ê±´)</span>
                         </div>
                         <div class="expert-regions">
                             <i class="fas fa-map-marker-alt"></i>
-                            <span>경기, 서울</span>
+                            <span>ê²½ê¸°, ìì¸</span>
                         </div>
-                        <p class="expert-intro">빠르고 정확한 대리 입찰 서비스를 제공합니다.</p>
+                        <p class="expert-intro">ë¹ ë¥´ê³  ì íí ëë¦¬ ìì°° ìë¹ì¤ë¥¼ ì ê³µí©ëë¤.</p>
                     </div>
                     
                     <div class="expert-card">
                         <div class="expert-header">
-                            <div class="expert-avatar">⚖️</div>
+                            <div class="expert-avatar">âï¸</div>
                             <div class="expert-info">
-                                <h3>박법률</h3>
-                                <span class="expert-type-badge badge-lawyer">법무사</span>
+                                <h3>ë°ë²ë¥ </h3>
+                                <span class="expert-type-badge badge-lawyer">ë²ë¬´ì¬</span>
                             </div>
                         </div>
                         <div class="expert-rating">
                             <i class="fas fa-star"></i>
-                            <span>4.9 (312건)</span>
+                            <span>4.9 (312ê±´)</span>
                         </div>
                         <div class="expert-regions">
                             <i class="fas fa-map-marker-alt"></i>
-                            <span>부산, 경남, 울산</span>
+                            <span>ë¶ì°, ê²½ë¨, ì¸ì°</span>
                         </div>
-                        <p class="expert-intro">부산·경남 지역 경매 전문 법무사</p>
+                        <p class="expert-intro">ë¶ì°Â·ê²½ë¨ ì§ì­ ê²½ë§¤ ì ë¬¸ ë²ë¬´ì¬</p>
                     </div>
                 </div>
 
-                <!-- 전문가 신청 배너 -->
+                <!-- ì ë¬¸ê° ì ì²­ ë°°ë -->
                 <div style="margin-top:3rem; padding:2rem; background:linear-gradient(135deg,var(--mint-dark),var(--mint)); border-radius:16px; text-align:center; color:#fff;">
-                    <p style="font-size:1rem; margin-bottom:.5rem; opacity:.9;">매수신청대리인 또는 법무사이신가요?</p>
-                    <h3 style="font-size:1.3rem; margin-bottom:1.25rem; font-weight:700;">대리입찰 톡 전문가로 활동하세요</h3>
-                    <a href="partner.html" style="display:inline-block;background:#fff; color:var(--mint-dark); padding:.75rem 2rem; border-radius:50px; font-weight:700; font-size:1rem; text-decoration:none;">대리인 신청하기 →</a>
+                    <p style="font-size:1rem; margin-bottom:.5rem; opacity:.9;">ë§¤ìì ì²­ëë¦¬ì¸ ëë ë²ë¬´ì¬ì´ì ê°ì?</p>
+                    <h3 style="font-size:1.3rem; margin-bottom:1.25rem; font-weight:700;">ëë¦¬ìì°° í¡ ì ë¬¸ê°ë¡ íëíì¸ì</h3>
+                    <a href="partner.html" style="display:inline-block;background:#fff; color:var(--mint-dark); padding:.75rem 2rem; border-radius:50px; font-weight:700; font-size:1rem; text-decoration:none;">ëë¦¬ì¸ ì ì²­íê¸° â</a>
                 </div>
             </div>
         </section>
 
-        <!-- Reviews Section (토스 스타일) -->
+        <!-- Reviews Section (í ì¤ ì¤íì¼) -->
         <section class="ts-gray">
             <div class="ts-container">
                 <div class="ts-sec-head reveal">
                     <span class="ts-tag">REVIEWS</span>
-                    <h2>실제 이용자 후기</h2>
-                    <p>대리입찰 톡을 경험한 분들의 이야기</p>
+                    <h2>ì¤ì  ì´ì©ì íê¸°</h2>
+                    <p>ëë¦¬ìì°° í¡ì ê²½íí ë¶ë¤ì ì´ì¼ê¸°</p>
                 </div>
                 <div class="ts-reviews reveal reveal-stagger">
                     <div class="ts-review">
-                        <div class="ts-stars">★★★★★</div>
-                        <p>"한두 푼도 아닌 입찰보증금을 믿고 맡길 수 있어 안심입니다. 신뢰할 수 있는 서비스인 것 같아 계속 이용할 의사 있습니다."</p>
-                        <div class="ts-author">전문투자자 A</div>
+                        <div class="ts-stars">âââââ</div>
+                        <p>"íë í¼ë ìë ìì°°ë³´ì¦ê¸ì ë¯¿ê³  ë§¡ê¸¸ ì ìì´ ìì¬ìëë¤. ì ë¢°í  ì ìë ìë¹ì¤ì¸ ê² ê°ì ê³ì ì´ì©í  ìì¬ ììµëë¤."</p>
+                        <div class="ts-author">ì ë¬¸í¬ìì A</div>
                     </div>
                     <div class="ts-review">
-                        <div class="ts-stars">★★★★★</div>
-                        <p>"직장인이다 보니 주중에 연차를 내는 게 부담스러웠는데, 대리입찰 톡 덕분에 연차 걱정 없이 경매 참여할 수 있습니다."</p>
-                        <div class="ts-author">직장인 B</div>
+                        <div class="ts-stars">âââââ</div>
+                        <p>"ì§ì¥ì¸ì´ë¤ ë³´ë ì£¼ì¤ì ì°ì°¨ë¥¼ ë´ë ê² ë¶ë´ì¤ë¬ì ëë°, ëë¦¬ìì°° í¡ ëë¶ì ì°ì°¨ ê±±ì  ìì´ ê²½ë§¤ ì°¸ì¬í  ì ììµëë¤."</p>
+                        <div class="ts-author">ì§ì¥ì¸ B</div>
                     </div>
                     <div class="ts-review">
-                        <div class="ts-stars">★★★★★</div>
-                        <p>"서비스 신청 웹페이지도 직관적이고, 절차 안내도 명확합니다. 처음 이용하는데도 불편함 없이 3분 만에 신청 완료했네요."</p>
-                        <div class="ts-author">전문직 C</div>
+                        <div class="ts-stars">âââââ</div>
+                        <p>"ìë¹ì¤ ì ì²­ ì¹íì´ì§ë ì§ê´ì ì´ê³ , ì ì°¨ ìë´ë ëªíí©ëë¤. ì²ì ì´ì©íëë°ë ë¶í¸í¨ ìì´ 3ë¶ ë§ì ì ì²­ ìë£íë¤ì."</p>
+                        <div class="ts-author">ì ë¬¸ì§ C</div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Pricing Section (토스 스타일) -->
+        <!-- Pricing Section (í ì¤ ì¤íì¼) -->
         <section>
             <div class="ts-container">
                 <div class="ts-sec-head reveal">
                     <span class="ts-tag">PRICING</span>
-                    <h2 id="pricingTitle">대리입찰 가격</h2>
-                    <p id="pricingSub">전문가 유형을 선택하세요 · 전국 어디서나 같은 가격</p>
+                    <h2 id="pricingTitle">ëë¦¬ìì°° ê°ê²©</h2>
+                    <p id="pricingSub">ì ë¬¸ê° ì íì ì ííì¸ì Â· ì êµ­ ì´ëìë ê°ì ê°ê²©</p>
                 </div>
                 <div class="ts-pricing reveal reveal-stagger">
-                    <!-- 공인중개사 -->
+                    <!-- ê³µì¸ì¤ê°ì¬ -->
                     <div class="ts-price-card">
-                        <div class="ts-price-cat">공인중개사</div>
-                        <div class="ts-price-name">공인중개사 대리입찰</div>
-                        <div class="ts-price-amt">132,000<span class="won">원</span></div>
-                        <p class="ts-price-vat">(VAT 포함)</p>
-                        <p class="ts-price-desc">매수신청대리인이 직접 진행</p>
+                        <div class="ts-price-cat">ê³µì¸ì¤ê°ì¬</div>
+                        <div class="ts-price-name">ê³µì¸ì¤ê°ì¬ ëë¦¬ìì°°</div>
+                        <div class="ts-price-amt">132,000<span class="won">ì</span></div>
+                        <p class="ts-price-vat">(VAT í¬í¨)</p>
+                        <p class="ts-price-desc">ë§¤ìì ì²­ëë¦¬ì¸ì´ ì§ì  ì§í</p>
                         <ul class="ts-price-feats">
-                            <li><i data-lucide="check"></i> 매수신청대리인</li>
-                            <li><i data-lucide="check"></i> 보험 5억 가입 완료</li>
-                            <li class="note"><i data-lucide="info"></i> 인감증명서 등 일부 서류 준비 필요</li>
-                            <li><i data-lucide="check"></i> 입찰 결과 안내</li>
+                            <li><i data-lucide="check"></i> ë§¤ìì ì²­ëë¦¬ì¸</li>
+                            <li><i data-lucide="check"></i> ë³´í 5ìµ ê°ì ìë£</li>
+                            <li class="note"><i data-lucide="info"></i> ì¸ê°ì¦ëªì ë± ì¼ë¶ ìë¥ ì¤ë¹ íì</li>
+                            <li><i data-lucide="check"></i> ìì°° ê²°ê³¼ ìë´</li>
                         </ul>
                     </div>
-                    <!-- 법무사 -->
+                    <!-- ë²ë¬´ì¬ -->
                     <div class="ts-price-card">
-                        <div class="ts-price-cat">법무사</div>
-                        <div class="ts-price-name">법무사 대리입찰</div>
-                        <div class="ts-price-amt">154,000<span class="won">원</span></div>
-                        <p class="ts-price-vat">(VAT 포함)</p>
-                        <p class="ts-price-desc">온라인 전자서명 3분 완료</p>
+                        <div class="ts-price-cat">ë²ë¬´ì¬</div>
+                        <div class="ts-price-name">ë²ë¬´ì¬ ëë¦¬ìì°°</div>
+                        <div class="ts-price-amt">154,000<span class="won">ì</span></div>
+                        <p class="ts-price-vat">(VAT í¬í¨)</p>
+                        <p class="ts-price-desc">ì¨ë¼ì¸ ì ììëª 3ë¶ ìë£</p>
                         <ul class="ts-price-feats">
-                            <li><i data-lucide="check"></i> 온라인 전자서명만 (3분)</li>
-                            <li><i data-lucide="check"></i> 주민센터 방문 불필요</li>
-                            <li><i data-lucide="check"></i> 인감증명서 불필요</li>
-                            <li><i data-lucide="check"></i> 대리 입찰참여</li>
-                            <li><i data-lucide="check"></i> 입찰 결과 안내</li>
+                            <li><i data-lucide="check"></i> ì¨ë¼ì¸ ì ììëªë§ (3ë¶)</li>
+                            <li><i data-lucide="check"></i> ì£¼ë¯¼ì¼í° ë°©ë¬¸ ë¶íì</li>
+                            <li><i data-lucide="check"></i> ì¸ê°ì¦ëªì ë¶íì</li>
+                            <li><i data-lucide="check"></i> ëë¦¬ ìì°°ì°¸ì¬</li>
+                            <li><i data-lucide="check"></i> ìì°° ê²°ê³¼ ìë´</li>
                         </ul>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- FAQ Section (토스 스타일) -->
+        <!-- FAQ Section (í ì¤ ì¤íì¼) -->
         <section id="support" class="ts-gray">
             <div class="ts-container">
                 <div class="ts-sec-head reveal">
                     <span class="ts-tag">FAQ</span>
-                    <h2>자주 묻는 질문</h2>
-                    <p>궁금한 점을 확인해 보세요</p>
+                    <h2>ìì£¼ ë¬»ë ì§ë¬¸</h2>
+                    <p>ê¶ê¸í ì ì íì¸í´ ë³´ì¸ì</p>
                 </div>
                 <div class="ts-faq reveal">
                     <div class="ts-faq-item">
-                        <button class="ts-faq-q">보증금은 안전한가요? <i data-lucide="chevron-down"></i></button>
-                        <div class="ts-faq-a"><p>전문 매수신청대리인의 배상책임보험이 가입되어 있어 보증금은 100% 안전합니다. 최대 5억 원까지 보장됩니다.</p></div>
+                        <button class="ts-faq-q">ë³´ì¦ê¸ì ìì íê°ì? <i data-lucide="chevron-down"></i></button>
+                        <div class="ts-faq-a"><p>ì ë¬¸ ë§¤ìì ì²­ëë¦¬ì¸ì ë°°ìì±ìë³´íì´ ê°ìëì´ ìì´ ë³´ì¦ê¸ì 100% ìì í©ëë¤. ìµë 5ìµ ìê¹ì§ ë³´ì¥ë©ëë¤.</p></div>
                     </div>
                     <div class="ts-faq-item">
-                        <button class="ts-faq-q">전국 어디서나 신청 가능한가요? <i data-lucide="chevron-down"></i></button>
-                        <div class="ts-faq-a"><p>네, 전국 모든 법원의 경매 사건에 대해 대리입찰 서비스를 제공합니다. 서울에서 부산 물건도, 제주에서 강원도 물건도 가능합니다.</p></div>
+                        <button class="ts-faq-q">ì êµ­ ì´ëìë ì ì²­ ê°ë¥íê°ì? <i data-lucide="chevron-down"></i></button>
+                        <div class="ts-faq-a"><p>ë¤, ì êµ­ ëª¨ë  ë²ìì ê²½ë§¤ ì¬ê±´ì ëí´ ëë¦¬ìì°° ìë¹ì¤ë¥¼ ì ê³µí©ëë¤. ìì¸ìì ë¶ì° ë¬¼ê±´ë, ì ì£¼ìì ê°ìë ë¬¼ê±´ë ê°ë¥í©ëë¤.</p></div>
                     </div>
                     <div class="ts-faq-item">
-                        <button class="ts-faq-q">입찰 당일 연락은 어떻게 받나요? <i data-lucide="chevron-down"></i></button>
-                        <div class="ts-faq-a"><p>입찰 완료 후 즉시 문자 메시지로 결과를 안내해 드립니다. 낙찰 여부와 함께 다음 절차에 대한 상세 안내가 포함됩니다.</p></div>
+                        <button class="ts-faq-q">ìì°° ë¹ì¼ ì°ë½ì ì´ë»ê² ë°ëì? <i data-lucide="chevron-down"></i></button>
+                        <div class="ts-faq-a"><p>ìì°° ìë£ í ì¦ì ë¬¸ì ë©ìì§ë¡ ê²°ê³¼ë¥¼ ìë´í´ ëë¦½ëë¤. ëì°° ì¬ë¶ì í¨ê» ë¤ì ì ì°¨ì ëí ìì¸ ìë´ê° í¬í¨ë©ëë¤.</p></div>
                     </div>
                     <div class="ts-faq-item">
-                        <button class="ts-faq-q">낙찰되면 추가 비용이 있나요? <i data-lucide="chevron-down"></i></button>
-                        <div class="ts-faq-a"><p>대리입찰 수수료 외 추가 비용은 없습니다. 낙찰 이후 소유권 이전 등기 등의 절차는 별도로 협의 가능합니다.</p></div>
+                        <button class="ts-faq-q">ëì°°ëë©´ ì¶ê° ë¹ì©ì´ ìëì? <i data-lucide="chevron-down"></i></button>
+                        <div class="ts-faq-a"><p>ëë¦¬ìì°° ììë£ ì¸ ì¶ê° ë¹ì©ì ììµëë¤. ëì°° ì´í ìì ê¶ ì´ì  ë±ê¸° ë±ì ì ì°¨ë ë³ëë¡ íì ê°ë¥í©ëë¤.</p></div>
                     </div>
                     <div class="ts-faq-item">
-                        <button class="ts-faq-q">신청 취소는 가능한가요? <i data-lucide="chevron-down"></i></button>
-                        <div class="ts-faq-a"><p>매각기일 전날까지 취소 시 전액 환불됩니다. 단, 매각기일 당일 취소는 환불이 불가능합니다.</p></div>
+                        <button class="ts-faq-q">ì ì²­ ì·¨ìë ê°ë¥íê°ì? <i data-lucide="chevron-down"></i></button>
+                        <div class="ts-faq-a"><p>ë§¤ê°ê¸°ì¼ ì ë ê¹ì§ ì·¨ì ì ì ì¡ íë¶ë©ëë¤. ë¨, ë§¤ê°ê¸°ì¼ ë¹ì¼ ì·¨ìë íë¶ì´ ë¶ê°ë¥í©ëë¤.</p></div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- CTA Section (토스 스타일) -->
+        <!-- CTA Section (í ì¤ ì¤íì¼) -->
         <section class="ts-cta">
             <div class="ts-container reveal">
-                <h2>지금 바로 대리입찰을 신청하세요</h2>
-                <p>3분이면 충분합니다</p>
-                <button class="ts-btn ts-btn-blue ts-btn-lg" id="ctaApplyBtn" onclick="location.href='apply.html'">대리입찰 신청하기</button>
+                <h2>ì§ê¸ ë°ë¡ ëë¦¬ìì°°ì ì ì²­íì¸ì</h2>
+                <p>3ë¶ì´ë©´ ì¶©ë¶í©ëë¤</p>
+                <button class="ts-btn ts-btn-blue ts-btn-lg" id="ctaApplyBtn" onclick="location.href='apply.html'">ëë¦¬ìì°° ì ì²­íê¸°</button>
             </div>
         </section>
     </div>
@@ -944,7 +944,7 @@
             <div class="progress-sidebar">
                 <div class="progress-logo">
                     <i class="fas fa-comment-dots"></i>
-                    <span>대리입찰 톡</span>
+                    <span>ëë¦¬ìì°° í¡</span>
                 </div>
                 <div class="progress-steps">
                     <div class="progress-step active" data-step="1">
@@ -952,7 +952,7 @@
                             <span class="step-number">1</span>
                             <i class="fas fa-check step-check"></i>
                         </div>
-                        <span class="step-label">사건 조회</span>
+                        <span class="step-label">ì¬ê±´ ì¡°í</span>
                     </div>
                     <div class="progress-line"></div>
                     <div class="progress-step" data-step="2">
@@ -960,7 +960,7 @@
                             <span class="step-number">2</span>
                             <i class="fas fa-check step-check"></i>
                         </div>
-                        <span class="step-label">입찰정보작성</span>
+                        <span class="step-label">ìì°°ì ë³´ìì±</span>
                     </div>
                     <div class="progress-line"></div>
                     <div class="progress-step" data-step="3">
@@ -968,7 +968,7 @@
                             <span class="step-number">3</span>
                             <i class="fas fa-check step-check"></i>
                         </div>
-                        <span class="step-label">전자계약</span>
+                        <span class="step-label">ì ìê³ì½</span>
                     </div>
                     <div class="progress-line"></div>
                     <div class="progress-step" data-step="4">
@@ -976,11 +976,11 @@
                             <span class="step-number">4</span>
                             <i class="fas fa-check step-check"></i>
                         </div>
-                        <span class="step-label">수수료결제</span>
+                        <span class="step-label">ììë£ê²°ì </span>
                     </div>
                 </div>
                 <button class="btn btn-back" id="backToMain">
-                    <i class="fas fa-arrow-left"></i> 홈으로
+                    <i class="fas fa-arrow-left"></i> íì¼ë¡
                 </button>
             </div>
 
@@ -988,118 +988,118 @@
             <div class="application-content">
                 <!-- Step 1: Case Search -->
                 <div class="step-content active" id="step1">
-                    <h2 class="step-title">의뢰하시는 경매 사건은 무엇인가요?</h2>
+                    <h2 class="step-title">ìë¢°íìë ê²½ë§¤ ì¬ê±´ì ë¬´ìì¸ê°ì?</h2>
                     <div class="form-card">
                         <div class="external-link">
                             <i class="fas fa-external-link-alt"></i>
-                            <a href="https://www.courtauction.go.kr" target="_blank">대법원 사건검색 바로가기</a>
+                            <a href="https://www.courtauction.go.kr" target="_blank">ëë²ì ì¬ê±´ê²ì ë°ë¡ê°ê¸°</a>
                         </div>
                         <div class="form-group">
-                            <label>관할법원 <span class="required">*</span></label>
+                            <label>ê´í ë²ì <span class="required">*</span></label>
                             <div class="form-row">
                                 <select id="region" class="form-control">
-                                    <option value="">지역 선택</option>
-                                    <option value="서울">서울</option>
-                                    <option value="인천">인천</option>
-                                    <option value="경기">경기</option>
-                                    <option value="부산">부산</option>
-                                    <option value="대구">대구</option>
-                                    <option value="광주">광주</option>
-                                    <option value="대전">대전</option>
-                                    <option value="울산">울산</option>
-                                    <option value="강원">강원</option>
-                                    <option value="충북">충북</option>
-                                    <option value="충남">충남</option>
-                                    <option value="전북">전북</option>
-                                    <option value="전남">전남</option>
-                                    <option value="경북">경북</option>
-                                    <option value="경남">경남</option>
-                                    <option value="제주">제주</option>
+                                    <option value="">ì§ì­ ì í</option>
+                                    <option value="ìì¸">ìì¸</option>
+                                    <option value="ì¸ì²">ì¸ì²</option>
+                                    <option value="ê²½ê¸°">ê²½ê¸°</option>
+                                    <option value="ë¶ì°">ë¶ì°</option>
+                                    <option value="ëêµ¬">ëêµ¬</option>
+                                    <option value="ê´ì£¼">ê´ì£¼</option>
+                                    <option value="ëì ">ëì </option>
+                                    <option value="ì¸ì°">ì¸ì°</option>
+                                    <option value="ê°ì">ê°ì</option>
+                                    <option value="ì¶©ë¶">ì¶©ë¶</option>
+                                    <option value="ì¶©ë¨">ì¶©ë¨</option>
+                                    <option value="ì ë¶">ì ë¶</option>
+                                    <option value="ì ë¨">ì ë¨</option>
+                                    <option value="ê²½ë¶">ê²½ë¶</option>
+                                    <option value="ê²½ë¨">ê²½ë¨</option>
+                                    <option value="ì ì£¼">ì ì£¼</option>
                                 </select>
                                 <select id="court" class="form-control">
-                                    <option value="">법원 선택</option>
+                                    <option value="">ë²ì ì í</option>
                                 </select>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>사건번호 <span class="required">*</span></label>
-                            <input type="text" id="caseNumber" class="form-control" placeholder="예) 2025타경103123">
+                            <label>ì¬ê±´ë²í¸ <span class="required">*</span></label>
+                            <input type="text" id="caseNumber" class="form-control" placeholder="ì) 2025íê²½103123">
                         </div>
                         <div class="form-group">
-                            <label>물건번호</label>
-                            <input type="text" id="propertyNumber" class="form-control" placeholder="있을 경우에만 입력해주세요">
+                            <label>ë¬¼ê±´ë²í¸</label>
+                            <input type="text" id="propertyNumber" class="form-control" placeholder="ìì ê²½ì°ìë§ ìë ¥í´ì£¼ì¸ì">
                         </div>
-                        <button class="btn btn-primary btn-lg" id="searchCase">조회하기</button>
+                        <button class="btn btn-primary btn-lg" id="searchCase">ì¡°ííê¸°</button>
                     </div>
                 </div>
 
                 <!-- Step 1 Result: Case Confirmation -->
                 <div class="step-content" id="step1Result">
-                    <h2 class="step-title">입찰하시는 사건을 확인해주세요</h2>
+                    <h2 class="step-title">ìì°°íìë ì¬ê±´ì íì¸í´ì£¼ì¸ì</h2>
                     <div class="case-info-card">
                         <div class="case-image">
                             <i class="fas fa-building"></i>
                         </div>
                         <div class="case-details">
                             <div class="case-detail-row">
-                                <span class="label">사건번호</span>
+                                <span class="label">ì¬ê±´ë²í¸</span>
                                 <span class="value" id="displayCaseNumber">-</span>
                             </div>
                             <div class="case-detail-row">
-                                <span class="label">관할법원</span>
+                                <span class="label">ê´í ë²ì</span>
                                 <span class="value" id="displayCourt">-</span>
                             </div>
                             <div class="case-detail-row">
-                                <span class="label">매각기일</span>
-                                <span class="value" id="displayAuctionDate">2025년 3월 15일 10:30</span>
+                                <span class="label">ë§¤ê°ê¸°ì¼</span>
+                                <span class="value" id="displayAuctionDate">2025ë 3ì 15ì¼ 10:30</span>
                             </div>
                             <div class="case-detail-row">
-                                <span class="label">감정가</span>
-                                <span class="value" id="displayAppraisalValue">350,000,000원</span>
+                                <span class="label">ê°ì ê°</span>
+                                <span class="value" id="displayAppraisalValue">350,000,000ì</span>
                             </div>
                             <div class="case-detail-row">
-                                <span class="label">최저입찰가</span>
-                                <span class="value" id="displayMinBid">280,000,000원</span>
+                                <span class="label">ìµì ìì°°ê°</span>
+                                <span class="value" id="displayMinBid">280,000,000ì</span>
                             </div>
                             <div class="case-detail-row highlight">
-                                <span class="label">입찰보증금</span>
-                                <span class="value" id="displayDeposit">28,000,000원</span>
+                                <span class="label">ìì°°ë³´ì¦ê¸</span>
+                                <span class="value" id="displayDeposit">28,000,000ì</span>
                             </div>
                         </div>
                     </div>
                     <div class="alert alert-warning">
                         <i class="fas fa-exclamation-triangle"></i>
-                        <span>사건의 입찰보증금은 의뢰인이 직접 해당 경매계에 확인하셔야 합니다</span>
+                        <span>ì¬ê±´ì ìì°°ë³´ì¦ê¸ì ìë¢°ì¸ì´ ì§ì  í´ë¹ ê²½ë§¤ê³ì íì¸íìì¼ í©ëë¤</span>
                     </div>
                     
                     <div class="alert alert-info" style="margin: 2rem 0;">
                         <i class="fas fa-info-circle"></i>
-                        <span><strong>대리입찰 톡은 전자서명으로만 진행합니다</strong> (법무사 · 공인중개사 매수신청대리인)</span>
+                        <span><strong>ëë¦¬ìì°° í¡ì ì ììëªì¼ë¡ë§ ì§íí©ëë¤</strong> (ë²ë¬´ì¬ Â· ê³µì¸ì¤ê°ì¬ ë§¤ìì ì²­ëë¦¬ì¸)</span>
                     </div>
                     
                     <div class="expert-type-selection">
                         <div class="expert-type-card" style="max-width: 600px; margin: 0 auto; border: 2px solid #1550E8;">
-                            <input type="radio" name="expertType" id="selectLawyer" value="법무사" checked style="display: none;">
+                            <input type="radio" name="expertType" id="selectLawyer" value="ë²ë¬´ì¬" checked style="display: none;">
                             <label for="selectLawyer" style="cursor: default;">
                                 <div class="expert-type-header">
-                                    <h4>⚖️ 전문가 전자서명 (법무사·공인중개사)</h4>
-                                    <span class="expert-type-price" style="font-size: 1.5rem; color: #1550E8;">132,000원</span>
+                                    <h4>âï¸ ì ë¬¸ê° ì ììëª (ë²ë¬´ì¬Â·ê³µì¸ì¤ê°ì¬)</h4>
+                                    <span class="expert-type-price" style="font-size: 1.5rem; color: #1550E8;">132,000ì</span>
                                 </div>
-                                <p class="expert-type-desc" style="font-weight: 600; color: #1550E8;">✅ 부가세 포함 (전국 단일가)</p>
+                                <p class="expert-type-desc" style="font-weight: 600; color: #1550E8;">â ë¶ê°ì¸ í¬í¨ (ì êµ­ ë¨ì¼ê°)</p>
                                 <ul class="expert-type-features">
-                                    <li>✅ 온라인 전자서명만 (3분 완료)</li>
-                                    <li>✅ 주민센터 방문 불필요</li>
-                                    <li>✅ 인감증명서 불필요</li>
-                                    <li>✅ 인감도장 불필요</li>
+                                    <li>â ì¨ë¼ì¸ ì ììëªë§ (3ë¶ ìë£)</li>
+                                    <li>â ì£¼ë¯¼ì¼í° ë°©ë¬¸ ë¶íì</li>
+                                    <li>â ì¸ê°ì¦ëªì ë¶íì</li>
+                                    <li>â ì¸ê°ëì¥ ë¶íì</li>
                                 </ul>
                             </label>
                         </div>
                     </div>
                     
                     <div class="button-group" style="margin-top: 2rem;">
-                        <button class="btn btn-primary btn-lg" id="applyPersonal">개인 입찰 신청</button>
-                        <button class="btn btn-primary btn-lg" id="applyJoint">공동 입찰 신청</button>
-                        <button class="btn btn-success btn-lg" id="applyCorporate">법인 입찰 신청</button>
+                        <button class="btn btn-primary btn-lg" id="applyPersonal">ê°ì¸ ìì°° ì ì²­</button>
+                        <button class="btn btn-primary btn-lg" id="applyJoint">ê³µë ìì°° ì ì²­</button>
+                        <button class="btn btn-success btn-lg" id="applyCorporate">ë²ì¸ ìì°° ì ì²­</button>
                     </div>
                 </div>
 
@@ -1107,327 +1107,327 @@
                 <div class="step-content" id="step2">
                     <div class="case-summary">
                         <div class="case-summary-item">
-                            <span class="label">사건번호</span>
+                            <span class="label">ì¬ê±´ë²í¸</span>
                             <span class="value" id="summaryCase">-</span>
                         </div>
                         <div class="case-summary-item">
-                            <span class="label">관할법원</span>
+                            <span class="label">ê´í ë²ì</span>
                             <span class="value" id="summaryCourt">-</span>
                         </div>
                         <div class="case-summary-item">
-                            <span class="label">매각기일</span>
+                            <span class="label">ë§¤ê°ê¸°ì¼</span>
                             <span class="value" id="summaryDate">-</span>
                         </div>
                     </div>
 
-                    <h2 class="step-title">입찰가를 입력해주세요</h2>
+                    <h2 class="step-title">ìì°°ê°ë¥¼ ìë ¥í´ì£¼ì¸ì</h2>
                     <div class="form-card">
                         <div class="info-box">
                             <i class="fas fa-lock"></i>
-                            <span>오직 대리인만 입찰가를 확인할 수 있습니다.</span>
+                            <span>ì¤ì§ ëë¦¬ì¸ë§ ìì°°ê°ë¥¼ íì¸í  ì ììµëë¤.</span>
                         </div>
                         <div class="form-group">
-                            <label>입찰가 <span class="required">*</span></label>
+                            <label>ìì°°ê° <span class="required">*</span></label>
                             <div class="input-with-unit">
-                                <input type="text" id="bidAmount" class="form-control text-right" placeholder="최저입찰가 이상 입력">
-                                <span class="unit">원</span>
+                                <input type="text" id="bidAmount" class="form-control text-right" placeholder="ìµì ìì°°ê° ì´ì ìë ¥">
+                                <span class="unit">ì</span>
                             </div>
-                            <small class="form-text">최저입찰가: <span id="minBidDisplay">280,000,000원</span></small>
+                            <small class="form-text">ìµì ìì°°ê°: <span id="minBidDisplay">280,000,000ì</span></small>
                         </div>
                         <div class="form-group">
-                            <label>입찰보증금</label>
+                            <label>ìì°°ë³´ì¦ê¸</label>
                             <div class="input-with-unit">
                                 <input type="text" id="depositAmount" class="form-control text-right" readonly>
-                                <span class="unit">원</span>
+                                <span class="unit">ì</span>
                             </div>
-                            <small class="form-text">입찰가의 10%로 자동 계산됩니다</small>
+                            <small class="form-text">ìì°°ê°ì 10%ë¡ ìë ê³ì°ë©ëë¤</small>
                         </div>
                     </div>
 
-                    <h2 class="step-title" style="margin-top: 40px;">입찰자 정보를 입력해주세요</h2>
+                    <h2 class="step-title" style="margin-top: 40px;">ìì°°ì ì ë³´ë¥¼ ìë ¥í´ì£¼ì¸ì</h2>
                     <div class="form-card">
                         <div class="alert alert-warning">
                             <i class="fas fa-exclamation-triangle"></i>
-                            <span>입찰정보는 입찰표에 그대로 반영되므로, 정확하게 기재해주세요.</span>
+                            <span>ìì°°ì ë³´ë ìì°°íì ê·¸ëë¡ ë°ìëë¯ë¡, ì ííê² ê¸°ì¬í´ì£¼ì¸ì.</span>
                         </div>
                         <div class="form-group">
-                            <label>입찰자 성명 <span class="required">*</span></label>
-                            <input type="text" id="bidderName" class="form-control" placeholder="주민등록상 성명">
+                            <label>ìì°°ì ì±ëª <span class="required">*</span></label>
+                            <input type="text" id="bidderName" class="form-control" placeholder="ì£¼ë¯¼ë±ë¡ì ì±ëª">
                         </div>
                         <div class="form-group">
-                            <label>보증금 반환계좌 <span class="required">*</span></label>
+                            <label>ë³´ì¦ê¸ ë°íê³ì¢ <span class="required">*</span></label>
                             <div class="form-row">
                                 <select id="bankName" class="form-control">
-                                    <option value="">은행 선택</option>
-                                    <option value="KB국민은행">KB국민은행</option>
-                                    <option value="신한은행">신한은행</option>
-                                    <option value="우리은행">우리은행</option>
-                                    <option value="하나은행">하나은행</option>
-                                    <option value="NH농협은행">NH농협은행</option>
-                                    <option value="IBK기업은행">IBK기업은행</option>
-                                    <option value="카카오뱅크">카카오뱅크</option>
-                                    <option value="토스뱅크">토스뱅크</option>
-                                    <option value="케이뱅크">케이뱅크</option>
+                                    <option value="">ìí ì í</option>
+                                    <option value="KBêµ­ë¯¼ìí">KBêµ­ë¯¼ìí</option>
+                                    <option value="ì íìí">ì íìí</option>
+                                    <option value="ì°ë¦¬ìí">ì°ë¦¬ìí</option>
+                                    <option value="íëìí">íëìí</option>
+                                    <option value="NHëíìí">NHëíìí</option>
+                                    <option value="IBKê¸°ììí">IBKê¸°ììí</option>
+                                    <option value="ì¹´ì¹´ì¤ë±í¬">ì¹´ì¹´ì¤ë±í¬</option>
+                                    <option value="í ì¤ë±í¬">í ì¤ë±í¬</option>
+                                    <option value="ì¼ì´ë±í¬">ì¼ì´ë±í¬</option>
                                 </select>
-                                <input type="text" id="accountNumber" class="form-control" placeholder="계좌번호 (- 없이 입력)">
+                                <input type="text" id="accountNumber" class="form-control" placeholder="ê³ì¢ë²í¸ (- ìì´ ìë ¥)">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>주민등록번호 <span class="required">*</span></label>
+                            <label>ì£¼ë¯¼ë±ë¡ë²í¸ <span class="required">*</span></label>
                             <div class="form-row">
-                                <input type="text" id="ssnFront" class="form-control" placeholder="앞 6자리" maxlength="6">
+                                <input type="text" id="ssnFront" class="form-control" placeholder="ì 6ìë¦¬" maxlength="6">
                                 <span class="separator">-</span>
-                                <input type="password" id="ssnBack" class="form-control" placeholder="뒤 7자리" maxlength="7">
+                                <input type="password" id="ssnBack" class="form-control" placeholder="ë¤ 7ìë¦¬" maxlength="7">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>주소 <span class="required">*</span></label>
+                            <label>ì£¼ì <span class="required">*</span></label>
                             <div class="input-with-button">
-                                <input type="text" id="addressRoad" class="form-control" placeholder="도로명주소" readonly>
-                                <button class="btn btn-secondary" id="searchAddress">주소 검색</button>
+                                <input type="text" id="addressRoad" class="form-control" placeholder="ëë¡ëªì£¼ì" readonly>
+                                <button class="btn btn-secondary" id="searchAddress">ì£¼ì ê²ì</button>
                             </div>
-                            <input type="text" id="addressDetail" class="form-control" placeholder="상세주소" style="margin-top: 8px;">
+                            <input type="text" id="addressDetail" class="form-control" placeholder="ìì¸ì£¼ì" style="margin-top: 8px;">
                         </div>
                         <div class="form-group">
-                            <label>휴대폰 번호 <span class="required">*</span></label>
+                            <label>í´ëí° ë²í¸ <span class="required">*</span></label>
                             <div class="input-with-button">
                                 <input type="text" id="phoneNumber" class="form-control" placeholder="010-0000-0000">
-                                <button class="btn btn-secondary" id="verifyPhone">인증번호 받기</button>
+                                <button class="btn btn-secondary" id="verifyPhone">ì¸ì¦ë²í¸ ë°ê¸°</button>
                             </div>
                         </div>
                         <div class="form-group checkbox-group">
                             <label class="checkbox-label">
                                 <input type="checkbox" id="agreePersonal">
-                                <span>개인정보 수집 및 이용에 동의합니다 <span class="required">*</span></span>
+                                <span>ê°ì¸ì ë³´ ìì§ ë° ì´ì©ì ëìí©ëë¤ <span class="required">*</span></span>
                             </label>
                             <label class="checkbox-label">
                                 <input type="checkbox" id="agreeContract">
-                                <span>위임계약 체결에 관한 동의합니다 <span class="required">*</span></span>
+                                <span>ììê³ì½ ì²´ê²°ì ê´í ëìí©ëë¤ <span class="required">*</span></span>
                             </label>
                         </div>
                         <div class="step-nav-buttons">
-                            <button class="btn btn-secondary" id="backToStep1Result">이전 단계</button>
-                            <button class="btn btn-primary btn-lg" id="proceedToContract">전자계약 진행하기</button>
+                            <button class="btn btn-secondary" id="backToStep1Result">ì´ì  ë¨ê³</button>
+                            <button class="btn btn-primary btn-lg" id="proceedToContract">ì ìê³ì½ ì§ííê¸°</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Step 3: Electronic Contract -->
                 <div class="step-content" id="step3">
-                    <h2 class="step-title">매수신청 대리 이용 계약서</h2>
+                    <h2 class="step-title">ë§¤ìì ì²­ ëë¦¬ ì´ì© ê³ì½ì</h2>
                     <div class="contract-card">
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle"></i>
-                            <span>실제 매수신청대리 업무는 입찰의뢰인과 플랫폼과는 독립된 제3자인 매수신청대리인이 수행하며, 플랫폼은 대리인의 행위에 대해 원칙적으로 책임지지 않음을 확인합니다.</span>
+                            <span>ì¤ì  ë§¤ìì ì²­ëë¦¬ ìë¬´ë ìì°°ìë¢°ì¸ê³¼ íë«í¼ê³¼ë ëë¦½ë ì 3ìì¸ ë§¤ìì ì²­ëë¦¬ì¸ì´ ìííë©°, íë«í¼ì ëë¦¬ì¸ì íìì ëí´ ìì¹ì ì¼ë¡ ì±ìì§ì§ ììì íì¸í©ëë¤.</span>
                         </div>
                         <div class="contract-content">
-                            <h3>매수신청 대리 이용 계약서</h3>
+                            <h3>ë§¤ìì ì²­ ëë¦¬ ì´ì© ê³ì½ì</h3>
                             
                             <table class="contract-table">
                                 <tr>
-                                    <th colspan="2">당사자 정보</th>
+                                    <th colspan="2">ë¹ì¬ì ì ë³´</th>
                                 </tr>
                                 <tr>
-                                    <td><strong>입찰의뢰인</strong></td>
-                                    <td><strong>매수신청대리인</strong></td>
+                                    <td><strong>ìì°°ìë¢°ì¸</strong></td>
+                                    <td><strong>ë§¤ìì ì²­ëë¦¬ì¸</strong></td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        성명: <span id="contractBidderName">-</span><br>
-                                        주민등록번호: <span id="contractSSN">-</span><br>
-                                        주소: <span id="contractAddress">-</span>
+                                        ì±ëª: <span id="contractBidderName">-</span><br>
+                                        ì£¼ë¯¼ë±ë¡ë²í¸: <span id="contractSSN">-</span><br>
+                                        ì£¼ì: <span id="contractAddress">-</span>
                                     </td>
                                     <td>
-                                        성명: 김법무<br>
-                                        매수신청대리인 등록번호: 제2024-001호<br>
-                                        주소: 서울특별시 강남구 테헤란로 123
+                                        ì±ëª: ê¹ë²ë¬´<br>
+                                        ë§¤ìì ì²­ëë¦¬ì¸ ë±ë¡ë²í¸: ì 2024-001í¸<br>
+                                        ì£¼ì: ìì¸í¹ë³ì ê°ë¨êµ¬ íí¤ëë¡ 123
                                     </td>
                                 </tr>
                             </table>
 
                             <table class="contract-table">
                                 <tr>
-                                    <th colspan="2">경매 사건 정보</th>
+                                    <th colspan="2">ê²½ë§¤ ì¬ê±´ ì ë³´</th>
                                 </tr>
                                 <tr>
-                                    <td>사건번호</td>
+                                    <td>ì¬ê±´ë²í¸</td>
                                     <td><span id="contractCaseNumber">-</span></td>
                                 </tr>
                                 <tr>
-                                    <td>물건번호</td>
+                                    <td>ë¬¼ê±´ë²í¸</td>
                                     <td><span id="contractPropertyNumber">-</span></td>
                                 </tr>
                                 <tr>
-                                    <td>집행법원</td>
+                                    <td>ì§íë²ì</td>
                                     <td><span id="contractCourt">-</span></td>
                                 </tr>
                             </table>
 
-                            <h4>매수신청 대리 보수</h4>
+                            <h4>ë§¤ìì ì²­ ëë¦¬ ë³´ì</h4>
                             <ul>
-                                <li>확정 보수액: 132,000원 (VAT 포함)</li>
-                                <li>보수 지급 시기: 대리입찰 접수 시</li>
+                                <li>íì  ë³´ìì¡: 132,000ì (VAT í¬í¨)</li>
+                                <li>ë³´ì ì§ê¸ ìê¸°: ëë¦¬ìì°° ì ì ì</li>
                             </ul>
 
-                            <h4>위임 내용</h4>
+                            <h4>ìì ë´ì©</h4>
                             <ol>
-                                <li>민사집행법 제113조에 따른 매수신청 보증의 제공</li>
-                                <li>입찰표의 작성 및 제출</li>
-                                <li>입찰표의 정정 및 취하</li>
-                                <li>개찰기일 출석 및 입찰 참여</li>
-                                <li>낙찰 시 매수신고 및 대금납부</li>
-                                <li>기타 매수신청에 필요한 일체의 행위</li>
+                                <li>ë¯¼ì¬ì§íë² ì 113ì¡°ì ë°ë¥¸ ë§¤ìì ì²­ ë³´ì¦ì ì ê³µ</li>
+                                <li>ìì°°íì ìì± ë° ì ì¶</li>
+                                <li>ìì°°íì ì ì  ë° ì·¨í</li>
+                                <li>ê°ì°°ê¸°ì¼ ì¶ì ë° ìì°° ì°¸ì¬</li>
+                                <li>ëì°° ì ë§¤ìì ê³  ë° ëê¸ë©ë¶</li>
+                                <li>ê¸°í ë§¤ìì ì²­ì íìí ì¼ì²´ì íì</li>
                             </ol>
 
-                            <h4>계약 내용</h4>
-                            <p><strong>가. 입찰의뢰인의 의무</strong></p>
+                            <h4>ê³ì½ ë´ì©</h4>
+                            <p><strong>ê°. ìì°°ìë¢°ì¸ì ìë¬´</strong></p>
                             <ul>
-                                <li>정확한 입찰정보 및 신원정보 제공</li>
-                                <li>입찰보증금의 적법한 준비 및 제공</li>
-                                <li>매수신청대리인의 정당한 업무수행 협조</li>
+                                <li>ì íí ìì°°ì ë³´ ë° ì ìì ë³´ ì ê³µ</li>
+                                <li>ìì°°ë³´ì¦ê¸ì ì ë²í ì¤ë¹ ë° ì ê³µ</li>
+                                <li>ë§¤ìì ì²­ëë¦¬ì¸ì ì ë¹í ìë¬´ìí íì¡°</li>
                             </ul>
 
-                            <p><strong>나. 매수신청대리인의 의무</strong></p>
+                            <p><strong>ë. ë§¤ìì ì²­ëë¦¬ì¸ì ìë¬´</strong></p>
                             <ul>
-                                <li>선량한 관리자의 주의의무로 입찰업무 수행</li>
-                                <li>입찰 정보의 비밀 유지</li>
-                                <li>입찰 결과의 신속한 통보</li>
-                                <li>배상책임보험 유지 (최대 5억 원)</li>
+                                <li>ì ëí ê´ë¦¬ìì ì£¼ììë¬´ë¡ ìì°°ìë¬´ ìí</li>
+                                <li>ìì°° ì ë³´ì ë¹ë° ì ì§</li>
+                                <li>ìì°° ê²°ê³¼ì ì ìí íµë³´</li>
+                                <li>ë°°ìì±ìë³´í ì ì§ (ìµë 5ìµ ì)</li>
                             </ul>
 
-                            <p class="contract-date">계약일: <span id="contractDate">2026년 2월 26일</span></p>
+                            <p class="contract-date">ê³ì½ì¼: <span id="contractDate">2026ë 2ì 26ì¼</span></p>
 
                             <div class="signature-section">
                                 <div class="signature-box">
-                                    <p><strong>입찰의뢰인</strong></p>
+                                    <p><strong>ìì°°ìë¢°ì¸</strong></p>
                                     <div class="signature-area" id="clientSignature">
-                                        <span class="signature-placeholder">서명해주세요</span>
+                                        <span class="signature-placeholder">ìëªí´ì£¼ì¸ì</span>
                                     </div>
                                 </div>
                                 <div class="signature-box">
-                                    <p><strong>매수신청대리인</strong></p>
+                                    <p><strong>ë§¤ìì ì²­ëë¦¬ì¸</strong></p>
                                     <div class="signature-area signed">
-                                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 80'%3E%3Cpath d='M20,40 Q40,20 60,40 T100,40 Q120,50 140,35' fill='none' stroke='%231550E8' stroke-width='3'/%3E%3C/svg%3E" alt="서명">
+                                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 80'%3E%3Cpath d='M20,40 Q40,20 60,40 T100,40 Q120,50 140,35' fill='none' stroke='%231550E8' stroke-width='3'/%3E%3C/svg%3E" alt="ìëª">
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="step-nav-buttons">
-                            <button class="btn btn-secondary" id="backToStep2">이전 단계</button>
-                            <button class="btn btn-primary btn-lg" id="openSignature">서명하기</button>
+                            <button class="btn btn-secondary" id="backToStep2">ì´ì  ë¨ê³</button>
+                            <button class="btn btn-primary btn-lg" id="openSignature">ìëªíê¸°</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Step 4: Payment -->
                 <div class="step-content" id="step4">
-                    <h2 class="step-title">수수료 결제</h2>
+                    <h2 class="step-title">ììë£ ê²°ì </h2>
                     <div class="payment-card">
                         <div class="payment-card-header">
                             <i class="fas fa-comment-dots"></i>
-                            <span>대리입찰 톡</span>
+                            <span>ëë¦¬ìì°° í¡</span>
                         </div>
                         <div class="payment-amount">
-                            <span class="label">대리입찰 비용</span>
-                            <span class="amount">132,000원</span>
+                            <span class="label">ëë¦¬ìì°° ë¹ì©</span>
+                            <span class="amount">132,000ì</span>
                         </div>
-                        <p style="margin:10px 16px 0;font-size:0.8rem;color:rgba(255,255,255,0.85);line-height:1.5;">중개수수료 0원 · 플랫폼이 떼는 돈은 없습니다.<br>대리입찰 비용 132,000원은 배정된 전문가에게 직접 전달됩니다.</p>
+                        <p style="margin:10px 16px 0;font-size:0.8rem;color:rgba(255,255,255,0.85);line-height:1.5;">ì¤ê°ììë£ 0ì Â· íë«í¼ì´ ë¼ë ëì ììµëë¤.<br>ëë¦¬ìì°° ë¹ì© 132,000ìì ë°°ì ë ì ë¬¸ê°ìê² ì§ì  ì ë¬ë©ëë¤.</p>
                     </div>
 
                     <div class="form-card">
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle"></i>
-                            <span>입찰 당일 전자본인서명확인서(주민센터 발급)를 반드시 지참하셔야 합니다.</span>
+                            <span>ìì°° ë¹ì¼ ì ìë³¸ì¸ìëªíì¸ì(ì£¼ë¯¼ì¼í° ë°ê¸)ë¥¼ ë°ëì ì§ì°¸íìì¼ í©ëë¤.</span>
                         </div>
 
-                        <h3 class="section-subtitle">서비스 포함 내역</h3>
+                        <h3 class="section-subtitle">ìë¹ì¤ í¬í¨ ë´ì­</h3>
                         <div class="service-includes">
                             <div class="service-include-item">
                                 <i class="fas fa-check-circle"></i>
-                                <span>입찰관련 서류작성</span>
+                                <span>ìì°°ê´ë ¨ ìë¥ìì±</span>
                             </div>
                             <div class="service-include-item">
                                 <i class="fas fa-check-circle"></i>
-                                <span>대리 입찰참여</span>
+                                <span>ëë¦¬ ìì°°ì°¸ì¬</span>
                             </div>
                             <div class="service-include-item">
                                 <i class="fas fa-check-circle"></i>
-                                <span>입찰 결과 안내</span>
+                                <span>ìì°° ê²°ê³¼ ìë´</span>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label>유의사항</label>
+                            <label>ì ìì¬í­</label>
                             <div class="terms-box">
                                 <ul>
-                                    <li>대리입찰 수수료는 입찰 참여에 대한 대가로, 낙찰 여부와 무관하게 환불되지 않습니다.</li>
-                                    <li>매각기일 전날까지 취소 시에만 전액 환불 가능합니다.</li>
-                                    <li>입찰 당일 전자본인서명확인서를 미지참할 경우 입찰이 진행되지 않을 수 있습니다.</li>
-                                    <li>입찰가 및 개인정보 오류로 인한 불이익은 의뢰인 책임입니다.</li>
+                                    <li>ëë¦¬ìì°° ììë£ë ìì°° ì°¸ì¬ì ëí ëê°ë¡, ëì°° ì¬ë¶ì ë¬´ê´íê² íë¶ëì§ ììµëë¤.</li>
+                                    <li>ë§¤ê°ê¸°ì¼ ì ë ê¹ì§ ì·¨ì ììë§ ì ì¡ íë¶ ê°ë¥í©ëë¤.</li>
+                                    <li>ìì°° ë¹ì¼ ì ìë³¸ì¸ìëªíì¸ìë¥¼ ë¯¸ì§ì°¸í  ê²½ì° ìì°°ì´ ì§íëì§ ìì ì ììµëë¤.</li>
+                                    <li>ìì°°ê° ë° ê°ì¸ì ë³´ ì¤ë¥ë¡ ì¸í ë¶ì´ìµì ìë¢°ì¸ ì±ììëë¤.</li>
                                 </ul>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label>결제약관 및 환불 규정</label>
+                            <label>ê²°ì ì½ê´ ë° íë¶ ê·ì </label>
                             <div class="terms-box scrollable">
-                                <h4>제1조 (목적)</h4>
-                                <p>본 약관은 대리입찰 톡(이하 "플랫폼")이 제공하는 대리입찰 서비스의 이용 및 결제에 관한 사항을 규정함을 목적으로 합니다.</p>
+                                <h4>ì 1ì¡° (ëª©ì )</h4>
+                                <p>ë³¸ ì½ê´ì ëë¦¬ìì°° í¡(ì´í "íë«í¼")ì´ ì ê³µíë ëë¦¬ìì°° ìë¹ì¤ì ì´ì© ë° ê²°ì ì ê´í ì¬í­ì ê·ì í¨ì ëª©ì ì¼ë¡ í©ëë¤.</p>
                                 
-                                <h4>제2조 (결제)</h4>
-                                <p>1. 대리입찰 수수료는 서비스 신청 완료 시 결제됩니다.<br>
-                                2. 결제 수단은 신용카드, 체크카드, 계좌이체를 지원합니다.<br>
-                                3. 결제 완료 후 영수증은 이메일 및 SMS로 발송됩니다.</p>
+                                <h4>ì 2ì¡° (ê²°ì )</h4>
+                                <p>1. ëë¦¬ìì°° ììë£ë ìë¹ì¤ ì ì²­ ìë£ ì ê²°ì ë©ëë¤.<br>
+                                2. ê²°ì  ìë¨ì ì ì©ì¹´ë, ì²´í¬ì¹´ë, ê³ì¢ì´ì²´ë¥¼ ì§ìí©ëë¤.<br>
+                                3. ê²°ì  ìë£ í ììì¦ì ì´ë©ì¼ ë° SMSë¡ ë°ì¡ë©ëë¤.</p>
                                 
-                                <h4>제3조 (환불)</h4>
-                                <p>1. 매각기일 전날까지 취소 시 전액 환불됩니다.<br>
-                                2. 매각기일 당일 취소는 환불이 불가능합니다.<br>
-                                3. 환불은 결제 수단으로 영업일 기준 3~5일 내 처리됩니다.</p>
+                                <h4>ì 3ì¡° (íë¶)</h4>
+                                <p>1. ë§¤ê°ê¸°ì¼ ì ë ê¹ì§ ì·¨ì ì ì ì¡ íë¶ë©ëë¤.<br>
+                                2. ë§¤ê°ê¸°ì¼ ë¹ì¼ ì·¨ìë íë¶ì´ ë¶ê°ë¥í©ëë¤.<br>
+                                3. íë¶ì ê²°ì  ìë¨ì¼ë¡ ììì¼ ê¸°ì¤ 3~5ì¼ ë´ ì²ë¦¬ë©ëë¤.</p>
                                 
-                                <h4>제4조 (책임의 제한)</h4>
-                                <p>1. 플랫폼은 입찰의뢰인과 전문가(법무사·공인중개사)를 연결하는 중개 역할만 수행하며, 중개수수료를 받지 않습니다.<br>
-                                2. 대리입찰 비용 132,000원은 배정된 전문가에게 직접 전달됩니다.<br>
-                                3. 전문가의 과실로 인한 손해는 배상책임보험으로 처리됩니다.<br>
-                                4. 의뢰인의 정보 오류로 인한 불이익은 플랫폼이 책임지지 않습니다.</p>
+                                <h4>ì 4ì¡° (ì±ìì ì í)</h4>
+                                <p>1. íë«í¼ì ìì°°ìë¢°ì¸ê³¼ ì ë¬¸ê°(ë²ë¬´ì¬Â·ê³µì¸ì¤ê°ì¬)ë¥¼ ì°ê²°íë ì¤ê° ì­í ë§ ìííë©°, ì¤ê°ììë£ë¥¼ ë°ì§ ììµëë¤.<br>
+                                2. ëë¦¬ìì°° ë¹ì© 132,000ìì ë°°ì ë ì ë¬¸ê°ìê² ì§ì  ì ë¬ë©ëë¤.<br>
+                                3. ì ë¬¸ê°ì ê³¼ì¤ë¡ ì¸í ìí´ë ë°°ìì±ìë³´íì¼ë¡ ì²ë¦¬ë©ëë¤.<br>
+                                4. ìë¢°ì¸ì ì ë³´ ì¤ë¥ë¡ ì¸í ë¶ì´ìµì íë«í¼ì´ ì±ìì§ì§ ììµëë¤.</p>
                             </div>
                         </div>
 
                         <div class="form-group checkbox-group">
                             <label class="checkbox-label">
                                 <input type="checkbox" id="agreePayment">
-                                <span>결제약관 및 환불 규정에 동의합니다 <span class="required">*</span></span>
+                                <span>ê²°ì ì½ê´ ë° íë¶ ê·ì ì ëìí©ëë¤ <span class="required">*</span></span>
                             </label>
                         </div>
 
                         <div class="form-group">
-                            <label>포인트 사용</label>
+                            <label>í¬ì¸í¸ ì¬ì©</label>
                             <div class="point-section">
                                 <div class="point-info">
-                                    <span>보유 포인트: <strong>5,000P</strong></span>
+                                    <span>ë³´ì  í¬ì¸í¸: <strong>5,000P</strong></span>
                                 </div>
                                 <div class="input-with-button">
                                     <input type="text" id="pointAmount" class="form-control" placeholder="0">
-                                    <button class="btn btn-secondary">전액 사용</button>
+                                    <button class="btn btn-secondary">ì ì¡ ì¬ì©</button>
                                 </div>
                             </div>
                         </div>
 
                         <div class="payment-summary">
                             <div class="summary-row">
-                                <span>수수료</span>
-                                <span>132,000원</span>
+                                <span>ììë£</span>
+                                <span>132,000ì</span>
                             </div>
                             <div class="summary-row">
-                                <span>포인트 할인</span>
-                                <span class="discount">-0원</span>
+                                <span>í¬ì¸í¸ í ì¸</span>
+                                <span class="discount">-0ì</span>
                             </div>
                             <div class="summary-row total">
-                                <span>최종 결제금액</span>
-                                <span>132,000원</span>
+                                <span>ìµì¢ ê²°ì ê¸ì¡</span>
+                                <span>132,000ì</span>
                             </div>
                         </div>
 
-                        <button class="btn btn-primary btn-lg" id="processPayment">결제하기</button>
+                        <button class="btn btn-primary btn-lg" id="processPayment">ê²°ì íê¸°</button>
                     </div>
                 </div>
             </div>
@@ -1440,274 +1440,274 @@
             <div class="expert-header">
                 <div class="container">
                     <button class="btn btn-back" id="backToMainFromExpert">
-                        <i class="fas fa-arrow-left"></i> 홈으로
+                        <i class="fas fa-arrow-left"></i> íì¼ë¡
                     </button>
-                    <h1>법무사 / 공인중개사 전문가 신청</h1>
-                    <p>대리입찰 톡과 함께 전국의 입찰의뢰인을 만나보세요</p>
+                    <h1>ë²ë¬´ì¬ / ê³µì¸ì¤ê°ì¬ ì ë¬¸ê° ì ì²­</h1>
+                    <p>ëë¦¬ìì°° í¡ê³¼ í¨ê» ì êµ­ì ìì°°ìë¢°ì¸ì ë§ëë³´ì¸ì</p>
                 </div>
             </div>
 
-            <!-- 법무사 모집 배너 (전문가 신청 페이지 전용) -->
+            <!-- ë²ë¬´ì¬ ëª¨ì§ ë°°ë (ì ë¬¸ê° ì ì²­ íì´ì§ ì ì©) -->
             <div class="expert-recruit-banner">
                 <div class="container">
                     <div class="recruit-urgent-badge">
                         <span class="pulse-dot"></span>
-                        ⚖️ 법무사 · 공인중개사 파트너 모집 중
+                        âï¸ ë²ë¬´ì¬ Â· ê³µì¸ì¤ê°ì¬ íí¸ë ëª¨ì§ ì¤
                     </div>
 
                     <div class="recruit-card">
-                        <!-- 왼쪽: 텍스트 -->
+                        <!-- ì¼ìª½: íì¤í¸ -->
                         <div class="recruit-text">
-                            <div class="recruit-tag">⚖️ 법무사 · 🏠 공인중개사</div>
+                            <div class="recruit-tag">âï¸ ë²ë¬´ì¬ Â· ð  ê³µì¸ì¤ê°ì¬</div>
                             <h2 class="recruit-title">
-                                대리입찰 톡 파트너로<br>
-                                <span class="highlight-text">지금 바로 시작하세요</span>
+                                ëë¦¬ìì°° í¡ íí¸ëë¡<br>
+                                <span class="highlight-text">ì§ê¸ ë°ë¡ ììíì¸ì</span>
                             </h2>
                             <p class="recruit-desc">
-                                대리입찰 톡에 등록하고 의뢰를 받아보세요.<br>
-                                건당 132,000원(부가세 포함) 수수료 전액을 전문가가 수령합니다.
+                                ëë¦¬ìì°° í¡ì ë±ë¡íê³  ìë¢°ë¥¼ ë°ìë³´ì¸ì.<br>
+                                ê±´ë¹ 132,000ì(ë¶ê°ì¸ í¬í¨) ììë£ ì ì¡ì ì ë¬¸ê°ê° ìë ¹í©ëë¤.
                             </p>
 
                             <div class="recruit-benefits">
                                 <div class="recruit-benefit">
                                     <i class="fas fa-check-circle"></i>
                                     <div>
-                                        <strong>플랫폼 수수료 0%</strong>
-                                        <span>수수료 전액 본인 수령</span>
+                                        <strong>íë«í¼ ììë£ 0%</strong>
+                                        <span>ììë£ ì ì¡ ë³¸ì¸ ìë ¹</span>
                                     </div>
                                 </div>
                                 <div class="recruit-benefit">
                                     <i class="fas fa-check-circle"></i>
                                     <div>
-                                        <strong>전국 의뢰 자동 매칭</strong>
-                                        <span>원하는 지역만 선택, 알림으로 배정</span>
+                                        <strong>ì êµ­ ìë¢° ìë ë§¤ì¹­</strong>
+                                        <span>ìíë ì§ì­ë§ ì í, ìë¦¼ì¼ë¡ ë°°ì </span>
                                     </div>
                                 </div>
                                 <div class="recruit-benefit">
                                     <i class="fas fa-check-circle"></i>
                                     <div>
-                                        <strong>등록 즉시 의뢰 매칭</strong>
-                                        <span>승인 후 바로 의뢰 배정 시작</span>
+                                        <strong>ë±ë¡ ì¦ì ìë¢° ë§¤ì¹­</strong>
+                                        <span>ì¹ì¸ í ë°ë¡ ìë¢° ë°°ì  ìì</span>
                                     </div>
                                 </div>
                             </div>
 
-                            <p class="recruit-note">* 법무사 또는 공인중개사 자격증 + 배상책임보험 보유자만 가입 가능</p>
+                            <p class="recruit-note">* ë²ë¬´ì¬ ëë ê³µì¸ì¤ê°ì¬ ìê²©ì¦ + ë°°ìì±ìë³´í ë³´ì ìë§ ê°ì ê°ë¥</p>
                         </div>
 
-                        <!-- 오른쪽: 수익 시뮬레이터 -->
+                        <!-- ì¤ë¥¸ìª½: ììµ ìë®¬ë ì´í° -->
                         <div class="recruit-simulator">
-                            <div class="sim-title">💰 월 수익 시뮬레이터</div>
+                            <div class="sim-title">ð° ì ììµ ìë®¬ë ì´í°</div>
                             <div class="sim-row">
-                                <label>월 처리 건수</label>
+                                <label>ì ì²ë¦¬ ê±´ì</label>
                                 <div class="sim-slider-wrap">
                                     <input type="range" id="simCount" min="1" max="30" value="10" oninput="updateSimulator()">
-                                    <span id="simCountVal">10건</span>
+                                    <span id="simCountVal">10ê±´</span>
                                 </div>
                             </div>
                             <div class="sim-result">
                                 <div class="sim-result-row">
-                                    <span>건당 수수료</span>
-                                    <span>132,000원</span>
+                                    <span>ê±´ë¹ ììë£</span>
+                                    <span>132,000ì</span>
                                 </div>
                                 <div class="sim-result-row">
-                                    <span>플랫폼 수수료</span>
-                                    <span class="green">0원 (전액 전문가 정산)</span>
+                                    <span>íë«í¼ ììë£</span>
+                                    <span class="green">0ì (ì ì¡ ì ë¬¸ê° ì ì°)</span>
                                 </div>
                                 <div class="sim-result-divider"></div>
                                 <div class="sim-result-row total">
-                                    <span>예상 월 수익</span>
-                                    <span id="simTotal" class="sim-total-val">1,320,000원</span>
+                                    <span>ìì ì ììµ</span>
+                                    <span id="simTotal" class="sim-total-val">1,320,000ì</span>
                                 </div>
                             </div>
-                            <p class="sim-note">실제 수익은 처리 건수에 따라 달라질 수 있습니다</p>
+                            <p class="sim-note">ì¤ì  ììµì ì²ë¦¬ ê±´ìì ë°ë¼ ë¬ë¼ì§ ì ììµëë¤</p>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- /법무사 모집 배너 -->
+            <!-- /ë²ë¬´ì¬ ëª¨ì§ ë°°ë -->
 
             <div class="container" style="max-width: 900px; padding: 3rem 20px;">
                 <div class="form-card">
-                    <h2 class="section-subtitle">기본 정보</h2>
+                    <h2 class="section-subtitle">ê¸°ë³¸ ì ë³´</h2>
                     
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle"></i>
-                        <span><strong>대리입찰 톡은 법무사 · 공인중개사 신청이 가능합니다</strong></span>
+                        <span><strong>ëë¦¬ìì°° í¡ì ë²ë¬´ì¬ Â· ê³µì¸ì¤ê°ì¬ ì ì²­ì´ ê°ë¥í©ëë¤</strong></span>
                     </div>
 
                     <div class="form-group">
-                        <label>전문가 유형 <span class="required">*</span></label>
+                        <label>ì ë¬¸ê° ì í <span class="required">*</span></label>
                         <div style="display:flex; gap:12px; margin-top:8px;">
                             <label style="flex:1; cursor:pointer; border:2px solid #1550E8; border-radius:8px; padding:14px; display:flex; align-items:center; gap:10px; background:#EEF2FF;">
-                                <input type="radio" name="expertType" id="selectLawyer" value="법무사" checked onchange="updateExpertTypeUI()">
-                                <span style="font-weight:600; color:#1550E8;">⚖️ 법무사</span>
+                                <input type="radio" name="expertType" id="selectLawyer" value="ë²ë¬´ì¬" checked onchange="updateExpertTypeUI()">
+                                <span style="font-weight:600; color:#1550E8;">âï¸ ë²ë¬´ì¬</span>
                             </label>
                             <label style="flex:1; cursor:pointer; border:2px solid #0D9488; border-radius:8px; padding:14px; display:flex; align-items:center; gap:10px; background:#F0FDF9;">
-                                <input type="radio" name="expertType" id="selectAgent" value="공인중개사" onchange="updateExpertTypeUI()">
-                                <span style="font-weight:600; color:#0D9488;">🏠 공인중개사</span>
+                                <input type="radio" name="expertType" id="selectAgent" value="ê³µì¸ì¤ê°ì¬" onchange="updateExpertTypeUI()">
+                                <span style="font-weight:600; color:#0D9488;">ð  ê³µì¸ì¤ê°ì¬</span>
                             </label>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>성명 <span class="required">*</span></label>
-                        <input type="text" id="expertName" class="form-control" placeholder="실명 입력">
+                        <label>ì±ëª <span class="required">*</span></label>
+                        <input type="text" id="expertName" class="form-control" placeholder="ì¤ëª ìë ¥">
                     </div>
 
                     <div class="form-group">
-                        <label id="licenseNumberLabel">자격증 번호 <span class="required">*</span></label>
-                        <input type="text" id="licenseNumber" class="form-control" placeholder="예) 제2024-001호">
+                        <label id="licenseNumberLabel">ìê²©ì¦ ë²í¸ <span class="required">*</span></label>
+                        <input type="text" id="licenseNumber" class="form-control" placeholder="ì) ì 2024-001í¸">
                     </div>
 
                     <div class="form-group">
-                        <label>연락처 <span class="required">*</span></label>
+                        <label>ì°ë½ì² <span class="required">*</span></label>
                         <input type="text" id="expertPhone" class="form-control" placeholder="010-0000-0000">
                     </div>
 
                     <div class="form-group">
-                        <label>이메일 <span class="required">*</span></label>
+                        <label>ì´ë©ì¼ <span class="required">*</span></label>
                         <input type="email" id="expertEmail" class="form-control" placeholder="example@email.com">
                     </div>
 
                     <div class="form-group">
-                        <label>사무소 주소 <span class="required">*</span></label>
+                        <label>ì¬ë¬´ì ì£¼ì <span class="required">*</span></label>
                         <div class="input-with-button">
-                            <input type="text" id="expertAddress" class="form-control" placeholder="도로명주소" readonly>
-                            <button class="btn btn-secondary" id="searchExpertAddress">주소 검색</button>
+                            <input type="text" id="expertAddress" class="form-control" placeholder="ëë¡ëªì£¼ì" readonly>
+                            <button class="btn btn-secondary" id="searchExpertAddress">ì£¼ì ê²ì</button>
                         </div>
-                        <input type="text" id="expertAddressDetail" class="form-control" placeholder="상세주소" style="margin-top: 8px;">
+                        <input type="text" id="expertAddressDetail" class="form-control" placeholder="ìì¸ì£¼ì" style="margin-top: 8px;">
                     </div>
 
-                    <h2 class="section-subtitle" style="margin-top: 40px;">활동 지역 선택</h2>
+                    <h2 class="section-subtitle" style="margin-top: 40px;">íë ì§ì­ ì í</h2>
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle"></i>
-                        <span>선택한 지역에서 입찰 신청이 접수되면 카카오톡 알림을 받게 됩니다.</span>
+                        <span>ì íí ì§ì­ìì ìì°° ì ì²­ì´ ì ìëë©´ ì¹´ì¹´ì¤í¡ ìë¦¼ì ë°ê² ë©ëë¤.</span>
                     </div>
 
                     <div class="form-group">
-                        <label>활동 가능 지역 <span class="required">*</span> (복수 선택 가능)</label>
+                        <label>íë ê°ë¥ ì§ì­ <span class="required">*</span> (ë³µì ì í ê°ë¥)</label>
                         <div class="checkbox-grid">
                             <label class="checkbox-label">
-                                <input type="checkbox" class="region-checkbox" value="서울">
-                                <span>서울</span>
+                                <input type="checkbox" class="region-checkbox" value="ìì¸">
+                                <span>ìì¸</span>
                             </label>
                             <label class="checkbox-label">
-                                <input type="checkbox" class="region-checkbox" value="인천">
-                                <span>인천</span>
+                                <input type="checkbox" class="region-checkbox" value="ì¸ì²">
+                                <span>ì¸ì²</span>
                             </label>
                             <label class="checkbox-label">
-                                <input type="checkbox" class="region-checkbox" value="경기">
-                                <span>경기</span>
+                                <input type="checkbox" class="region-checkbox" value="ê²½ê¸°">
+                                <span>ê²½ê¸°</span>
                             </label>
                             <label class="checkbox-label">
-                                <input type="checkbox" class="region-checkbox" value="부산">
-                                <span>부산</span>
+                                <input type="checkbox" class="region-checkbox" value="ë¶ì°">
+                                <span>ë¶ì°</span>
                             </label>
                             <label class="checkbox-label">
-                                <input type="checkbox" class="region-checkbox" value="대구">
-                                <span>대구</span>
+                                <input type="checkbox" class="region-checkbox" value="ëêµ¬">
+                                <span>ëêµ¬</span>
                             </label>
                             <label class="checkbox-label">
-                                <input type="checkbox" class="region-checkbox" value="광주">
-                                <span>광주</span>
+                                <input type="checkbox" class="region-checkbox" value="ê´ì£¼">
+                                <span>ê´ì£¼</span>
                             </label>
                             <label class="checkbox-label">
-                                <input type="checkbox" class="region-checkbox" value="대전">
-                                <span>대전</span>
+                                <input type="checkbox" class="region-checkbox" value="ëì ">
+                                <span>ëì </span>
                             </label>
                             <label class="checkbox-label">
-                                <input type="checkbox" class="region-checkbox" value="울산">
-                                <span>울산</span>
+                                <input type="checkbox" class="region-checkbox" value="ì¸ì°">
+                                <span>ì¸ì°</span>
                             </label>
                             <label class="checkbox-label">
-                                <input type="checkbox" class="region-checkbox" value="강원">
-                                <span>강원</span>
+                                <input type="checkbox" class="region-checkbox" value="ê°ì">
+                                <span>ê°ì</span>
                             </label>
                             <label class="checkbox-label">
-                                <input type="checkbox" class="region-checkbox" value="충북">
-                                <span>충북</span>
+                                <input type="checkbox" class="region-checkbox" value="ì¶©ë¶">
+                                <span>ì¶©ë¶</span>
                             </label>
                             <label class="checkbox-label">
-                                <input type="checkbox" class="region-checkbox" value="충남">
-                                <span>충남</span>
+                                <input type="checkbox" class="region-checkbox" value="ì¶©ë¨">
+                                <span>ì¶©ë¨</span>
                             </label>
                             <label class="checkbox-label">
-                                <input type="checkbox" class="region-checkbox" value="전북">
-                                <span>전북</span>
+                                <input type="checkbox" class="region-checkbox" value="ì ë¶">
+                                <span>ì ë¶</span>
                             </label>
                             <label class="checkbox-label">
-                                <input type="checkbox" class="region-checkbox" value="전남">
-                                <span>전남</span>
+                                <input type="checkbox" class="region-checkbox" value="ì ë¨">
+                                <span>ì ë¨</span>
                             </label>
                             <label class="checkbox-label">
-                                <input type="checkbox" class="region-checkbox" value="경북">
-                                <span>경북</span>
+                                <input type="checkbox" class="region-checkbox" value="ê²½ë¶">
+                                <span>ê²½ë¶</span>
                             </label>
                             <label class="checkbox-label">
-                                <input type="checkbox" class="region-checkbox" value="경남">
-                                <span>경남</span>
+                                <input type="checkbox" class="region-checkbox" value="ê²½ë¨">
+                                <span>ê²½ë¨</span>
                             </label>
                             <label class="checkbox-label">
-                                <input type="checkbox" class="region-checkbox" value="제주">
-                                <span>제주</span>
+                                <input type="checkbox" class="region-checkbox" value="ì ì£¼">
+                                <span>ì ì£¼</span>
                             </label>
                         </div>
                     </div>
 
-                    <h2 class="section-subtitle" style="margin-top: 40px;">자격 증명 서류</h2>
+                    <h2 class="section-subtitle" style="margin-top: 40px;">ìê²© ì¦ëª ìë¥</h2>
                     
                     <div class="form-group">
-                        <label>자격증 사본 <span class="required">*</span></label>
+                        <label>ìê²©ì¦ ì¬ë³¸ <span class="required">*</span></label>
                         <input type="file" id="licenseFile" class="form-control" accept="image/*,.pdf">
-                        <small class="form-text" id="licenseFileHint">법무사 자격증 또는 매수신청대리인 등록증</small>
+                        <small class="form-text" id="licenseFileHint">ë²ë¬´ì¬ ìê²©ì¦ ëë ë§¤ìì ì²­ëë¦¬ì¸ ë±ë¡ì¦</small>
                     </div>
 
                     <div class="form-group">
-                        <label>배상책임보험증권 <span class="required">*</span></label>
+                        <label>ë°°ìì±ìë³´íì¦ê¶ <span class="required">*</span></label>
                         <input type="file" id="insuranceFile" class="form-control" accept="image/*,.pdf">
-                        <small class="form-text">최대 5억 원 이상 보험 가입 증명</small>
+                        <small class="form-text">ìµë 5ìµ ì ì´ì ë³´í ê°ì ì¦ëª</small>
                     </div>
 
                     <div class="form-group">
-                        <label>사업자등록증 (선택)</label>
+                        <label>ì¬ììë±ë¡ì¦ (ì í)</label>
                         <input type="file" id="businessFile" class="form-control" accept="image/*,.pdf">
                     </div>
 
-                    <h2 class="section-subtitle" style="margin-top: 40px;">수수료 정보</h2>
+                    <h2 class="section-subtitle" style="margin-top: 40px;">ììë£ ì ë³´</h2>
                     
                     <div class="form-group">
-                        <label>수수료 안내</label>
+                        <label>ììë£ ìë´</label>
                         <div class="info-box" style="background: #f8f9fa; padding: 1rem; border-radius: 8px; text-align: center;">
-                            <p style="margin: 0; font-size: 1.25rem; font-weight: 600; color: #1550E8;">132,000원 (부가세 포함)</p>
-                            <small style="color: #666;">모든 전문가에게 동일하게 적용됩니다</small>
+                            <p style="margin: 0; font-size: 1.25rem; font-weight: 600; color: #1550E8;">132,000ì (ë¶ê°ì¸ í¬í¨)</p>
+                            <small style="color: #666;">ëª¨ë  ì ë¬¸ê°ìê² ëì¼íê² ì ì©ë©ëë¤</small>
                         </div>
                         <input type="hidden" id="expertFee" value="132000">
                     </div>
 
                     <div class="form-group">
-                        <label>카카오톡 알림 수신 번호 <span class="required">*</span></label>
+                        <label>ì¹´ì¹´ì¤í¡ ìë¦¼ ìì  ë²í¸ <span class="required">*</span></label>
                         <input type="text" id="kakaoPhone" class="form-control" placeholder="010-0000-0000">
-                        <small class="form-text">입찰 신청 시 알림을 받을 번호</small>
+                        <small class="form-text">ìì°° ì ì²­ ì ìë¦¼ì ë°ì ë²í¸</small>
                     </div>
 
                     <div class="form-group">
-                        <label>간단한 소개</label>
-                        <textarea id="expertIntro" class="form-control" rows="5" placeholder="경력, 전문 분야, 특기사항 등을 자유롭게 작성해주세요."></textarea>
+                        <label>ê°ë¨í ìê°</label>
+                        <textarea id="expertIntro" class="form-control" rows="5" placeholder="ê²½ë ¥, ì ë¬¸ ë¶ì¼, í¹ê¸°ì¬í­ ë±ì ìì ë¡­ê² ìì±í´ì£¼ì¸ì."></textarea>
                     </div>
 
                     <div class="form-group checkbox-group">
                         <label class="checkbox-label">
                             <input type="checkbox" id="agreeExpertTerms">
-                            <span>전문가 이용약관에 동의합니다 <span class="required">*</span></span>
+                            <span>ì ë¬¸ê° ì´ì©ì½ê´ì ëìí©ëë¤ <span class="required">*</span></span>
                         </label>
                         <label class="checkbox-label">
                             <input type="checkbox" id="agreeExpertPrivacy">
-                            <span>개인정보 수집 및 이용에 동의합니다 <span class="required">*</span></span>
+                            <span>ê°ì¸ì ë³´ ìì§ ë° ì´ì©ì ëìí©ëë¤ <span class="required">*</span></span>
                         </label>
                     </div>
 
-                    <button class="btn btn-primary btn-lg" id="submitExpertApplication">전문가 신청하기</button>
+                    <button class="btn btn-primary btn-lg" id="submitExpertApplication">ì ë¬¸ê° ì ì²­íê¸°</button>
                 </div>
             </div>
         </div>
@@ -1718,53 +1718,53 @@
         <div class="admin-container">
             <div class="admin-header">
                 <div class="container">
-                    <h1>관리자 대시보드</h1>
+                    <h1>ê´ë¦¬ì ëìë³´ë</h1>
                     <button class="btn btn-back" id="backToMainFromAdmin">
-                        <i class="fas fa-arrow-left"></i> 로그아웃
+                        <i class="fas fa-arrow-left"></i> ë¡ê·¸ìì
                     </button>
                 </div>
             </div>
 
             <div class="container" style="max-width: 1400px; padding: 2rem 20px;">
                 <div class="admin-tabs">
-                    <button class="admin-tab active" data-tab="applications">대리입찰 신청 관리</button>
-                    <button class="admin-tab" data-tab="experts">전문가 관리</button>
+                    <button class="admin-tab active" data-tab="applications">ëë¦¬ìì°° ì ì²­ ê´ë¦¬</button>
+                    <button class="admin-tab" data-tab="experts">ì ë¬¸ê° ê´ë¦¬</button>
                 </div>
 
                 <!-- Applications Tab -->
                 <div class="admin-tab-content active" id="applicationsTab">
                     <div class="admin-section">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                            <h2>대리입찰 신청 목록</h2>
+                            <h2>ëë¦¬ìì°° ì ì²­ ëª©ë¡</h2>
                             <button class="btn btn-success" onclick="exportApplicationsToExcel()">
-                                <i class="fas fa-download"></i> 엑셀 다운로드
+                                <i class="fas fa-download"></i> ìì ë¤ì´ë¡ë
                             </button>
                         </div>
                         <div class="table-container">
                             <table class="admin-table">
                                 <thead>
                                     <tr>
-                                        <th>신청일시</th>
-                                        <th>신청자</th>
-                                        <th>연락처</th>
-                                        <th>사건번호</th>
-                                        <th>관할법원</th>
-                                        <th>입찰가</th>
-                                        <th>상태</th>
-                                        <th>관리</th>
+                                        <th>ì ì²­ì¼ì</th>
+                                        <th>ì ì²­ì</th>
+                                        <th>ì°ë½ì²</th>
+                                        <th>ì¬ê±´ë²í¸</th>
+                                        <th>ê´í ë²ì</th>
+                                        <th>ìì°°ê°</th>
+                                        <th>ìí</th>
+                                        <th>ê´ë¦¬</th>
                                     </tr>
                                 </thead>
                                 <tbody id="applicationsTableBody">
                                     <tr>
                                         <td>2026-02-26 10:30</td>
-                                        <td>홍길동</td>
+                                        <td>íê¸¸ë</td>
                                         <td>010-1234-5678</td>
-                                        <td>2025타경103123</td>
-                                        <td>서울중앙지방법원</td>
-                                        <td>280,000,000원</td>
-                                        <td><span class="status-badge status-pending">대기중</span></td>
+                                        <td>2025íê²½103123</td>
+                                        <td>ìì¸ì¤ìì§ë°©ë²ì</td>
+                                        <td>280,000,000ì</td>
+                                        <td><span class="status-badge status-pending">ëê¸°ì¤</span></td>
                                         <td>
-                                            <button class="btn btn-sm btn-primary">상세보기</button>
+                                            <button class="btn btn-sm btn-primary">ìì¸ë³´ê¸°</button>
                                         </td>
                                     </tr>
                                     <!-- More rows will be added dynamically -->
@@ -1778,60 +1778,60 @@
                 <div class="admin-tab-content" id="expertsTab">
                     <div class="admin-section">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                            <h2>전문가 승인 대기</h2>
+                            <h2>ì ë¬¸ê° ì¹ì¸ ëê¸°</h2>
                             <button class="btn btn-success" onclick="exportExpertsToExcel()">
-                                <i class="fas fa-download"></i> 엑셀 다운로드
+                                <i class="fas fa-download"></i> ìì ë¤ì´ë¡ë
                             </button>
                         </div>
                         <div class="table-container">
                             <table class="admin-table">
                                 <thead>
                                     <tr>
-                                        <th>신청일시</th>
-                                        <th>성명</th>
-                                        <th>구분</th>
-                                        <th>자격증번호</th>
-                                        <th>연락처</th>
-                                        <th>활동지역</th>
-                                        <th>첨부서류</th>
-                                        <th>관리</th>
+                                        <th>ì ì²­ì¼ì</th>
+                                        <th>ì±ëª</th>
+                                        <th>êµ¬ë¶</th>
+                                        <th>ìê²©ì¦ë²í¸</th>
+                                        <th>ì°ë½ì²</th>
+                                        <th>íëì§ì­</th>
+                                        <th>ì²¨ë¶ìë¥</th>
+                                        <th>ê´ë¦¬</th>
                                     </tr>
                                 </thead>
                                 <tbody id="expertsTableBody">
-                                    <!-- Firestore에서 동적으로 로드됨 -->
+                                    <!-- Firestoreìì ëì ì¼ë¡ ë¡ëë¨ -->
                                 </tbody>
                             </table>
                         </div>
                     </div>
 
                     <div class="admin-section" style="margin-top: 3rem;">
-                        <h2>승인된 전문가</h2>
+                        <h2>ì¹ì¸ë ì ë¬¸ê°</h2>
                         <div class="table-container">
                             <table class="admin-table">
                                 <thead>
                                     <tr>
-                                        <th>성명</th>
-                                        <th>구분</th>
-                                        <th>자격증번호</th>
-                                        <th>연락처</th>
-                                        <th>활동지역</th>
-                                        <th>희망수수료</th>
-                                        <th>상태</th>
-                                        <th>관리</th>
+                                        <th>ì±ëª</th>
+                                        <th>êµ¬ë¶</th>
+                                        <th>ìê²©ì¦ë²í¸</th>
+                                        <th>ì°ë½ì²</th>
+                                        <th>íëì§ì­</th>
+                                        <th>í¬ë§ììë£</th>
+                                        <th>ìí</th>
+                                        <th>ê´ë¦¬</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>이법무</td>
-                                        <td>법무사</td>
-                                        <td>제2023-055호</td>
+                                        <td>ì´ë²ë¬´</td>
+                                        <td>ë²ë¬´ì¬</td>
+                                        <td>ì 2023-055í¸</td>
                                         <td>010-1111-2222</td>
-                                        <td>서울 전체</td>
-                                        <td>132,000원</td>
-                                        <td><span class="status-badge status-approved">활동중</span></td>
+                                        <td>ìì¸ ì ì²´</td>
+                                        <td>132,000ì</td>
+                                        <td><span class="status-badge status-approved">íëì¤</span></td>
                                         <td>
-                                            <button class="btn btn-sm btn-primary">상세보기</button>
-                                            <button class="btn btn-sm btn-danger">정지</button>
+                                            <button class="btn btn-sm btn-primary">ìì¸ë³´ê¸°</button>
+                                            <button class="btn btn-sm btn-danger">ì ì§</button>
                                         </td>
                                     </tr>
                                     <!-- More rows will be added dynamically -->
@@ -1848,19 +1848,19 @@
     <div class="modal" id="signatureModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>서명하기</h3>
+                <h3>ìëªíê¸°</h3>
                 <button class="modal-close" id="closeSignature">&times;</button>
             </div>
             <div class="modal-body">
-                <p>아래 캔버스에 서명해주세요</p>
+                <p>ìë ìºë²ì¤ì ìëªí´ì£¼ì¸ì</p>
                 <canvas id="signatureCanvas"></canvas>
                 <div class="signature-actions">
-                    <button class="btn btn-secondary" id="clearSignature">다시 그리기</button>
+                    <button class="btn btn-secondary" id="clearSignature">ë¤ì ê·¸ë¦¬ê¸°</button>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancelSignature">취소</button>
-                <button class="btn btn-primary" id="completeSignature">서명완료</button>
+                <button class="btn btn-secondary" id="cancelSignature">ì·¨ì</button>
+                <button class="btn btn-primary" id="completeSignature">ìëªìë£</button>
             </div>
         </div>
     </div>
@@ -1868,85 +1868,85 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <!-- 대장TV 소개 배너 -->
+            <!-- ëì¥TV ìê° ë°°ë -->
             <div style="background:linear-gradient(135deg,rgba(49,130,246,0.12),rgba(49,130,246,0.06));border:1px solid rgba(49,130,246,0.22);border-radius:16px;padding:1.4rem 1.6rem;margin-bottom:1.8rem;display:flex;flex-wrap:wrap;align-items:center;gap:1rem;">
                 <div style="width:44px;height:44px;border-radius:12px;background:rgba(49,130,246,0.18);display:flex;align-items:center;justify-content:center;color:#5B9DFF;">
                     <i class="fas fa-tv" style="font-size:1.2rem;"></i>
                 </div>
                 <div style="flex:1;min-width:200px;">
                     <div style="font-size:0.95rem;font-weight:800;color:#fff;margin-bottom:4px;">
-                        부동산경매 1등 <span style="color:#5B9DFF;">대장TV</span>가 운영하는 중개수수료 무료 대리입찰 플랫폼
+                        ë¶ëì°ê²½ë§¤ 1ë± <span style="color:#5B9DFF;">ëì¥TV</span>ê° ì´ìíë ì¤ê°ììë£ ë¬´ë£ ëë¦¬ìì°° íë«í¼
                     </div>
                     <div style="font-size:0.8rem;color:rgba(255,255,255,0.7);line-height:1.6;">
-                        쉬운 경매 문화를 만들기 위해 대장TV가 직접 기획·운영합니다.
-                        중개수수료 없이 의뢰인과 전문가를 연결해 드리며, 봉사와 나눔의 가치를 실천합니다.
+                        ì¬ì´ ê²½ë§¤ ë¬¸íë¥¼ ë§ë¤ê¸° ìí´ ëì¥TVê° ì§ì  ê¸°íÂ·ì´ìí©ëë¤.
+                        ì¤ê°ììë£ ìì´ ìë¢°ì¸ê³¼ ì ë¬¸ê°ë¥¼ ì°ê²°í´ ëë¦¬ë©°, ë´ì¬ì ëëì ê°ì¹ë¥¼ ì¤ì²í©ëë¤.
                     </div>
                 </div>
                 <a href="https://www.youtube.com/@ksj" target="_blank" style="background:#3182F6;color:#fff;padding:0.55rem 1.2rem;border-radius:12px;font-size:0.82rem;font-weight:700;text-decoration:none;white-space:nowrap;">
-                    대장TV 바로가기 →
+                    ëì¥TV ë°ë¡ê°ê¸° â
                 </a>
             </div>
             <div class="footer-content">
                 <div class="footer-logo">
                     <i class="fas fa-comment-dots"></i>
-                    <span>대리입찰 톡</span>
+                    <span>ëë¦¬ìì°° í¡</span>
                 </div>
                 <div class="footer-info">
-                    <p><strong>상호명:</strong> <span id="footerCompany">대리입찰톡</span></p>
-                    <p><strong>회사:</strong> <span id="footerCorp">대장TV</span></p>
-                    <p><strong>대표자:</strong> <span id="footerCeo">장영준</span></p>
-                    <p><strong>주소:</strong> <span id="footerAddress">서울특별시 금천구 가산디지털1로 75-24 901호</span></p>
-                    <p><strong>사업자등록번호:</strong> <span id="footerBizNo">802-87-00106</span></p>
-                    <p><strong>통신판매업신고:</strong> <span id="footerMailOrderNo">제2018-서울금천-0895호</span></p>
-                    <p><strong>대표전화:</strong> <a id="footerTelLink" href="tel:02-853-5875" style="color:#5B9DFF;"><span id="footerTel">02-853-5875</span></a> &nbsp;|&nbsp; <span id="footerHours">평일 09:00~18:00</span></p>
-                    <p><strong>이메일:</strong> <a id="footerEmailLink" href="mailto:qkqk5342@naver.com" style="color:#5B9DFF;"><span id="footerEmail">qkqk5342@naver.com</span></a></p>
+                    <p><strong>ìí¸ëª:</strong> <span id="footerCompany">ëë¦¬ìì°°í¡</span></p>
+                    <p><strong>íì¬:</strong> <span id="footerCorp">ëì¥TV</span></p>
+                    <p><strong>ëíì:</strong> <span id="footerCeo">ì¥ìì¤</span></p>
+                    <p><strong>ì£¼ì:</strong> <span id="footerAddress">ìì¸í¹ë³ì ê¸ì²êµ¬ ê°ì°ëì§í¸1ë¡ 75-24 901í¸</span></p>
+                    <p><strong>ì¬ììë±ë¡ë²í¸:</strong> <span id="footerBizNo">802-87-00106</span></p>
+                    <p><strong>íµì íë§¤ìì ê³ :</strong> <span id="footerMailOrderNo">ì 2018-ìì¸ê¸ì²-0895í¸</span></p>
+                    <p><strong>ëíì í:</strong> <a id="footerTelLink" href="tel:02-863-1022" style="color:#5B9DFF;"><span id="footerTel">02-863-1022</span></a> &nbsp;|&nbsp; <span id="footerHours">íì¼ 09:00~18:00</span></p>
+                    <p><strong>ì´ë©ì¼:</strong> <a id="footerEmailLink" href="mailto:qkqk5342@naver.com" style="color:#5B9DFF;"><span id="footerEmail">qkqk5342@naver.com</span></a></p>
                 </div>
                 <div class="footer-links">
-                    <a href="terms.html">이용약관</a>
-                    <a href="privacy.html">개인정보처리방침</a>
-                    <a href="safety.html">안전장치</a>
+                    <a href="terms.html">ì´ì©ì½ê´</a>
+                    <a href="privacy.html">ê°ì¸ì ë³´ì²ë¦¬ë°©ì¹¨</a>
+                    <a href="safety.html">ìì ì¥ì¹</a>
                 </div>
             </div>
             <div class="footer-copyright">
-                <p id="footerCopyright">&copy; 2026 대리입찰 톡 (대장TV). All rights reserved.</p>
+                <p id="footerCopyright">&copy; 2026 ëë¦¬ìì°° í¡ (ëì¥TV). All rights reserved.</p>
                 <div class="footer-disclaimer">
-                    <h4>⚖️ 법적 고지</h4>
-                    <p>플랫폼은 의뢰인과 매수신청대리인을 연결하는 중개 서비스입니다.</p>
-                    <p>본 플랫폼은 입찰 대리 서비스를 직접 제공하지 않으며, 모든 법률 행위는 자격을 갖춘 법무사가 수행합니다.</p>
-                    <p>법무사는 법무사법 제2조 및 제23조에 따라 등기 및 공탁에 관한 대리 업무를 수행할 수 있습니다.</p>
-                    <p>본 서비스 이용 시 발생하는 법률적 책임은 해당 법무사에게 있으며, 플랫폼은 중개 역할만을 담당합니다.</p>
-                    <p><strong>중개 수수료 무료 — 대리입찰 비용은 배정된 전문가가 직접 받습니다.</strong></p>
-                    <p>각 법무사는 배상책임보험(최대 5억원)에 가입되어 있습니다.</p>
+                    <h4>âï¸ ë²ì  ê³ ì§</h4>
+                    <p>íë«í¼ì ìë¢°ì¸ê³¼ ë§¤ìì ì²­ëë¦¬ì¸ì ì°ê²°íë ì¤ê° ìë¹ì¤ìëë¤.</p>
+                    <p>ë³¸ íë«í¼ì ìì°° ëë¦¬ ìë¹ì¤ë¥¼ ì§ì  ì ê³µíì§ ìì¼ë©°, ëª¨ë  ë²ë¥  íìë ìê²©ì ê°ì¶ ë²ë¬´ì¬ê° ìíí©ëë¤.</p>
+                    <p>ë²ë¬´ì¬ë ë²ë¬´ì¬ë² ì 2ì¡° ë° ì 23ì¡°ì ë°ë¼ ë±ê¸° ë° ê³µíì ê´í ëë¦¬ ìë¬´ë¥¼ ìíí  ì ììµëë¤.</p>
+                    <p>ë³¸ ìë¹ì¤ ì´ì© ì ë°ìíë ë²ë¥ ì  ì±ìì í´ë¹ ë²ë¬´ì¬ìê² ìì¼ë©°, íë«í¼ì ì¤ê° ì­í ë§ì ë´ë¹í©ëë¤.</p>
+                    <p><strong>ì¤ê° ììë£ ë¬´ë£ â ëë¦¬ìì°° ë¹ì©ì ë°°ì ë ì ë¬¸ê°ê° ì§ì  ë°ìµëë¤.</strong></p>
+                    <p>ê° ë²ë¬´ì¬ë ë°°ìì±ìë³´í(ìµë 5ìµì)ì ê°ìëì´ ììµëë¤.</p>
                 </div>
             </div>
         </div>
     </footer>
 
     <!-- ====================================================
-         전문가 상세보기 모달
+         ì ë¬¸ê° ìì¸ë³´ê¸° ëª¨ë¬
          ==================================================== -->
     <div id="expertDetailModal" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.65); overflow-y:auto; padding:20px;">
         <div style="background:#fff; border-radius:16px; max-width:780px; margin:0 auto; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.35);">
 
-            <!-- 모달 헤더 -->
+            <!-- ëª¨ë¬ í¤ë -->
             <div style="background:linear-gradient(135deg,#0f1340,#1550E8); padding:1.5rem 2rem; display:flex; justify-content:space-between; align-items:center;">
-                <h2 style="color:#fff; margin:0; font-size:1.25rem;">⚖️ 전문가 신청 상세보기</h2>
-                <button onclick="closeExpertModal()" style="background:rgba(255,255,255,0.15); border:none; color:#fff; width:36px; height:36px; border-radius:50%; font-size:1.2rem; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
+                <h2 style="color:#fff; margin:0; font-size:1.25rem;">âï¸ ì ë¬¸ê° ì ì²­ ìì¸ë³´ê¸°</h2>
+                <button onclick="closeExpertModal()" style="background:rgba(255,255,255,0.15); border:none; color:#fff; width:36px; height:36px; border-radius:50%; font-size:1.2rem; cursor:pointer; display:flex; align-items:center; justify-content:center;">â</button>
             </div>
 
-            <!-- 모달 본문 -->
+            <!-- ëª¨ë¬ ë³¸ë¬¸ -->
             <div id="expertDetailBody" style="padding:2rem; font-size:0.95rem; line-height:1.8; color:#333;">
-                <!-- JS로 채워짐 -->
+                <!-- JSë¡ ì±ìì§ -->
             </div>
         </div>
     </div>
 
-    <!-- 파일 미리보기 모달 (이미지/PDF) -->
+    <!-- íì¼ ë¯¸ë¦¬ë³´ê¸° ëª¨ë¬ (ì´ë¯¸ì§/PDF) -->
     <div id="filePreviewModal" style="display:none; position:fixed; inset:0; z-index:10000; background:rgba(0,0,0,0.85); align-items:center; justify-content:center; padding:20px;">
         <div style="position:relative; max-width:90vw; max-height:90vh; background:#fff; border-radius:12px; overflow:hidden;">
-            <button onclick="closeFilePreview()" style="position:absolute; top:10px; right:10px; z-index:1; background:rgba(0,0,0,0.6); border:none; color:#fff; width:36px; height:36px; border-radius:50%; font-size:1.1rem; cursor:pointer;">✕</button>
+            <button onclick="closeFilePreview()" style="position:absolute; top:10px; right:10px; z-index:1; background:rgba(0,0,0,0.6); border:none; color:#fff; width:36px; height:36px; border-radius:50%; font-size:1.1rem; cursor:pointer;">â</button>
             <div id="filePreviewContent" style="display:flex; align-items:center; justify-content:center; min-width:300px; min-height:200px; padding:0;">
-                <!-- 이미지 or PDF iframe -->
+                <!-- ì´ë¯¸ì§ or PDF iframe -->
             </div>
         </div>
     </div>
@@ -1962,22 +1962,22 @@
     <script src="js/main.js"></script>
     <script src="js/admin.js"></script>
     <script>
-    // ── 법무사·공인중개사 수익 시뮬레이터 ───────────────────────────────
+    // ââ ë²ë¬´ì¬Â·ê³µì¸ì¤ê°ì¬ ììµ ìë®¬ë ì´í° âââââââââââââââââââââââââââââââ
     function updateSimulator() {
         const count = parseInt(document.getElementById('simCount').value, 10);
         const total = count * 132000;
-        document.getElementById('simCountVal').textContent = count + '건';
-        document.getElementById('simTotal').textContent = total.toLocaleString('ko-KR') + '원';
+        document.getElementById('simCountVal').textContent = count + 'ê±´';
+        document.getElementById('simTotal').textContent = total.toLocaleString('ko-KR') + 'ì';
     }
 
-    // ── 전문가 유형(법무사/공인중개사) 선택 UI 업데이트 ───────────────────
+    // ââ ì ë¬¸ê° ì í(ë²ë¬´ì¬/ê³µì¸ì¤ê°ì¬) ì í UI ìë°ì´í¸ âââââââââââââââââââ
     function updateExpertTypeUI() {
         const lawyerEl = document.getElementById('selectLawyer');
         const agentEl  = document.getElementById('selectAgent');
         if (!lawyerEl || !agentEl) return;
         const isLawyer = lawyerEl.checked;
 
-        // 라디오 라벨 테두리/배경 강조
+        // ë¼ëì¤ ë¼ë²¨ íëë¦¬/ë°°ê²½ ê°ì¡°
         const lawyerLabel = lawyerEl.closest('label');
         const agentLabel  = agentEl.closest('label');
         if (lawyerLabel && agentLabel) {
@@ -1987,72 +1987,72 @@
             agentLabel.style.background    = isLawyer ? '#fff' : '#F0FDF9';
         }
 
-        // 자격증 입력 안내 문구를 유형에 맞게 변경
+        // ìê²©ì¦ ìë ¥ ìë´ ë¬¸êµ¬ë¥¼ ì íì ë§ê² ë³ê²½
         const numLabel = document.getElementById('licenseNumberLabel');
         const numInput = document.getElementById('licenseNumber');
         const fileHint = document.getElementById('licenseFileHint');
         if (isLawyer) {
-            if (numLabel) numLabel.innerHTML = '법무사 등록번호 <span class="required">*</span>';
-            if (numInput) numInput.placeholder = '예) 제2024-001호';
-            if (fileHint) fileHint.textContent = '법무사 자격증 또는 매수신청대리인 등록증';
+            if (numLabel) numLabel.innerHTML = 'ë²ë¬´ì¬ ë±ë¡ë²í¸ <span class="required">*</span>';
+            if (numInput) numInput.placeholder = 'ì) ì 2024-001í¸';
+            if (fileHint) fileHint.textContent = 'ë²ë¬´ì¬ ìê²©ì¦ ëë ë§¤ìì ì²­ëë¦¬ì¸ ë±ë¡ì¦';
         } else {
-            if (numLabel) numLabel.innerHTML = '공인중개사 등록번호 <span class="required">*</span>';
-            if (numInput) numInput.placeholder = '예) 제12345-2024-00001호';
-            if (fileHint) fileHint.textContent = '공인중개사 자격증 + 매수신청대리인 등록증';
+            if (numLabel) numLabel.innerHTML = 'ê³µì¸ì¤ê°ì¬ ë±ë¡ë²í¸ <span class="required">*</span>';
+            if (numInput) numInput.placeholder = 'ì) ì 12345-2024-00001í¸';
+            if (fileHint) fileHint.textContent = 'ê³µì¸ì¤ê°ì¬ ìê²©ì¦ + ë§¤ìì ì²­ëë¦¬ì¸ ë±ë¡ì¦';
         }
     }
 
-    // ── WHY 탭 전환 (대리입찰 톡 스타일 2-컬럼) ─────────────────────────────────────────
+    // ââ WHY í­ ì í (ëë¦¬ìì°° í¡ ì¤íì¼ 2-ì»¬ë¼) âââââââââââââââââââââââââââââââââââââââââ
     const WHY_DATA = {
         price: {
-            badge: '💰 단일가',
-            heading: '전국 어디서나<br><em>공인중개사 13만2천 · 법무사 15만4천</em>',
-            desc: '자격을 갖춘 전문가가 직접 진행하는 대리입찰.\n숨겨진 수수료, 지역별 차등 없이 전국 동일합니다.',
-            points: ['추가 비용 일절 없음', '인증된 전문가가 직접 진행', '결제 즉시 매칭 시작'],
-            vcIcon: '💰',
-            vcTitle: '투명한 단일 가격',
-            vcBody: '공인중개사 132,000원 · 법무사 154,000원(각 부가세 포함).\n중개수수료 0원, 전국 전문가 직접 연결.',
-            stats: [{num:'132,000', label:'원 공인중개사'}, {num:'154,000', label:'원 법무사'}, {num:'0', label:'숨겨진 비용'}]
+            badge: 'ð° ë¨ì¼ê°',
+            heading: 'ì êµ­ ì´ëìë<br><em>ê³µì¸ì¤ê°ì¬ 13ë§2ì² Â· ë²ë¬´ì¬ 15ë§4ì²</em>',
+            desc: 'ìê²©ì ê°ì¶ ì ë¬¸ê°ê° ì§ì  ì§ííë ëë¦¬ìì°°.\nì¨ê²¨ì§ ììë£, ì§ì­ë³ ì°¨ë± ìì´ ì êµ­ ëì¼í©ëë¤.',
+            points: ['ì¶ê° ë¹ì© ì¼ì  ìì', 'ì¸ì¦ë ì ë¬¸ê°ê° ì§ì  ì§í', 'ê²°ì  ì¦ì ë§¤ì¹­ ìì'],
+            vcIcon: 'ð°',
+            vcTitle: 'í¬ëªí ë¨ì¼ ê°ê²©',
+            vcBody: 'ê³µì¸ì¤ê°ì¬ 132,000ì Â· ë²ë¬´ì¬ 154,000ì(ê° ë¶ê°ì¸ í¬í¨).\nì¤ê°ììë£ 0ì, ì êµ­ ì ë¬¸ê° ì§ì  ì°ê²°.',
+            stats: [{num:'132,000', label:'ì ê³µì¸ì¤ê°ì¬'}, {num:'154,000', label:'ì ë²ë¬´ì¬'}, {num:'0', label:'ì¨ê²¨ì§ ë¹ì©'}]
         },
         time: {
-            badge: '⏰ 대신 입찰',
-            heading: '법원에 가지 않아도<br><em>낙찰</em>받을 수 있습니다',
-            desc: '연차 쓰고 아침 일찍 법원에 갈 필요 없습니다.\n전문 법무사가 대신 입찰하고, 결과는 문자로 받으세요.',
-            points: ['입찰 당일 내 업무 그대로', '카카오톡으로 즉시 결과 통보', '전국 당일 배정 시스템'],
-            vcIcon: '⏰',
-            vcTitle: '시간을 돌려드립니다',
-            vcBody: '평균 법원 대기 시간 3~4시간.\n그 시간을 고객님께 돌려드립니다.',
-            stats: [{num:'3~4h', label:'절약되는 대기시간'}, {num:'당일', label:'결과 문자 통보'}, {num:'24/7', label:'온라인 신청'} ]
+            badge: 'â° ëì  ìì°°',
+            heading: 'ë²ìì ê°ì§ ììë<br><em>ëì°°</em>ë°ì ì ììµëë¤',
+            desc: 'ì°ì°¨ ì°ê³  ìì¹¨ ì¼ì° ë²ìì ê° íì ììµëë¤.\nì ë¬¸ ë²ë¬´ì¬ê° ëì  ìì°°íê³ , ê²°ê³¼ë ë¬¸ìë¡ ë°ì¼ì¸ì.',
+            points: ['ìì°° ë¹ì¼ ë´ ìë¬´ ê·¸ëë¡', 'ì¹´ì¹´ì¤í¡ì¼ë¡ ì¦ì ê²°ê³¼ íµë³´', 'ì êµ­ ë¹ì¼ ë°°ì  ìì¤í'],
+            vcIcon: 'â°',
+            vcTitle: 'ìê°ì ëë ¤ëë¦½ëë¤',
+            vcBody: 'íê·  ë²ì ëê¸° ìê° 3~4ìê°.\nê·¸ ìê°ì ê³ ê°ëê» ëë ¤ëë¦½ëë¤.',
+            stats: [{num:'3~4h', label:'ì ì½ëë ëê¸°ìê°'}, {num:'ë¹ì¼', label:'ê²°ê³¼ ë¬¸ì íµë³´'}, {num:'24/7', label:'ì¨ë¼ì¸ ì ì²­'} ]
         },
         distance: {
-            badge: '🗺️ 모든법원',
-            heading: '전국 <em>모든 법원</em>에서\n입찰 가능합니다',
-            desc: '서울에 살아도 제주 물건 입찰 OK.\n지역 법무사 네트워크로 어디든 당일 커버합니다.',
-            points: ['전국 법원 커버율 100%', '지역 법무사 파트너 네트워크', '도서산간도 가능'],
-            vcIcon: '🗺️',
-            vcTitle: '지역 제한 없음',
-            vcBody: '전국 60개 지원 법원 모두 커버.\n한 번의 신청으로 원하는 법원 어디든 입찰합니다.',
-            stats: [{num:'60+', label:'커버 법원'}, {num:'전국', label:'동일 서비스'}, {num:'100%', label:'당일 배정'}]
+            badge: 'ðºï¸ ëª¨ë ë²ì',
+            heading: 'ì êµ­ <em>ëª¨ë  ë²ì</em>ìì\nìì°° ê°ë¥í©ëë¤',
+            desc: 'ìì¸ì ì´ìë ì ì£¼ ë¬¼ê±´ ìì°° OK.\nì§ì­ ë²ë¬´ì¬ ë¤í¸ìí¬ë¡ ì´ëë  ë¹ì¼ ì»¤ë²í©ëë¤.',
+            points: ['ì êµ­ ë²ì ì»¤ë²ì¨ 100%', 'ì§ì­ ë²ë¬´ì¬ íí¸ë ë¤í¸ìí¬', 'ëìì°ê°ë ê°ë¥'],
+            vcIcon: 'ðºï¸',
+            vcTitle: 'ì§ì­ ì í ìì',
+            vcBody: 'ì êµ­ 60ê° ì§ì ë²ì ëª¨ë ì»¤ë².\ní ë²ì ì ì²­ì¼ë¡ ìíë ë²ì ì´ëë  ìì°°í©ëë¤.',
+            stats: [{num:'60+', label:'ì»¤ë² ë²ì'}, {num:'ì êµ­', label:'ëì¼ ìë¹ì¤'}, {num:'100%', label:'ë¹ì¼ ë°°ì '}]
         },
         worker: {
-            badge: '⚡ 3분 완성',
-            heading: '신청부터 완료까지\n<em>단 3분</em>이면 충분합니다',
-            desc: '사건번호 입력 → 입찰가 설정 → 전자서명.\n인감증명서도 불필요합니다.',
-            points: ['사건번호 자동 정보 조회', '온라인 전자서명 (인감 불필요)', '즉시 전문가 매칭'],
-            vcIcon: '⚡',
-            vcTitle: '초간단 3단계',
-            vcBody: '① 사건번호 입력  ② 입찰가 결정  ③ 전자서명\n이게 전부입니다. 복잡한 서류 작업은 저희가 합니다.',
-            stats: [{num:'3분', label:'평균 신청 시간'}, {num:'0장', label:'필요 서류'}, {num:'즉시', label:'전문가 배정'}]
+            badge: 'â¡ 3ë¶ ìì±',
+            heading: 'ì ì²­ë¶í° ìë£ê¹ì§\n<em>ë¨ 3ë¶</em>ì´ë©´ ì¶©ë¶í©ëë¤',
+            desc: 'ì¬ê±´ë²í¸ ìë ¥ â ìì°°ê° ì¤ì  â ì ììëª.\nì¸ê°ì¦ëªìë ë¶íìí©ëë¤.',
+            points: ['ì¬ê±´ë²í¸ ìë ì ë³´ ì¡°í', 'ì¨ë¼ì¸ ì ììëª (ì¸ê° ë¶íì)', 'ì¦ì ì ë¬¸ê° ë§¤ì¹­'],
+            vcIcon: 'â¡',
+            vcTitle: 'ì´ê°ë¨ 3ë¨ê³',
+            vcBody: 'â  ì¬ê±´ë²í¸ ìë ¥  â¡ ìì°°ê° ê²°ì   â¢ ì ììëª\nì´ê² ì ë¶ìëë¤. ë³µì¡í ìë¥ ììì ì í¬ê° í©ëë¤.',
+            stats: [{num:'3ë¶', label:'íê·  ì ì²­ ìê°'}, {num:'0ì¥', label:'íì ìë¥'}, {num:'ì¦ì', label:'ì ë¬¸ê° ë°°ì '}]
         },
         safe: {
-            badge: '🛡️ 안심 보증금',
-            heading: '보증금은\n<em>100% 안전</em>하게 보호됩니다',
-            desc: '배상책임보험 최대 5억 가입 완료.\n만에 하나의 사고도 고객님 손실은 없습니다.',
-            points: ['배상책임보험 최대 5억', '법무사 공제회 소속 전문가', '전문가 직접 입찰 진행'],
-            vcIcon: '🛡️',
-            vcTitle: '5억 한도 보험 가입',
-            vcBody: '전국 법무사 공제회 소속 파트너가 직접 진행.\n배상책임보험 최대 5억 한도 내에서 보상됩니다.',
-            stats: [{num:'5억', label:'배상책임보험 한도'}, {num:'100%', label:'보증금 보호'}, {num:'공제회', label:'소속 전문가'}]
+            badge: 'ð¡ï¸ ìì¬ ë³´ì¦ê¸',
+            heading: 'ë³´ì¦ê¸ì\n<em>100% ìì </em>íê² ë³´í¸ë©ëë¤',
+            desc: 'ë°°ìì±ìë³´í ìµë 5ìµ ê°ì ìë£.\në§ì íëì ì¬ê³ ë ê³ ê°ë ìì¤ì ììµëë¤.',
+            points: ['ë°°ìì±ìë³´í ìµë 5ìµ', 'ë²ë¬´ì¬ ê³µì í ìì ì ë¬¸ê°', 'ì ë¬¸ê° ì§ì  ìì°° ì§í'],
+            vcIcon: 'ð¡ï¸',
+            vcTitle: '5ìµ íë ë³´í ê°ì',
+            vcBody: 'ì êµ­ ë²ë¬´ì¬ ê³µì í ìì íí¸ëê° ì§ì  ì§í.\në°°ìì±ìë³´í ìµë 5ìµ íë ë´ìì ë³´ìë©ëë¤.',
+            stats: [{num:'5ìµ', label:'ë°°ìì±ìë³´í íë'}, {num:'100%', label:'ë³´ì¦ê¸ ë³´í¸'}, {num:'ê³µì í', label:'ìì ì ë¬¸ê°'}]
         }
     };
 
@@ -2069,17 +2069,17 @@
         const visualCard = document.getElementById('whyVisualCard');
         if (!textCol || !visualCard) return;
 
-        // 좌측 텍스트
+        // ì¢ì¸¡ íì¤í¸
         textCol.innerHTML = `
             <div class="why-badge"><span class="badge-icon">${d.badge.split(' ')[0]}</span>${d.badge.slice(d.badge.indexOf(' ')+1)}</div>
             <h3>${d.heading}</h3>
             <p class="why-desc">${d.desc.replace(/\n/g,'<br>')}</p>
             <ul class="why-points">
-                ${d.points.map(p=>`<li><span class="chk">✓</span><span>${p}</span></li>`).join('')}
+                ${d.points.map(p=>`<li><span class="chk">â</span><span>${p}</span></li>`).join('')}
             </ul>
         `;
 
-        // 우측 비주얼 카드
+        // ì°ì¸¡ ë¹ì£¼ì¼ ì¹´ë
         visualCard.innerHTML = `
             <span class="vc-icon">${d.vcIcon}</span>
             <div class="vc-title">${d.vcTitle}</div>
@@ -2124,7 +2124,7 @@
     }
 
     function startWhyRolling() {
-        if (!document.querySelector('.why-tab')) return; // 토스 리디자인: WHY 탭 제거됨 → no-op
+        if (!document.querySelector('.why-tab')) return; // í ì¤ ë¦¬ëìì¸: WHY í­ ì ê±°ë¨ â no-op
         whyAutoTimer = setInterval(function() {
             if (whyPaused) return;
             const active = document.querySelector('.why-tab.active');
@@ -2138,7 +2138,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         updateSimulator();
 
-        // WHY 탭 클릭 이벤트
+        // WHY í­ í´ë¦­ ì´ë²¤í¸
         document.querySelectorAll('.why-tab').forEach(btn => {
             btn.addEventListener('click', function() {
                 whyPaused = true;
@@ -2154,27 +2154,27 @@
             });
         });
 
-        // 초기 렌더 및 자동 롤링 (토스 리디자인 후 WHY 탭이 없으면 내부에서 안전하게 no-op)
+        // ì´ê¸° ë ë ë° ìë ë¡¤ë§ (í ì¤ ë¦¬ëìì¸ í WHY í­ì´ ìì¼ë©´ ë´ë¶ìì ìì íê² no-op)
         activateTab('price');
         startWhyRolling();
     });
     </script>
 
-    <!-- ── 토스 스타일 랜딩: 아이콘 · 스크롤 리빌 · FAQ ── -->
+    <!-- ââ í ì¤ ì¤íì¼ ëë©: ìì´ì½ Â· ì¤í¬ë¡¤ ë¦¬ë¹ Â· FAQ ââ -->
     <script>
     (function(){
         function initToss(){
-            // Lucide 라인 아이콘 렌더링
+            // Lucide ë¼ì¸ ìì´ì½ ë ëë§
             if (window.lucide && typeof lucide.createIcons === 'function') {
                 try { lucide.createIcons(); } catch(e) {}
             }
-            // FAQ 토글
+            // FAQ í ê¸
             document.querySelectorAll('.ts-faq-q').forEach(function(btn){
                 btn.addEventListener('click', function(){
                     btn.parentElement.classList.toggle('open');
                 });
             });
-            // 스크롤 리빌 (뷰포트에 들어오면 나타남)
+            // ì¤í¬ë¡¤ ë¦¬ë¹ (ë·°í¬í¸ì ë¤ì´ì¤ë©´ ëíë¨)
             var reveals = document.querySelectorAll('.toss .reveal');
             if (!('IntersectionObserver' in window)) {
                 reveals.forEach(function(el){ el.classList.add('is-visible'); });
@@ -2198,38 +2198,38 @@
     })();
     </script>
 
-    <!-- ── 홈페이지 콘텐츠 동적 로드 (Firestore siteContents/main) ── -->
+    <!-- ââ ííì´ì§ ì½íì¸  ëì  ë¡ë (Firestore siteContents/main) ââ -->
     <script>
     (function() {
-        // 기본값 (Firestore 저장 전 fallback)
+        // ê¸°ë³¸ê° (Firestore ì ì¥ ì  fallback)
         const DEFAULTS = {
-            hero_title1: '법원 갈 시간에',
-            hero_title2: '가족과 함께',
-            hero_sub1: '소비자는 앉아서 간편하게 신청,',
-            hero_sub2: '전문가가 대신 법원에 가서 입찰합니다',
-            hero_badge: '부동산경매 1등 대장TV가 운영하는 중개수수료 무료 대리입찰 플랫폼',
-            how_title: '이용 방법',
-            how_sub: '딱 4단계로 완료됩니다',
-            step1_title: '사건번호 입력', step1_desc: '대법원 경매 사건번호를 입력하면 자동으로 정보를 불러옵니다',
-            step2_title: '입찰가 결정',   step2_desc: '원하는 입찰 금액과 보증금 납부 방법을 선택합니다',
-            step3_title: '전자서명',      step3_desc: '온라인 전자서명으로 위임장 작성. 인감증명서 불필요',
-            step4_title: '결과 수령',     step4_desc: '입찰 당일 문자로 낙찰/패찰 결과를 즉시 안내받습니다',
-            price_title: '대리입찰 가격',
-            price_sub: '숨겨진 비용 없이 전국 어디서나 같은 가격',
+            hero_title1: 'ë²ì ê° ìê°ì',
+            hero_title2: 'ê°ì¡±ê³¼ í¨ê»',
+            hero_sub1: 'ìë¹ìë ììì ê°í¸íê² ì ì²­,',
+            hero_sub2: 'ì ë¬¸ê°ê° ëì  ë²ìì ê°ì ìì°°í©ëë¤',
+            hero_badge: 'ë¶ëì°ê²½ë§¤ 1ë± ëì¥TVê° ì´ìíë ì¤ê°ììë£ ë¬´ë£ ëë¦¬ìì°° íë«í¼',
+            how_title: 'ì´ì© ë°©ë²',
+            how_sub: 'ë± 4ë¨ê³ë¡ ìë£ë©ëë¤',
+            step1_title: 'ì¬ê±´ë²í¸ ìë ¥', step1_desc: 'ëë²ì ê²½ë§¤ ì¬ê±´ë²í¸ë¥¼ ìë ¥íë©´ ìëì¼ë¡ ì ë³´ë¥¼ ë¶ë¬ìµëë¤',
+            step2_title: 'ìì°°ê° ê²°ì ',   step2_desc: 'ìíë ìì°° ê¸ì¡ê³¼ ë³´ì¦ê¸ ë©ë¶ ë°©ë²ì ì íí©ëë¤',
+            step3_title: 'ì ììëª',      step3_desc: 'ì¨ë¼ì¸ ì ììëªì¼ë¡ ììì¥ ìì±. ì¸ê°ì¦ëªì ë¶íì',
+            step4_title: 'ê²°ê³¼ ìë ¹',     step4_desc: 'ìì°° ë¹ì¼ ë¬¸ìë¡ ëì°°/í¨ì°° ê²°ê³¼ë¥¼ ì¦ì ìë´ë°ìµëë¤',
+            price_title: 'ëë¦¬ìì°° ê°ê²©',
+            price_sub: 'ì¨ê²¨ì§ ë¹ì© ìì´ ì êµ­ ì´ëìë ê°ì ê°ê²©',
             price_amount: '132,000',
-            price_desc: '온라인 전자서명 3분 완료',
-            footer_company: '대리입찰톡',
-            footer_corp: '대장TV',
-            footer_address: '서울특별시 금천구 가산디지털1로 75-24 901호',
+            price_desc: 'ì¨ë¼ì¸ ì ììëª 3ë¶ ìë£',
+            footer_company: 'ëë¦¬ìì°°í¡',
+            footer_corp: 'ëì¥TV',
+            footer_address: 'ìì¸í¹ë³ì ê¸ì²êµ¬ ê°ì°ëì§í¸1ë¡ 75-24 901í¸',
             footer_biz_no: '802-87-00106',
-            footer_mail_order_no: '제2018-서울금천-0895호',
-            footer_tel: '02-853-5875',
-            footer_hours: '평일 09:00~18:00',
-            footer_ceo: '장영준',
+            footer_mail_order_no: 'ì 2018-ìì¸ê¸ì²-0895í¸',
+            footer_tel: '02-863-1022',
+            footer_hours: 'íì¼ 09:00~18:00',
+            footer_ceo: 'ì¥ìì¤',
             footer_email: 'qkqk5342@naver.com',
-            footer_copyright: '© 2026 대리입찰 톡 (대장TV). All rights reserved.',
+            footer_copyright: 'Â© 2026 ëë¦¬ìì°° í¡ (ëì¥TV). All rights reserved.',
             banner_show: true,
-            banner_text: '<strong>중개수수료 0원</strong> — 대리입찰 톡은 의뢰인과 전문가를 <strong>무료로 연결</strong>해 드립니다. 플랫폼이 가져가는 수수료는 없습니다.',
+            banner_text: '<strong>ì¤ê°ììë£ 0ì</strong> â ëë¦¬ìì°° í¡ì ìë¢°ì¸ê³¼ ì ë¬¸ê°ë¥¼ <strong>ë¬´ë£ë¡ ì°ê²°</strong>í´ ëë¦½ëë¤. íë«í¼ì´ ê°ì ¸ê°ë ììë£ë ììµëë¤.',
             banner_color: 'linear-gradient(90deg,#1B64DA,#3182F6)',
         };
 
@@ -2238,15 +2238,15 @@
             const setInner = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined) el.innerHTML = val; };
             const setHref = (id, val) => { const el = document.getElementById(id); if (el && val) el.href = val; };
 
-            // 히어로 — DB에 남아있을 수 있는 옛 '무료로 맡기세요/무료 대리입찰' 문구는 무시
-            const cleanHero = (val, def) => (!val || /무료로 맡기세요|무료 대리입찰 플랫폼/.test(val)) ? def : val;
+            // íì´ë¡ â DBì ë¨ììì ì ìë ì 'ë¬´ë£ë¡ ë§¡ê¸°ì¸ì/ë¬´ë£ ëë¦¬ìì°°' ë¬¸êµ¬ë ë¬´ì
+            const cleanHero = (val, def) => (!val || /ë¬´ë£ë¡ ë§¡ê¸°ì¸ì|ë¬´ë£ ëë¦¬ìì°° íë«í¼/.test(val)) ? def : val;
             const heroTitle = document.getElementById('heroTitle');
             if (heroTitle) heroTitle.innerHTML = (d.hero_title1 || DEFAULTS.hero_title1) + '<br><span class="accent" id="heroTitle2">' + (d.hero_title2 || DEFAULTS.hero_title2) + '</span>';
             const heroSub = document.getElementById('heroSub');
             if (heroSub) heroSub.innerHTML = (d.hero_sub1 || DEFAULTS.hero_sub1) + '<br>' + cleanHero(d.hero_sub2, DEFAULTS.hero_sub2);
             set('heroBadge', cleanHero(d.hero_badge, DEFAULTS.hero_badge));
 
-            // 이용방법
+            // ì´ì©ë°©ë²
             set('howTitle', d.how_title || DEFAULTS.how_title);
             set('howSub', d.how_sub || DEFAULTS.how_sub);
             set('step1Title', d.step1_title || DEFAULTS.step1_title);
@@ -2258,14 +2258,14 @@
             set('step4Title', d.step4_title || DEFAULTS.step4_title);
             set('step4Desc', d.step4_desc || DEFAULTS.step4_desc);
 
-            // 수수료 — DB에 남아있을 수 있는 옛 '정찰제' 문구는 무시하고 코드 기본값 사용
-            const cleanText = (val, def) => (!val || /정찰제/.test(val)) ? def : val;
+            // ììë£ â DBì ë¨ììì ì ìë ì 'ì ì°°ì ' ë¬¸êµ¬ë ë¬´ìíê³  ì½ë ê¸°ë³¸ê° ì¬ì©
+            const cleanText = (val, def) => (!val || /ì ì°°ì /.test(val)) ? def : val;
             set('pricingTitle', cleanText(d.price_title, DEFAULTS.price_title));
             set('pricingSub', cleanText(d.price_sub, DEFAULTS.price_sub));
             set('pricingAmount', d.price_amount || DEFAULTS.price_amount);
             set('pricingDesc', d.price_desc || DEFAULTS.price_desc);
 
-            // 푸터
+            // í¸í°
             set('footerCompany', d.footer_company || DEFAULTS.footer_company);
             set('footerCorp', d.footer_corp || DEFAULTS.footer_corp);
             set('footerAddress', d.footer_address || DEFAULTS.footer_address);
@@ -2279,7 +2279,7 @@
             setHref('footerTelLink', 'tel:' + (d.footer_tel || DEFAULTS.footer_tel).replace(/-/g,''));
             setHref('footerEmailLink', 'mailto:' + (d.footer_email || DEFAULTS.footer_email));
 
-            // 배너
+            // ë°°ë
             const bannerEl = document.getElementById('betaBanner');
             const bannerTextEl = document.getElementById('bannerText');
             if (bannerEl) {
@@ -2290,14 +2290,14 @@
                     if (spacer) spacer.style.display = 'none';
                 } else {
                     bannerEl.style.background = d.banner_color || DEFAULTS.banner_color;
-                    // DB에 남아있을 수 있는 옛 문구(결제 없이/법무사만 등)는 무시하고 기본값 사용
-                    const oldBanner = d.banner_text && /결제 없이|법무사 매칭 서비스/.test(d.banner_text);
+                    // DBì ë¨ììì ì ìë ì ë¬¸êµ¬(ê²°ì  ìì´/ë²ë¬´ì¬ë§ ë±)ë ë¬´ìíê³  ê¸°ë³¸ê° ì¬ì©
+                    const oldBanner = d.banner_text && /ê²°ì  ìì´|ë²ë¬´ì¬ ë§¤ì¹­ ìë¹ì¤/.test(d.banner_text);
                     if (bannerTextEl) bannerTextEl.innerHTML = oldBanner ? DEFAULTS.banner_text : (d.banner_text || DEFAULTS.banner_text);
                 }
             }
         }
 
-        // Firestore에서 로드, 실패 시 기본값 사용
+        // Firestoreìì ë¡ë, ì¤í¨ ì ê¸°ë³¸ê° ì¬ì©
         function loadSiteContent() {
             try {
                 const db = typeof getDB === 'function' ? getDB() : null;
@@ -2310,7 +2310,7 @@
             }
         }
 
-        // DOM 준비되면 로드
+        // DOM ì¤ë¹ëë©´ ë¡ë
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', loadSiteContent);
         } else {
