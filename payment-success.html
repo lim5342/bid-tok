@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ê²°ì  ìë£ - ëë¦¬ìì°° í¡</title>
+    <title>결제 완료 - 대리입찰 톡</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
@@ -45,86 +45,86 @@
 </head>
 <body>
 <div class="card">
-    <!-- ë¡ë© -->
+    <!-- 로딩 -->
     <div id="loadingView">
-        <div class="icon-wrap">â³</div>
-        <h1>ê²°ì  íì¸ ì¤...</h1>
-        <p class="loading">ê²°ì  ì ë³´ë¥¼ íì¸íê³  ë´ë¹ ì ë¬¸ê°ë¥¼ ë§¤ì¹­íê³  ììµëë¤.</p>
+        <div class="icon-wrap">⏳</div>
+        <h1>결제 확인 중...</h1>
+        <p class="loading">결제 정보를 확인하고 담당 전문가를 매칭하고 있습니다.</p>
         <div class="step-loading">
             <div class="spin"></div>
-            <p><strong id="loadingStep">ê²°ì  ìí íì¸ ì¤...</strong><small>ì ìë§ ê¸°ë¤ë ¤ì£¼ì¸ì</small></p>
+            <p><strong id="loadingStep">결제 상태 확인 중...</strong><small>잠시만 기다려주세요</small></p>
         </div>
     </div>
 
-    <!-- ì±ê³µ -->
+    <!-- 성공 -->
     <div id="successView" style="display:none;">
-        <div class="icon-wrap">ð</div>
-        <h1>ê²°ì  & ì ì²­ ìë£!</h1>
-        <p>ëë¦¬ìì°° ìë¹ì¤ ììë£ <strong style="color:#1550E8;"><span id="paidAmountText">-</span>ì</strong> ê²°ì ê° ìë£ëììµëë¤.</p>
+        <div class="icon-wrap">🎉</div>
+        <h1>결제 & 신청 완료!</h1>
+        <p>대리입찰 서비스 수수료 <strong style="color:#1550E8;"><span id="paidAmountText">-</span>원</strong> 결제가 완료되었습니다.</p>
 
-        <div class="app-id" id="appIdBadge">ì ì²­ë²í¸: -</div>
+        <div class="app-id" id="appIdBadge">신청번호: -</div>
 
-        <!-- ë²ë¬´ì¬ ë°°ì  ê²°ê³¼ -->
+        <!-- 법무사 배정 결과 -->
         <div id="expertAssignedBox" style="display:none;">
             <div class="expert-assigned">
                 <div class="expert-avatar"><i class="fas fa-user-tie"></i></div>
                 <div class="expert-info">
                     <strong id="expertNameDisplay">-</strong>
-                    <small>ë´ë¹ ì ë¬¸ê° ë°°ì  ìë£ â</small>
+                    <small>담당 전문가 배정 완료 ✅</small>
                 </div>
             </div>
         </div>
         <div id="expertPendingBox">
             <div style="background:#fff7ed;border:1.5px solid #fed7aa;border-radius:12px;padding:0.85rem 1.1rem;text-align:left;margin-bottom:1.2rem;font-size:0.85rem;color:#c2410c;">
-                â° ë´ë¹ ì ë¬¸ê° ë°°ì  ì¤... <strong>2~4ìê° ë´</strong> SMSë¡ ìë´ëë¦½ëë¤.
+                ⏰ 담당 전문가 배정 중... <strong>2~4시간 내</strong> SMS로 안내드립니다.
             </div>
         </div>
 
         <div class="info-box">
-            â ê²°ì ê¸ì¡: <strong><span id="paidAmountText2">-</span>ì</strong><br>
-            ð ì ì²­ë²í¸: <strong id="appIdText">-</strong><br>
-            ð± ë°°ì  ìë£ ì SMS / ì¹´ì¹´ì¤í¡ ìë¦¼ ë°ì¡<br>
-            ð ìì°° ê¸°ì¼ 48ìê° ì ê¹ì§ ì·¨ì ì ì ì¡ íë¶
+            ✅ 결제금액: <strong><span id="paidAmountText2">-</span>원</strong><br>
+            📋 신청번호: <strong id="appIdText">-</strong><br>
+            📱 배정 완료 시 SMS / 카카오톡 알림 발송<br>
+            🔒 입찰 기일 48시간 전까지 취소 시 전액 환불
         </div>
 
-        <!-- ì§í ë¨ê³ -->
+        <!-- 진행 단계 -->
         <div class="steps">
             <div class="step-item">
                 <div class="step-num done"><i class="fas fa-check" style="font-size:0.7rem;"></i></div>
-                <div class="step-text"><strong>ê²°ì  ìë£</strong><small><span id="paidAmountText3">-</span>ì ê²°ì  ì±ê³µ</small></div>
+                <div class="step-text"><strong>결제 완료</strong><small><span id="paidAmountText3">-</span>원 결제 성공</small></div>
             </div>
             <div class="step-item">
                 <div class="step-num" id="stepMatchNum">2</div>
-                <div class="step-text"><strong>ì ë¬¸ê° ë§¤ì¹­</strong><small id="stepMatchTxt">2~4ìê° ë´ ë°°ì </small></div>
+                <div class="step-text"><strong>전문가 매칭</strong><small id="stepMatchTxt">2~4시간 내 배정</small></div>
             </div>
             <div class="step-item">
                 <div class="step-num" style="background:#e0e0e0;">3</div>
-                <div class="step-text"><strong>ìì°° ì§í</strong><small>ì ë¬¸ê°ê° ì§ì  ë²ì ì¶ì</small></div>
+                <div class="step-text"><strong>입찰 진행</strong><small>전문가가 직접 법원 출석</small></div>
             </div>
             <div class="step-item">
                 <div class="step-num" style="background:#e0e0e0;">4</div>
-                <div class="step-text"><strong>ê²°ê³¼ íµë³´</strong><small>ëì°°/í¨ì°° ì¦ì SMS ìë´</small></div>
+                <div class="step-text"><strong>결과 통보</strong><small>낙찰/패찰 즉시 SMS 안내</small></div>
             </div>
         </div>
 
         <div class="btn-wrap">
-            <a href="mypage.html" class="btn btn-outline"><i class="fas fa-list"></i> ì ì²­ ë´ì­</a>
-            <a href="index.html" class="btn btn-primary"><i class="fas fa-home"></i> íì¼ë¡</a>
+            <a href="mypage.html" class="btn btn-outline"><i class="fas fa-list"></i> 신청 내역</a>
+            <a href="index.html" class="btn btn-primary"><i class="fas fa-home"></i> 홈으로</a>
         </div>
     </div>
 
-    <!-- ì¤í¨ -->
+    <!-- 실패 -->
     <div id="errorView" style="display:none;">
-        <div class="icon-wrap">â</div>
-        <h1>ê²°ì  íì¸ ì¤í¨</h1>
-        <p>ê²°ì  ì²ë¦¬ ì¤ ì¤ë¥ê° ë°ìíìµëë¤.<br><strong>ì´ë¯¸ ê²°ì ê° ëìì ì ìì¼ë, ë¨¼ì  'ë´ ì ì²­ íì¸'ìì íì¸í´ ì£¼ì¸ì.</strong><br>ì¤ë³µ ê²°ì  ë°©ì§ë¥¼ ìí´ ë°ë¡ ë¤ì ê²°ì íì§ ë§ìê³ , ë¬¸ì ê° ê³ìëë©´ ê³ ê°ì¼í°ë¡ ë¬¸ìí´ì£¼ì¸ì.</p>
+        <div class="icon-wrap">❌</div>
+        <h1>결제 확인 실패</h1>
+        <p>결제 처리 중 오류가 발생했습니다.<br><strong>이미 결제가 되었을 수 있으니, 먼저 '내 신청 확인'에서 확인해 주세요.</strong><br>중복 결제 방지를 위해 바로 다시 결제하지 마시고, 문제가 계속되면 고객센터로 문의해주세요.</p>
         <p style="font-size:0.88rem;background:#f0f4ff;padding:0.75rem 1rem;border-radius:10px;color:#1550E8;">
-            ð <strong>02-863-1022</strong> &nbsp;|&nbsp; íì¼ 09:00~18:00
+            📞 <strong>02-863-1022</strong> &nbsp;|&nbsp; 평일 09:00~18:00
         </p>
         <div class="btn-wrap">
-            <a href="mypage.html" class="btn btn-primary"><i class="fas fa-clipboard-list"></i> ë´ ì ì²­ íì¸</a>
-            <a href="javascript:history.back()" class="btn btn-outline"><i class="fas fa-redo"></i> ê²°ì  ë¤ì ìë</a>
-            <a href="index.html" class="btn btn-outline"><i class="fas fa-home"></i> íì¼ë¡</a>
+            <a href="mypage.html" class="btn btn-primary"><i class="fas fa-clipboard-list"></i> 내 신청 확인</a>
+            <a href="javascript:history.back()" class="btn btn-outline"><i class="fas fa-redo"></i> 결제 다시 시도</a>
+            <a href="index.html" class="btn btn-outline"><i class="fas fa-home"></i> 홈으로</a>
         </div>
     </div>
 </div>
@@ -137,21 +137,21 @@
     <script src="js/api.js"></script>
 <script src="js/auth.js"></script>
 <script>
-// ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-// EmailJS ì¤ì  (https://www.emailjs.com ìì ë°ê¸)
-// ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';    // â emailjs.com â Account â Public Key
-const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';    // â emailjs.com â Email Services â Service ID
-const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';   // â emailjs.com â Email Templates â Template ID
+// ══════════════════════════════════════════════════════
+// EmailJS 설정 (https://www.emailjs.com 에서 발급)
+// ══════════════════════════════════════════════════════
+const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';    // ← emailjs.com → Account → Public Key
+const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';    // ← emailjs.com → Email Services → Service ID
+const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';   // ← emailjs.com → Email Templates → Template ID
 
-// EmailJS ì´ê¸°í (Public Key ì¤ì  í íì±íë¨)
+// EmailJS 초기화 (Public Key 설정 후 활성화됨)
 if (EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
     emailjs.init(EMAILJS_PUBLIC_KEY);
 }
 
-// ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-// ë©ì¸ ì²ë¦¬
-// ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════════════
+// 메인 처리
+// ══════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', async function() {
     const params     = new URLSearchParams(window.location.search);
     const paymentKey = params.get('paymentKey');
@@ -166,12 +166,12 @@ document.addEventListener('DOMContentLoaded', async function() {
     };
 
     try {
-        // ââ 1. í ì¤íì´ë¨¼ì¸  ê²°ì  ì¹ì¸ (ìë² ìì»¤) ââââââââââ
+        // ── 1. 토스페이먼츠 결제 승인 (서버 워커) ──────────
         if (!paymentKey || !orderId || !amount) {
-            throw new Error('ê²°ì  ì ë³´ê° ì¬ë°ë¥´ì§ ììµëë¤.');
+            throw new Error('결제 정보가 올바르지 않습니다.');
         }
 
-        setStep('ê²°ì  ì¹ì¸ ì²ë¦¬ ì¤...');
+        setStep('결제 승인 처리 중...');
         const confirmRes = await fetch((cfg.workerUrl || '') + '/confirm', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -180,30 +180,30 @@ document.addEventListener('DOMContentLoaded', async function() {
         const confirmData = await confirmRes.json();
 
         if (!confirmRes.ok || confirmData.success === false) {
-            const msg = confirmData.message || confirmData.error || 'ê²°ì  ì¹ì¸ì ì¤í¨íìµëë¤.';
-            // "ì´ë¯¸ ì²ë¦¬ë ê²°ì "ë ì¤ì ë¡ë ê²°ì ê° ì±ê³µí ìí(ì¹ì¸ ì¤ë³µ í¸ì¶).
-            // ì¤í¨ë¡ ë³´ì§ ìê³  ì±ê³µ íë¦ì¼ë¡ ê³ì ì§ííë¤.
-            const alreadyDone = /ì´ë¯¸\s*ì²ë¦¬|ì²ë¦¬ë\s*ê²°ì |already|ALREADY_PROCESSED|ì¤ë³µ/i.test(msg);
+            const msg = confirmData.message || confirmData.error || '결제 승인에 실패했습니다.';
+            // "이미 처리된 결제"는 실제로는 결제가 성공한 상태(승인 중복 호출).
+            // 실패로 보지 않고 성공 흐름으로 계속 진행한다.
+            const alreadyDone = /이미\s*처리|처리된\s*결제|already|ALREADY_PROCESSED|중복/i.test(msg);
             if (!alreadyDone) {
-                console.error('ê²°ì  ì¹ì¸ ì¤í¨:', confirmData);
+                console.error('결제 승인 실패:', confirmData);
                 showError(msg);
                 return;
             }
-            console.warn('ì´ë¯¸ ì²ë¦¬ë ê²°ì  â ì±ê³µì¼ë¡ ê°ì£¼íê³  ì§í');
+            console.warn('이미 처리된 결제 → 성공으로 간주하고 진행');
         } else {
-            console.log('â ê²°ì  ì¹ì¸ ìë£:', confirmData);
+            console.log('✅ 결제 승인 완료:', confirmData);
         }
 
-        // ââ 2. orderIdë¡ ì ì²­ ê±´ ì°¾ì ìí ìë°ì´í¸ âââââââ
-        setStep('ì ì²­ ì ë³´ ì ì¥ ì¤...');
+        // ── 2. orderId로 신청 건 찾아 상태 업데이트 ───────
+        setStep('신청 정보 저장 중...');
         let appId = null;
         try {
             const all = (await API.applications.getAll())?.data || [];
             const found = all.find(a => a.order_id === orderId);
             if (found) appId = found.id;
-        } catch (e) { console.warn('ì ì²­ê±´ ì¡°í ì¤í¨:', e); }
+        } catch (e) { console.warn('신청건 조회 실패:', e); }
 
-        // ì ì²­ê±´ì´ ìì¼ë©´(ì¬ì  ì ì¥ ì¤í¨ ë±) sessionStorage ë°ì´í°ë¡ ìë¡ ìì±
+        // 신청건이 없으면(사전 저장 실패 등) sessionStorage 데이터로 새로 생성
         if (!appId) {
             let pending = null;
             try { pending = JSON.parse(sessionStorage.getItem('bidtok_pending_order') || 'null'); } catch (e) {}
@@ -214,32 +214,32 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
 
         if (appId) {
-            await API.applications.updateStatus(appId, 'ê²°ì ìë£', {
+            await API.applications.updateStatus(appId, '결제완료', {
                 payment_key:    paymentKey,
                 order_id:       orderId,
-                payment_status: 'ê²°ì ìë£',
+                payment_status: '결제완료',
                 paid_at:        new Date().toISOString()
             });
 
-            // ââ 3. ì§ì­ë³ ì ë¬¸ê° ìë ë§¤ì¹­ âââââââââââââ
-            setStep('ë´ë¹ ì ë¬¸ê° ë§¤ì¹­ ì¤...');
+            // ── 3. 지역별 전문가 자동 매칭 ─────────────
+            setStep('담당 전문가 매칭 중...');
             await autoMatchExpert(appId);
         }
 
-        // ê²°ì  ìë£ë ìì ë°ì´í° ì ë¦¬
+        // 결제 완료된 임시 데이터 정리
         try {
             sessionStorage.removeItem('bidtok_pending_order');
             localStorage.removeItem('daerijangTalk_formData');
         } catch (e) {}
 
-        // ââ 4. ìë£ íë©´ íì ââââââââââââââââââââââââââ
+        // ── 4. 완료 화면 표시 ──────────────────────────
         const shortId = appId
             ? appId.toString().slice(-8).toUpperCase()
             : (orderId || 'UNKNOWN');
-        document.getElementById('appIdBadge').textContent = 'ì ì²­ë²í¸: ' + shortId;
+        document.getElementById('appIdBadge').textContent = '신청번호: ' + shortId;
         document.getElementById('appIdText').textContent  = shortId;
 
-        // ââ ì¤ì  ê²°ì  ê¸ì¡ íì (í ì¤ìì ê²°ì ë ê¸ì¡ ê·¸ëë¡) ââ
+        // ── 실제 결제 금액 표시 (토스에서 결제된 금액 그대로) ──
         const paidAmount = Number(amount) || 0;
         const paidText = paidAmount.toLocaleString('ko-KR');
         ['paidAmountText', 'paidAmountText2', 'paidAmountText3'].forEach(id => {
@@ -251,8 +251,8 @@ document.addEventListener('DOMContentLoaded', async function() {
         document.getElementById('successView').style.display = 'block';
 
     } catch(e) {
-        console.error('ê²°ì  íì¸ ì¤ë¥:', e);
-        showError(e.message || 'ê²°ì  ì ë³´ íì¸ ì¤ ì¤ë¥ê° ë°ìíìµëë¤.');
+        console.error('결제 확인 오류:', e);
+        showError(e.message || '결제 정보 확인 중 오류가 발생했습니다.');
     }
 });
 
@@ -262,51 +262,51 @@ function showError(msg) {
     document.getElementById('successView').style.display = 'none';
     errView.style.display = 'block';
     const p = errView.querySelector('p');
-    if (p && msg) p.innerHTML = msg + '<br>ê³ ê°ì¼í°ë¡ ë¬¸ìí´ì£¼ì¸ì.';
+    if (p && msg) p.innerHTML = msg + '<br>고객센터로 문의해주세요.';
 }
 
-// ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-// ì ë¬¸ê° ì í ì ê·í (realtor/lawyer ì½ë Â· íê¸ ë¼ë²¨ ëª¨ë ëì)
-//   â 'realtor'(ê³µì¸ì¤ê°ì¬) | 'lawyer'(ë²ë¬´ì¬) | '' (ë¶ëª)
-// ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════════════
+// 전문가 유형 정규화 (realtor/lawyer 코드 · 한글 라벨 모두 대응)
+//   → 'realtor'(공인중개사) | 'lawyer'(법무사) | '' (불명)
+// ══════════════════════════════════════════════════════
 function normalizeExpertType(v) {
     if (!v) return '';
     const s = String(v).toLowerCase().trim();
-    if (s === 'realtor' || s.includes('ê³µì¸ì¤ê°') || s.includes('ë§¤ìì ì²­') || s.includes('ì¤ê°'))
+    if (s === 'realtor' || s.includes('공인중개') || s.includes('매수신청') || s.includes('중개'))
         return 'realtor';
-    if (s === 'lawyer' || s.includes('ë²ë¬´'))
+    if (s === 'lawyer' || s.includes('법무'))
         return 'lawyer';
     return '';
 }
 
-// ì ì²­ ê±´ì ì ë¬¸ê° ì í
+// 신청 건의 전문가 유형
 function getAppExpertType(app) {
     return normalizeExpertType(app.expert_type || app.expertType || '');
 }
 
-// ì ë¬¸ê°(íì)ì ì í
+// 전문가(회원)의 유형
 function getUserExpertType(u) {
     return normalizeExpertType(u.expertType || u.expert_type || '');
 }
 
-// ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-// ê²°ì  í ë§¤ì¹­ ì²ë¦¬ (v2 â ìëë°°ì  íì§)
-//   â ë³ê²½ ì´ì (2026-07): íë ë²ì ë°Â·ë ì§ ë¶ê° ì ë¬¸ê°ìê²
-//      ìëë°°ì ëë ì¤ë°°ì  ì¬ê³  ë°©ì§. ì´ì  ìëì¼ë¡ ë°°ì íì§ ìê³ 
-//      'ë§¤ì¹­ì¤' ìíë¡ ëì´, ê´ë¦¬ì ë°°ì  ëë (êµ¬ì¶ ìì )
-//      ì ë¬¸ê° ì ì°©ì ìë½ì¼ë¡ë§ ë§¤ì¹­íë¤.
-// ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-// ì ë¬¸ê° íëë²ì ëª©ë¡ (serviceRegions + selectedCourts ë³í©)
+// ══════════════════════════════════════════════════════
+// 결제 후 매칭 처리 (v2 — 자동배정 폐지)
+//   ★ 변경 이유(2026-07): 활동 법원 밖·날짜 불가 전문가에게
+//      자동배정되는 오배정 사고 방지. 이제 자동으로 배정하지 않고
+//      '매칭중' 상태로 두어, 관리자 배정 또는 (구축 예정)
+//      전문가 선착순 수락으로만 매칭한다.
+// ══════════════════════════════════════════════════════
+// 전문가 활동법원 목록 (serviceRegions + selectedCourts 병합)
 function getExpertCourts(u) {
     const a = Array.isArray(u.selectedCourts) ? u.selectedCourts : [];
     const b = Array.isArray(u.serviceRegions) ? u.serviceRegions : (u.serviceRegions ? [u.serviceRegions] : []);
     return [...new Set([...a, ...b].filter(Boolean))];
 }
-// ë²ìëª ì ê·í: ì ì²­ì "ââì§ë°©ë²ì" â ì ë¬¸ê° "ââì§ë²" íê¸° íµì¼
+// 법원명 정규화: 신청서 "○○지방법원" ↔ 전문가 "○○지법" 표기 통일
 function normCourtP(v) {
-    return String(v || '').replace(/ì§ë°©ë²ì/g, 'ì§ë²').replace(/\s+/g, ' ').trim();
+    return String(v || '').replace(/지방법원/g, '지법').replace(/\s+/g, ' ').trim();
 }
-// ì ì²­ ë²ì â ì ë¬¸ê° íëë²ì (ì ê·í í ë¹êµ)
+// 신청 법원 ∈ 전문가 활동법원 (정규화 후 비교)
 function courtMatchP(appCourt, courts) {
     if (!appCourt || !courts || courts.length === 0) return false;
     const c = normCourtP(appCourt);
@@ -318,14 +318,14 @@ async function autoMatchExpert(appId) {
         const app = await API.applications.getById(appId);
         if (!app) return;
 
-        // ìëë°°ì íì§ ìì. 'ë§¤ì¹­ì¤'ì¼ë¡ íìíì¬ ì ì°©ì ìë½ ëê¸°.
-        await API.applications.updateStatus(appId, 'ë§¤ì¹­ì¤', {
+        // 자동배정하지 않음. '매칭중'으로 표시하여 선착순 수락 대기.
+        await API.applications.updateStatus(appId, '매칭중', {
             match_stage: 'awaiting_accept',
             updatedAt: new Date().toISOString()
         });
-        console.log('[ë§¤ì¹­] ìëë°°ì  ìì´ ë§¤ì¹­ì¤ ìíë¡ ëê¸° (ì ì°©ì ìë½).');
+        console.log('[매칭] 자동배정 없이 매칭중 상태로 대기 (선착순 수락).');
 
-        // â ë³´ìëª¨ë: ì ë¬¸ê° ìë¦¼ì ìë²(ìì»¤) ê²½ì  â í´ë¼ì´ì¸í¸ê° íìëª©ë¡ ì¡°í ë¶íì
+        // ★ 보안모드: 전문가 알림을 서버(워커) 경유 → 클라이언트가 회원목록 조회 불필요
         if (window.AUTH_CONFIG && window.AUTH_CONFIG.workerUrl) {
             try {
                 const base = window.AUTH_CONFIG.workerUrl.replace(/\/+$/, '');
@@ -333,14 +333,14 @@ async function autoMatchExpert(appId) {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ applicationId: appId })
                 }).then(x => x.json());
-                console.log(`[ë§¤ì¹­] (ìë²) ìê²© ì ë¬¸ê° ${r && r.notified != null ? r.notified : '?'}ëªìê² ì ìë¢° ìë¦¼`);
+                console.log(`[매칭] (서버) 자격 전문가 ${r && r.notified != null ? r.notified : '?'}명에게 새 의뢰 알림`);
             } catch (notifyErr) {
-                console.warn('ì ë¬¸ê° ìë¦¼(ìë²) ë°ì¡ ì¤í¨:', notifyErr);
+                console.warn('전문가 알림(서버) 발송 실패:', notifyErr);
             }
             return;
         }
 
-        // ââ ìê²© ë§ë ì ë¬¸ê°(ì¹ì¸+íëë²ì+ì í)ìê² ì ìë¢° ë¬¸ì ìë¦¼ ââ
+        // ── 자격 맞는 전문가(승인+활동법원+유형)에게 새 의뢰 문자 알림 ──
         try {
             const res = await API.users.getAll();
             const experts = (res?.data || []).filter(u => u.userType === 'expert' && u.status === 'active');
@@ -356,32 +356,32 @@ async function autoMatchExpert(appId) {
                 body: JSON.stringify({ type: 'expert_new_request', to: ex.phone,
                     data: { name: ex.name, court, caseNumber: app.case_number, bidDate: app.bid_date } })
             }).catch(() => {}) : Promise.resolve()));
-            console.log(`[ë§¤ì¹­] ìê²© ì ë¬¸ê° ${eligible.length}ëªìê² ì ìë¢° ìë¦¼ ë°ì¡`);
+            console.log(`[매칭] 자격 전문가 ${eligible.length}명에게 새 의뢰 알림 발송`);
 
-            // ìê²© ì ë¬¸ê°ê° ìì¼ë©´ ê´ë¦¬ììê² ìë¦¼(ì§ì  ì­ì¸ì©)
+            // 자격 전문가가 없으면 관리자에게 알림(직접 섭외용)
             if (eligible.length === 0) {
-                const ADMIN_PHONES = ['01083445342'];  // ê´ë¦¬ì ìë¦¼ ìì  ë²í¸
+                const ADMIN_PHONES = ['01083445342'];  // 관리자 알림 수신 번호
                 await Promise.all(ADMIN_PHONES.map(p => fetch(SMS_URL, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ type: 'expert_new_request', to: p,
-                        data: { name: 'ê´ë¦¬ì', court, caseNumber: app.case_number, bidDate: app.bid_date } })
+                        data: { name: '관리자', court, caseNumber: app.case_number, bidDate: app.bid_date } })
                 }).catch(() => {})));
-                console.log('[ë§¤ì¹­] ìê²© ì ë¬¸ê° ìì â ê´ë¦¬ì ìë¦¼ ë°ì¡');
+                console.log('[매칭] 자격 전문가 없음 → 관리자 알림 발송');
             }
         } catch(notifyErr) {
-            console.warn('ì ë¬¸ê° ìë¦¼ ë°ì¡ ì¤í¨:', notifyErr);
+            console.warn('전문가 알림 발송 실패:', notifyErr);
         }
     } catch(e) {
-        console.error('ë§¤ì¹­ ì²ë¦¬ ì¤ë¥:', e);
+        console.error('매칭 처리 오류:', e);
     }
 }
 
-// ë°°ì  ê±´ìê° ê°ì¥ ì ì ì ë¬¸ê° ì í (ë¡ëë°¸ë°ì±)
+// 배정 건수가 가장 적은 전문가 선택 (로드밸런싱)
 async function pickLeastBusy(experts) {
     if (!experts || experts.length === 0) return null;
     if (experts.length === 1) return experts[0];
 
-    // ì ì²´ ì ì²­ 1í ì¡°í í ë°°ì  ê±´ì ì§ê³ (getAllì íí°ë¥¼ ë¬´ìíë¯ë¡ JSìì ì¹´ì´í¸)
+    // 전체 신청 1회 조회 후 배정 건수 집계 (getAll은 필터를 무시하므로 JS에서 카운트)
     let allApps = [];
     try {
         const res = await API.applications.getAll();
@@ -390,43 +390,43 @@ async function pickLeastBusy(experts) {
 
     const counts = experts.map(ex => {
         const count = allApps.filter(a =>
-            a.assigned_expert_id === ex.id && a.status === 'ë§¤ì¹­ìë£'
+            a.assigned_expert_id === ex.id && a.status === '매칭완료'
         ).length;
         return { expert: ex, count };
     });
-    // ê±´ì ê°ì¥ ì ì ì ë¬¸ê° ë°í
+    // 건수 가장 적은 전문가 반환
     counts.sort((a, b) => a.count - b.count);
     return counts[0]?.expert || experts[0];
 }
 
-// ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-// ë²ë¬´ì¬ ë°°ì  + ìë¦¼ ë°ì¡
-// ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════════════
+// 법무사 배정 + 알림 발송
+// ══════════════════════════════════════════════════════
 async function assignAndNotify(appId, app, expert) {
-    // DB ë°°ì  ìë°ì´í¸
+    // DB 배정 업데이트
     await API.applications.assignExpert(appId, expert.id, expert.name || expert.userId);
 
-    // UI ìë°ì´í¸ â ë²ë¬´ì¬ ë°°ì  ìë£ íì
-    const name = expert.name || expert.userId || 'ë´ë¹ ì ë¬¸ê°';
-    document.getElementById('expertNameDisplay').textContent = name + ' ì ë¬¸ê°';
+    // UI 업데이트 — 법무사 배정 완료 표시
+    const name = expert.name || expert.userId || '담당 전문가';
+    document.getElementById('expertNameDisplay').textContent = name + ' 전문가';
     document.getElementById('expertAssignedBox').style.display = 'block';
     document.getElementById('expertPendingBox').style.display  = 'none';
 
     const stepNum = document.getElementById('stepMatchNum');
     const stepTxt = document.getElementById('stepMatchTxt');
     if (stepNum) { stepNum.classList.add('done'); stepNum.innerHTML = '<i class="fas fa-check" style="font-size:0.7rem;"></i>'; }
-    if (stepTxt) stepTxt.textContent = name + ' ì ë¬¸ê° ë°°ì  ìë£';
+    if (stepTxt) stepTxt.textContent = name + ' 전문가 배정 완료';
 
-    // ââ SMS ìë¦¼ ë°ì¡ (ì ë¬¸ê° + ì ì²­ì) ââ
+    // ── SMS 알림 발송 (전문가 + 신청자) ──
     await sendAssignmentSms(app, expert, name);
 
-    // ì´ë©ì¼ ìë¦¼ (EmailJS ì¤ì ë ê²½ì°)
+    // 이메일 알림 (EmailJS 설정된 경우)
     await sendEmailNotification(app, expert);
 }
 
-// ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-// ë°°ì  SMS ë°ì¡ (ì ë¬¸ê° + ì ì²­ì ììª½)
-// ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════════════
+// 배정 SMS 발송 (전문가 + 신청자 양쪽)
+// ══════════════════════════════════════════════════════
 const SMS_PROXY_URL = 'https://bidtok-sms-proxy.qkqk5342.workers.dev';
 async function sendSms(payload) {
     try {
@@ -438,7 +438,7 @@ async function sendSms(payload) {
         const data = await res.json().catch(() => ({}));
         return res.ok && data.success;
     } catch (e) {
-        console.warn('SMS ë°ì¡ ì¤í¨:', e);
+        console.warn('SMS 발송 실패:', e);
         return false;
     }
 }
@@ -453,45 +453,45 @@ async function sendAssignmentSms(app, expert, expertName) {
         expertName: expertName || '',
     };
 
-    // â  ì ë¬¸ê°ìê² ì ì¬ê±´ ë°°ì  ìë¦¼
+    // ① 전문가에게 새 사건 배정 알림
     const expertPhone = (expert.phone || expert.kakaoPhone || '').replace(/[^0-9]/g, '');
     if (expertPhone) {
         await sendSms({
             type: 'expert_assigned',
             to: expertPhone,
-            data: { ...common, name: expert.name || expert.userId || 'ì ë¬¸ê°' }
+            data: { ...common, name: expert.name || expert.userId || '전문가' }
         });
     }
 
-    // â¡ ì ì²­ì(ê³ ê°)ìê² ë°°ì  ìë£ ìë¦¼
+    // ② 신청자(고객)에게 배정 완료 알림
     const clientPhone = (app.phone || '').replace(/[^0-9]/g, '');
     if (clientPhone) {
         await sendSms({
             type: 'client_assigned',
             to: clientPhone,
-            data: { ...common, name: app.applicant_name || 'ê³ ê°' }
+            data: { ...common, name: app.applicant_name || '고객' }
         });
     }
 }
 
-// ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-// EmailJS ìë¦¼ ë°ì¡
-// ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ══════════════════════════════════════════════════════
+// EmailJS 알림 발송
+// ══════════════════════════════════════════════════════
 async function sendEmailNotification(app, expert) {
     if (EMAILJS_SERVICE_ID === 'YOUR_SERVICE_ID') {
-        // ë¯¸ì¤ì  ì ì½ì ë¡ê·¸ë§
-        console.log('ð§ [EmailJS ë¯¸ì¤ì ] ì´ë©ì¼ ìë¦¼ ì¤íµ');
-        console.log('  â ë²ë¬´ì¬:', expert.name || expert.userId, '/', expert.email);
-        console.log('  â ì ì²­ì:', app.applicant_name, '/', app.phone);
-        console.log('  â ì¬ê±´ë²í¸:', app.case_number, '@', app.court);
+        // 미설정 시 콘솔 로그만
+        console.log('📧 [EmailJS 미설정] 이메일 알림 스킵');
+        console.log('  → 법무사:', expert.name || expert.userId, '/', expert.email);
+        console.log('  → 신청자:', app.applicant_name, '/', app.phone);
+        console.log('  → 사건번호:', app.case_number, '@', app.court);
         return;
     }
 
     const templateParams = {
-        // ë²ë¬´ì¬ìê² ë°ì¡
+        // 법무사에게 발송
         to_email:         expert.email || '',
-        to_name:          expert.name  || expert.userId || 'ë²ë¬´ì¬',
-        // ì ì²­ ì ë³´
+        to_name:          expert.name  || expert.userId || '법무사',
+        // 신청 정보
         applicant_name:   app.applicant_name || '',
         applicant_phone:  app.phone || '',
         applicant_email:  app.email || '',
@@ -500,21 +500,21 @@ async function sendEmailNotification(app, expert) {
         region:           app.region || '',
         bid_date:         app.bid_date || '',
         address:          app.address || '',
-        bid_amount:       Number(app.bid_amount || 0).toLocaleString('ko-KR') + 'ì',
+        bid_amount:       Number(app.bid_amount || 0).toLocaleString('ko-KR') + '원',
         deposit_method:   app.deposit_method || '',
-        bid_type:         app.bid_type || 'ë¨ë',
-        memo:             app.memo || 'ìì',
-        service_fee:      (Number(app.service_fee || 0)).toLocaleString('ko-KR') + 'ì',
+        bid_type:         app.bid_type || '단독',
+        memo:             app.memo || '없음',
+        service_fee:      (Number(app.service_fee || 0)).toLocaleString('ko-KR') + '원',
         assigned_at:      new Date().toLocaleString('ko-KR'),
         mypage_url:       'https://lim5342.github.io/bid-tok/expert-mypage.html',
     };
 
     try {
         await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
-        console.log('â ë²ë¬´ì¬ ì´ë©ì¼ ìë¦¼ ë°ì¡ ìë£');
+        console.log('✅ 법무사 이메일 알림 발송 완료');
     } catch(e) {
-        // ì´ë©ì¼ ì¤í¨í´ë ê²°ì  ìë£ íë©´ì ì ì íì
-        console.error('ð§ ì´ë©ì¼ ë°ì¡ ì¤ë¥ (ë¬´ì):', e);
+        // 이메일 실패해도 결제 완료 화면은 정상 표시
+        console.error('📧 이메일 발송 오류 (무시):', e);
     }
 }
 </script>
