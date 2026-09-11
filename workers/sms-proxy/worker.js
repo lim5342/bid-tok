@@ -89,7 +89,7 @@ export default {
         // 파트너 거부 알림
         const name = (data && data.name) ? data.name : '파트너';
         const reason = (data && data.reason) ? data.reason : '';
-        text = `[대리입찰톡] ${name}님, 파트너 신청 심사 결과를 안내드립니다.\n아쉽게도 이번 심사에서는 승인이 어렵습니다.${reason ? '\n사유: ' + reason : ''}\n문의: 02-853-5875`;
+        text = `[대리입찰톡] ${name}님, 파트너 신청 심사 결과를 안내드립니다.\n아쉽게도 이번 심사에서는 승인이 어렵습니다.${reason ? '\n사유: ' + reason : ''}\n문의: 02-863-1022`;
       } else if (type === 'expert_assigned') {
         // 전문가에게: 새 사건 배정 알림
         const d = data || {};
