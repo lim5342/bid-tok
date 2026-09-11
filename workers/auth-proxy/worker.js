@@ -756,11 +756,75 @@ export default {
         return json({ success: true }, 200, cors);
       }
 
+      // ── 결제대기 자동 만료 (24시간 경과) ──────────────────────
+      if (path === '/cleanup-pending') {
+        const apps = await fsListAll(token, 'applications');
+        const now = Date.now();
+        const EXPIRE_MS = 24 * 60 * 60 * 1000;
+        let expired = 0, errors = 0;
+        for (const app of apps) {
+          if (app.status !== '결제대기') continue;
+          const created = app.createdAt ? new Date(app.createdAt).getTime() : 0;
+          if (!created || (now - created) < EXPIRE_MS) continue;
+          try {
+            await fsDelete(token, 'applications', app.id);
+            expired++;
+          } catch (e) {
+            console.error('결제대기 만료 삭제 실패:', app.id, e.message || e);
+            errors++;
+          }
+        }
+        console.log(`[cleanup-pending] 만료 삭제: ${expired}건, 오류: ${errors}건`);
+        return json({ success: true, expired, errors }, 200, cors);
+      }
+
+      // ── 상태값 자동 전환 (입찰 기일 기준) ──────────────────────
+      if (path === '/auto-status') {
+        const apps = await fsListAll(token, 'applications');
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const todayStr = today.toISOString().slice(0, 10);
+        let updated = 0, errors = 0;
+        const results = [];
+        for (const app of apps) {
+          const bidDateRaw = app.bid_date || app.bidDate || '';
+          const bidDate = bidDateRaw.replace(/[.\s]/g, '-').slice(0, 10);
+          if (!bidDate || bidDate.length < 8) continue;
+          let newStatus = null;
+          const reason = [];
+          if (bidDate < todayStr) {
+            if (app.status === '매칭중' && !app.assigned_expert_id) { newStatus = '만료'; reason.push('입찰 기일 경과, 전문가 미배정'); }
+            else if (app.status === '진행중' && app.assigned_expert_id) { newStatus = '완료'; reason.push('입찰 기일 경과, 진행완료 처리'); }
+            else if (app.status === '매칭완료' && app.assigned_expert_id) { newStatus = '완료'; reason.push('입찰 기일 경과, 매칭완료→완료'); }
+          }
+          if (newStatus) {
+            try {
+              await fsPatch(token, 'applications', app.id, { status: newStatus, auto_status_reason: reason.join('; '), auto_status_at: new Date().toISOString(), updatedAt: new Date().toISOString() });
+              updated++;
+              results.push({ id: app.id, from: app.status, to: newStatus, bidDate });
+            } catch (e) { console.error('상태 전환 실패:', app.id, e.message || e); errors++; }
+          }
+        }
+        console.log(`[auto-status] 전환: ${updated}건, 오류: ${errors}건`);
+        return json({ success: true, updated, errors, details: results }, 200, cors);
+      }
+
       return json({ success: false, message: '알 수 없는 요청 경로입니다: ' + path }, 404, cors);
 
     } catch (err) {
       console.error('auth-proxy 오류:', err);
       return json({ success: false, message: '서버 오류가 발생했습니다.', detail: String(err.message || err) }, 500, cors);
     }
+  },
+
+  async scheduled(event, env, ctx) {
+    console.log('[scheduled] Cron 실행:', new Date().toISOString());
+    const baseUrl = 'https://bidtok-auth-proxy.qkqk5342.workers.dev';
+    try {
+      const cleanupRes = await fetch(`${baseUrl}/cleanup-pending`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
+      console.log('[scheduled] cleanup-pending 결과:', JSON.stringify(await cleanupRes.json()));
+      const statusRes = await fetch(`${baseUrl}/auto-status`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
+      console.log('[scheduled] auto-status 결과:', JSON.stringify(await statusRes.json()));
+    } catch (e) { console.error('[scheduled] Cron 실행 오류:', e.message || e); }
   },
 };
