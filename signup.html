@@ -437,6 +437,12 @@
                     el.setAttribute('autocomplete', 'new-password');
                 }
             });
+            // 배너(쿠폰 받기)에서 넘어온 신규 회원 → 쿠폰 코드 자동 채움
+            try {
+                const pc = localStorage.getItem('pending_coupon');
+                const cc = document.getElementById('clientCoupon');
+                if (pc && cc && !cc.value) cc.value = pc;
+            } catch (e) {}
         });
 
         function switchTab(type) {
@@ -753,8 +759,14 @@
             try {
                 const result = await Auth.signup(formData);
                 if (result.success) {
-                    alert('회원가입이 완료되었습니다!\n로그인 페이지로 이동합니다.');
-                    window.location.href = 'login.html';
+                    // 배너 쿠폰으로 넘어온 신규 회원이면 로그인 후 쿠폰 페이지로 복귀
+                    let dest = 'login.html';
+                    try {
+                        const pc = localStorage.getItem('pending_coupon');
+                        if (pc) dest = 'login.html?redirect=' + encodeURIComponent('coupon.html?code=' + pc);
+                    } catch (e) {}
+                    alert('회원가입이 완료되었습니다!\n로그인 후 쿠폰이 자동 적용됩니다.');
+                    window.location.href = dest;
                 } else {
                     alert(result.message || '회원가입에 실패했습니다.');
                     submitBtn.disabled = false;

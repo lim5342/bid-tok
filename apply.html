@@ -1255,7 +1255,7 @@ async function loadMyCouponForApply() {
         if (!cur) { slot.innerHTML = ''; return; }
         let u = cur;
         try { const fresh = await API.users.getById(cur.id || cur.userId); if (fresh) u = fresh; } catch (e) {}
-        if (!u || !u.coupon_code || !u.coupon_claimed || u.coupon_used) { slot.innerHTML = ''; return; }
+        if (!u || !u.coupon_code || u.coupon_used || (!u.coupon_claimed && !u.coupon_registered_at)) { slot.innerHTML = ''; return; }
         const isFree = String(u.coupon_code).toLowerCase() === 'boostv';
         const label = (u.coupon_channel || '') + ' · ' + (isFree ? '1회 무료' : '30,000원 할인');
         slot.innerHTML =
