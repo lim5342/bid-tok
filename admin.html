@@ -783,12 +783,18 @@
                     <button class="ftab"         data-status="결제취소신청" onclick="setAppFilter('결제취소신청',this)" style="border-left:2px solid #ef4444;">결제취소신청 <span class="cnt" id="cnt-결제취소신청" style="background:#ef4444;color:#fff;">0</span></button>
                 </div>
 
-                <!-- 검색 -->
-                <div class="toolbar">
+                <!-- 검색 + 기간 -->
+                <div class="toolbar" style="flex-wrap:wrap;gap:8px;align-items:center;">
                     <div class="search-box">
                         <i class="fas fa-search"></i>
                         <input type="text" id="appSearch" placeholder="사건번호, 신청자, 연락처 검색..." oninput="filterAppTable()">
                     </div>
+                    <span style="color:#94a3b8;">|</span>
+                    <span style="font-size:0.85rem;color:#64748b;">신청일</span>
+                    <input type="date" id="appFrom" onchange="filterAppTable()" style="padding:0.45rem 0.6rem;border:1.5px solid #e2e8f0;border-radius:8px;font-size:0.85rem;">
+                    <span style="color:#64748b;">~</span>
+                    <input type="date" id="appTo" onchange="filterAppTable()" style="padding:0.45rem 0.6rem;border:1.5px solid #e2e8f0;border-radius:8px;font-size:0.85rem;">
+                    <button class="btn-sm" onclick="clearAppDate()" style="background:#f1f5f9;color:#475569;border:none;padding:0.45rem 0.8rem;border-radius:8px;cursor:pointer;font-size:0.82rem;">기간 초기화</button>
                 </div>
 
                 <div class="panel" style="padding:0; overflow:hidden;">
@@ -1003,17 +1009,23 @@
 
                 <!-- 요약 -->
                 <div class="settlement-summary">
-                    <div class="sum-box"><div class="num" id="sales-total" style="color:#16a34a;">-</div><div class="lbl">총 매출 (결제완료)</div></div>
+                    <div class="sum-box"><div class="num" id="sales-total" style="color:#16a34a;">-</div><div class="lbl">매출 (선택 기간)</div></div>
                     <div class="sum-box"><div class="num" id="sales-month" style="color:#2563eb;">-</div><div class="lbl">이번달 매출</div></div>
-                    <div class="sum-box"><div class="num" id="sales-refund" style="color:#ef4444;">-</div><div class="lbl">취소·환불 금액</div></div>
-                    <div class="sum-box"><div class="num" id="sales-count">-</div><div class="lbl">결제 건수</div></div>
+                    <div class="sum-box"><div class="num" id="sales-refund" style="color:#ef4444;">-</div><div class="lbl">취소·환불 (선택 기간)</div></div>
+                    <div class="sum-box"><div class="num" id="sales-count">-</div><div class="lbl">결제 건수 (선택 기간)</div></div>
                 </div>
 
-                <!-- 월별 필터 -->
-                <div class="toolbar">
-                    <select id="salesMonthFilter" onchange="renderSalesTable()" style="padding:0.65rem 1rem; border:2px solid #e0e0e0; border-radius:10px; font-size:0.88rem; font-family:inherit;">
+                <!-- 기간 필터 -->
+                <div class="toolbar" style="flex-wrap:wrap;gap:8px;align-items:center;">
+                    <select id="salesMonthFilter" onchange="onSalesMonthChange()" style="padding:0.65rem 1rem; border:2px solid #e0e0e0; border-radius:10px; font-size:0.88rem; font-family:inherit;">
                         <option value="all">전체 기간</option>
                     </select>
+                    <span style="color:#94a3b8;">|</span>
+                    <span style="font-size:0.85rem;color:#64748b;">결제일</span>
+                    <input type="date" id="salesFrom" onchange="renderSalesTable()" style="padding:0.45rem 0.6rem;border:1.5px solid #e2e8f0;border-radius:8px;font-size:0.85rem;">
+                    <span style="color:#64748b;">~</span>
+                    <input type="date" id="salesTo" onchange="renderSalesTable()" style="padding:0.45rem 0.6rem;border:1.5px solid #e2e8f0;border-radius:8px;font-size:0.85rem;">
+                    <button class="btn-sm" onclick="clearSalesDate()" style="background:#f1f5f9;color:#475569;border:none;padding:0.45rem 0.8rem;border-radius:8px;cursor:pointer;font-size:0.82rem;">기간 초기화</button>
                     <button class="btn-excel" onclick="exportSalesCSV()">
                         <i class="fas fa-file-csv"></i> 매출 CSV
                     </button>
@@ -1035,26 +1047,36 @@
                 </div>
 
                 <!-- 기간 필터 -->
-                <div class="toolbar" style="gap:6px;flex-wrap:wrap;">
+                <div class="toolbar" style="gap:6px;flex-wrap:wrap;align-items:center;">
                     <button class="ftab active" data-range="today"  onclick="setChannelRange('today',this)">오늘</button>
                     <button class="ftab"        data-range="week"   onclick="setChannelRange('week',this)">이번 주</button>
                     <button class="ftab"        data-range="month"  onclick="setChannelRange('month',this)">이번 달</button>
                     <button class="ftab"        data-range="all"    onclick="setChannelRange('all',this)">전체</button>
+                    <span style="margin-left:8px;color:#94a3b8;">|</span>
+                    <input type="date" id="chFrom" style="padding:0.45rem 0.6rem;border:1.5px solid #e2e8f0;border-radius:8px;font-size:0.85rem;">
+                    <span style="color:#64748b;">~</span>
+                    <input type="date" id="chTo" style="padding:0.45rem 0.6rem;border:1.5px solid #e2e8f0;border-radius:8px;font-size:0.85rem;">
+                    <button class="ftab" onclick="applyChannelCustom(this)" style="background:#1550E8;color:#fff;border-color:#1550E8;">기간 적용</button>
                 </div>
 
                 <!-- 요약 -->
                 <div class="settlement-summary" style="margin-top:0.8rem;">
-                    <div class="sum-box"><div class="num" id="ch-signups" style="color:#2563eb;">-</div><div class="lbl">기간 내 쿠폰 가입자</div></div>
+                    <div class="sum-box"><div class="num" id="ch-signups" style="color:#2563eb;">-</div><div class="lbl">기간 내 쿠폰 받은 사람</div></div>
                     <div class="sum-box"><div class="num" id="ch-conversions" style="color:#16a34a;">-</div><div class="lbl">결제(전환) 건수</div></div>
                     <div class="sum-box"><div class="num" id="ch-rate" style="color:#a855f7;">-</div><div class="lbl">전환율</div></div>
                     <div class="sum-box"><div class="num" id="ch-remaining" style="color:#ef4444;">-</div><div class="lbl">선착순 잔여(전체)</div></div>
                 </div>
 
-                <div class="panel" style="padding:0; overflow:hidden; margin-top:1rem;">
+                <div style="margin-top:0.4rem;font-size:0.82rem;color:#64748b;">💡 채널 줄을 클릭하면 <b>누가 받았는지</b> 명단이 아래에 표시됩니다.</div>
+
+                <div class="panel" style="padding:0; overflow:hidden; margin-top:0.6rem;">
                     <div class="overflow-wrap" id="channelTableWrap">
                         <div style="text-align:center;padding:3rem;color:#ccc;"><i class="fas fa-spinner fa-spin fa-2x"></i></div>
                     </div>
                 </div>
+
+                <!-- 채널 클릭 시 받은 사람 상세 -->
+                <div id="channelDetailWrap" style="margin-top:1rem;"></div>
             </div>
 
             <!-- ════ 내 정보 / 비밀번호 변경 ════ -->
@@ -1984,27 +2006,44 @@ const CHANNEL_LIST = [
     { code: '0987',   channel: '인스타광고' },
     { code: 'boostv', channel: '수강생(무료)' },
 ];
-let _channelRange = 'today';
-let _channelCache = null; // { users, apps }
+let _channelRange = 'today';   // today|week|month|all|custom
+let _channelFrom = null, _channelTo = null;
+let _channelCache = null;       // { users, apps }
+let _channelSelected = null;    // 상세 열린 채널
 
-function _rangeStart(range) {
+function _rangeWindow() {
     const now = new Date();
-    if (range === 'today') { const d = new Date(now); d.setHours(0,0,0,0); return d.getTime(); }
-    if (range === 'week')  { const d = new Date(now); const day = (d.getDay()+6)%7; d.setDate(d.getDate()-day); d.setHours(0,0,0,0); return d.getTime(); } // 월요일 시작
-    if (range === 'month') { const d = new Date(now.getFullYear(), now.getMonth(), 1); return d.getTime(); }
-    return 0; // all
+    if (_channelRange === 'custom') return { start: _channelFrom, end: _channelTo };
+    if (_channelRange === 'today') { const d = new Date(now); d.setHours(0,0,0,0); return { start: d.getTime(), end: null }; }
+    if (_channelRange === 'week')  { const d = new Date(now); const day = (d.getDay()+6)%7; d.setDate(d.getDate()-day); d.setHours(0,0,0,0); return { start: d.getTime(), end: null }; }
+    if (_channelRange === 'month') { const d = new Date(now.getFullYear(), now.getMonth(), 1); return { start: d.getTime(), end: null }; }
+    return { start: 0, end: null };
 }
-function _inRange(dateVal, startMs) {
-    if (!startMs) return true;
-    if (!dateVal) return false;
+function _inWin(dateVal, w) {
+    if (!dateVal) return !w.start;
     const t = new Date(dateVal).getTime();
-    return !isNaN(t) && t >= startMs;
+    if (isNaN(t)) return false;
+    if (w.start && t < w.start) return false;
+    if (w.end && t > w.end) return false;
+    return true;
 }
+function _claimDate(u) { return u.coupon_registered_at || u.createdAt || u.created_at; }
 function _isPaidApp(a) {
     return a.payment_status === '결제완료' || a.payment_status === '무료쿠폰' || a.payment_status === '무료매칭' || !!a.paid_at;
 }
 function setChannelRange(range, el) {
     _channelRange = range;
+    document.querySelectorAll('#sec-channels .ftab').forEach(b => b.classList.remove('active'));
+    if (el) el.classList.add('active');
+    renderChannels();
+}
+function applyChannelCustom(el) {
+    const f = document.getElementById('chFrom').value;
+    const t = document.getElementById('chTo').value;
+    if (!f && !t) { alert('시작일 또는 종료일을 선택하세요.'); return; }
+    _channelFrom = f ? new Date(f + 'T00:00:00').getTime() : null;
+    _channelTo   = t ? new Date(t + 'T23:59:59').getTime() : null;
+    _channelRange = 'custom';
     document.querySelectorAll('#sec-channels .ftab').forEach(b => b.classList.remove('active'));
     if (el) el.classList.add('active');
     renderChannels();
@@ -2015,10 +2054,7 @@ async function loadChannels() {
             API.users.getAll('limit=2000'),
             API.applications.getAll('limit=2000')
         ]);
-        _channelCache = {
-            users: (uRes && uRes.data) || [],
-            apps:  (aRes && aRes.data) || []
-        };
+        _channelCache = { users: (uRes && uRes.data) || [], apps: (aRes && aRes.data) || [] };
         renderChannels();
     } catch (e) {
         console.error('채널 데이터 로드 실패:', e);
@@ -2027,27 +2063,26 @@ async function loadChannels() {
 }
 function renderChannels() {
     if (!_channelCache) return;
-    const startMs = _rangeStart(_channelRange);
+    const w = _rangeWindow();
     const users = _channelCache.users, apps = _channelCache.apps;
 
-    // 채널별 집계
     const agg = {};
     CHANNEL_LIST.forEach(c => agg[c.channel] = { code: c.code, channel: c.channel, signups: 0, conversions: 0 });
     const other = { code: '-', channel: '(기타/직접)', signups: 0, conversions: 0 };
 
-    // 가입자: 쿠폰 채널 있는 유저 + createdAt 기간필터
+    // 받은 사람: 쿠폰 채널 있는 유저 + 받은날(coupon_registered_at) 기간필터
+    let totalClaimersAll = 0;
     users.forEach(u => {
         if (!u.coupon_channel) return;
-        if (!_inRange(u.createdAt || u.created_at, startMs)) return;
+        if (u.coupon_claimed || u.coupon_registered_at) totalClaimersAll++;
+        if (!_inWin(_claimDate(u), w)) return;
         (agg[u.coupon_channel] || other).signups++;
     });
     // 전환: 결제완료(또는 무료) + 쿠폰 채널 + paid_at 기간필터
-    let totalRedeemedAll = 0;
     apps.forEach(a => {
         if (!a.coupon_channel) return;
         if (!_isPaidApp(a)) return;
-        totalRedeemedAll++; // 전체기간 소진 수(선착순 잔여 계산용)
-        if (!_inRange(a.paid_at || a.createdAt || a.created_at, startMs)) return;
+        if (!_inWin(a.paid_at || a.createdAt || a.created_at, w)) return;
         (agg[a.coupon_channel] || other).conversions++;
     });
 
@@ -2057,10 +2092,9 @@ function renderChannels() {
     let sumSign = 0, sumConv = 0;
     const trs = rows.map(r => {
         sumSign += r.signups; sumConv += r.conversions;
-        const rate = r.signups ? Math.round(r.conversions / r.signups * 100) : 0;
-        const rateTxt = r.signups ? rate + '%' : '-';
-        return `<tr>
-            <td style="font-weight:700;">${r.channel}</td>
+        const rateTxt = r.signups ? Math.round(r.conversions / r.signups * 100) + '%' : '-';
+        return `<tr style="cursor:pointer;" onclick="showChannelDetail('${r.channel}')">
+            <td style="font-weight:700;">${r.channel} <i class="fas fa-chevron-right" style="font-size:0.7rem;color:#cbd5e1;"></i></td>
             <td style="text-align:center;color:#888;">${r.code}</td>
             <td style="text-align:center;font-weight:700;color:#2563eb;">${r.signups}</td>
             <td style="text-align:center;font-weight:700;color:#16a34a;">${r.conversions}</td>
@@ -2073,19 +2107,49 @@ function renderChannels() {
             <thead><tr style="background:#f8fafc;">
                 <th style="text-align:left;padding:0.7rem 0.9rem;">채널</th>
                 <th style="text-align:center;padding:0.7rem 0.5rem;">코드</th>
-                <th style="text-align:center;padding:0.7rem 0.5rem;">가입자</th>
+                <th style="text-align:center;padding:0.7rem 0.5rem;">받은 사람</th>
                 <th style="text-align:center;padding:0.7rem 0.5rem;">전환(결제)</th>
                 <th style="text-align:center;padding:0.7rem 0.5rem;">전환율</th>
             </tr></thead>
             <tbody>${trs}</tbody>
         </table>`;
 
-    const overallRate = sumSign ? Math.round(sumConv / sumSign * 100) + '%' : '-';
     document.getElementById('ch-signups').textContent     = sumSign;
     document.getElementById('ch-conversions').textContent = sumConv;
-    document.getElementById('ch-rate').textContent        = overallRate;
-    document.getElementById('ch-remaining').textContent   = Math.max(0, 100 - totalRedeemedAll) + '명';
+    document.getElementById('ch-rate').textContent        = sumSign ? Math.round(sumConv / sumSign * 100) + '%' : '-';
+    document.getElementById('ch-remaining').textContent   = Math.max(0, 100 - totalClaimersAll) + '명';
+
+    if (_channelSelected) showChannelDetail(_channelSelected);
 }
+function showChannelDetail(channel) {
+    if (!_channelCache) return;
+    _channelSelected = channel;
+    const w = _rangeWindow();
+    const list = _channelCache.users.filter(u =>
+        u.coupon_channel === channel && (u.coupon_claimed || u.coupon_registered_at) && _inWin(_claimDate(u), w));
+    const fmt = v => { if (!v) return '-'; const d = new Date(v); if (isNaN(d)) return '-';
+        return d.getFullYear() + '.' + String(d.getMonth()+1).padStart(2,'0') + '.' + String(d.getDate()).padStart(2,'0') + ' ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0'); };
+    const rows = list.map(u => `<tr>
+            <td style="padding:0.5rem 0.7rem;">${u.name || '-'}</td>
+            <td style="padding:0.5rem 0.7rem;">${u.phone || '-'}</td>
+            <td style="padding:0.5rem 0.7rem;">${fmt(_claimDate(u))}</td>
+            <td style="padding:0.5rem 0.7rem;text-align:center;">${u.coupon_used ? '<span style="color:#64748b;">사용완료</span>' : '<span style="color:#16a34a;font-weight:700;">미사용</span>'}</td>
+        </tr>`).join('');
+    document.getElementById('channelDetailWrap').innerHTML =
+        `<div class="panel" style="padding:0;overflow:hidden;">
+            <div style="background:#1550E8;color:#fff;padding:0.7rem 1rem;font-weight:700;display:flex;justify-content:space-between;align-items:center;">
+                <span><i class="fas fa-users"></i> ${channel} — 받은 사람 ${list.length}명</span>
+                <button onclick="closeChannelDetail()" style="background:transparent;border:none;color:#fff;cursor:pointer;font-size:1.1rem;">✕</button>
+            </div>
+            <div class="overflow-wrap">
+                ${list.length ? `<table class="data-table" style="width:100%;border-collapse:collapse;">
+                    <thead><tr style="background:#f8fafc;"><th style="text-align:left;padding:0.5rem 0.7rem;">이름</th><th style="text-align:left;padding:0.5rem 0.7rem;">휴대폰</th><th style="text-align:left;padding:0.5rem 0.7rem;">받은 일시</th><th style="text-align:center;padding:0.5rem 0.7rem;">사용여부</th></tr></thead>
+                    <tbody>${rows}</tbody></table>`
+                : '<div style="padding:2rem;text-align:center;color:#94a3b8;">해당 기간에 받은 사람이 없습니다.</div>'}
+            </div>
+        </div>`;
+}
+function closeChannelDetail() { _channelSelected = null; document.getElementById('channelDetailWrap').innerHTML = ''; }
 
 // ═══════════════════════════════════════════════════════
 // 사이드바 (모바일)
@@ -2396,8 +2460,17 @@ function setAppFilter(status, el) {
     filterAppTable();
 }
 
+function clearAppDate() {
+    const f = document.getElementById('appFrom'); const t = document.getElementById('appTo');
+    if (f) f.value = ''; if (t) t.value = '';
+    filterAppTable();
+}
 function filterAppTable() {
     const q   = (document.getElementById('appSearch')?.value || '').toLowerCase();
+    const fromV = document.getElementById('appFrom')?.value;
+    const toV   = document.getElementById('appTo')?.value;
+    const fromMs = fromV ? new Date(fromV + 'T00:00:00').getTime() : null;
+    const toMs   = toV ? new Date(toV + 'T23:59:59').getTime() : null;
     const filtered = allApps.filter(a => {
         const isCancelReq = a.payment_cancel_requested && a.payment_status === '취소신청';
         const matchStatus = appFilter === 'all'
@@ -2407,7 +2480,13 @@ function filterAppTable() {
             (a.applicant_name || '').toLowerCase().includes(q) ||
             (a.phone || '').includes(q) ||
             (a.expert_name || '').toLowerCase().includes(q);
-        return matchStatus && matchSearch;
+        let matchDate = true;
+        if (fromMs || toMs) {
+            const dv = a.createdAt || a.created_at || a.paid_at;
+            const t = dv ? new Date(dv).getTime() : NaN;
+            matchDate = !isNaN(t) && (!fromMs || t >= fromMs) && (!toMs || t <= toMs);
+        }
+        return matchStatus && matchSearch && matchDate;
     });
     renderAppTable(filtered);
 }
@@ -4214,13 +4293,42 @@ async function loadSales() {
     }
 }
 
+function onSalesMonthChange() {
+    const f = document.getElementById('salesFrom'), t = document.getElementById('salesTo');
+    if (f) f.value = ''; if (t) t.value = '';
+    renderSalesTable();
+}
+function clearSalesDate() {
+    const f = document.getElementById('salesFrom'), t = document.getElementById('salesTo');
+    if (f) f.value = ''; if (t) t.value = '';
+    renderSalesTable();
+}
 function renderSalesTable() {
     const sel = document.getElementById('salesMonthFilter');
     const m = sel ? sel.value : 'all';
-    const rows = salesData.filter(a => m === 'all' || _salesMonth(a) === m);
+    const fromV = document.getElementById('salesFrom')?.value;
+    const toV   = document.getElementById('salesTo')?.value;
+    const fromMs = fromV ? new Date(fromV + 'T00:00:00').getTime() : null;
+    const toMs   = toV ? new Date(toV + 'T23:59:59').getTime() : null;
+    const useDate = fromMs || toMs;
+    const rows = salesData.filter(a => {
+        if (useDate) {
+            const dv = a.paid_at || a.created_at || a.createdAt;
+            const t = dv ? new Date(dv).getTime() : NaN;
+            return !isNaN(t) && (!fromMs || t >= fromMs) && (!toMs || t <= toMs);
+        }
+        return m === 'all' || _salesMonth(a) === m;
+    });
+    // 선택 기간 요약 갱신
+    const totalF  = rows.filter(a => !_isRefund(a)).reduce((s, a) => s + _salesFee(a), 0);
+    const refundF = rows.filter(a => _isRefund(a)).reduce((s, a) => s + _salesFee(a), 0);
+    const countF  = rows.filter(a => !_isRefund(a)).length;
+    const te = document.getElementById('sales-total');  if (te) te.textContent = fmtNum(totalF) + '원';
+    const re = document.getElementById('sales-refund'); if (re) re.textContent = fmtNum(refundF) + '원';
+    const ce = document.getElementById('sales-count');  if (ce) ce.textContent = countF + '건';
     const wrap = document.getElementById('salesTableWrap');
     if (!rows.length) {
-        wrap.innerHTML = `<div class="empty-box"><i class="fas fa-receipt"></i><p>매출 내역이 없습니다.</p></div>`;
+        wrap.innerHTML = `<div class="empty-box"><i class="fas fa-receipt"></i><p>해당 기간 매출 내역이 없습니다.</p></div>`;
         return;
     }
     wrap.innerHTML = `
