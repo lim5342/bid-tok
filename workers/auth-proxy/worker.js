@@ -333,6 +333,33 @@ function normType(v) {
 }
 
 // ============================================================
+//  쿠폰(채널 추적 + 할인) 설정
+//    · 3만원 할인 코드: 정상가에서 30,000원 차감
+//    · boostv(수강생): 1회 완전 무료
+//    · 악용 차단: 휴대폰 번호 1개당 "코드 종류 불문" 평생 1회만
+// ============================================================
+const COUPONS = {
+  '0909':   { channel: '대장옥션',   type: 'amount', discount: 30000 },
+  '0915':   { channel: '유튜브',     type: 'amount', discount: 30000 },
+  '0919':   { channel: '카페',       type: 'amount', discount: 30000 },
+  '0922':   { channel: '블로그',     type: 'amount', discount: 30000 },
+  '0925':   { channel: '인스타그램', type: 'amount', discount: 30000 },
+  '0987':   { channel: '인스타광고', type: 'amount', discount: 30000 },
+  'boostv': { channel: '수강생',     type: 'free',   discount: null },
+};
+const COUPON_ISSUE_DEADLINE = Date.parse('2026-10-30T23:59:59+09:00'); // 발행(신규 등록) 기한
+const COUPON_VALID_MS = 90 * 24 * 60 * 60 * 1000;                       // 사용기한: 발급 후 약 3개월(90일)
+const COUPON_TOTAL_LIMIT = 100;                                         // 선착순 전체 사용 한도(폭주 방지)
+
+function couponLookup(codeRaw) {
+  if (!codeRaw) return null;
+  const code = String(codeRaw).trim();
+  const key = Object.keys(COUPONS).find(k => k.toLowerCase() === code.toLowerCase());
+  return key ? { code: key, ...COUPONS[key] } : null;
+}
+function normPhone(p) { return String(p || '').replace(/[^0-9]/g, ''); }
+
+// ============================================================
 //  라우팅
 // ============================================================
 export default {
@@ -426,8 +453,20 @@ export default {
           createdAt: new Date().toISOString(),
           status: userData.status || (userData.userType === 'expert' ? 'pending' : 'active'),
         };
+        // ── 쿠폰 채널 귀속(가입 시 코드 입력) ──
+        //    유효 코드 + 발행기한 내이면 채널 귀속만 기록(실제 할인은 결제 시 사용).
+        const cInfo = couponLookup(userData.coupon || userData.coupon_code);
+        delete data.coupon;
+        if (cInfo && Date.now() <= COUPON_ISSUE_DEADLINE) {
+          data.coupon_code = cInfo.code;
+          data.coupon_channel = cInfo.channel;
+          data.coupon_registered_at = new Date().toISOString();
+          data.coupon_used = false;
+        } else {
+          delete data.coupon_code; delete data.coupon_channel; delete data.coupon_used;
+        }
         const created = await fsCreate(token, 'users', data);
-        return json({ success: true, message: '회원가입이 완료되었습니다.', user: sanitizeUser(created) }, 200, cors);
+        return json({ success: true, message: '회원가입이 완료되었습니다.', user: sanitizeUser(created), coupon: cInfo ? { channel: cInfo.channel, type: cInfo.type } : null }, 200, cors);
       }
 
       // ── 아이디 중복확인 ────────────────────────────────
@@ -440,6 +479,131 @@ export default {
       if (path === '/check-email') {
         const dup = await fsQueryByField(token, 'users', 'email', body.email);
         return json({ available: dup.length === 0 }, 200, cors);
+      }
+
+      // ── 쿠폰 검증 (공개) — 코드 유효/발행기한/번호중복 확인 + 할인가 계산 ──
+      //    body: { code, phone?, baseAmount? }
+      if (path === '/coupon-validate') {
+        const info = couponLookup(body.code);
+        if (!info) return json({ valid: false, message: '유효하지 않은 쿠폰 코드입니다.' }, 200, cors);
+        if (Date.now() > COUPON_ISSUE_DEADLINE) {
+          return json({ valid: false, message: '쿠폰 발행 기간이 종료되었습니다.', channel: info.channel }, 200, cors);
+        }
+        // 선착순 전체 한도(100명) 소진 여부
+        const usedCount = (await fsListAll(token, 'couponRedemptions')).length;
+        if (usedCount >= COUPON_TOTAL_LIMIT) {
+          return json({ valid: false, soldOut: true, channel: info.channel,
+            message: `쿠폰이 모두 소진되었습니다. (선착순 ${COUPON_TOTAL_LIMIT}명 마감)` }, 200, cors);
+        }
+        // 휴대폰 번호 1개당 코드 종류 불문 1회만 — 이미 사용했으면 차단
+        const ph = normPhone(body.phone);
+        if (ph) {
+          const red = await fsGetDoc(token, 'couponRedemptions', ph);
+          if (red) return json({ valid: false, alreadyUsed: true, channel: info.channel,
+            message: '이미 쿠폰 혜택을 받은 번호입니다. (1인 1회, 코드 종류 무관)' }, 200, cors);
+        }
+        const base = Number(body.baseAmount) || 0;
+        const final = info.type === 'free' ? 0 : Math.max(0, base - info.discount);
+        return json({ valid: true, channel: info.channel, type: info.type, free: info.type === 'free',
+          discount: info.type === 'free' ? base : info.discount, final, remaining: COUPON_TOTAL_LIMIT - usedCount }, 200, cors);
+      }
+
+      // ── 쿠폰 받기(발급) (세션 필요) — 로그인 사용자 계정에 쿠폰 저장 ──
+      //    body: { session, code }
+      //    · 검증: 코드유효 + 발행기한 + 선착순잔여 + 번호중복(미사용) + 계정중복
+      //    · 실제 할인은 결제 시 /coupon-redeem 에서 확정(여기선 보관만)
+      if (path === '/coupon-claim') {
+        const sess = await verifySession(env, body.session);
+        if (!sess) return json({ success: false, message: '로그인이 필요합니다.' }, 401, cors);
+        const info = couponLookup(body.code);
+        if (!info) return json({ success: false, message: '유효하지 않은 쿠폰 코드입니다.' }, 200, cors);
+        if (Date.now() > COUPON_ISSUE_DEADLINE) return json({ success: false, message: '쿠폰 발행 기간이 종료되었습니다.' }, 200, cors);
+
+        const uid = sess.uid;
+        const user = await fsGetDoc(token, 'users', uid);
+        if (!user) return json({ success: false, message: '회원 정보를 찾을 수 없습니다.' }, 200, cors);
+        // 이미 쿠폰을 사용한 계정
+        if (user.coupon_used) return json({ success: false, alreadyUsed: true, message: '이미 쿠폰을 사용한 계정입니다. (계정당 1회)' }, 200, cors);
+        // 이미 받은(보관 중) 쿠폰이 있으면 그대로 반환(중복 발급 방지)
+        if (user.coupon_code && user.coupon_claimed && !user.coupon_used) {
+          const cur = couponLookup(user.coupon_code);
+          return json({ success: true, already: true, channel: (cur && cur.channel) || user.coupon_channel,
+            type: (cur && cur.type) || '', message: '이미 받은 쿠폰이 있습니다. 마이페이지에서 확인하세요.' }, 200, cors);
+        }
+        // 선착순 전체 한도(발급 기준으로도 제한)
+        const usedCount = (await fsListAll(token, 'couponRedemptions')).length;
+        if (usedCount >= COUPON_TOTAL_LIMIT) return json({ success: false, soldOut: true, message: `쿠폰이 모두 소진되었습니다. (선착순 ${COUPON_TOTAL_LIMIT}명 마감)` }, 200, cors);
+        // 번호 중복 사용 차단
+        const ph = normPhone(user.phone);
+        if (ph) {
+          const red = await fsGetDoc(token, 'couponRedemptions', ph);
+          if (red) return json({ success: false, alreadyUsed: true, message: '이미 쿠폰 혜택을 받은 번호입니다. (1인 1회)' }, 200, cors);
+        }
+
+        const nowIso = new Date().toISOString();
+        await fsPatch(token, 'users', uid, {
+          coupon_code: info.code, coupon_channel: info.channel,
+          coupon_registered_at: nowIso, coupon_claimed: true, coupon_used: false
+        });
+        return json({ success: true, channel: info.channel, type: info.type, free: info.type === 'free',
+          discount: info.type === 'free' ? null : info.discount, registeredAt: nowIso,
+          message: `${info.channel} 쿠폰을 받았습니다.` }, 200, cors);
+      }
+
+      // ── 쿠폰 사용 처리 (세션 필요) — 실제 혜택 확정 + 번호/계정 잠금 ──
+      //    body: { session, code, phone, applicationId?, baseAmount? }
+      //    · 결제형(amount): 토스 결제 성공 후 호출 → 사용기록만 남김
+      //    · 무료형(boostv): 신청건을 즉시 결제완료(무료)로 마감 + 사용기록
+      if (path === '/coupon-redeem') {
+        const sess = await verifySession(env, body.session);
+        if (!sess) return json({ success: false, message: '로그인이 필요합니다.' }, 401, cors);
+        const info = couponLookup(body.code);
+        if (!info) return json({ success: false, message: '유효하지 않은 쿠폰입니다.' }, 200, cors);
+        const ph = normPhone(body.phone);
+        if (!ph) return json({ success: false, message: '휴대폰 번호가 필요합니다.' }, 200, cors);
+
+        // 1) 번호 중복(코드 종류 불문) 차단
+        const red = await fsGetDoc(token, 'couponRedemptions', ph);
+        if (red) return json({ success: false, alreadyUsed: true, message: '이미 쿠폰 혜택을 받은 번호입니다. (1인 1회)' }, 200, cors);
+
+        // 1-1) 선착순 전체 한도(100명) 소진 차단
+        const usedCount = (await fsListAll(token, 'couponRedemptions')).length;
+        if (usedCount >= COUPON_TOTAL_LIMIT) return json({ success: false, soldOut: true, message: `쿠폰이 모두 소진되었습니다. (선착순 ${COUPON_TOTAL_LIMIT}명 마감)` }, 200, cors);
+
+        // 2) 계정 중복 차단 + 사용기한 체크
+        const uid = sess.uid;
+        const user = await fsGetDoc(token, 'users', uid);
+        if (user && user.coupon_used) return json({ success: false, alreadyUsed: true, message: '이미 쿠폰을 사용한 계정입니다. (계정당 1회)' }, 200, cors);
+        const regAt = (user && user.coupon_code && couponLookup(user.coupon_code) && couponLookup(user.coupon_code).code === info.code) ? user.coupon_registered_at : null;
+        if (regAt) {
+          if (Date.now() > (Date.parse(regAt) + COUPON_VALID_MS)) return json({ success: false, message: '쿠폰 사용기한(발급 후 3개월)이 지났습니다.' }, 200, cors);
+        } else if (Date.now() > COUPON_ISSUE_DEADLINE) {
+          return json({ success: false, message: '쿠폰 발행 기간이 종료되었습니다.' }, 200, cors);
+        }
+
+        // 3) 신청건/금액
+        const appId = body.applicationId || '';
+        const app = appId ? await fsGetDoc(token, 'applications', appId) : null;
+        const base = Number(body.baseAmount) || Number(app && app.service_fee) || 0;
+        const final = info.type === 'free' ? 0 : Math.max(0, base - info.discount);
+        const nowIso = new Date().toISOString();
+
+        // 4) 사용기록 잠금 (번호키 문서 — 재가입/탈퇴해도 유지)
+        await fsSetDoc(token, 'couponRedemptions', ph, {
+          code: info.code, channel: info.channel, type: info.type,
+          userId: sess.userId || uid, userDocId: uid, applicationId: appId,
+          usedAt: nowIso, free: info.type === 'free'
+        });
+        // 5) 계정 잠금
+        if (user) await fsPatch(token, 'users', uid, { coupon_used: true, coupon_used_at: nowIso, coupon_channel: info.channel, coupon_code: info.code });
+        // 6) 신청건 기록 (무료형은 즉시 결제완료 마감)
+        if (app) {
+          const patch = { coupon_code: info.code, coupon_channel: info.channel,
+            discount_amount: info.type === 'free' ? base : info.discount, final_amount: final };
+          if (info.type === 'free') { patch.status = '결제완료'; patch.payment_status = '무료쿠폰'; patch.paid_at = nowIso; patch.service_fee = 0; }
+          await fsPatch(token, 'applications', appId, patch);
+        }
+        return json({ success: true, final, free: info.type === 'free', channel: info.channel }, 200, cors);
       }
 
       // ── 비밀번호 변경 ──────────────────────────────────
@@ -643,7 +807,7 @@ export default {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ type: 'expert_new_request', to: t.phone,
             data: { name: t.name, court: app.court, caseNumber: app.case_number, bidDate: app.bid_date } })
-        }).catch(() => {}) : Promise.resolve()));
+        }).catch(e => console.error('SMS 발송 실패:', t.phone, e.message || e)) : Promise.resolve()));
         return json({ success: true, notified: eligible.length }, 200, cors);
       }
 
@@ -727,7 +891,7 @@ export default {
                   } })
                 });
               }
-            } catch (e) {}
+            } catch (e) { console.error('의뢰인 배정완료 SMS 발송 실패:', e.message || e); }
           }
           return json({ success: true }, 200, cors);
         }
@@ -757,10 +921,11 @@ export default {
       }
 
       // ── 결제대기 자동 만료 (24시간 경과) ──────────────────────
+      //    Cron 또는 관리자 호출용 — 결제대기 상태가 24시간 이상 된 건 삭제
       if (path === '/cleanup-pending') {
         const apps = await fsListAll(token, 'applications');
         const now = Date.now();
-        const EXPIRE_MS = 24 * 60 * 60 * 1000;
+        const EXPIRE_MS = 24 * 60 * 60 * 1000; // 24시간
         let expired = 0, errors = 0;
         for (const app of apps) {
           if (app.status !== '결제대기') continue;
@@ -779,30 +944,54 @@ export default {
       }
 
       // ── 상태값 자동 전환 (입찰 기일 기준) ──────────────────────
+      //    Cron 또는 관리자 호출용 — bid_date 경과 시 상태 자동 전환
       if (path === '/auto-status') {
         const apps = await fsListAll(token, 'applications');
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        const todayStr = today.toISOString().slice(0, 10);
+        const todayStr = today.toISOString().slice(0, 10); // 'YYYY-MM-DD'
         let updated = 0, errors = 0;
         const results = [];
         for (const app of apps) {
+          // bid_date 파싱 (YYYY-MM-DD 또는 YYYY.MM.DD 등)
           const bidDateRaw = app.bid_date || app.bidDate || '';
           const bidDate = bidDateRaw.replace(/[.\s]/g, '-').slice(0, 10);
           if (!bidDate || bidDate.length < 8) continue;
+
           let newStatus = null;
           const reason = [];
+
+          // 입찰 기일이 오늘 이전인 경우만 처리
           if (bidDate < todayStr) {
-            if (app.status === '매칭중' && !app.assigned_expert_id) { newStatus = '만료'; reason.push('입찰 기일 경과, 전문가 미배정'); }
-            else if (app.status === '진행중' && app.assigned_expert_id) { newStatus = '완료'; reason.push('입찰 기일 경과, 진행완료 처리'); }
-            else if (app.status === '매칭완료' && app.assigned_expert_id) { newStatus = '완료'; reason.push('입찰 기일 경과, 매칭완료→완료'); }
+            if (app.status === '매칭중' && !app.assigned_expert_id) {
+              // 기일 경과 + 전문가 미배정 → 만료
+              newStatus = '만료';
+              reason.push('입찰 기일 경과, 전문가 미배정');
+            } else if (app.status === '진행중' && app.assigned_expert_id) {
+              // 기일 경과 + 전문가 배정됨 → 완료
+              newStatus = '완료';
+              reason.push('입찰 기일 경과, 진행완료 처리');
+            } else if (app.status === '매칭완료' && app.assigned_expert_id) {
+              // 매칭완료 상태에서 기일 경과 → 완료
+              newStatus = '완료';
+              reason.push('입찰 기일 경과, 매칭완료→완료');
+            }
           }
+
           if (newStatus) {
             try {
-              await fsPatch(token, 'applications', app.id, { status: newStatus, auto_status_reason: reason.join('; '), auto_status_at: new Date().toISOString(), updatedAt: new Date().toISOString() });
+              await fsPatch(token, 'applications', app.id, {
+                status: newStatus,
+                auto_status_reason: reason.join('; '),
+                auto_status_at: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+              });
               updated++;
               results.push({ id: app.id, from: app.status, to: newStatus, bidDate });
-            } catch (e) { console.error('상태 전환 실패:', app.id, e.message || e); errors++; }
+            } catch (e) {
+              console.error('상태 전환 실패:', app.id, e.message || e);
+              errors++;
+            }
           }
         }
         console.log(`[auto-status] 전환: ${updated}건, 오류: ${errors}건`);
@@ -817,14 +1006,34 @@ export default {
     }
   },
 
+  // ============================================================
+  //  Cloudflare Cron Trigger — 매일 자동 정리/상태 전환
+  //  wrangler.toml 에 [triggers] crons = ["0 0 * * *"] 추가 필요
+  //  (매일 UTC 00:00 = KST 09:00 실행)
+  // ============================================================
   async scheduled(event, env, ctx) {
     console.log('[scheduled] Cron 실행:', new Date().toISOString());
     const baseUrl = 'https://bidtok-auth-proxy.qkqk5342.workers.dev';
     try {
-      const cleanupRes = await fetch(`${baseUrl}/cleanup-pending`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
-      console.log('[scheduled] cleanup-pending 결과:', JSON.stringify(await cleanupRes.json()));
-      const statusRes = await fetch(`${baseUrl}/auto-status`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
-      console.log('[scheduled] auto-status 결과:', JSON.stringify(await statusRes.json()));
-    } catch (e) { console.error('[scheduled] Cron 실행 오류:', e.message || e); }
+      // 1) 결제대기 24시간 경과 건 자동 삭제
+      const cleanupRes = await fetch(`${baseUrl}/cleanup-pending`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({})
+      });
+      const cleanupResult = await cleanupRes.json();
+      console.log('[scheduled] cleanup-pending 결과:', JSON.stringify(cleanupResult));
+
+      // 2) 상태값 자동 전환
+      const statusRes = await fetch(`${baseUrl}/auto-status`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({})
+      });
+      const statusResult = await statusRes.json();
+      console.log('[scheduled] auto-status 결과:', JSON.stringify(statusResult));
+    } catch (e) {
+      console.error('[scheduled] Cron 실행 오류:', e.message || e);
+    }
   },
 };
