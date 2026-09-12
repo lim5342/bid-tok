@@ -334,17 +334,17 @@ function normType(v) {
 
 // ============================================================
 //  쿠폰(채널 추적 + 할인) 설정
-//    · 3만원 할인 코드: 정상가에서 30,000원 차감
+//    · 할인 코드: 정상가 132,000에서 33,000원 차감 → 결제 99,000원 (전문가 정산 132,000, 차액 회사 부담)
 //    · boostv(수강생): 1회 완전 무료
 //    · 악용 차단: 휴대폰 번호 1개당 "코드 종류 불문" 평생 1회만
 // ============================================================
 const COUPONS = {
-  '0909':   { channel: '대장옥션',   type: 'amount', discount: 30000 },
-  '0915':   { channel: '유튜브',     type: 'amount', discount: 30000 },
-  '0919':   { channel: '카페',       type: 'amount', discount: 30000 },
-  '0922':   { channel: '블로그',     type: 'amount', discount: 30000 },
-  '0925':   { channel: '인스타그램', type: 'amount', discount: 30000 },
-  '0987':   { channel: '인스타광고', type: 'amount', discount: 30000 },
+  '0909':   { channel: '대장옥션',   type: 'amount', discount: 33000},
+  '0915':   { channel: '유튜브',     type: 'amount', discount: 33000},
+  '0919':   { channel: '카페',       type: 'amount', discount: 33000},
+  '0922':   { channel: '블로그',     type: 'amount', discount: 33000},
+  '0925':   { channel: '인스타그램', type: 'amount', discount: 33000},
+  '0987':   { channel: '인스타광고', type: 'amount', discount: 33000},
   'boostv': { channel: '수강생',     type: 'free',   discount: null },
 };
 const COUPON_END = Date.parse('2026-10-30T23:59:59+09:00');            // 쿠폰 공통 종료일(이후 발급 불가·자동 만료)
