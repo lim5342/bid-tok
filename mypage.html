@@ -456,6 +456,14 @@
         }
         window._showSection = showSection;
 
+        // 해시(#coupons 등)로 진입 시 해당 섹션 바로 열기 (쿠폰 받기 → "마이페이지에서 쿠폰 보기")
+        (function openSectionFromHash() {
+            const h = (location.hash || '').replace('#', '');
+            if (!h) return;
+            const item = document.querySelector('a.menu-item[href="#' + h + '"]');
+            if (item) showSection(h, item);
+        })();
+
         // ── 내 쿠폰함 ────────────────────────────────────────────
         async function loadCoupons() {
             const box = document.getElementById('couponsList');
@@ -472,13 +480,12 @@
                 const isFree = String(code).toLowerCase() === 'boostv';
                 const used = !!u.coupon_used;
                 const channel = u.coupon_channel || '';
-                const regAt = u.coupon_registered_at ? new Date(u.coupon_registered_at) : null;
-                const expAt = regAt ? new Date(regAt.getTime() + 90 * 24 * 60 * 60 * 1000) : null;
+                const expAt = new Date('2026-10-30T23:59:59+09:00'); // 쿠폰 공통 종료일
                 const fmt = d => d ? (d.getFullYear() + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + String(d.getDate()).padStart(2, '0')) : '-';
-                const expired = expAt && Date.now() > expAt.getTime();
+                const expired = Date.now() > expAt.getTime();
                 const statusBadge = used
                     ? '<span style="background:#e2e8f0;color:#64748b;padding:3px 10px;border-radius:20px;font-size:0.78rem;font-weight:700;">사용완료</span>'
-                    : (expired ? '<span style="background:#fee2e2;color:#ef4444;padding:3px 10px;border-radius:20px;font-size:0.78rem;font-weight:700;">기한만료</span>'
+                    : (expired ? '<span style="background:#fee2e2;color:#ef4444;padding:3px 10px;border-radius:20px;font-size:0.78rem;font-weight:700;">만료</span>'
                                : '<span style="background:#dcfce7;color:#16a34a;padding:3px 10px;border-radius:20px;font-size:0.78rem;font-weight:700;">사용가능</span>');
                 const valueTxt = isFree ? '1회 무료' : '30,000원 할인';
                 box.innerHTML =

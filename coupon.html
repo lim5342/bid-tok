@@ -56,7 +56,7 @@
                     <div class="cc-sub" id="doneSub" style="margin-top:0.6rem;">마이페이지 &gt; 내 쿠폰함에서 확인할 수 있어요.</div>
                 </div>
                 <button class="cc-btn" onclick="location.href='apply.html'"><i class="fas fa-file-signature"></i> 지금 대리입찰 신청하기</button>
-                <button class="cc-btn sub" onclick="location.href='mypage.html'"><i class="fas fa-user"></i> 마이페이지에서 쿠폰 보기</button>
+                <button class="cc-btn sub" onclick="location.href='mypage.html#coupons'"><i class="fas fa-user"></i> 마이페이지에서 쿠폰 보기</button>
             </div>
 
             <div id="errorBox" class="hidden">
@@ -69,7 +69,7 @@
 
             <div class="cc-note">
                 · 쿠폰은 <b>1인(휴대폰 번호) 1회</b>만 사용 가능하며, 코드 종류와 무관하게 중복 사용은 제한됩니다.<br>
-                · 선착순 100명 한정 · 발행 마감 2026-10-30 · 발급 후 3개월 이내 사용.
+                · 선착순 100명 한정 · <b>2026-10-30 마감</b> (이후 자동 만료).
             </div>
         </div>
     </div>
@@ -94,10 +94,43 @@
             show('errorBox');
         }
 
+        // 잔여 수량 실시간 갱신(오퍼 화면이 떠 있는 동안 15초마다)
+        let _remainTimer = null;
+        function startRemainingAutoRefresh() {
+            if (_remainTimer) return;
+            _remainTimer = setInterval(async () => {
+                // 오퍼 화면이 아닐 때(발급완료/에러)는 중단
+                if (document.getElementById('offerBox').classList.contains('hidden')) { clearInterval(_remainTimer); _remainTimer = null; return; }
+                try {
+                    const r = await _authPost('/coupon-validate', { code: COUPON_CODE });
+                    const el = document.getElementById('chRemaining');
+                    if (!el) return;
+                    if (r && r.soldOut) {
+                        el.textContent = '🚫 선착순 100명 마감';
+                        const btn = document.getElementById('claimBtn');
+                        if (btn) { btn.disabled = true; btn.innerHTML = '마감되었습니다'; }
+                        clearInterval(_remainTimer); _remainTimer = null;
+                    } else if (r && typeof r.remaining === 'number') {
+                        el.textContent = '⏳ 선착순 잔여 ' + r.remaining + '명';
+                    }
+                } catch (e) {}
+            }, 15000);
+        }
+
         async function initCoupon() {
             if (!COUPON_CODE) { showError('쿠폰 코드가 없습니다. 배너를 다시 눌러주세요.'); return; }
             try {
                 const r = await _authPost('/coupon-validate', { code: COUPON_CODE });
+                // 선착순 마감 → 오퍼는 보여주되 받기 비활성화
+                if (r && r.soldOut) {
+                    document.getElementById('chChannel').textContent = (r.channel || '') + ' 채널';
+                    document.getElementById('chDiscount').innerHTML = '<span style="color:#ef4444;">마감</span>';
+                    document.getElementById('chRemaining').textContent = '🚫 선착순 100명 마감';
+                    const btn = document.getElementById('claimBtn');
+                    btn.disabled = true; btn.innerHTML = '마감되었습니다';
+                    show('offerBox');
+                    return;
+                }
                 if (!r || !r.valid) { showError((r && r.message) || '유효하지 않은 쿠폰입니다.'); return; }
                 document.getElementById('chChannel').textContent = r.channel + ' 채널';
                 document.getElementById('chDiscount').innerHTML = r.free
@@ -107,6 +140,7 @@
                     document.getElementById('chRemaining').textContent = '⏳ 선착순 잔여 ' + r.remaining + '명';
                 }
                 show('offerBox');
+                startRemainingAutoRefresh(); // 잔여 실시간 갱신
 
                 // 로그인 상태에서 배너를 통해 돌아온 경우(대기 쿠폰) 자동 발급
                 const pending = localStorage.getItem('pending_coupon');
