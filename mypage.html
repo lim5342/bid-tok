@@ -41,6 +41,9 @@
                 <a href="#payments" class="menu-item" onclick="window._showSection('payments', this); return false;">
                     <i class="fas fa-credit-card"></i> 결제 내역
                 </a>
+                <a href="#coupons" class="menu-item" onclick="window._showSection('coupons', this); return false;">
+                    <i class="fas fa-ticket"></i> 내 쿠폰함
+                </a>
                 <a href="#profile" class="menu-item" onclick="window._showSection('profile', this); return false;">
                     <i class="fas fa-user-edit"></i> 회원정보 수정
                 </a>
@@ -98,6 +101,19 @@
                     <h2><i class="fas fa-credit-card"></i> 결제 내역</h2>
                 </div>
                 <div class="table-wrap" id="paymentsList">
+                    <div class="empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>불러오는 중...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 내 쿠폰함 섹션 -->
+            <section id="couponsSection" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-ticket"></i> 내 쿠폰함</h2>
+                </div>
+                <div class="table-wrap" id="couponsList">
                     <div class="empty-state">
                         <i class="fas fa-spinner fa-spin"></i>
                         <p>불러오는 중...</p>
@@ -415,6 +431,9 @@
             } else if (section === 'payments') {
                 document.getElementById('paymentsSection').classList.add('active');
                 loadPayments();
+            } else if (section === 'coupons') {
+                document.getElementById('couponsSection').classList.add('active');
+                loadCoupons();
             } else if (section === 'profile') {
                 document.getElementById('profileSection').classList.add('active');
             } else if (section === 'withdraw') {
@@ -422,6 +441,47 @@
             }
         }
         window._showSection = showSection;
+
+        // ── 내 쿠폰함 ────────────────────────────────────────────
+        async function loadCoupons() {
+            const box = document.getElementById('couponsList');
+            box.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>불러오는 중...</p></div>';
+            try {
+                const cur = Auth.getCurrentUser();
+                let u = cur;
+                try { const fresh = await API.users.getById(cur.id || cur.userId); if (fresh) u = fresh; } catch (e) {}
+                const code = u.coupon_code;
+                if (!code || !u.coupon_claimed) {
+                    box.innerHTML = '<div class="empty-state"><i class="fas fa-ticket"></i><p>받은 쿠폰이 없습니다.<br><span style="font-size:0.85rem;color:#94a3b8;">대장옥션·유튜브·카페 등 채널 배너에서 쿠폰을 받아보세요.</span></p></div>';
+                    return;
+                }
+                const isFree = String(code).toLowerCase() === 'boostv';
+                const used = !!u.coupon_used;
+                const channel = u.coupon_channel || '';
+                const regAt = u.coupon_registered_at ? new Date(u.coupon_registered_at) : null;
+                const expAt = regAt ? new Date(regAt.getTime() + 90 * 24 * 60 * 60 * 1000) : null;
+                const fmt = d => d ? (d.getFullYear() + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + String(d.getDate()).padStart(2, '0')) : '-';
+                const expired = expAt && Date.now() > expAt.getTime();
+                const statusBadge = used
+                    ? '<span style="background:#e2e8f0;color:#64748b;padding:3px 10px;border-radius:20px;font-size:0.78rem;font-weight:700;">사용완료</span>'
+                    : (expired ? '<span style="background:#fee2e2;color:#ef4444;padding:3px 10px;border-radius:20px;font-size:0.78rem;font-weight:700;">기한만료</span>'
+                               : '<span style="background:#dcfce7;color:#16a34a;padding:3px 10px;border-radius:20px;font-size:0.78rem;font-weight:700;">사용가능</span>');
+                const valueTxt = isFree ? '1회 무료' : '30,000원 할인';
+                box.innerHTML =
+                    '<div style="border:2px dashed ' + (used || expired ? '#cbd5e1' : '#1550E8') + ';border-radius:16px;padding:1.3rem 1.5rem;max-width:460px;' + (used || expired ? 'opacity:0.6;' : '') + '">' +
+                        '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+                            '<span style="background:#e0edff;color:#1550E8;font-weight:700;font-size:0.8rem;padding:3px 10px;border-radius:20px;">' + channel + ' 채널</span>' +
+                            statusBadge +
+                        '</div>' +
+                        '<div style="font-size:1.8rem;font-weight:800;color:#1550E8;margin:0.7rem 0 0.3rem;">' + valueTxt + '</div>' +
+                        '<div style="color:#64748b;font-size:0.85rem;">사용기한: ' + fmt(expAt) + '까지</div>' +
+                        ((!used && !expired) ? '<button onclick="location.href=\'apply.html\'" style="margin-top:1rem;width:100%;padding:0.8rem;background:#1550E8;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;">이 쿠폰으로 대리입찰 신청하기</button>' : '') +
+                    '</div>';
+            } catch (e) {
+                box.innerHTML = '<div class="empty-state"><i class="fas fa-triangle-exclamation"></i><p>쿠폰 정보를 불러오지 못했습니다.</p></div>';
+            }
+        }
+        window._loadCoupons = loadCoupons;
 
         // ── 상태 매핑 ────────────────────────────────────────────
         const STATUS_MAP = {

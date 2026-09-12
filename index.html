@@ -2,6 +2,13 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <script>
+        // 쿠폰 배너 진입(?coupon=코드) → 쿠폰 받기 페이지로 이동
+        (function(){ try {
+            var c = new URLSearchParams(location.search).get('coupon');
+            if (c && /^[a-zA-Z0-9]{3,20}$/.test(c)) location.replace('coupon.html?code=' + c);
+        } catch(e){} })();
+    </script>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>대리입찰 톡 - 전국 경매 대리입찰 연결 플랫폼</title>

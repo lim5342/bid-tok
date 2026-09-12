@@ -599,6 +599,9 @@
             <button class="nav-item" onclick="goto('sales',this)">
                 <i class="fas fa-chart-line"></i> 매출 관리
             </button>
+            <button class="nav-item" onclick="goto('channels',this)">
+                <i class="fas fa-bullhorn"></i> 채널별 유입
+            </button>
             <button class="nav-item" onclick="goto('settlements',this)">
                 <i class="fas fa-won-sign"></i> 정산 관리
             </button>
@@ -1018,6 +1021,37 @@
 
                 <div class="panel" style="padding:0; overflow:hidden;">
                     <div class="overflow-wrap" id="salesTableWrap">
+                        <div style="text-align:center;padding:3rem;color:#ccc;"><i class="fas fa-spinner fa-spin fa-2x"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ════ 채널별 유입 (쿠폰 추적) ════ -->
+            <div class="section" id="sec-channels">
+                <div class="section-title"><i class="fas fa-bullhorn"></i> 채널별 유입 (쿠폰 코드 추적)</div>
+
+                <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:0.8rem 1.1rem;margin-bottom:1.2rem;font-size:0.85rem;color:#1e40af;line-height:1.6;">
+                    💡 채널별 쿠폰 코드로 <strong>가입자 수 · 결제(전환) 수 · 전환율</strong>을 추적합니다. 기간을 바꿔 오늘/이번주/이번달 유입을 비교하세요. (선착순 100명 한정 캠페인)
+                </div>
+
+                <!-- 기간 필터 -->
+                <div class="toolbar" style="gap:6px;flex-wrap:wrap;">
+                    <button class="ftab active" data-range="today"  onclick="setChannelRange('today',this)">오늘</button>
+                    <button class="ftab"        data-range="week"   onclick="setChannelRange('week',this)">이번 주</button>
+                    <button class="ftab"        data-range="month"  onclick="setChannelRange('month',this)">이번 달</button>
+                    <button class="ftab"        data-range="all"    onclick="setChannelRange('all',this)">전체</button>
+                </div>
+
+                <!-- 요약 -->
+                <div class="settlement-summary" style="margin-top:0.8rem;">
+                    <div class="sum-box"><div class="num" id="ch-signups" style="color:#2563eb;">-</div><div class="lbl">기간 내 쿠폰 가입자</div></div>
+                    <div class="sum-box"><div class="num" id="ch-conversions" style="color:#16a34a;">-</div><div class="lbl">결제(전환) 건수</div></div>
+                    <div class="sum-box"><div class="num" id="ch-rate" style="color:#a855f7;">-</div><div class="lbl">전환율</div></div>
+                    <div class="sum-box"><div class="num" id="ch-remaining" style="color:#ef4444;">-</div><div class="lbl">선착순 잔여(전체)</div></div>
+                </div>
+
+                <div class="panel" style="padding:0; overflow:hidden; margin-top:1rem;">
+                    <div class="overflow-wrap" id="channelTableWrap">
                         <div style="text-align:center;padding:3rem;color:#ccc;"><i class="fas fa-spinner fa-spin fa-2x"></i></div>
                     </div>
                 </div>
@@ -1458,6 +1492,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <script src="js/localdb.js"></script>
+    <script src="js/payment-config.js"></script>
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
 <script>
@@ -1897,7 +1932,7 @@ async function importLocalDbFromFile(input) {
 const SECTION_TITLES = {
     dashboard: '대시보드', applications: '신청 관리',
     experts: '전문가 승인', partners: '대리인 현황 (전국)', users: '회원 관리',
-    sales: '매출 관리', settlements: '정산 관리',
+    sales: '매출 관리', settlements: '정산 관리', channels: '채널별 유입 (쿠폰 추적)',
     myinfo: '내 정보 / 비밀번호 변경', contents: '콘텐츠 관리'
 };
 
@@ -1929,12 +1964,128 @@ function goto(sec, el) {
     if (sec === 'partners')     loadPartners();
     if (sec === 'users')        loadUsers();
     if (sec === 'sales')        loadSales();
+    if (sec === 'channels')     loadChannels();
     if (sec === 'settlements')  loadSettlements();
     if (sec === 'myinfo')        loadMyInfo();
     if (sec === 'contents')      loadContents();
 }
 
 function refreshCurrent() { goto(currentSection, null); }
+
+// ═══════════════════════════════════════════════════════
+// 채널별 유입 (쿠폰 코드 추적)
+// ═══════════════════════════════════════════════════════
+const CHANNEL_LIST = [
+    { code: '0909',   channel: '대장옥션' },
+    { code: '0915',   channel: '유튜브' },
+    { code: '0919',   channel: '카페' },
+    { code: '0922',   channel: '블로그' },
+    { code: '0925',   channel: '인스타그램' },
+    { code: '0987',   channel: '인스타광고' },
+    { code: 'boostv', channel: '수강생(무료)' },
+];
+let _channelRange = 'today';
+let _channelCache = null; // { users, apps }
+
+function _rangeStart(range) {
+    const now = new Date();
+    if (range === 'today') { const d = new Date(now); d.setHours(0,0,0,0); return d.getTime(); }
+    if (range === 'week')  { const d = new Date(now); const day = (d.getDay()+6)%7; d.setDate(d.getDate()-day); d.setHours(0,0,0,0); return d.getTime(); } // 월요일 시작
+    if (range === 'month') { const d = new Date(now.getFullYear(), now.getMonth(), 1); return d.getTime(); }
+    return 0; // all
+}
+function _inRange(dateVal, startMs) {
+    if (!startMs) return true;
+    if (!dateVal) return false;
+    const t = new Date(dateVal).getTime();
+    return !isNaN(t) && t >= startMs;
+}
+function _isPaidApp(a) {
+    return a.payment_status === '결제완료' || a.payment_status === '무료쿠폰' || a.payment_status === '무료매칭' || !!a.paid_at;
+}
+function setChannelRange(range, el) {
+    _channelRange = range;
+    document.querySelectorAll('#sec-channels .ftab').forEach(b => b.classList.remove('active'));
+    if (el) el.classList.add('active');
+    renderChannels();
+}
+async function loadChannels() {
+    try {
+        const [uRes, aRes] = await Promise.all([
+            API.users.getAll('limit=2000'),
+            API.applications.getAll('limit=2000')
+        ]);
+        _channelCache = {
+            users: (uRes && uRes.data) || [],
+            apps:  (aRes && aRes.data) || []
+        };
+        renderChannels();
+    } catch (e) {
+        console.error('채널 데이터 로드 실패:', e);
+        document.getElementById('channelTableWrap').innerHTML = '<div style="text-align:center;padding:2rem;color:#ef4444;">데이터를 불러오지 못했습니다.</div>';
+    }
+}
+function renderChannels() {
+    if (!_channelCache) return;
+    const startMs = _rangeStart(_channelRange);
+    const users = _channelCache.users, apps = _channelCache.apps;
+
+    // 채널별 집계
+    const agg = {};
+    CHANNEL_LIST.forEach(c => agg[c.channel] = { code: c.code, channel: c.channel, signups: 0, conversions: 0 });
+    const other = { code: '-', channel: '(기타/직접)', signups: 0, conversions: 0 };
+
+    // 가입자: 쿠폰 채널 있는 유저 + createdAt 기간필터
+    users.forEach(u => {
+        if (!u.coupon_channel) return;
+        if (!_inRange(u.createdAt || u.created_at, startMs)) return;
+        (agg[u.coupon_channel] || other).signups++;
+    });
+    // 전환: 결제완료(또는 무료) + 쿠폰 채널 + paid_at 기간필터
+    let totalRedeemedAll = 0;
+    apps.forEach(a => {
+        if (!a.coupon_channel) return;
+        if (!_isPaidApp(a)) return;
+        totalRedeemedAll++; // 전체기간 소진 수(선착순 잔여 계산용)
+        if (!_inRange(a.paid_at || a.createdAt || a.created_at, startMs)) return;
+        (agg[a.coupon_channel] || other).conversions++;
+    });
+
+    const rows = [...CHANNEL_LIST.map(c => agg[c.channel])];
+    if (other.signups || other.conversions) rows.push(other);
+
+    let sumSign = 0, sumConv = 0;
+    const trs = rows.map(r => {
+        sumSign += r.signups; sumConv += r.conversions;
+        const rate = r.signups ? Math.round(r.conversions / r.signups * 100) : 0;
+        const rateTxt = r.signups ? rate + '%' : '-';
+        return `<tr>
+            <td style="font-weight:700;">${r.channel}</td>
+            <td style="text-align:center;color:#888;">${r.code}</td>
+            <td style="text-align:center;font-weight:700;color:#2563eb;">${r.signups}</td>
+            <td style="text-align:center;font-weight:700;color:#16a34a;">${r.conversions}</td>
+            <td style="text-align:center;font-weight:700;color:#a855f7;">${rateTxt}</td>
+        </tr>`;
+    }).join('');
+
+    document.getElementById('channelTableWrap').innerHTML = `
+        <table class="data-table" style="width:100%;border-collapse:collapse;">
+            <thead><tr style="background:#f8fafc;">
+                <th style="text-align:left;padding:0.7rem 0.9rem;">채널</th>
+                <th style="text-align:center;padding:0.7rem 0.5rem;">코드</th>
+                <th style="text-align:center;padding:0.7rem 0.5rem;">가입자</th>
+                <th style="text-align:center;padding:0.7rem 0.5rem;">전환(결제)</th>
+                <th style="text-align:center;padding:0.7rem 0.5rem;">전환율</th>
+            </tr></thead>
+            <tbody>${trs}</tbody>
+        </table>`;
+
+    const overallRate = sumSign ? Math.round(sumConv / sumSign * 100) + '%' : '-';
+    document.getElementById('ch-signups').textContent     = sumSign;
+    document.getElementById('ch-conversions').textContent = sumConv;
+    document.getElementById('ch-rate').textContent        = overallRate;
+    document.getElementById('ch-remaining').textContent   = Math.max(0, 100 - totalRedeemedAll) + '명';
+}
 
 // ═══════════════════════════════════════════════════════
 // 사이드바 (모바일)
@@ -3839,22 +3990,68 @@ function togglePwDisplay(userId, pw) {
 
 // ── 관리자: 카드 취소 처리 ──
 async function processCardCancel(appId) {
-    if (!confirm('카드 결제 취소 처리를 진행하시겠습니까?\n\n처리 후 고객 카드사에 환불이 요청됩니다.\n실제 환불은 카드사 규정에 따라 3~5 영업일 소요됩니다.')) return;
-    const note = prompt('취소 처리 메모 (선택 입력):') ?? '';
+    // 1) 신청건 조회 → 환불에 필요한 payment_key 확보
+    const _appDoc = await API.applications.getById(appId);
+    if (!_appDoc) { showToast('신청 정보를 찾을 수 없습니다.', 'error'); return; }
+
+    // 이미 취소된 건 재취소 방지
+    if (_appDoc.payment_cancelled || _appDoc.payment_status === '취소완료') {
+        showToast('이미 취소(환불) 처리된 결제입니다.', 'error');
+        return;
+    }
+
+    const payKey = _appDoc.payment_key || _appDoc.paymentKey;
+    // 무료(boostv 등) 또는 결제키 없는 건은 실제 환불 대상 아님 → 상태만 취소 처리
+    if (!payKey) {
+        if (!confirm('이 건은 카드 결제키가 없습니다(무료/미결제 건).\n\n실제 카드 환불 없이 상태만 "취소"로 처리할까요?')) return;
+        try {
+            await API.applications.updateStatus(appId, _appDoc.status || '', {
+                payment_status: '취소완료',
+                payment_cancelled: true,
+                payment_cancel_completed_at: new Date().toISOString(),
+                payment_cancel_note: '무료/미결제 건 상태 취소'
+            });
+            showToast('✅ 상태 취소 처리 완료 (실제 환불 없음).', 'success');
+            closeModal('modalUser');
+        } catch(e) { console.error(e); showToast('취소 처리 실패: ' + e.message, 'error'); }
+        return;
+    }
+
+    const amt = _appDoc.service_fee || _appDoc.amount || _appDoc.payment_amount || '';
+    if (!confirm(`카드 결제를 실제로 취소(환불)합니다.\n\n금액: ${amt ? Number(amt).toLocaleString()+'원' : '전액'}\n처리 시 토스페이먼츠를 통해 고객 카드사에 환불이 요청됩니다.\n(실제 입금은 카드사 규정상 3~5 영업일 소요)\n\n진행하시겠습니까?`)) return;
+    const note = prompt('취소 사유 (필수):', '고객 요청 환불') ?? '';
+    if (!note.trim()) { showToast('취소 사유를 입력해야 환불이 가능합니다.', 'error'); return; }
+
+    // 2) 토스페이먼츠 실제 환불 호출 (성공해야만 DB 취소완료 기록)
     try {
-        // 결제취소 처리 (서버 경유) — 현재 status 유지 + 취소 필드 갱신
-        const _appDoc = await API.applications.getById(appId);
-        await API.applications.updateStatus(appId, (_appDoc && _appDoc.status) || '', {
+        const tossUrl = (window.PAYMENT_CONFIG && window.PAYMENT_CONFIG.workerUrl) || 'https://bidtok-toss-payment.qkqk5342.workers.dev';
+        const res = await fetch(tossUrl + '/cancel', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ paymentKey: payKey, cancelReason: note.trim() })
+        });
+        const result = await res.json().catch(() => ({}));
+        if (!res.ok || result.success === false) {
+            const msg = result.message || result.code || ('HTTP ' + res.status);
+            showToast('❌ 환불 실패: ' + msg + '\n(토스 대시보드에서 직접 확인 필요)', 'error');
+            console.error('토스 취소 실패:', result);
+            return; // 환불 실패 시 DB는 건드리지 않음
+        }
+
+        // 3) 환불 성공 → DB에 취소완료 기록
+        await API.applications.updateStatus(appId, _appDoc.status || '', {
+            status: '취소',
             payment_status: '취소완료',
             payment_cancelled: true,
             payment_cancel_completed_at: new Date().toISOString(),
-            payment_cancel_note: note.trim() || '관리자 카드 취소 처리'
+            payment_cancel_note: note.trim(),
+            payment_cancel_receipt: result.receipt?.url || result.transactionKey || ''
         });
-        showToast('✅ 카드 취소 처리 완료! 고객에게 환불이 진행됩니다.', 'success');
+        showToast('✅ 카드 환불 완료! 고객 카드사로 환불 요청됨 (3~5영업일).', 'success');
         closeModal('modalUser');
     } catch(e) {
         console.error(e);
-        showToast('취소 처리 실패: ' + e.message, 'error');
+        showToast('환불 처리 중 오류: ' + e.message, 'error');
     }
 }
 

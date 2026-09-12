@@ -346,9 +346,9 @@
 
                 <!-- 승인 대기 안내 -->
                 <div id="expertPendingNotice" style="display:none; margin-top:1rem; padding:1rem; background:#fffbeb; border:1px solid #fcd34d; border-radius:8px; font-size:0.88rem; color:#92400e;">
-                    <strong>⏳ 승인 가토 중입니다</strong><br>
-                    신청한 파트너 계정은 운영팀 가토 후 활성화됩니다.<br>
-                    승인 완료 시 등록한신 연락처로 SMS 알림이 발송됩니다.
+                    <strong>⏳ 승인 검토 중입니다</strong><br>
+                    신청하신 파트너 계정은 운영팀 검토 후 활성화됩니다.<br>
+                    승인 완료 시 등록하신 연락처로 SMS 알림이 발송됩니다.
                 </div>
             </form>
 
@@ -402,8 +402,13 @@
             const result = await Auth.login(userId, password, 'client', remember);
             
             if (result.success) {
-                // 로그인 성공 알릸 없이 바로 이동 (UX 개선)
-                window.location.href = 'mypage.html';
+                // 로그인 성공 알림 없이 바로 이동 (UX 개선)
+                const rd = new URLSearchParams(location.search).get('redirect');
+                if (rd && /^[a-zA-Z0-9_\-]+\.html(\?[^#]*)?$/.test(rd)) {
+                    window.location.href = rd; // 내부 경로만 허용(오픈리다이렉트 방지)
+                } else {
+                    window.location.href = 'mypage.html';
+                }
             } else {
                 alert(result.message || '아이디 또는 비밀번호를 확인해주세요.');
             }
@@ -413,7 +418,7 @@
         document.getElementById('expertLoginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            // 이전에 떴�� 승인 대기 박스 숨기기
+            // 이전에 떴던 승인 대기 박스 숨기기
             document.getElementById('expertPendingNotice').style.display = 'none';
 
             const userId = document.getElementById('expertUserId').value;

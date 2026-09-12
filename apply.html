@@ -995,6 +995,24 @@
             <div class="fee-amount"><span id="feeAmountText">132,000</span>원 <span style="font-size:1rem; font-weight:400; color:#555;">(VAT 포함)</span></div>
             <div class="fee-desc">✓ 전국 단일가 &nbsp;|&nbsp; ✓ 전문가 직접 연결 &nbsp;|&nbsp; ✓ 결제 금액은 전문가에게 직접 정산</div>
             <div style="margin-top:0.5rem; font-size:0.82rem; color:#888;">플랫폼 중개수수료는 0원이며, 결제하신 금액(부가세 포함)은 전액 배정된 전문가에게 정산됩니다. 공동입찰·법인 입찰은 별도 협의 후 비용이 추가될 수 있습니다.</div>
+
+            <!-- 쿠폰(받은 쿠폰 선택 + 직접입력) -->
+            <div id="couponBox" style="margin-top:0.9rem; padding-top:0.9rem; border-top:1px dashed #d7dbe6;">
+                <div style="font-size:0.85rem; font-weight:700; color:#1550E8; margin-bottom:0.4rem;">🎟️ 할인 쿠폰</div>
+                <!-- 마이페이지에 받아둔 쿠폰 자동 표시 -->
+                <div id="myCouponSlot" style="margin-bottom:0.5rem;"></div>
+                <!-- 직접 코드 입력(보조) -->
+                <div id="manualCouponWrap">
+                    <div style="font-size:0.78rem; color:#94a3b8; margin-bottom:0.3rem;">코드를 직접 가지고 계시면 입력하세요</div>
+                    <div style="display:flex; gap:8px;">
+                        <input type="text" id="couponInput" placeholder="쿠폰 코드 입력" autocomplete="off"
+                            style="flex:1; padding:0.6rem 0.7rem; border:1.5px solid #d7dbe6; border-radius:8px; font-size:0.9rem;">
+                        <button type="button" id="couponBtn" onclick="applyCoupon()"
+                            style="padding:0.6rem 1.1rem; background:#1550E8; color:#fff; border:none; border-radius:8px; font-size:0.88rem; font-weight:700; cursor:pointer; white-space:nowrap;">적용</button>
+                    </div>
+                </div>
+                <div id="couponMsg" style="margin-top:0.4rem; font-size:0.82rem; min-height:1.1rem;"></div>
+            </div>
         </div>
 
         <div class="apply-card">
@@ -1221,7 +1239,37 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 전문가 유형 기본 선택(공인중개사) 초기화 → 금액/라벨 동기화 (법무사는 준비중 비활성화)
     selectExpertType('realtor');
+
+    // 받아둔 쿠폰 표시
+    loadMyCouponForApply();
 });
+
+// ─────────────────────────────────────────────
+// 받은 쿠폰(마이페이지 보관) 자동 표시 + 적용
+// ─────────────────────────────────────────────
+async function loadMyCouponForApply() {
+    const slot = document.getElementById('myCouponSlot');
+    if (!slot) return;
+    try {
+        const cur = Auth.getCurrentUser();
+        if (!cur) { slot.innerHTML = ''; return; }
+        let u = cur;
+        try { const fresh = await API.users.getById(cur.id || cur.userId); if (fresh) u = fresh; } catch (e) {}
+        if (!u || !u.coupon_code || !u.coupon_claimed || u.coupon_used) { slot.innerHTML = ''; return; }
+        const isFree = String(u.coupon_code).toLowerCase() === 'boostv';
+        const label = (u.coupon_channel || '') + ' · ' + (isFree ? '1회 무료' : '30,000원 할인');
+        slot.innerHTML =
+            '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:#eef5ff;border:1.5px solid #bcd3ff;border-radius:10px;padding:0.6rem 0.85rem;">' +
+                '<div><b style="color:#1550E8;">받은 쿠폰</b> <span style="color:#334155;font-size:0.9rem;">' + label + '</span></div>' +
+                '<button type="button" id="myCouponApplyBtn" onclick="applyMyCoupon(\'' + u.coupon_code + '\')" style="padding:0.45rem 0.95rem;background:#1550E8;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:0.85rem;cursor:pointer;white-space:nowrap;">적용</button>' +
+            '</div>';
+    } catch (e) { slot.innerHTML = ''; }
+}
+function applyMyCoupon(code) {
+    const input = document.getElementById('couponInput');
+    if (input) input.value = code;
+    applyCoupon();
+}
 
 // ─────────────────────────────────────────────
 // 단계 이동
@@ -1758,6 +1806,69 @@ function selectExpertType(type) {
     if (subEl) subEl.textContent = feeStr;
     // STEP4 요약 즉시 갱신 (이미 STEP4를 보고 있을 때)
     if (typeof currentStep !== 'undefined' && currentStep === 4) fillSummary();
+    renderCouponFee();
+}
+
+// ─────────────────────────────────────────────
+// 쿠폰 (채널 할인)
+// ─────────────────────────────────────────────
+let couponState = { valid: false };
+function effectiveFee() {
+    const base = getExpertPrice(selectedExpertType);
+    if (couponState && couponState.valid) {
+        if (couponState.free) return 0;
+        return Math.max(0, base - (couponState.discount || 0));
+    }
+    return base;
+}
+function renderCouponFee() {
+    const base = getExpertPrice(selectedExpertType);
+    const amtEl = document.getElementById('feeAmountText');
+    const subEl = document.getElementById('submitFeeText');
+    if (couponState && couponState.valid) {
+        const fin = effectiveFee();
+        const html = couponState.free
+            ? `<span style="text-decoration:line-through;color:#aaa;">${base.toLocaleString('ko-KR')}</span> <span style="color:#16A34A;font-weight:800;">무료</span>`
+            : `<span style="text-decoration:line-through;color:#aaa;">${base.toLocaleString('ko-KR')}</span> <span style="color:#16A34A;font-weight:800;">${fin.toLocaleString('ko-KR')}</span>`;
+        if (amtEl) amtEl.innerHTML = html;
+        if (subEl) subEl.textContent = couponState.free ? '0' : fin.toLocaleString('ko-KR');
+    } else {
+        if (amtEl) amtEl.textContent = base.toLocaleString('ko-KR');
+        if (subEl) subEl.textContent = base.toLocaleString('ko-KR');
+    }
+}
+async function applyCoupon() {
+    const codeEl = document.getElementById('couponInput');
+    const msg = document.getElementById('couponMsg');
+    const code = (codeEl ? codeEl.value : '').trim();
+    const phone = (document.getElementById('applicantPhone') && document.getElementById('applicantPhone').value || '').trim();
+    if (!code) { couponState = { valid: false }; msg.textContent = ''; renderCouponFee(); return; }
+    if (typeof _authPost !== 'function') { msg.style.color = '#dc2626'; msg.textContent = '쿠폰 확인 불가(서버 미설정). 관리자에게 문의하세요.'; return; }
+    msg.style.color = '#888'; msg.textContent = '쿠폰 확인 중...';
+    try {
+        const base = getExpertPrice(selectedExpertType);
+        const r = await _authPost('/coupon-validate', { code, phone, baseAmount: base });
+        if (!r || !r.valid) {
+            couponState = { valid: false };
+            msg.style.color = '#dc2626';
+            msg.textContent = '❌ ' + ((r && r.message) || '사용할 수 없는 코드입니다.');
+            renderCouponFee();
+            return;
+        }
+        couponState = { valid: true, code, channel: r.channel, type: r.type, free: !!r.free, discount: r.discount || 0, final: r.final || 0 };
+        msg.style.color = '#16A34A';
+        const remainTxt = (typeof r.remaining === 'number') ? ` · 선착순 잔여 ${r.remaining}명` : '';
+        msg.textContent = (r.free
+            ? `✅ ${r.channel} 쿠폰 적용 — 이번 신청 무료!`
+            : `✅ ${r.channel} 쿠폰 적용 — ${(r.discount||0).toLocaleString('ko-KR')}원 할인 (결제 ${(r.final||0).toLocaleString('ko-KR')}원)`) + remainTxt;
+        renderCouponFee();
+        if (typeof currentStep !== 'undefined' && currentStep === 4) fillSummary();
+    } catch (e) {
+        couponState = { valid: false };
+        msg.style.color = '#dc2626';
+        msg.textContent = '쿠폰 확인 중 오류가 발생했습니다.';
+        renderCouponFee();
+    }
 }
 
 function fillSummary() {
@@ -1786,6 +1897,10 @@ function fillSummary() {
         ['대리입찰 가격', fee.toLocaleString('ko-KR') + '원 (VAT 포함)'],
         ['중개수수료', '0원 (플랫폼이 떼는 돈 없음)'],
     ];
+    if (couponState && couponState.valid) {
+        rows.push(['적용 쿠폰', couponState.channel + (couponState.free ? ' (1회 무료)' : ' (-' + (couponState.discount||0).toLocaleString('ko-KR') + '원)')]);
+        rows.push(['최종 결제금액', couponState.free ? '0원 (무료)' : effectiveFee().toLocaleString('ko-KR') + '원']);
+    }
 
     document.getElementById('summaryTable').innerHTML = rows
         .filter(([_, v]) => v && v.trim() !== '' && v.trim() !== '원')
@@ -1833,7 +1948,10 @@ async function submitApplication() {
     const cfg = window.PAYMENT_CONFIG || {};
     const expertType = selectedExpertType || 'lawyer';
     const expertLabel = (EXPERT_INFO[expertType] || EXPERT_INFO.lawyer).label;
-    const serviceFee = getExpertPrice(expertType); // VAT 포함 최종 결제 금액
+    const baseFee = getExpertPrice(expertType); // 정상가(VAT 포함)
+    const useCoupon = !!(couponState && couponState.valid && couponState.code);
+    const isFreeCoupon = useCoupon && couponState.free;
+    const serviceFee = useCoupon ? (isFreeCoupon ? 0 : Math.max(0, baseFee - (couponState.discount || 0))) : baseFee; // 실제 결제 금액
     const orderId = 'BIDTOK_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
 
     const appData = {
@@ -1870,6 +1988,14 @@ async function submitApplication() {
         status: '결제대기',
         created_at: new Date().toISOString()
     };
+    // 쿠폰 적용 정보 기록
+    if (useCoupon) {
+        appData.base_fee = baseFee;
+        appData.coupon_code = couponState.code;
+        appData.coupon_channel = couponState.channel;
+        appData.discount_amount = isFreeCoupon ? baseFee : (couponState.discount || 0);
+        appData.final_amount = serviceFee;
+    }
 
     try {
         // ── 1. 신청 데이터를 '결제대기' 상태로 먼저 저장 ──
@@ -1887,6 +2013,27 @@ async function submitApplication() {
 
         // 결제 성공 페이지에서 사용할 임시 데이터 저장
         try { sessionStorage.setItem('bidtok_pending_order', JSON.stringify(appData)); } catch (e) {}
+
+        // ── 무료 쿠폰(boostv 등): 결제창 없이 서버에서 무료 확정 처리 ──
+        if (isFreeCoupon) {
+            const appId = savedApp && (savedApp.id || savedApp.name);
+            const rd = await _authPost('/coupon-redeem', {
+                session: _session(), code: couponState.code, phone: appData.phone,
+                applicationId: appId, baseAmount: baseFee
+            });
+            if (!rd || !rd.success) {
+                toast('무료 쿠폰 적용 실패: ' + ((rd && rd.message) || '이미 사용된 번호이거나 유효하지 않습니다.'), 'error');
+                // 실패 시 방금 만든 결제대기 신청 정리
+                try { if (appId && API.applications.delete) await API.applications.delete(appId); } catch (e) {}
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> 신청 완료';
+                return;
+            }
+            // 전문가 매칭 알림 트리거(결제 완료건과 동일)
+            try { await _authPost('/notify-new-order', { applicationId: appId }); } catch (e) {}
+            location.href = 'payment-success.html?free=1&appId=' + encodeURIComponent(appId);
+            return;
+        }
 
         // ── 2. 토스페이먼츠 결제창 호출 ──
         if (typeof TossPayments === 'undefined' || !cfg.clientKey) {

@@ -346,6 +346,12 @@
                     <div id="clientVerifySuccess" class="verify-success" style="display: none;">✓ 인증이 완료되었습니다</div>
                 </div>
 
+                <div class="form-group">
+                    <label for="clientCoupon">쿠폰 코드 <span style="color:#888;font-weight:400;font-size:0.85rem;">(선택 · 채널 코드가 있으면 입력)</span></label>
+                    <input type="text" id="clientCoupon" name="coupon" placeholder="예: 0915 (없으면 비워두세요)" autocomplete="off" maxlength="20">
+                    <small style="color:#16A34A;display:block;margin-top:4px;">입력하신 코드로 가입 채널이 기록되며, 첫 대리입찰 결제 시 할인이 적용됩니다.</small>
+                </div>
+
                 <div class="terms-group">
                     <div class="terms-checkbox all-terms">
                         <input type="checkbox" id="clientAllTerms" onclick="toggleAllTerms('client')">
@@ -733,6 +739,7 @@
                 password: password,
                 name: document.getElementById('clientName').value,
                 phone: document.getElementById('clientPhone').value,
+                coupon: (document.getElementById('clientCoupon') && document.getElementById('clientCoupon').value || '').trim(),
                 userType: 'client',
                 smsConsent: true,
                 smsConsentDate: new Date().toISOString(),
