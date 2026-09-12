@@ -347,9 +347,9 @@ const COUPONS = {
   '0987':   { channel: '인스타광고', type: 'amount', discount: 30000 },
   'boostv': { channel: '수강생',     type: 'free',   discount: null },
 };
-const COUPON_ISSUE_DEADLINE = Date.parse('2026-10-30T23:59:59+09:00'); // 발행(신규 등록) 기한
-const COUPON_VALID_MS = 90 * 24 * 60 * 60 * 1000;                       // 사용기한: 발급 후 약 3개월(90일)
-const COUPON_TOTAL_LIMIT = 100;                                         // 선착순 전체 사용 한도(폭주 방지)
+const COUPON_END = Date.parse('2026-10-30T23:59:59+09:00');            // 쿠폰 공통 종료일(이후 발급 불가·자동 만료)
+const COUPON_ISSUE_DEADLINE = COUPON_END;                              // 발급 마감 = 종료일 (기존 참조 호환용 별칭)
+const COUPON_TOTAL_LIMIT = 100;                                        // 선착순 발급 한도(폭주 방지)
 
 function couponLookup(codeRaw) {
   if (!codeRaw) return null;
@@ -453,20 +453,37 @@ export default {
           createdAt: new Date().toISOString(),
           status: userData.status || (userData.userType === 'expert' ? 'pending' : 'active'),
         };
-        // ── 쿠폰 채널 귀속(가입 시 코드 입력) ──
-        //    유효 코드 + 발행기한 내이면 채널 귀속만 기록(실제 할인은 결제 시 사용).
+        // ── 쿠폰 채널 귀속(가입 시 코드 입력) — 받기(발급)로 카운트 ──
         const cInfo = couponLookup(userData.coupon || userData.coupon_code);
         delete data.coupon;
+        delete data.coupon_code; delete data.coupon_channel; delete data.coupon_used; delete data.coupon_claimed; delete data.coupon_registered_at;
+        let _grantNewClaim = false;
+        const _ph = normPhone(userData.phone);
         if (cInfo && Date.now() <= COUPON_ISSUE_DEADLINE) {
-          data.coupon_code = cInfo.code;
-          data.coupon_channel = cInfo.channel;
-          data.coupon_registered_at = new Date().toISOString();
-          data.coupon_used = false;
-        } else {
-          delete data.coupon_code; delete data.coupon_channel; delete data.coupon_used;
+          const _redeemed = _ph ? await fsGetDoc(token, 'couponRedemptions', _ph) : null;
+          const _alreadyClaim = _ph ? await fsGetDoc(token, 'couponClaims', _ph) : null;
+          if (_redeemed) {
+            // 이미 사용한 번호 → 쿠폰 미부여
+          } else if (_alreadyClaim) {
+            // 이미 받은 번호 → 같은 쿠폰 보관(중복 카운트 안 함)
+            const cur = couponLookup(_alreadyClaim.code) || cInfo;
+            data.coupon_code = cur.code; data.coupon_channel = cur.channel;
+            data.coupon_registered_at = new Date().toISOString(); data.coupon_claimed = true; data.coupon_used = false;
+          } else {
+            const _cc = (await fsListAll(token, 'couponClaims')).length;
+            if (_cc < COUPON_TOTAL_LIMIT) {
+              data.coupon_code = cInfo.code; data.coupon_channel = cInfo.channel;
+              data.coupon_registered_at = new Date().toISOString(); data.coupon_claimed = true; data.coupon_used = false;
+              _grantNewClaim = true;
+            } // else 소진 → 미부여
+          }
         }
         const created = await fsCreate(token, 'users', data);
-        return json({ success: true, message: '회원가입이 완료되었습니다.', user: sanitizeUser(created), coupon: cInfo ? { channel: cInfo.channel, type: cInfo.type } : null }, 200, cors);
+        if (_grantNewClaim) {
+          const _key = _ph || ('uid_' + created.id);
+          try { await fsSetDoc(token, 'couponClaims', _key, { code: cInfo.code, channel: cInfo.channel, userId: created.id, userDocId: created.id, at: new Date().toISOString(), viaSignup: true }); } catch (e) {}
+        }
+        return json({ success: true, message: '회원가입이 완료되었습니다.', user: sanitizeUser(created), coupon: data.coupon_code ? { channel: data.coupon_channel } : null }, 200, cors);
       }
 
       // ── 아이디 중복확인 ────────────────────────────────
@@ -489,14 +506,16 @@ export default {
         if (Date.now() > COUPON_ISSUE_DEADLINE) {
           return json({ valid: false, message: '쿠폰 발행 기간이 종료되었습니다.', channel: info.channel }, 200, cors);
         }
-        // 선착순 전체 한도(100명) 소진 여부
-        const usedCount = (await fsListAll(token, 'couponRedemptions')).length;
-        if (usedCount >= COUPON_TOTAL_LIMIT) {
-          return json({ valid: false, soldOut: true, channel: info.channel,
+        // 선착순 전체 한도(100명) — "받기(발급)" 수 기준으로 잔여 계산
+        const claimCount = (await fsListAll(token, 'couponClaims')).length;
+        const ph = normPhone(body.phone);
+        // 이미 받은/사용한 번호면 잔여와 무관하게 본인은 계속 사용 가능
+        const myClaim = ph ? await fsGetDoc(token, 'couponClaims', ph) : null;
+        if (!myClaim && claimCount >= COUPON_TOTAL_LIMIT) {
+          return json({ valid: false, soldOut: true, channel: info.channel, remaining: 0,
             message: `쿠폰이 모두 소진되었습니다. (선착순 ${COUPON_TOTAL_LIMIT}명 마감)` }, 200, cors);
         }
-        // 휴대폰 번호 1개당 코드 종류 불문 1회만 — 이미 사용했으면 차단
-        const ph = normPhone(body.phone);
+        // 이미 사용(결제 소진)한 번호는 차단
         if (ph) {
           const red = await fsGetDoc(token, 'couponRedemptions', ph);
           if (red) return json({ valid: false, alreadyUsed: true, channel: info.channel,
@@ -505,7 +524,7 @@ export default {
         const base = Number(body.baseAmount) || 0;
         const final = info.type === 'free' ? 0 : Math.max(0, base - info.discount);
         return json({ valid: true, channel: info.channel, type: info.type, free: info.type === 'free',
-          discount: info.type === 'free' ? base : info.discount, final, remaining: COUPON_TOTAL_LIMIT - usedCount }, 200, cors);
+          discount: info.type === 'free' ? base : info.discount, final, remaining: Math.max(0, COUPON_TOTAL_LIMIT - claimCount) }, 200, cors);
       }
 
       // ── 쿠폰 받기(발급) (세션 필요) — 로그인 사용자 계정에 쿠폰 저장 ──
@@ -524,29 +543,38 @@ export default {
         if (!user) return json({ success: false, message: '회원 정보를 찾을 수 없습니다.' }, 200, cors);
         // 이미 쿠폰을 사용한 계정
         if (user.coupon_used) return json({ success: false, alreadyUsed: true, message: '이미 쿠폰을 사용한 계정입니다. (계정당 1회)' }, 200, cors);
-        // 이미 받은(보관 중) 쿠폰이 있으면 그대로 반환(중복 발급 방지)
-        if (user.coupon_code && user.coupon_claimed && !user.coupon_used) {
-          const cur = couponLookup(user.coupon_code);
-          return json({ success: true, already: true, channel: (cur && cur.channel) || user.coupon_channel,
-            type: (cur && cur.type) || '', message: '이미 받은 쿠폰이 있습니다. 마이페이지에서 확인하세요.' }, 200, cors);
-        }
-        // 선착순 전체 한도(발급 기준으로도 제한)
-        const usedCount = (await fsListAll(token, 'couponRedemptions')).length;
-        if (usedCount >= COUPON_TOTAL_LIMIT) return json({ success: false, soldOut: true, message: `쿠폰이 모두 소진되었습니다. (선착순 ${COUPON_TOTAL_LIMIT}명 마감)` }, 200, cors);
-        // 번호 중복 사용 차단
         const ph = normPhone(user.phone);
+        const claimKey = ph || ('uid_' + uid);
+        // 이미 사용(결제 소진)한 번호는 재발급 불가
         if (ph) {
           const red = await fsGetDoc(token, 'couponRedemptions', ph);
           if (red) return json({ success: false, alreadyUsed: true, message: '이미 쿠폰 혜택을 받은 번호입니다. (1인 1회)' }, 200, cors);
         }
+        // 이미 받아둔 쿠폰이 있으면 그대로 반환(중복 발급/중복 카운트 방지)
+        const myClaim = await fsGetDoc(token, 'couponClaims', claimKey);
+        if (myClaim || (user.coupon_code && user.coupon_claimed && !user.coupon_used)) {
+          const curCode = (myClaim && myClaim.code) || user.coupon_code;
+          const cur = couponLookup(curCode);
+          await fsPatch(token, 'users', uid, { coupon_code: curCode, coupon_channel: (cur && cur.channel) || user.coupon_channel, coupon_claimed: true });
+          const claimCount0 = (await fsListAll(token, 'couponClaims')).length;
+          return json({ success: true, already: true, channel: (cur && cur.channel) || user.coupon_channel,
+            type: (cur && cur.type) || '', remaining: Math.max(0, COUPON_TOTAL_LIMIT - claimCount0),
+            message: '이미 받은 쿠폰이 있습니다. 마이페이지에서 확인하세요.' }, 200, cors);
+        }
+        // 선착순 발급 한도(100명) 체크
+        const claimCount = (await fsListAll(token, 'couponClaims')).length;
+        if (claimCount >= COUPON_TOTAL_LIMIT) return json({ success: false, soldOut: true, message: `쿠폰이 모두 소진되었습니다. (선착순 ${COUPON_TOTAL_LIMIT}명 마감)` }, 200, cors);
 
         const nowIso = new Date().toISOString();
+        // 발급 카운트 기록 + 유저 문서 보관
+        await fsSetDoc(token, 'couponClaims', claimKey, { code: info.code, channel: info.channel, userId: sess.userId || uid, userDocId: uid, at: nowIso });
         await fsPatch(token, 'users', uid, {
           coupon_code: info.code, coupon_channel: info.channel,
           coupon_registered_at: nowIso, coupon_claimed: true, coupon_used: false
         });
         return json({ success: true, channel: info.channel, type: info.type, free: info.type === 'free',
           discount: info.type === 'free' ? null : info.discount, registeredAt: nowIso,
+          remaining: Math.max(0, COUPON_TOTAL_LIMIT - (claimCount + 1)),
           message: `${info.channel} 쿠폰을 받았습니다.` }, 200, cors);
       }
 
@@ -574,11 +602,8 @@ export default {
         const uid = sess.uid;
         const user = await fsGetDoc(token, 'users', uid);
         if (user && user.coupon_used) return json({ success: false, alreadyUsed: true, message: '이미 쿠폰을 사용한 계정입니다. (계정당 1회)' }, 200, cors);
-        const regAt = (user && user.coupon_code && couponLookup(user.coupon_code) && couponLookup(user.coupon_code).code === info.code) ? user.coupon_registered_at : null;
-        if (regAt) {
-          if (Date.now() > (Date.parse(regAt) + COUPON_VALID_MS)) return json({ success: false, message: '쿠폰 사용기한(발급 후 3개월)이 지났습니다.' }, 200, cors);
-        } else if (Date.now() > COUPON_ISSUE_DEADLINE) {
-          return json({ success: false, message: '쿠폰 발행 기간이 종료되었습니다.' }, 200, cors);
+        if (Date.now() > COUPON_END) {
+          return json({ success: false, expired: true, message: '쿠폰 사용 기간이 종료되었습니다. (마감 2026-10-30)' }, 200, cors);
         }
 
         // 3) 신청건/금액
