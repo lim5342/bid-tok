@@ -1111,6 +1111,16 @@
                     <div id="staffMsg" style="margin-top:0.5rem;font-size:0.85rem;min-height:1.1rem;"></div>
                 </div>
 
+                <!-- 직원(관리자) 계정 목록 -->
+                <div class="panel" style="margin-bottom:1.2rem;padding:0;overflow:hidden;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:0.9rem 1.2rem;background:#f0f9ff;">
+                        <span style="font-weight:700;color:#075985;"><i class="fas fa-users-gear"></i> 관리자 계정 목록</span>
+                        <button onclick="loadStaffList()" style="padding:0.4rem 0.9rem;background:#fff;border:1.5px solid #bae6fd;border-radius:8px;color:#075985;cursor:pointer;font-size:0.82rem;">새로고침</button>
+                    </div>
+                    <div style="padding:0.6rem 1.2rem;font-size:0.8rem;color:#94a3b8;">🔑 비밀번호는 보안상 표시되지 않습니다. 잊었으면 "비번 재설정"으로 새로 정하세요.</div>
+                    <div class="overflow-wrap" id="staffListWrap"><div style="padding:1.2rem;text-align:center;color:#cbd5e1;">"새로고침"을 눌러 확인</div></div>
+                </div>
+
                 <!-- 삭제된 회원/전문가 복원 -->
                 <div class="panel" style="margin-bottom:1.2rem;padding:0;overflow:hidden;">
                     <div style="display:flex;justify-content:space-between;align-items:center;padding:0.9rem 1.2rem;background:#fff7ed;">
@@ -2236,6 +2246,38 @@ function loadSecurity() {
         document.getElementById('sec-security').innerHTML = '<div style="padding:2rem;text-align:center;color:#ef4444;font-weight:600;">마스터 관리자만 접근할 수 있습니다.</div>';
         return;
     }
+    loadStaffList();
+}
+async function loadStaffList() {
+    const wrap = document.getElementById('staffListWrap');
+    if (!wrap) return;
+    wrap.innerHTML = '<div style="padding:1rem;text-align:center;color:#ccc;"><i class="fas fa-spinner fa-spin"></i></div>';
+    try {
+        const r = await _authPost('/list-admins', { session: _session() });
+        const list = (r && r.data) || [];
+        if (!list.length) { wrap.innerHTML = '<div style="padding:1.2rem;text-align:center;color:#94a3b8;">등록된 관리자 계정이 없습니다.</div>'; return; }
+        wrap.innerHTML = '<table class="data-table" style="width:100%;"><thead><tr style="background:#f8fafc;"><th style="text-align:left;padding:0.5rem 0.8rem;">아이디</th><th style="text-align:left;padding:0.5rem 0.8rem;">이름</th><th>등급</th><th>비밀번호</th></tr></thead><tbody>' +
+            list.map(a => {
+                const aid = a.id || a.userId || '';
+                const isMaster = aid === 'bootv1' || a.role === 'master' || a.level === 'master';
+                return `<tr>
+                    <td style="padding:0.5rem 0.8rem;font-weight:700;">${aid}</td>
+                    <td style="padding:0.5rem 0.8rem;">${a.name || '-'}</td>
+                    <td style="text-align:center;">${isMaster ? '<span style="color:#7c3aed;font-weight:700;">마스터</span>' : '직원'}</td>
+                    <td style="text-align:center;">${isMaster ? '<span style="color:#cbd5e1;">-</span>' : `<button onclick="resetStaffPassword('${aid}')" style="padding:0.3rem 0.7rem;background:#f59e0b;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.78rem;">비번 재설정</button>`}</td>
+                </tr>`;
+            }).join('') + '</tbody></table>';
+    } catch (e) { wrap.innerHTML = '<div style="padding:1rem;color:#ef4444;">오류: ' + e.message + '</div>'; }
+}
+async function resetStaffPassword(adminId) {
+    const np = prompt('"' + adminId + '" 직원의 새 비밀번호를 입력하세요.\n(이 비밀번호를 직원에게 전달하면 됩니다)');
+    if (np === null) return;
+    if (!np || np.length < 4) { showToast('비밀번호는 4자 이상 입력하세요.', 'error'); return; }
+    try {
+        const r = await _authPost('/reset-staff-password', { session: _session(), adminId, newPassword: np });
+        if (r && r.success) { alert('✅ ' + adminId + ' 비밀번호가 재설정되었습니다.\n\n새 비밀번호: ' + np + '\n\n(이 값을 직원에게 전달하세요. 이 창을 닫으면 다시 볼 수 없습니다.)'); }
+        else showToast('재설정 실패: ' + ((r && r.message) || ''), 'error');
+    } catch (e) { showToast('오류: ' + e.message, 'error'); }
 }
 async function downloadBackup() {
     const msg = document.getElementById('backupMsg');
