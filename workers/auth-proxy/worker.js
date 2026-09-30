@@ -838,6 +838,22 @@ export default {
         return json({ success: true, adminId, name: name || adminId }, 200, cors);
       }
 
+      // ── 직원(부관리자) 비밀번호 재설정 (마스터 전용) ──
+      //    body: { session, adminId, newPassword }
+      if (path === '/reset-staff-password') {
+        const sess = await verifySession(env, body.session);
+        if (!sess || sess.role !== 'admin') return json({ success: false, message: '관리자 권한이 필요합니다.' }, 403, cors);
+        if (sess.level !== 'master') return json({ success: false, message: '비밀번호 재설정은 마스터만 가능합니다.' }, 403, cors);
+        const { adminId, newPassword } = body;
+        if (!adminId || !newPassword) return json({ success: false, message: '아이디와 새 비밀번호가 필요합니다.' }, 200, cors);
+        if (adminId === 'bootv1') return json({ success: false, message: '마스터 계정은 여기서 재설정할 수 없습니다. (내 정보에서 변경)' }, 200, cors);
+        const target = await fsGetDoc(token, 'admins', adminId);
+        if (!target) return json({ success: false, message: '해당 관리자 계정을 찾을 수 없습니다.' }, 200, cors);
+        await fsPatch(token, 'admins', adminId, { pw: await hashPassword(newPassword), pwResetAt: new Date().toISOString(), pwResetBy: sess.adminId });
+        await writeAudit(token, { action: 'reset_staff_password', targetId: adminId, adminId: sess.adminId, level: sess.level });
+        return json({ success: true, adminId }, 200, cors);
+      }
+
       // ── 관리자 권한 해제 (마스터 전용) ────────────────────
       if (path === '/revoke-admin') {
         const sess = await verifySession(env, body.session);
