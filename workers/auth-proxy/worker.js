@@ -323,6 +323,19 @@ async function verifySession(env, tokenStr) {
   if (!payload || (payload.exp && payload.exp < Math.floor(Date.now() / 1000))) return null;
   return payload;
 }
+// ── 관리자 등급 판정 (마스터/직원) ──
+//    bootv1 또는 admins 문서 role/level==='master' 이면 마스터. 그 외 직원(staff).
+function adminLevel(admin) {
+  if (!admin) return 'staff';
+  if (admin.id === 'bootv1' || admin.userId === 'bootv1' || admin.role === 'master' || admin.level === 'master') return 'master';
+  return 'staff';
+}
+// ── 감사 로그 기록 (누가·언제·무엇) — 실패해도 본 작업엔 영향 없음 ──
+async function writeAudit(token, entry) {
+  try { await fsCreate(token, 'auditLogs', { ...entry, at: new Date().toISOString() }); }
+  catch (e) { console.error('audit log 실패:', e.message || e); }
+}
+
 // 신청 법원명 정규화 (지방법원 ↔ 지법)
 function normCourt(v) { return String(v || '').replace(/지방법원/g, '지법').replace(/\s+/g, ' ').trim(); }
 function normType(v) {
@@ -431,8 +444,10 @@ export default {
           } catch (e) {}
         }
         const { pw, ...safe } = admin;
-        const session = await makeSession(env, { uid: admin.id, adminId: admin.name || admin.id, role: 'admin' });
-        return json({ success: true, admin: safe, session }, 200, cors);
+        const level = adminLevel(admin);
+        const session = await makeSession(env, { uid: admin.id, adminId: admin.name || admin.id, role: 'admin', level });
+        await writeAudit(token, { action: 'admin_login', adminId: admin.name || admin.id, level });
+        return json({ success: true, admin: { ...safe, level }, session }, 200, cors);
       }
 
       // ── 회원가입 ───────────────────────────────────────
@@ -765,7 +780,7 @@ export default {
       if (path === '/list-users') {
         const sess = await verifySession(env, body.session);
         if (!sess || sess.role !== 'admin') return json({ success: false, message: '관리자 권한이 필요합니다.' }, 403, cors);
-        const users = (await fsListAll(token, 'users')).map(sanitizeUser);
+        const users = (await fsListAll(token, 'users')).filter(u => !u.deleted).map(sanitizeUser);
         return json({ success: true, data: users }, 200, cors);
       }
 
@@ -773,19 +788,27 @@ export default {
       if (path === '/delete-doc') {
         const sess = await verifySession(env, body.session);
         if (!sess || sess.role !== 'admin') return json({ success: false, message: '관리자 권한이 필요합니다.' }, 403, cors);
+        if (sess.level !== 'master') return json({ success: false, message: '삭제는 마스터 관리자만 가능합니다. (직원 계정은 삭제할 수 없습니다)' }, 403, cors);
         const { collection, id } = body;
         if (!collection || !id) return json({ success: false, message: '필수 정보가 누락되었습니다.' }, 200, cors);
         if (!['users', 'applications', 'experts', 'adminNotifications'].includes(collection)) {
           return json({ success: false, message: '허용되지 않은 컬렉션입니다.' }, 403, cors);
         }
+        if (collection === 'users' || collection === 'experts') {
+          await fsPatch(token, collection, id, { deleted: true, deletedAt: new Date().toISOString(), deletedBy: sess.adminId });
+          await writeAudit(token, { action: 'soft_delete', collection, targetId: id, adminId: sess.adminId, level: sess.level });
+          return json({ success: true, soft: true }, 200, cors);
+        }
         await fsDelete(token, collection, id);
+        await writeAudit(token, { action: 'delete', collection, targetId: id, adminId: sess.adminId, level: sess.level });
         return json({ success: true }, 200, cors);
       }
 
-      // ── 직원 관리자 지정 (관리자 전용) ────────────────────
+      // ── 직원 관리자 지정 (마스터 전용) ────────────────────
       if (path === '/grant-admin') {
         const sess = await verifySession(env, body.session);
         if (!sess || sess.role !== 'admin') return json({ success: false, message: '관리자 권한이 필요합니다.' }, 403, cors);
+        if (sess.level !== 'master') return json({ success: false, message: '관리자 지정은 마스터만 가능합니다.' }, 403, cors);
         const { targetUserId } = body;
         const found = await fsQueryByField(token, 'users', 'userId', targetUserId);
         const u = found[0];
@@ -793,17 +816,75 @@ export default {
         await fsSetDoc(token, 'admins', u.userId, {
           name: u.name || u.userId, userId: u.userId, pw: u.password || '', role: 'staff', grantedAt: new Date().toISOString()
         });
+        await writeAudit(token, { action: 'grant_admin', targetId: u.userId, adminId: sess.adminId, level: sess.level });
         return json({ success: true, name: u.name }, 200, cors);
       }
 
-      // ── 관리자 권한 해제 (관리자 전용) ────────────────────
+      // ── 직원(부관리자) 계정 직접 생성 (마스터 전용) ──
+      //    body: { session, adminId, password, name }  — 유저 없이 admins에 staff 계정 생성
+      if (path === '/create-staff-admin') {
+        const sess = await verifySession(env, body.session);
+        if (!sess || sess.role !== 'admin') return json({ success: false, message: '관리자 권한이 필요합니다.' }, 403, cors);
+        if (sess.level !== 'master') return json({ success: false, message: '직원 계정 생성은 마스터만 가능합니다.' }, 403, cors);
+        const { adminId, password, name } = body;
+        if (!adminId || !password) return json({ success: false, message: '아이디와 비밀번호가 필요합니다.' }, 200, cors);
+        const exist = await fsGetDoc(token, 'admins', adminId);
+        if (exist) return json({ success: false, message: '이미 존재하는 관리자 아이디입니다.' }, 200, cors);
+        await fsSetDoc(token, 'admins', adminId, {
+          name: name || adminId, userId: adminId, pw: await hashPassword(password),
+          role: 'staff', level: 'staff', createdAt: new Date().toISOString(), createdBy: sess.adminId
+        });
+        await writeAudit(token, { action: 'create_staff_admin', targetId: adminId, adminId: sess.adminId, level: sess.level });
+        return json({ success: true, adminId, name: name || adminId }, 200, cors);
+      }
+
+      // ── 관리자 권한 해제 (마스터 전용) ────────────────────
       if (path === '/revoke-admin') {
         const sess = await verifySession(env, body.session);
         if (!sess || sess.role !== 'admin') return json({ success: false, message: '관리자 권한이 필요합니다.' }, 403, cors);
+        if (sess.level !== 'master') return json({ success: false, message: '관리자 해제는 마스터만 가능합니다.' }, 403, cors);
         const { targetUserId } = body;
         if (targetUserId === 'bootv1' || targetUserId === 'dajangtv') return json({ success: false, message: '기본 마스터 계정은 해제할 수 없습니다.' }, 200, cors);
         await fsDelete(token, 'admins', targetUserId);
+        await writeAudit(token, { action: 'revoke_admin', targetId: targetUserId, adminId: sess.adminId, level: sess.level });
         return json({ success: true }, 200, cors);
+      }
+
+      // ── 감사 로그 조회 (마스터 전용) ──
+      if (path === '/list-audit') {
+        const sess = await verifySession(env, body.session);
+        if (!sess || sess.role !== 'admin') return json({ success: false, message: '관리자 권한이 필요합니다.' }, 403, cors);
+        if (sess.level !== 'master') return json({ success: false, message: '감사 로그는 마스터만 볼 수 있습니다.' }, 403, cors);
+        const logs = (await fsListAll(token, 'auditLogs')).sort((a, b) => String(b.at || '').localeCompare(String(a.at || ''))).slice(0, 300);
+        return json({ success: true, data: logs }, 200, cors);
+      }
+
+      // ── 삭제된(소프트) 회원/전문가 조회 (마스터 전용) ──
+      if (path === '/list-deleted') {
+        const sess = await verifySession(env, body.session);
+        if (!sess || sess.role !== 'admin' || sess.level !== 'master') return json({ success: false, message: '마스터 권한이 필요합니다.' }, 403, cors);
+        const users = (await fsListAll(token, 'users')).filter(u => u.deleted).map(sanitizeUser);
+        return json({ success: true, data: users }, 200, cors);
+      }
+
+      // ── 소프트 삭제 복원 (마스터 전용) ──
+      if (path === '/restore-doc') {
+        const sess = await verifySession(env, body.session);
+        if (!sess || sess.role !== 'admin' || sess.level !== 'master') return json({ success: false, message: '마스터 권한이 필요합니다.' }, 403, cors);
+        const { collection, id } = body;
+        if (!['users', 'experts'].includes(collection)) return json({ success: false, message: '허용되지 않은 컬렉션입니다.' }, 403, cors);
+        await fsPatch(token, collection, id, { deleted: false, restoredAt: new Date().toISOString(), restoredBy: sess.adminId });
+        await writeAudit(token, { action: 'restore', collection, targetId: id, adminId: sess.adminId, level: sess.level });
+        return json({ success: true }, 200, cors);
+      }
+
+      // ── 전체 데이터 백업 (마스터 전용) — 다운로드용 ──
+      if (path === '/backup-data') {
+        const sess = await verifySession(env, body.session);
+        if (!sess || sess.role !== 'admin' || sess.level !== 'master') return json({ success: false, message: '마스터 권한이 필요합니다.' }, 403, cors);
+        const [users, applications] = await Promise.all([fsListAll(token, 'users'), fsListAll(token, 'applications')]);
+        await writeAudit(token, { action: 'backup_download', adminId: sess.adminId, level: sess.level, detail: `users:${users.length} apps:${applications.length}` });
+        return json({ success: true, at: new Date().toISOString(), users: users.map(sanitizeUser), applications }, 200, cors);
       }
 
       // ── 새 의뢰 → 자격 전문가에게 문자 알림 (결제완료 후 호출) ──
@@ -818,6 +899,7 @@ export default {
         const appCourt = normCourt(app.court);
         const users = await fsListAll(token, 'users');
         const eligible = users.filter(u => {
+          if (u.deleted) return false;
           if (u.userType !== 'expert' || u.status !== 'active') return false;
           const ut = normType(u.expertType || u.expertTypeLabel);
           if (wantType && ut && ut !== wantType) return false; // 유형 미기재 전문가는 법원 매칭만으로 포함
@@ -929,7 +1011,13 @@ export default {
         if (!sess) return json({ success: false, message: '로그인이 필요합니다.' }, 401, cors);
         const { collection, id } = body;
         if (collection === 'applications') {
-          if (sess.role === 'admin') { await fsDelete(token, 'applications', id); return json({ success: true }, 200, cors); }
+          if (sess.role === 'admin') {
+            // 관리자의 신청 삭제 = 마스터만
+            if (sess.level !== 'master') return json({ success: false, message: '삭제는 마스터 관리자만 가능합니다. (직원 계정 불가)' }, 403, cors);
+            await fsDelete(token, 'applications', id);
+            await writeAudit(token, { action: 'delete_application', collection, targetId: id, adminId: sess.adminId, level: sess.level });
+            return json({ success: true }, 200, cors);
+          }
           const app = await fsGetDoc(token, 'applications', id);
           if (!app) return json({ success: true }, 200, cors);
           const myId = sess.userId || sess.uid;
@@ -938,10 +1026,18 @@ export default {
           if (owner && deletable) { await fsDelete(token, 'applications', id); return json({ success: true }, 200, cors); }
           return json({ success: false, message: '삭제 권한이 없습니다.' }, 403, cors);
         }
-        // users/experts/adminNotifications 삭제는 관리자만
+        // users/experts/adminNotifications — 관리자 중 "마스터만" 삭제 가능
         if (sess.role !== 'admin') return json({ success: false, message: '삭제 권한이 없습니다.' }, 403, cors);
+        if (sess.level !== 'master') return json({ success: false, message: '삭제는 마스터 관리자만 가능합니다. (직원 계정은 삭제할 수 없습니다)' }, 403, cors);
         if (!['users', 'experts', 'adminNotifications'].includes(collection)) return json({ success: false, message: '허용되지 않은 컬렉션입니다.' }, 403, cors);
+        // 회원/전문가는 소프트 삭제(되살림 가능). adminNotifications만 실제 삭제.
+        if (collection === 'users' || collection === 'experts') {
+          await fsPatch(token, collection, id, { deleted: true, deletedAt: new Date().toISOString(), deletedBy: sess.adminId });
+          await writeAudit(token, { action: 'soft_delete', collection, targetId: id, adminId: sess.adminId, level: sess.level });
+          return json({ success: true, soft: true }, 200, cors);
+        }
         await fsDelete(token, collection, id);
+        await writeAudit(token, { action: 'delete', collection, targetId: id, adminId: sess.adminId, level: sess.level });
         return json({ success: true }, 200, cors);
       }
 
@@ -1057,6 +1153,21 @@ export default {
       });
       const statusResult = await statusRes.json();
       console.log('[scheduled] auto-status 결과:', JSON.stringify(statusResult));
+
+      // 3) 매일 데이터 카운트 스냅샷 저장 (유실 감지 트립와이어 — backups/{YYYY-MM-DD})
+      try {
+        const t = await getAccessToken(env);
+        const [users, apps] = await Promise.all([fsListAll(t, 'users'), fsListAll(t, 'applications')]);
+        const experts = users.filter(u => u.userType === 'expert' && !u.deleted).length;
+        const clients = users.filter(u => u.userType !== 'expert' && !u.deleted).length;
+        const deletedU = users.filter(u => u.deleted).length;
+        const snap = {
+          date: new Date().toISOString().slice(0, 10), at: new Date().toISOString(),
+          usersTotal: users.length, experts, clients, deletedUsers: deletedU, applications: apps.length
+        };
+        await fsSetDoc(t, 'backups', snap.date, snap);
+        console.log('[scheduled] 백업 스냅샷:', JSON.stringify(snap));
+      } catch (e) { console.error('[scheduled] 백업 스냅샷 실패:', e.message || e); }
     } catch (e) {
       console.error('[scheduled] Cron 실행 오류:', e.message || e);
     }
