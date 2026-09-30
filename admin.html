@@ -608,6 +608,9 @@
             <button class="nav-item" onclick="goto('contents',this)">
                 <i class="fas fa-edit"></i> 콘텐츠 관리
             </button>
+            <button class="nav-item" id="navSecurity" onclick="goto('security',this)" style="display:none;">
+                <i class="fas fa-shield-halved"></i> 보안 / 백업
+            </button>
         </nav>
         <div class="sidebar-footer">
             <a href="index.html" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:0.6rem;margin-bottom:0.5rem;background:rgba(255,255,255,0.08);border-radius:8px;color:#a5b4fc;font-size:0.85rem;font-weight:600;text-decoration:none;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">
@@ -1077,6 +1080,54 @@
 
                 <!-- 채널 클릭 시 받은 사람 상세 -->
                 <div id="channelDetailWrap" style="margin-top:1rem;"></div>
+            </div>
+
+            <!-- ════ 보안 / 백업 / 감사 (마스터 전용) ════ -->
+            <div class="section" id="sec-security">
+                <div class="section-title"><i class="fas fa-shield-halved"></i> 보안 / 백업 / 감사 로그 <span style="font-size:0.8rem;color:#ef4444;font-weight:600;margin-left:6px;">마스터 전용</span></div>
+
+                <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:0.8rem 1.1rem;margin-bottom:1.2rem;font-size:0.85rem;color:#166534;line-height:1.6;">
+                    🔒 삭제·백업·직원계정 관리는 <b>마스터(이사님)만</b> 가능합니다. 직원(부관리자)은 조회·일상업무만 되고 <b>삭제가 원천 차단</b>됩니다. 삭제해도 실제로는 "삭제표시"만 되어 <b>언제든 복원</b>됩니다.
+                </div>
+
+                <!-- 전체 백업 -->
+                <div class="panel" style="max-width:640px;margin-bottom:1.2rem;padding:1.1rem 1.3rem;">
+                    <div style="font-weight:700;color:#1550E8;margin-bottom:0.5rem;"><i class="fas fa-database"></i> 전체 데이터 백업</div>
+                    <div style="color:#64748b;font-size:0.85rem;margin-bottom:0.7rem;">회원·전문가·신청 전체를 JSON 파일로 내려받습니다. 정기적으로 받아 안전한 곳에 보관하세요. (매일 자동으로 카운트 스냅샷도 서버에 저장됩니다)</div>
+                    <button onclick="downloadBackup()" style="padding:0.7rem 1.4rem;background:#1550E8;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;"><i class="fas fa-download"></i> 지금 전체 백업 다운로드</button>
+                    <span id="backupMsg" style="margin-left:10px;font-size:0.85rem;color:#64748b;"></span>
+                </div>
+
+                <!-- 직원 관리자 계정 추가 -->
+                <div class="panel" style="max-width:640px;margin-bottom:1.2rem;padding:1.1rem 1.3rem;">
+                    <div style="font-weight:700;color:#1550E8;margin-bottom:0.5rem;"><i class="fas fa-user-plus"></i> 직원(부관리자) 계정 추가</div>
+                    <div style="color:#64748b;font-size:0.85rem;margin-bottom:0.7rem;">직원마다 <b>개별 아이디</b>로 만드세요(공용 금지). 직원은 삭제·백업 권한이 없고, 모든 행동이 감사 로그에 남습니다.</div>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                        <input type="text" id="newStaffId" placeholder="아이디(영문/숫자)" style="flex:1;min-width:120px;padding:0.6rem 0.8rem;border:1.5px solid #e2e8f0;border-radius:8px;">
+                        <input type="text" id="newStaffName" placeholder="이름" style="flex:1;min-width:100px;padding:0.6rem 0.8rem;border:1.5px solid #e2e8f0;border-radius:8px;">
+                        <input type="password" id="newStaffPw" placeholder="비밀번호" style="flex:1;min-width:120px;padding:0.6rem 0.8rem;border:1.5px solid #e2e8f0;border-radius:8px;">
+                        <button onclick="createStaffAdmin()" style="padding:0.6rem 1.2rem;background:#16a34a;color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;white-space:nowrap;">직원 추가</button>
+                    </div>
+                    <div id="staffMsg" style="margin-top:0.5rem;font-size:0.85rem;min-height:1.1rem;"></div>
+                </div>
+
+                <!-- 삭제된 회원/전문가 복원 -->
+                <div class="panel" style="margin-bottom:1.2rem;padding:0;overflow:hidden;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:0.9rem 1.2rem;background:#fff7ed;">
+                        <span style="font-weight:700;color:#9a3412;"><i class="fas fa-trash-arrow-up"></i> 삭제된 회원/전문가 (복원 가능)</span>
+                        <button onclick="loadDeleted()" style="padding:0.4rem 0.9rem;background:#fff;border:1.5px solid #fdba74;border-radius:8px;color:#9a3412;cursor:pointer;font-size:0.82rem;">새로고침</button>
+                    </div>
+                    <div class="overflow-wrap" id="deletedWrap"><div style="padding:1.5rem;text-align:center;color:#cbd5e1;">"새로고침"을 눌러 확인</div></div>
+                </div>
+
+                <!-- 감사 로그 -->
+                <div class="panel" style="padding:0;overflow:hidden;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:0.9rem 1.2rem;background:#eef2ff;">
+                        <span style="font-weight:700;color:#3730a3;"><i class="fas fa-clipboard-list"></i> 감사 로그 (누가·언제·무엇)</span>
+                        <button onclick="loadAudit()" style="padding:0.4rem 0.9rem;background:#fff;border:1.5px solid #c7d2fe;border-radius:8px;color:#3730a3;cursor:pointer;font-size:0.82rem;">새로고침</button>
+                    </div>
+                    <div class="overflow-wrap" id="auditWrap"><div style="padding:1.5rem;text-align:center;color:#cbd5e1;">"새로고침"을 눌러 확인</div></div>
+                </div>
             </div>
 
             <!-- ════ 내 정보 / 비밀번호 변경 ════ -->
@@ -1592,6 +1643,7 @@ function saveAdminSession(admin) {
         id:   admin.id,
         name: admin.name,
         role: admin.role,
+        level: admin.level || (admin.id === 'bootv1' ? 'master' : 'staff'),
         ts:   Date.now()
     }));
 }
@@ -1625,6 +1677,7 @@ function clearAdminSession() {
         document.getElementById('sidebarToggle').style.display = 'flex';
         document.getElementById('sidebarName').textContent = sess.name;
         document.getElementById('sidebarId').textContent   = sess.id;
+        applyRoleUI();
         loadDashboard();
     } else {
         // 세션 없으면 대시보드 완전 숨김 (기본값이 display:none 이므로 OK)
@@ -1753,8 +1806,23 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         document.getElementById('sidebarName').textContent   = adm.name;
         document.getElementById('sidebarId').textContent     = adm.id;
         document.getElementById('loginForm').reset();
+        applyRoleUI();
         loadDashboard();
     }
+    // ── 세션 만료 시: "0으로 착각" 방지 — 로그인 화면으로 되돌리고 안내 ──
+    let _adminAuthFailShown = false;
+    window._onAdminAuthFail = function (msg) {
+        if (_adminAuthFailShown) return;
+        _adminAuthFailShown = true;
+        try { clearAdminSession(); localStorage.removeItem('bidtok_session'); } catch (e) {}
+        try {
+            document.getElementById('adminWrap').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
+        } catch (e) {}
+        setTimeout(function () {
+            alert('관리자 세션이 만료되었습니다.\n\n※ 데이터가 삭제된 것이 아닙니다. 로그인이 풀린 것뿐입니다.\n다시 로그인하시면 모든 회원·전문가·신청 자료가 그대로 보입니다.');
+        }, 100);
+    };
     function loginFail() {
         showToast('아이디 또는 비밀번호가 올바르지 않습니다.', 'error');
         document.getElementById('adminPw').value = '';
@@ -1782,7 +1850,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
             if (r && r.success) {
                 if (r.session) { try { localStorage.setItem('bidtok_session', r.session); } catch (e) {} }
                 const adm = r.admin || {};
-                enterAdmin({ id, name: adm.name || id, role: adm.role || 'admin' });
+                enterAdmin({ id, name: adm.name || id, role: adm.role || 'admin', level: adm.level || (id === 'bootv1' ? 'master' : 'staff') });
             } else {
                 loginFail();
             }
@@ -1955,7 +2023,7 @@ const SECTION_TITLES = {
     dashboard: '대시보드', applications: '신청 관리',
     experts: '전문가 승인', partners: '대리인 현황 (전국)', users: '회원 관리',
     sales: '매출 관리', settlements: '정산 관리', channels: '채널별 유입 (쿠폰 추적)',
-    myinfo: '내 정보 / 비밀번호 변경', contents: '콘텐츠 관리'
+    myinfo: '내 정보 / 비밀번호 변경', contents: '콘텐츠 관리', security: '보안 / 백업 / 감사 로그'
 };
 
 function goto(sec, el) {
@@ -1987,6 +2055,7 @@ function goto(sec, el) {
     if (sec === 'users')        loadUsers();
     if (sec === 'sales')        loadSales();
     if (sec === 'channels')     loadChannels();
+    if (sec === 'security')     loadSecurity();
     if (sec === 'settlements')  loadSettlements();
     if (sec === 'myinfo')        loadMyInfo();
     if (sec === 'contents')      loadContents();
@@ -2150,6 +2219,84 @@ function showChannelDetail(channel) {
         </div>`;
 }
 function closeChannelDetail() { _channelSelected = null; document.getElementById('channelDetailWrap').innerHTML = ''; }
+
+// ═══════════════════════════════════════════════════════
+// 보안 / 백업 / 감사 (마스터 전용)
+// ═══════════════════════════════════════════════════════
+function _isMaster() {
+    const s = currentAdmin || getAdminSession();
+    return !!(s && s.level === 'master');
+}
+function applyRoleUI() {
+    const nav = document.getElementById('navSecurity');
+    if (nav) nav.style.display = _isMaster() ? 'flex' : 'none';
+}
+function loadSecurity() {
+    if (!_isMaster()) {
+        document.getElementById('sec-security').innerHTML = '<div style="padding:2rem;text-align:center;color:#ef4444;font-weight:600;">마스터 관리자만 접근할 수 있습니다.</div>';
+        return;
+    }
+}
+async function downloadBackup() {
+    const msg = document.getElementById('backupMsg');
+    msg.textContent = '백업 생성 중...';
+    try {
+        const r = await _authPost('/backup-data', { session: _session() });
+        if (!r || !r.success) { msg.textContent = '❌ ' + ((r && r.message) || '실패'); return; }
+        const blob = new Blob([JSON.stringify(r, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = 'bidtok_backup_' + new Date().toISOString().slice(0, 10) + '.json'; a.click();
+        URL.revokeObjectURL(url);
+        msg.textContent = '✅ 다운로드 완료 (회원 ' + (r.users || []).length + '명, 신청 ' + (r.applications || []).length + '건)';
+    } catch (e) { msg.textContent = '오류: ' + e.message; }
+}
+async function createStaffAdmin() {
+    const id = document.getElementById('newStaffId').value.trim();
+    const name = document.getElementById('newStaffName').value.trim();
+    const pw = document.getElementById('newStaffPw').value;
+    const msg = document.getElementById('staffMsg');
+    if (!id || !pw) { msg.style.color = '#ef4444'; msg.textContent = '아이디와 비밀번호를 입력하세요.'; return; }
+    msg.style.color = '#64748b'; msg.textContent = '생성 중...';
+    try {
+        const r = await _authPost('/create-staff-admin', { session: _session(), adminId: id, password: pw, name });
+        if (r && r.success) {
+            msg.style.color = '#16a34a'; msg.textContent = '✅ 직원 계정 생성됨: ' + id + ' (직원에게 아이디/비번 전달)';
+            document.getElementById('newStaffId').value = ''; document.getElementById('newStaffName').value = ''; document.getElementById('newStaffPw').value = '';
+        } else { msg.style.color = '#ef4444'; msg.textContent = '❌ ' + ((r && r.message) || '실패'); }
+    } catch (e) { msg.style.color = '#ef4444'; msg.textContent = '오류: ' + e.message; }
+}
+async function loadDeleted() {
+    const wrap = document.getElementById('deletedWrap');
+    wrap.innerHTML = '<div style="padding:1rem;text-align:center;color:#ccc;"><i class="fas fa-spinner fa-spin"></i></div>';
+    try {
+        const r = await _authPost('/list-deleted', { session: _session() });
+        const list = (r && r.data) || [];
+        if (!list.length) { wrap.innerHTML = '<div style="padding:1.5rem;text-align:center;color:#94a3b8;">삭제된 회원/전문가가 없습니다.</div>'; return; }
+        wrap.innerHTML = '<table class="data-table" style="width:100%;"><thead><tr style="background:#f8fafc;"><th style="text-align:left;padding:0.5rem 0.8rem;">이름</th><th>유형</th><th>삭제일</th><th>삭제자</th><th>복원</th></tr></thead><tbody>' +
+            list.map(u => `<tr><td style="padding:0.5rem 0.8rem;">${u.name || u.userId || '-'}</td><td style="text-align:center;">${u.userType === 'expert' ? '전문가' : '회원'}</td><td style="text-align:center;font-size:0.82rem;color:#888;">${(u.deletedAt || '').slice(0, 10)}</td><td style="text-align:center;font-size:0.82rem;">${u.deletedBy || '-'}</td><td style="text-align:center;"><button onclick="restoreUser('${u.id}')" style="padding:0.3rem 0.8rem;background:#16a34a;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.8rem;">복원</button></td></tr>`).join('') + '</tbody></table>';
+    } catch (e) { wrap.innerHTML = '<div style="padding:1rem;color:#ef4444;">오류: ' + e.message + '</div>'; }
+}
+async function restoreUser(id) {
+    if (!confirm('이 회원/전문가를 복원할까요?')) return;
+    try {
+        const r = await _authPost('/restore-doc', { session: _session(), collection: 'users', id });
+        if (r && r.success) { showToast('복원 완료', 'success'); loadDeleted(); }
+        else showToast('복원 실패: ' + ((r && r.message) || ''), 'error');
+    } catch (e) { showToast('오류: ' + e.message, 'error'); }
+}
+async function loadAudit() {
+    const wrap = document.getElementById('auditWrap');
+    wrap.innerHTML = '<div style="padding:1rem;text-align:center;color:#ccc;"><i class="fas fa-spinner fa-spin"></i></div>';
+    try {
+        const r = await _authPost('/list-audit', { session: _session() });
+        const logs = (r && r.data) || [];
+        if (!logs.length) { wrap.innerHTML = '<div style="padding:1.5rem;text-align:center;color:#94a3b8;">기록이 없습니다.</div>'; return; }
+        const label = { admin_login: '로그인', soft_delete: '삭제(복원가능)', delete: '삭제', delete_application: '신청삭제', restore: '복원', grant_admin: '관리자지정', revoke_admin: '관리자해제', create_staff_admin: '직원계정생성', backup_download: '백업다운로드' };
+        wrap.innerHTML = '<table class="data-table" style="width:100%;"><thead><tr style="background:#f8fafc;"><th style="text-align:left;padding:0.5rem 0.8rem;">시각</th><th>관리자</th><th>행동</th><th>대상</th></tr></thead><tbody>' +
+            logs.map(l => `<tr><td style="padding:0.5rem 0.8rem;font-size:0.8rem;color:#666;">${(l.at || '').replace('T', ' ').slice(0, 16)}</td><td style="text-align:center;">${l.adminId || '-'}${l.level === 'master' ? ' <span style="color:#7c3aed;font-size:0.7rem;">(마스터)</span>' : ''}</td><td style="text-align:center;font-weight:600;">${label[l.action] || l.action}</td><td style="text-align:center;font-size:0.82rem;color:#888;">${l.collection ? l.collection + '/' : ''}${l.targetId || l.detail || ''}</td></tr>`).join('') + '</tbody></table>';
+    } catch (e) { wrap.innerHTML = '<div style="padding:1rem;color:#ef4444;">오류: ' + e.message + '</div>'; }
+}
 
 // ═══════════════════════════════════════════════════════
 // 사이드바 (모바일)
