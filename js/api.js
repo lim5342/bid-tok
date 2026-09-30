@@ -213,6 +213,10 @@ async function _smartGetCollection(collection) {
             const r = await _authPost(ep, { session: _session() });
             if (r && r.success) return r.data || [];
             console.warn(`[API] 서버 ${collection} 조회 거부: ${r && r.message}`);
+            // 세션 만료/권한없음 → 관리자 페이지면 "0으로 착각" 방지: 재로그인 유도
+            if (r && /관리자 권한이 필요|로그인이 필요|세션/.test(r.message || '') && typeof window._onAdminAuthFail === 'function') {
+                window._onAdminAuthFail(r.message);
+            }
             return [];
         } catch (e) {
             console.warn(`[API] 서버 ${collection} 조회 실패:`, e.message);
