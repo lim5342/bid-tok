@@ -694,7 +694,9 @@
                         <option value="">선택 (선택사항)</option>
                         <option>아파트</option><option>빌라/연립</option><option>단독/다가구</option>
                         <option>오피스텔</option><option>상가</option><option>토지</option><option>기타</option>
+                        <option value="차량">자동차·차량 (신청 불가)</option>
                     </select>
+                    <div class="hint">※ 대리입찰 톡은 <strong>부동산 경매만</strong> 지원합니다. 자동차·차량 등 동산 경매는 신청이 제한됩니다.</div>
                 </div>
             </div>
         </div>
@@ -1353,6 +1355,11 @@ function validateStep(step) {
 
     if (step === 1) {
         let ok = true;
+        // 자동차·차량 경매는 대리입찰 범위를 벗어나 신청 차단
+        if (val('propertyType') && document.getElementById('propertyType').value === '차량') {
+            toast('자동차·차량 경매는 신청이 제한됩니다. 대리입찰 톡은 부동산 경매만 지원합니다.', 'error');
+            return false;
+        }
         if (!val('regionSelect')) { showError('regionSelect'); ok = false; }
         if (!val('courtSelect'))  { showError('courtSelect');  ok = false; }
         if (!val('caseNumber'))   { showError('caseNumber');   ok = false; }
