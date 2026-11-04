@@ -1386,6 +1386,16 @@ function validateStep(step) {
     if (step === 3) {
         let ok = true;
         if (!val('bidAmount'))     { showError('bidAmount');     ok = false; }
+        else {
+            // #9 입찰가는 최저입찰가 이상이어야 다음 단계로 진행 가능
+            const _bid = parseNumber(val2('bidAmount'));
+            const _min = parseNumber(val2('minBidPrice'));
+            if (_min > 0 && _bid < _min) {
+                showError('bidAmount', '입찰가는 최저입찰가(' + _min.toLocaleString('ko-KR') + '원) 이상이어야 합니다.');
+                toast('입찰가가 최저입찰가보다 낮습니다. 최저입찰가 이상으로 입력해주세요.', 'error');
+                ok = false;
+            }
+        }
         if (!val('depositMethod')) { showError('depositMethod'); ok = false; }
         if (!document.getElementById('agreeContract') || !document.getElementById('agreeContract').checked) {
             toast('전자계약 동의(서명)가 필요합니다.', 'error');
