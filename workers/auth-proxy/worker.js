@@ -360,7 +360,7 @@ const COUPONS = {
   '0987':   { channel: '인스타광고', type: 'amount', discount: 33000},
   'boostv': { channel: '수강생',     type: 'free',   discount: null },
 };
-const COUPON_END = Date.parse('2026-10-30T23:59:59+09:00');            // 쿠폰 공통 종료일(이후 발급 불가·자동 만료)
+const COUPON_END = Date.parse('2026-12-31T23:59:59+09:00');            // 쿠폰 공통 종료일(이후 발급 불가·자동 만료)
 const COUPON_ISSUE_DEADLINE = COUPON_END;                              // 발급 마감 = 종료일 (기존 참조 호환용 별칭)
 const COUPON_TOTAL_LIMIT = 100;                                        // 선착순 발급 한도(폭주 방지)
 
@@ -618,7 +618,7 @@ export default {
         const user = await fsGetDoc(token, 'users', uid);
         if (user && user.coupon_used) return json({ success: false, alreadyUsed: true, message: '이미 쿠폰을 사용한 계정입니다. (계정당 1회)' }, 200, cors);
         if (Date.now() > COUPON_END) {
-          return json({ success: false, expired: true, message: '쿠폰 사용 기간이 종료되었습니다. (마감 2026-10-30)' }, 200, cors);
+          return json({ success: false, expired: true, message: '쿠폰 사용 기간이 종료되었습니다. (마감 2026-12-31)' }, 200, cors);
         }
 
         // 3) 신청건/금액
