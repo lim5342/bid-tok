@@ -879,14 +879,27 @@
         async function requestPaymentCancel(id) {
             const app = allApplications.find(a => a.id === id);
             if (!app) return;
-            if (!confirm('결제 취소를 요청하시겠습니까?\n\n관리자 확인 후 카드 결제가 취소(환불)됩니다.\n※ 이미 입찰이 진행된 경우에는 환불이 어려울 수 있습니다.')) return;
+            if (!confirm(
+                '【결제 취소 요청 전 꼭 확인해주세요】\n\n' +
+                '■ 환불 기준 (은행영업일 기준 · 주말/공휴일 제외)\n' +
+                '· 입찰 2영업일 전까지 취소: 100% 환불\n' +
+                '· 입찰 전날 취소: 50% 환불\n' +
+                '· 입찰 당일 취소: 환불 불가\n' +
+                '· 법원 사정(취하·정지·변경 등): 50% 현금 + 50% 포인트\n\n' +
+                '■ 매우 중요 — 취소 버튼만으로는 끝이 아닙니다\n' +
+                '배정된 전문가는 입찰 당일(전날 밤~당일 아침) 법원으로 출발합니다.\n' +
+                '따라서 반드시 고객센터(02-863-1022)와 배정 전문가에게 직접 연락하여\n' +
+                '취소를 협의·확인하셔야 효력이 있습니다.\n' +
+                '(연락·확인 없이 취소 버튼만 누르고 안심하시면 전문가가 입찰을 진행할 수 있습니다.)\n\n' +
+                '위 내용을 모두 확인하였으며, 결제 취소를 요청하시겠습니까?'
+            )) return;
             try {
                 await API.applications.updateStatus(id, app.status, {
                     payment_cancel_requested: true,
                     payment_status: '취소신청',
                     payment_cancel_requested_at: new Date().toISOString()
                 });
-                alert('결제 취소 요청이 접수되었습니다.\n관리자 확인 후 처리되며, 진행 상황은 마이페이지에서 확인하실 수 있습니다.');
+                alert('결제 취소 요청이 접수되었습니다.\n\n★ 반드시 고객센터(02-863-1022)로 전화하여 취소를 확정해 주세요.\n★ 배정된 전문가에게도 취소 사실을 직접 알려 주세요. (입찰 전 통보 필수)\n\n관리자 확인 후 처리되며, 진행 상황은 마이페이지에서 확인하실 수 있습니다.');
                 const idx = allApplications.findIndex(a => a.id === id);
                 if (idx >= 0) { allApplications[idx].payment_cancel_requested = true; allApplications[idx].payment_status = '취소신청'; }
                 renderApplications(allApplications);
