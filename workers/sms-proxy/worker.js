@@ -116,6 +116,14 @@ export default {
                `${d.caseNumber ? '사건: ' + d.caseNumber + '\n' : ''}` +
                `${d.bidDate ? '입찰일: ' + d.bidDate + '\n' : ''}` +
                `먼저 수락하시는 전문가에게 배정됩니다. 지금 확인하세요.\n▶ https://bid-tok.kr/expert-mypage.html`;
+      } else if (type === 'expert_cancel') {
+        // 전문가에게: 의뢰인이 취소를 요청함 (입찰 전 반드시 확인)
+        const d = data || {};
+        const name = d.name || '전문가';
+        text = `[대리입찰톡] ${name}님, 담당 사건의 의뢰인이 취소를 요청했습니다.\n` +
+               `${d.court ? '법원: ' + d.court + '\n' : ''}` +
+               `${d.caseNumber ? '사건: ' + d.caseNumber + '\n' : ''}` +
+               `입찰 진행 전 반드시 진행 여부를 확인하시고, 취소 건은 입찰하지 마세요.\n문의: 02-863-1022`;
       } else if (code) {
         // 기본 인증번호 발송
         text = `[대리입찰톡] 인증번호 [${code}]를 입력해주세요. (5분 이내 입력)`;
