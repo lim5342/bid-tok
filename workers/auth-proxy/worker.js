@@ -1002,6 +1002,32 @@ export default {
         if (collection === 'applications') {
           // 유효 세션(관리자/의뢰인/전문가)이면 허용 — 익명 변조 차단이 목적
           await fsPatch(token, 'applications', id, upd);
+          // 의뢰인 취소 요청 → 배정된 전문가에게 "취소 요청" 문자 (입찰 전 반드시 확인)
+          if (upd.payment_cancel_requested === true || upd.payment_status === '취소신청') {
+            try {
+              const full = await fsGetDoc(token, 'applications', id);
+              const expId = full && full.assigned_expert_id;
+              const expName = full && full.expert_name;
+              let expPhone = '';
+              if (expId) {
+                const exp = await fsGetDoc(token, 'users', String(expId)).catch(() => null);
+                if (exp && exp.phone) expPhone = exp.phone;
+              }
+              if (!expPhone && expName) {
+                const us = await fsListAll(token, 'users');
+                const m = us.find(u => u.name === expName && u.phone);
+                if (m) expPhone = m.phone;
+              }
+              if (expPhone) {
+                await fetch('https://bidtok-sms-proxy.qkqk5342.workers.dev', {
+                  method: 'POST', headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ type: 'expert_cancel', to: expPhone, data: {
+                    name: expName || '', court: (full && full.court) || '', caseNumber: (full && full.case_number) || ''
+                  } })
+                });
+              }
+            } catch (e) { console.error('전문가 취소알림 SMS 발송 실패:', e.message || e); }
+          }
           // 전문가 수임 확정 → 의뢰인에게 "매칭완료" 문자 (서버가 보장, 세션/클라 실패와 무관)
           if (upd.assigned_expert_id && (upd.status === '진행중' || upd.status === '매칭완료')) {
             try {
