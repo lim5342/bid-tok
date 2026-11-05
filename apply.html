@@ -1169,6 +1169,37 @@
         </div>
     </div>
 
+    <!-- 결제 직전 최종 확인 팝업 -->
+    <div id="prePayModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:9999; align-items:center; justify-content:center; padding:1rem;">
+        <div style="background:#fff; border-radius:16px; max-width:460px; width:100%; padding:1.7rem 1.6rem; box-shadow:0 10px 40px rgba(0,0,0,0.2);">
+            <div style="font-size:1.12rem; font-weight:800; color:#1a2233; text-align:center; margin-bottom:0.2rem;">신청 전 꼭 확인해주세요</div>
+            <p style="font-size:0.82rem; color:#8a93a6; text-align:center; margin:0 0 1.1rem;">원활한 진행을 위한 안내입니다 🙂</p>
+
+            <div style="display:flex; gap:0.7rem; align-items:flex-start; background:#f6f9ff; border:1px solid #e3ecfb; border-radius:10px; padding:0.8rem 0.95rem; margin-bottom:0.6rem;">
+                <span style="color:#1550E8; font-weight:800;">1</span>
+                <div style="font-size:0.88rem; color:#333; line-height:1.55;">대리입찰 톡은 의뢰인과 전문가를 <b>연결</b>해드리는 플랫폼입니다. 매칭 후에는 <b>배정된 전문가와 직접 소통</b>하며 진행됩니다. (전문가 연락처를 안내해 드립니다.)</div>
+            </div>
+            <div style="display:flex; gap:0.7rem; align-items:flex-start; background:#f6f9ff; border:1px solid #e3ecfb; border-radius:10px; padding:0.8rem 0.95rem; margin-bottom:0.6rem;">
+                <span style="color:#1550E8; font-weight:800;">2</span>
+                <div style="font-size:0.88rem; color:#333; line-height:1.55;"><b>입찰 당일 취소·환불은 불가</b>합니다. 취소·변경이 필요하시면 <b>고객센터와 배정된 전문가 양쪽에</b> 알려 협의해 주세요.</div>
+            </div>
+            <div style="display:flex; gap:0.7rem; align-items:flex-start; background:#f6f9ff; border:1px solid #e3ecfb; border-radius:10px; padding:0.8rem 0.95rem; margin-bottom:1rem;">
+                <span style="color:#1550E8; font-weight:800;">3</span>
+                <div style="font-size:0.88rem; color:#333; line-height:1.55;">최종 입찰 금액과 진행 여부는 <b>배정 전문가와 충분히 협의한 뒤</b> 확정해 주세요.</div>
+            </div>
+
+            <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; margin-bottom:1rem; font-size:0.9rem; color:#1a2233; font-weight:600;">
+                <input type="checkbox" id="prePayAgree" style="width:18px; height:18px;">
+                위 내용을 확인했습니다.
+            </label>
+
+            <div style="display:flex; gap:0.6rem;">
+                <button type="button" onclick="document.getElementById('prePayModal').style.display='none'" style="flex:1; padding:0.8rem; background:#f3f4f6; border:1px solid #d1d5db; border-radius:10px; font-weight:700; font-size:0.92rem; cursor:pointer; color:#555;">뒤로</button>
+                <button type="button" onclick="confirmPrePay()" style="flex:2; padding:0.8rem; background:#1550E8; color:#fff; border:none; border-radius:10px; font-weight:700; font-size:0.95rem; cursor:pointer;">확인하고 결제</button>
+            </div>
+        </div>
+    </div>
+
     <!-- ══ STEP 5: 완료 ══ -->
     <div class="step-panel" id="panel5">
         <div class="apply-card" style="max-width:620px; margin:0 auto;">
@@ -2076,6 +2107,11 @@ async function submitApplication() {
     if (!signatureData) {
         toast('전자계약 서명이 필요합니다. 3단계로 돌아가서 서명해주세요.', 'error'); return;
     }
+    // 결제 직전 최종 확인 팝업 (1회) — 연결 플랫폼 안내 + 취소/협의 고지
+    if (!_prePayConfirmed) {
+        const m = document.getElementById('prePayModal');
+        if (m) { m.style.display = 'flex'; return; }
+    }
 
     const btn = document.querySelector('.btn-submit');
     btn.disabled = true;
@@ -2492,6 +2528,17 @@ document.head.appendChild(style);
 // ─────────────────────────────────────────────
 let signatureData = null;
 let _signBoxes = [];   // [{canvas, ctx, hasMark, char, guide}]
+
+// 결제 직전 최종 확인 팝업
+let _prePayConfirmed = false;
+function confirmPrePay() {
+    const chk = document.getElementById('prePayAgree');
+    if (!chk || !chk.checked) { toast('안내 내용 확인에 체크해주세요.', 'error'); return; }
+    _prePayConfirmed = true;
+    const m = document.getElementById('prePayModal');
+    if (m) m.style.display = 'none';
+    submitApplication();
+}
 
 // 본인서명확인서 안내 팝업 (STEP4 진입 시 1회)
 let _signCertShown = false;
